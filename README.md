@@ -41,7 +41,8 @@ Demonstrate the ability to plan, organize, and execute **automated end-to-end te
 
 ---
 
-```## 📁 Repository Structure
+## 📁 Repository Structure
+```
 ├── tests/ # End-to-end test scripts
 │ ├── search.spec.ts
 │ ├── filters.spec.ts
