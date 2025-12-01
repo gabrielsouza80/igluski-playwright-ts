@@ -63,7 +63,7 @@ Demonstrate the ability to plan, organize, and execute **automated end-to-end te
 
 1. Clone the repository:
 git clone https://github.com/gabrielsouza80/igluski-playwright-ts
-cd igluski-playwright-ts
+ cd igluski-playwright-ts
 
 2. Install dependencies:
 npm install
@@ -71,7 +71,7 @@ npm install
 3. Install browsers:
 npx playwright install
 
-4.Run all tests:
+4. Run all tests:
 npx playwright test
 
 5. Run tests with UI:
