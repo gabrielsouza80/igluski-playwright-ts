@@ -41,7 +41,7 @@ Demonstrate the ability to plan, organize, and execute **automated end-to-end te
 
 ---
 
-## 📁 Repository Structure
+```## 📁 Repository Structure
 ├── tests/ # End-to-end test scripts
 │ ├── search.spec.ts
 │ ├── filters.spec.ts
@@ -55,14 +55,13 @@ Demonstrate the ability to plan, organize, and execute **automated end-to-end te
 ├── package.json # Node.js project dependencies
 ├── tsconfig.json # TypeScript configuration
 └── README.md # Project documentation
-
+```
 ---
 
 ## ▶️ How to Run the Tests
 
 1. Clone the repository:
 
-```bash
 git clone https://github.com/gabrielsouza80/igluski-playwright-ts
 cd igluski-playwright-ts
 
