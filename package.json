@@ -1,0 +1,16 @@
+{
+  "name": "igluski-playwright-ts",
+  "version": "1.0.0",
+  "description": "End-to-end QA project including automated tests for search and booking flows on IgluSki's demo holiday website using Playwright + TypeScript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "typescript": "^5.9.3"
+  }
+}
