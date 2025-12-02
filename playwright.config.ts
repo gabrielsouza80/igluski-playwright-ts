@@ -5,7 +5,7 @@ export default defineConfig({
   timeout: 30000,
   retries: 0,
   use: {
-    headless: true,
+    headless: false,
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
     screenshot: 'only-on-failure',
