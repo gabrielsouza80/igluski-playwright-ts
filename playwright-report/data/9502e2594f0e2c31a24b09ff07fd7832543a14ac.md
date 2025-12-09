@@ -1,0 +1,470 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: The UK's number 1 ski travel agency
+        - 'img "Rating: 4.7 stars" [ref=e8]'
+        - link "6388 reviews Feefo logo" [ref=e9] [cursor=pointer]:
+          - /url: /customer-reviews
+          - generic [ref=e10]: 6388 reviews
+          - img "Feefo logo" [ref=e11]
+      - list [ref=e12]:
+        - listitem [ref=e13]:
+          - generic [ref=e14]:
+            - button "Recently Viewed" [ref=e15] [cursor=pointer]:  Recently Viewed
+            - text: 
+        - listitem [ref=e16]:
+          - link "Customer portal icon Customer portal" [ref=e17] [cursor=pointer]:
+            - /url: https://customerportal.igluski.com/
+            - img "Customer portal icon" [ref=e18]
+            - text: Customer portal
+    - generic [ref=e20]:
+      - link "Iglu Ski logo" [ref=e21] [cursor=pointer]:
+        - /url: /
+        - img "Iglu Ski logo" [ref=e22]
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - text: 
+          - link "Phone 9:00 AM - 6:00 PM or book online" [ref=e27] [cursor=pointer]:
+            - /url: /contact-us
+        - generic [ref=e28]:
+          - generic "Phone icon" [ref=e29]: 
+          - text: 020 3848 3700
+      - text: 
+    - navigation [ref=e32]:
+      - list [ref=e33]:
+        - listitem [ref=e34]:
+          - link "Search" [ref=e35] [cursor=pointer]:
+            - /url: /ski-holidays
+        - listitem [ref=e36]:
+          - link "Ski Holidays" [ref=e37] [cursor=pointer]:
+            - /url: /ski-holidays
+        - listitem [ref=e38]:
+          - link "Ski Destinations" [ref=e39] [cursor=pointer]:
+            - /url: /ski-resorts
+        - listitem [ref=e40]:
+          - link "Ski Deals" [ref=e41] [cursor=pointer]:
+            - /url: /ski-deals
+      - list [ref=e42]:
+        - listitem [ref=e43]:
+          - link "Snow reports" [ref=e44] [cursor=pointer]:
+            - /url: /snow-reports
+        - listitem [ref=e45]:
+          - link "Ski blog & guides" [ref=e46] [cursor=pointer]:
+            - /url: /blog
+        - listitem [ref=e47]:
+          - link "Enquire" [ref=e48] [cursor=pointer]:
+            - /url: /enquire
+    - text:     
+    - generic [ref=e52]:
+      - generic [ref=e57]:
+        - list [ref=e59]:
+          - listitem [ref=e60]:
+            - button "Ski holidays" [ref=e61] [cursor=pointer]:
+              - img [ref=e62]
+              - img [ref=e63]
+              - img [ref=e64]
+              - text: Ski Holiday
+          - listitem [ref=e65]:
+            - button "Accomodation only" [ref=e66] [cursor=pointer]:
+              - img [ref=e67]
+              - text: Accommodation only
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - generic [ref=e70]: Where?
+            - textbox "Where?" [ref=e71]:
+              - /placeholder: Country, ski area or resort...
+          - generic [ref=e72]:
+            - generic [ref=e73]: When?
+            - textbox "When?" [ref=e75]: Select a date
+          - button "How many? 2 Adults 0 Children" [ref=e77] [cursor=pointer]:
+            - strong [ref=e78]: How many?
+            - generic [ref=e79]: 2 Adults 0 Children
+          - generic [ref=e80]:
+            - generic [ref=e81]: Travel from?
+            - textbox "Travel from?" [ref=e82]:
+              - /placeholder: Any UK airport or ski train...
+          - button [ref=e83] [cursor=pointer]:
+            - img [ref=e84]
+      - text: 
+  - generic [ref=e86]:
+    - generic [ref=e87]:
+      - heading "Welcome To The Home Of Ski Holidays" [level=1] [ref=e90]
+      - generic [ref=e91]:
+        - generic [ref=e93]:
+          - link "December last minute" [ref=e96] [cursor=pointer]:
+            - /url: https://www.igluski.com/ski-deals/o2393
+            - img "December last minute" [ref=e97]
+          - list [ref=e98]:
+            - listitem [ref=e99] [cursor=pointer]
+            - listitem [ref=e100] [cursor=pointer]
+          - button "Previous" [ref=e101] [cursor=pointer]:
+            - generic [ref=e102]: 
+            - generic [ref=e103]: Previous
+          - button "Next" [ref=e104] [cursor=pointer]:
+            - generic [ref=e105]: 
+            - generic [ref=e106]: Next
+        - generic [ref=e109]:
+          - heading "Speak to the ski experts" [level=2] [ref=e110]
+          - paragraph [ref=e111]:
+            - text: We partner with over 50 of the biggest and best names in ski to give you access to the
+            - strong [ref=e112]:
+              - text: most
+              - link "ski holidays" [ref=e113] [cursor=pointer]:
+                - /url: https://www.igluski.com/ski-holidays
+              - text: and
+              - link "ski deals" [ref=e114] [cursor=pointer]:
+                - /url: https://www.igluski.com/ski-deals
+              - text: in one place,
+            - text: with more
+            - link "ski chalets" [ref=e115] [cursor=pointer]:
+              - /url: https://www.igluski.com/ski-holidays/ski-chalet-holidays
+            - text: ","
+            - link "hotels" [ref=e116] [cursor=pointer]:
+              - /url: https://www.igluski.com/ski-holidays/ski-hotels
+            - text: ", and"
+            - link "apartments" [ref=e117] [cursor=pointer]:
+              - /url: https://www.igluski.com/ski-holidays/ski-apartments
+            - text: than anyone else
+            - strong [ref=e118]: .
+            - text: Finding your perfect ski holiday is easy; search, filter and book
+            - strong [ref=e119]: thousands
+            - text: of packages and properties across the world's best ski resorts on our website or organise your holiday with our
+            - strong [ref=e120]: award-winning team of ski experts
+            - text: .
+          - text: With
+          - strong [ref=e121]: no hidden costs
+          - text: ","
+          - strong [ref=e122]: the best prices
+          - text: and our
+          - link "price match guarantee" [ref=e123] [cursor=pointer]:
+            - /url: https://www.igluski.com/price-match
+          - text: ", we're here to ensure you get exceptional value without sacrificing any aspect of your ski holiday."
+          - text: And with Iglu Ski customers getting access to
+          - strong [ref=e124]: exclusive partner discounts
+          - text: ","
+          - strong [ref=e125]: loyalty discounts
+          - text: and more, there's never been more reason to step into the world of ski.
+      - generic [ref=e126]:
+        - link "TALK TO A SKI EXPERT GET IN TOUCH" [ref=e128] [cursor=pointer]:
+          - /url: https://www.igluski.com/enquire
+          - generic [ref=e129]:
+            - heading "TALK TO A SKI EXPERT" [level=2] [ref=e130]:
+              - text: TALK TO
+              - text: A SKI EXPERT
+            - generic [ref=e131]: GET IN TOUCH
+        - link "ABOUT IGLU SKI FIND OUT MORE" [ref=e133] [cursor=pointer]:
+          - /url: https://www.igluski.com/about
+          - generic [ref=e134]:
+            - heading "ABOUT IGLU SKI" [level=2] [ref=e135]:
+              - text: ABOUT
+              - text: IGLU SKI
+            - generic [ref=e136]: FIND OUT MORE
+        - link "SIGN UP TO OUR NEWSLETTER GET THE BEST DEALS FIRST SIGN ME UP" [ref=e138] [cursor=pointer]:
+          - /url: /signup
+          - generic [ref=e139]:
+            - heading "SIGN UP TO OUR NEWSLETTER" [level=2] [ref=e140]
+            - generic [ref=e141]: GET THE BEST DEALS FIRST
+            - generic [ref=e142]: SIGN ME UP
+      - heading "Find Your Skiing Holiday" [level=2] [ref=e143]
+      - text: Discover your perfect ski holiday this winter from the greatest choice of
+      - link "ski deals" [ref=e144] [cursor=pointer]:
+        - /url: /ski-deals
+      - text: anywhere. Choose from over
+      - link "280 ski resorts" [ref=e145] [cursor=pointer]:
+        - /url: /ski-resorts
+      - text: ", across 15 countries in"
+      - link "Europe" [ref=e146] [cursor=pointer]:
+        - /url: /ski-resorts/ski-areas
+      - text: ","
+      - link "North America" [ref=e147] [cursor=pointer]:
+        - /url: /ski-resorts/ski-areas/ski-holidays-north-america
+      - text: and
+      - link "Japan" [ref=e148] [cursor=pointer]:
+        - /url: /ski-resorts/japan
+      - text: . From the snow-sure slopes of
+      - link "France" [ref=e149] [cursor=pointer]:
+        - /url: /ski-resorts/france
+      - text: ", the beautiful scenery of"
+      - link "Austria" [ref=e150] [cursor=pointer]:
+        - /url: /ski-resorts/austria
+      - text: and the vast ski areas of
+      - link "Canada" [ref=e151] [cursor=pointer]:
+        - /url: /ski-resorts/canada
+      - text: ", you'll find the best selection of skiing and"
+      - link "snowboarding holidays" [ref=e152] [cursor=pointer]:
+        - /url: /ski-holidays/snowboard-holidays
+      - text: right here.
+      - link "Package ski holidays" [ref=e153] [cursor=pointer]:
+        - /url: /ski-holidays
+      - text: are now on sale for Winter 2025/2026, meaning now is the perfect time to get your trip to the mountains booked.
+      - generic [ref=e154]:
+        - link "FRANCE SKI resorts FIND YOUR HOLIDAY" [ref=e156] [cursor=pointer]:
+          - /url: https://www.igluski.com/ski-resorts/france
+          - generic [ref=e157]:
+            - heading "FRANCE SKI resorts" [level=2] [ref=e158]:
+              - text: FRANCE
+              - text: SKI resorts
+            - generic [ref=e159]: FIND YOUR HOLIDAY
+        - link "AUSTRIA SKI resorts FIND YOUR HOLIDAY" [ref=e161] [cursor=pointer]:
+          - /url: https://www.igluski.com/ski-resorts/austria
+          - generic [ref=e162]:
+            - heading "AUSTRIA SKI resorts" [level=2] [ref=e163]:
+              - text: AUSTRIA
+              - text: SKI resorts
+            - generic [ref=e164]: FIND YOUR HOLIDAY
+        - link "Skiers enjoying the Italian alps while on holiday ITALY SKI resorts FIND YOUR HOLIDAY" [ref=e166] [cursor=pointer]:
+          - /url: https://www.igluski.com/ski-resorts/italy
+          - img "Skiers enjoying the Italian alps while on holiday" [ref=e167]
+          - generic [ref=e168]:
+            - heading "ITALY SKI resorts" [level=2] [ref=e169]:
+              - text: ITALY
+              - text: SKI resorts
+            - generic [ref=e170]: FIND YOUR HOLIDAY
+        - link "ANDORRA SKI resorts FIND YOUR HOLIDAY" [ref=e172] [cursor=pointer]:
+          - /url: https://www.igluski.com/ski-resorts/andorra
+          - generic [ref=e173]:
+            - heading "ANDORRA SKI resorts" [level=2] [ref=e174]:
+              - text: ANDORRA
+              - text: SKI resorts
+            - generic [ref=e175]: FIND YOUR HOLIDAY
+      - generic [ref=e176]:
+        - link "BULGARIA SKI resorts FIND YOUR HOLIDAY" [ref=e178] [cursor=pointer]:
+          - /url: /ski-resorts/bulgaria
+          - generic [ref=e179]:
+            - heading "BULGARIA SKI resorts" [level=2] [ref=e180]:
+              - text: BULGARIA
+              - text: SKI resorts
+            - generic [ref=e181]: FIND YOUR HOLIDAY
+        - link "SWITZERLAND SKI resorts FIND YOUR HOLIDAY" [ref=e183] [cursor=pointer]:
+          - /url: /ski-resorts/switzerland
+          - generic [ref=e184]:
+            - heading "SWITZERLAND SKI resorts" [level=2] [ref=e185]:
+              - text: SWITZERLAND
+              - text: SKI resorts
+            - generic [ref=e186]: FIND YOUR HOLIDAY
+        - link "CANADA SKI resorts FIND YOUR HOLIDAY" [ref=e188] [cursor=pointer]:
+          - /url: /ski-resorts/canada
+          - generic [ref=e189]:
+            - heading "CANADA SKI resorts" [level=2] [ref=e190]:
+              - text: CANADA
+              - text: SKI resorts
+            - generic [ref=e191]: FIND YOUR HOLIDAY
+        - link "JAPAN SKI resorts FIND YOUR HOLIDAY" [ref=e193] [cursor=pointer]:
+          - /url: /ski-resorts/japan
+          - generic [ref=e194]:
+            - heading "JAPAN SKI resorts" [level=2] [ref=e195]:
+              - text: JAPAN
+              - text: SKI resorts
+            - generic [ref=e196]: FIND YOUR HOLIDAY
+    - generic:   
+  - contentinfo [ref=e197]:
+    - generic [ref=e198]:
+      - generic [ref=e201]:
+        - generic [ref=e203]:
+          - generic [ref=e205]: 
+          - generic [ref=e206]: Speak to a ski expert
+          - generic [ref=e207] [cursor=pointer]: 020 3848 3700
+        - generic [ref=e209]:
+          - generic [ref=e211]: 
+          - generic [ref=e212]: Email about a ski holiday
+          - generic [ref=e213] [cursor=pointer]:
+            - text: Enquire
+            - generic [ref=e215]: 
+        - generic [ref=e217]:
+          - generic [ref=e219]: 
+          - generic [ref=e220]: Subscribe to our newsletter
+          - generic [ref=e221] [cursor=pointer]:
+            - text: Sign up
+            - generic [ref=e223]: 
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - generic [ref=e227]:
+            - heading "Popular Countries" [level=4] [ref=e228]
+            - text: 
+          - list [ref=e229]:
+            - listitem [ref=e230]:
+              - link "France" [ref=e231] [cursor=pointer]:
+                - /url: /ski-resorts/france
+            - listitem [ref=e232]:
+              - link "Austria" [ref=e233] [cursor=pointer]:
+                - /url: /ski-resorts/austria
+            - listitem [ref=e234]:
+              - link "Italy" [ref=e235] [cursor=pointer]:
+                - /url: /ski-resorts/italy
+            - listitem [ref=e236]:
+              - link "Andorra" [ref=e237] [cursor=pointer]:
+                - /url: /ski-resorts/andorra
+            - listitem [ref=e238]:
+              - link "Switzerland" [ref=e239] [cursor=pointer]:
+                - /url: /ski-resorts/switzerland
+            - listitem [ref=e240]:
+              - link "Bulgaria" [ref=e241] [cursor=pointer]:
+                - /url: /ski-resorts/bulgaria
+        - generic [ref=e242]:
+          - generic [ref=e243]:
+            - heading "Popular Ski Resorts" [level=4] [ref=e244]
+            - text: 
+          - list [ref=e245]:
+            - listitem [ref=e246]:
+              - link "Val d'Isère" [ref=e247] [cursor=pointer]:
+                - /url: /ski-resorts/france/val-d-isere
+            - listitem [ref=e248]:
+              - link "St Anton" [ref=e249] [cursor=pointer]:
+                - /url: /ski-resorts/austria/st-anton
+            - listitem [ref=e250]:
+              - link "Cervinia" [ref=e251] [cursor=pointer]:
+                - /url: /ski-resorts/italy/cervinia
+            - listitem [ref=e252]:
+              - link "Val Thorens" [ref=e253] [cursor=pointer]:
+                - /url: /ski-resorts/france/val-thorens
+            - listitem [ref=e254]:
+              - link "Tignes" [ref=e255] [cursor=pointer]:
+                - /url: /ski-resorts/france/tignes
+            - listitem [ref=e256]:
+              - link "Méribel" [ref=e257] [cursor=pointer]:
+                - /url: /ski-resorts/france/meribel
+            - listitem [ref=e258]:
+              - link "Mayrhofen" [ref=e259] [cursor=pointer]:
+                - /url: /ski-resorts/austria/mayrhofen
+            - listitem [ref=e260]:
+              - link "Sauze d'Oulx" [ref=e261] [cursor=pointer]:
+                - /url: /ski-resorts/italy/sauze-d-oulx
+            - listitem [ref=e262]:
+              - link "Les Deux Alpes" [ref=e263] [cursor=pointer]:
+                - /url: /ski-resorts/france/les-deux-alpes
+            - listitem [ref=e264]:
+              - link "Ischgl" [ref=e265] [cursor=pointer]:
+                - /url: /ski-resorts/austria/ischgl
+            - listitem [ref=e266]:
+              - link "Courchevel" [ref=e267] [cursor=pointer]:
+                - /url: /ski-resorts/france/courchevel-1850
+            - listitem [ref=e268]:
+              - link "Sestriere" [ref=e269] [cursor=pointer]:
+                - /url: /ski-resorts/italy/sestriere
+        - generic [ref=e270]:
+          - generic [ref=e271]:
+            - heading "Popular Accom Types" [level=4] [ref=e272]
+            - text: 
+          - list [ref=e273]:
+            - listitem [ref=e274]:
+              - link "Ski Chalets" [ref=e275] [cursor=pointer]:
+                - /url: /ski-holidays/ski-chalet-holidays
+            - listitem [ref=e276]:
+              - link "Ski Hotels" [ref=e277] [cursor=pointer]:
+                - /url: /ski-holidays/ski-hotels
+            - listitem [ref=e278]:
+              - link "Self-catered" [ref=e279] [cursor=pointer]:
+                - /url: /ski-holidays/self-catered-ski-deals
+            - listitem [ref=e280]:
+              - link "All-inclusive" [ref=e281] [cursor=pointer]:
+                - /url: /ski-holidays/all-inclusive-ski-deals
+        - generic [ref=e282]:
+          - generic [ref=e283]:
+            - heading "Popular Ski Holidays" [level=4] [ref=e284]
+            - text: 
+          - list [ref=e285]:
+            - listitem [ref=e286]:
+              - link "Cheap Ski Deals" [ref=e287] [cursor=pointer]:
+                - /url: /ski-deals
+            - listitem [ref=e288]:
+              - link "Last Minute" [ref=e289] [cursor=pointer]:
+                - /url: /ski-holidays/last-minute-ski-holidays
+            - listitem [ref=e290]:
+              - link "Accommodation Only" [ref=e291] [cursor=pointer]:
+                - /url: /ski-holidays/ski-accommodation-only
+            - listitem [ref=e292]:
+              - link "Group Ski Holidays" [ref=e293] [cursor=pointer]:
+                - /url: /ski-holidays/group-ski-holidays
+            - listitem [ref=e294]:
+              - link "Family Ski Holidays" [ref=e295] [cursor=pointer]:
+                - /url: /ski-holidays/family-ski-holidays
+            - listitem [ref=e296]:
+              - link "Ski Holidays with Lift Passes" [ref=e297] [cursor=pointer]:
+                - /url: /ski-holidays/lift-pass-included
+            - listitem [ref=e298]:
+              - link "Short Ski Breaks" [ref=e299] [cursor=pointer]:
+                - /url: /ski-holidays/ski-short-breaks
+            - listitem [ref=e300]:
+              - link "Lapland Holidays" [ref=e301] [cursor=pointer]:
+                - /url: /lapland-holidays
+      - generic [ref=e304]:
+        - generic [ref=e305]:
+          - generic [ref=e306]:
+            - img "ATOL logo" [ref=e308]
+            - link "ABTA logo" [ref=e310] [cursor=pointer]:
+              - /url: https://abta.com/find-a-member/results?term=j0332#results
+              - img "ABTA logo" [ref=e311]
+            - img "IATA logo" [ref=e313]
+          - 'link "Rating: 4.7 stars 6388 reviews Feefo logo" [ref=e315] [cursor=pointer]':
+            - /url: /customer-reviews
+            - 'img "Rating: 4.7 stars" [ref=e316]'
+            - generic [ref=e317]: 6388 reviews
+            - img "Feefo logo" [ref=e318]
+        - generic [ref=e319]:
+          - heading "Customer Service" [level=4] [ref=e320]
+          - list [ref=e321]:
+            - listitem [ref=e322]:
+              - link "Cookie & Privacy Policy" [ref=e323] [cursor=pointer]:
+                - /url: /privacy-policy
+            - listitem [ref=e324]:
+              - link "Terms & Conditions" [ref=e325] [cursor=pointer]:
+                - /url: /terms-and-conditions
+            - listitem [ref=e326]:
+              - link "Contact Us" [ref=e327] [cursor=pointer]:
+                - /url: /contact-us
+            - listitem [ref=e328]:
+              - link "Frequently Asked Questions" [ref=e329] [cursor=pointer]:
+                - /url: /guides/faqs/frequently-asked-questions
+            - listitem [ref=e330]:
+              - link "Travel Advice from the Foreign Office" [ref=e331] [cursor=pointer]:
+                - /url: https://www.gov.uk/foreign-travel-advice
+        - generic [ref=e332]:
+          - heading "About Iglu" [level=4] [ref=e333]
+          - list [ref=e334]:
+            - listitem [ref=e335]:
+              - link "Iglu.com" [ref=e336] [cursor=pointer]:
+                - /url: https://www.iglu.com
+            - listitem [ref=e337]:
+              - link "About us" [ref=e338] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e339]:
+              - link "Working at Iglu Ski" [ref=e340] [cursor=pointer]:
+                - /url: https://careers.iglu.com/departments/ski
+            - listitem [ref=e341]:
+              - link "Meet the Team" [ref=e342] [cursor=pointer]:
+                - /url: /meet-the-team
+            - listitem [ref=e343]:
+              - link "Lapland Holidays" [ref=e344] [cursor=pointer]:
+                - /url: /lapland-holidays
+            - listitem [ref=e345]:
+              - link "Site Map" [ref=e346] [cursor=pointer]:
+                - /url: /sitemap
+        - generic [ref=e348]:
+          - link "Facebook logo" [ref=e349] [cursor=pointer]:
+            - /url: https://www.facebook.com/igluskiholidays
+            - generic [ref=e350]: 
+          - link "Instagram logo" [ref=e351] [cursor=pointer]:
+            - /url: https://www.instagram.com/igluski/
+            - generic [ref=e352]: 
+          - link "X logo" [ref=e353] [cursor=pointer]:
+            - /url: https://twitter.com/igluski
+            - generic [ref=e354]: 
+      - generic [ref=e355]:
+        - button "Search by Holiday ID" [ref=e356] [cursor=pointer]
+        - text: 
+      - link "Chat on WhatsApp with a ski expert" [ref=e358] [cursor=pointer]:
+        - /url: https://wa.me/447777135734?text=Hey+there%2c+chat+to+one+of+our+ski+experts+and+we%27ll+find+you+an+amazing+holiday.
+        - generic [ref=e360]: 
+  - button "Cookies Settings" [ref=e361] [cursor=pointer]
+  - region "Cookie banner" [active] [ref=e363]:
+    - alertdialog "Privacy" [ref=e364]:
+      - generic [ref=e365]:
+        - generic [ref=e367]: Cookies are used to access and store information on your device to offer personalised content, analyse site usage and assist in our marketing efforts. By clicking 'Accept' you consent to our use of cookies.
+        - generic [ref=e369]:
+          - button "Accept Cookies & Close" [ref=e371] [cursor=pointer]
+          - button "Cookies Settings" [ref=e372] [cursor=pointer]
+```
