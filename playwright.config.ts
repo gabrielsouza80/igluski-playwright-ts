@@ -10,8 +10,9 @@ export default defineConfig({
   retries: 0,
 
   /* Configurações padrão para todos os testes */
+  fullyParallel: true,
   use: {
-    headless: true,
+    headless: false,
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
 
@@ -32,14 +33,14 @@ export default defineConfig({
       name: 'chrome',
       use: { ...devices['Desktop Chrome'] },
     },
-  //   {
-  //     name: 'firefox',
-  //     use: { ...devices['Desktop Firefox'] },
-  //   },
-  // ],
+      {
+        name: 'firefox',
+        use: { ...devices['Desktop Firefox'] },
+      },
+    ],
 
-  /* Opcional: caminho dos relatórios */
-  reporter: [
-    ['html', { open: 'never' }]
-  ],
+    /* Opcional: caminho dos relatórios */
+    reporter: [
+      ['html', { open: 'never' }]
+    ],
 });

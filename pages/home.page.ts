@@ -4,7 +4,7 @@ export class HomePage {
   readonly page: Page;
 
   // Header & Navigation
-  readonly logoLink: Locator;
+  readonly logoLink: Locator
   readonly buyLink: Locator;
   readonly rentLink: Locator;
   readonly newDevelopmentsLink: Locator;
