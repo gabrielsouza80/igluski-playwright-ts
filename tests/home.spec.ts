@@ -2,11 +2,12 @@ import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/home.page';
 
 test.describe('Home Page', () => {
-
+  // ===========================
+  // Antes de cada teste: Navegar e aceitar cookies
+  // ===========================
   test.beforeEach(async ({ page }) => {
     const home = new HomePage(page);
-    await home.navigate();
-    await home.closePromoIfVisible();
+    await home.navigate(); // Isso também vai aceitar os cookies
   });
 
   // ===========================
@@ -15,11 +16,10 @@ test.describe('Home Page', () => {
   test('Validar elementos principais do header', async ({ page }) => {
     const home = new HomePage(page);
 
-    await page.waitForTimeout(50000000);
     await expect(home.logoLink).toBeVisible();
-    await expect(home.buyLink).toBeVisible();
-    await expect(home.rentLink).toBeVisible();
-    await expect(home.servicesLink).toBeVisible();
+    await expect(home.skiHolidaysLink).toBeVisible();
+    await expect(home.skiDestinationsLink).toBeVisible();
+    await expect(home.skiDealsLink).toBeVisible();
   });
 
   // ===========================
@@ -29,100 +29,74 @@ test.describe('Home Page', () => {
     const home = new HomePage(page);
 
     await expect(home.footerFranceLink).toBeVisible();
-    await expect(home.skiChaletsLink).toBeVisible();
+    await expect(home.footerSkiChaletsLink).toBeVisible();
   });
 
   // ===========================
   // 3️⃣ Teste: Pesquisa simples
   // ===========================
-  test('Pesquisar por "Lisbon" e validar resultados', async ({ page }) => {
+  test('Pesquisar por resort e validar resultados', async ({ page }) => {
     const home = new HomePage(page);
 
-    await home.searchFor('Lisbon');
+    await home.searchFor('Val Thorens');
 
     const resultsText = await home.getSearchResults();
-    expect(resultsText).toContain('properties found');
+    expect(resultsText).toBeTruthy();
   });
 
   // ===========================
-  // 4️⃣ Teste: Fechar mensagem promo
-  // ===========================
-  test('Fechar mensagem promocional se visível', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.closePromoIfVisible();
-
-    const visible = await home.promoMessage.isVisible().catch(() => false);
-    expect(visible).toBeFalsy();
-  });
-
-  // ===========================
-  // 5️⃣ Teste: Navegar para BUY
-  // ===========================
-  test('Clicar no link Buy e validar URL', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.buyLink.click();
-
-    const result = await home.verifyPageLoaded('/buy');
-    expect(result).toBe(true);
-  });
-
-  // ===========================
-  // 6️⃣ Teste: Navegar para Rent
-  // ===========================
-  test('Clicar no link Rent e validar URL', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.rentLink.click();
-
-    const result = await home.verifyPageLoaded('/rent');
-    expect(result).toBe(true);
-  });
-
-  // ===========================
-  // 7️⃣ Teste: Navegar About Us
-  // ===========================
-  test('Clicar em About Us e validar URL', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.aboutUsLink.click();
-
-    const result = await home.verifyPageLoaded('/about-us');
-    expect(result).toBe(true);
-  });
-
-  // ===========================
-  // 8️⃣ Teste: Validar campo de pesquisa
+  // 4️⃣ Teste: Validar campo de pesquisa
   // ===========================
   test('Validar que o input de pesquisa está visível', async ({ page }) => {
     const home = new HomePage(page);
-
-    await expect(home.searchInput).toBeVisible();
+    
+    await expect(home.resortsSearchInput).toBeVisible();
   });
 
   // ===========================
-  // 9️⃣ Teste: Digitação no campo de busca
+  // 5️⃣ Teste: Digitação no campo de busca
   // ===========================
   test('Escrever no campo de busca e verificar que preencheu', async ({ page }) => {
     const home = new HomePage(page);
 
-    await home.searchInput.fill('Porto');
+    await home.resortsSearchInput.fill('Porto');
 
-    await expect(home.searchInput).toHaveValue('Porto');
+    await expect(home.resortsSearchInput).toHaveValue('Porto');
   });
 
   // ===========================
-  // 🔟 Teste: Validar se resultados aparecem após pesquisa
+  // 6️⃣ Teste: Navegar para Ski Holidays
   // ===========================
-  test('Pesquisar e validar que os resultados aparecem', async ({ page }) => {
+  test('Clicar no link Ski Holidays e validar URL', async ({ page }) => {
     const home = new HomePage(page);
 
-    await home.searchFor('Coimbra');
+    await home.skiHolidaysLink.click();
 
-    const results = await home.getSearchResults();
-
-    expect(results.length).toBeGreaterThan(0);
+    const result = await home.verifyPageLoaded('/ski-holidays');
+    expect(result).toBe(true);
   });
 
+  // ===========================
+  // 7️⃣ Teste: Navegar para Ski Resorts
+  // ===========================
+  test('Clicar no link Ski Resorts e validar URL', async ({ page }) => {
+    const home = new HomePage(page);
+
+    await home.skiDestinationsLink.click();
+
+    const result = await home.verifyPageLoaded('/ski-resorts');
+    expect(result).toBe(true);
+  });
+
+  // ===========================
+  // 8️⃣ Teste: Navegar para About
+  // ===========================
+  test('Clicar em About e validar URL', async ({ page }) => {
+    const home = new HomePage(page);
+
+    await home.aboutUsLink.click();
+
+    const result = await home.verifyPageLoaded('/about');
+    expect(result).toBe(true);
+  });
 });

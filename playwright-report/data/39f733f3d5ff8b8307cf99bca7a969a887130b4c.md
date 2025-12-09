@@ -1,7 +1,7 @@
 # Page snapshot
 
 ```yaml
-- generic [active] [ref=e1]:
+- generic [ref=e1]:
   - banner [ref=e2]:
     - generic [ref=e4]:
       - paragraph [ref=e6]: The UK's number 1 ski travel agency
@@ -12,7 +12,7 @@
             - text: 
         - listitem [ref=e11]:
           - link "Customer portal icon Customer portal" [ref=e12] [cursor=pointer]:
-            - /url: https://customerportal.igluski.com/?_its=eJwljkuOwyAQRO_SayzRmJ-5QRbZzAUsDGUNkoMlTGYTxWcfOVlWqZ5eveivZArEzAYABmvlMmhMafCwfkjGjZCsDNZEgo4eOyhQ2_rJzho16ZHducWaTzUzSz_NuTSkPrs0Sq-1gWan_KSlVMsKuTCYrYQnQbH3VpZnL3ul8KK8P2KpFIgENaxoDe2b0m-sFdstU_g4BB0t3fd8Xfnq6FP9YL2At6CjdFxzo_T7H4cmQzI
+            - /url: https://customerportal.igluski.com/
             - img "Customer portal icon" [ref=e13]
             - text: Customer portal
     - generic [ref=e15]:
@@ -26,7 +26,7 @@
             - /url: /contact-us
         - generic [ref=e23]:
           - generic "Phone icon" [ref=e24]: 
-          - text: 020 3993 4298
+          - text: 020 3848 3700
       - text: 
     - navigation [ref=e27]:
       - list [ref=e28]:
@@ -177,9 +177,9 @@
       - heading "Welcome To The Home Of Ski Holidays" [level=1] [ref=e100]
       - generic [ref=e101]:
         - generic [ref=e103]:
-          - link "Brand Banner" [ref=e106] [cursor=pointer]:
-            - /url: https://www.igluski.com/ski-holidays
-            - img "Brand Banner" [ref=e107]
+          - link "December last minute" [ref=e106] [cursor=pointer]:
+            - /url: https://www.igluski.com/ski-deals/o2393
+            - img "December last minute" [ref=e107]
           - list [ref=e108]:
             - listitem [ref=e109] [cursor=pointer]
             - listitem [ref=e110] [cursor=pointer]
@@ -349,7 +349,7 @@
         - generic [ref=e213]:
           - generic [ref=e215]: 
           - generic [ref=e216]: Speak to a ski expert
-          - generic [ref=e217] [cursor=pointer]: 020 3993 4298
+          - generic [ref=e217] [cursor=pointer]: 020 3848 3700
         - generic [ref=e219]:
           - generic [ref=e221]: 
           - generic [ref=e222]: Email about a ski holiday
@@ -536,21 +536,11 @@
         - /url: https://wa.me/447777135734?text=Hey+there%2c+chat+to+one+of+our+ski+experts+and+we%27ll+find+you+an+amazing+holiday.
         - generic [ref=e365]: 
   - button "Cookies Settings" [ref=e366] [cursor=pointer]
-  - generic [ref=e368]:
-    - generic:
-      - button [ref=e370] [cursor=pointer]:
-        - img [ref=e371]
-      - paragraph [ref=e374]:
-        - strong [ref=e375]: WANT A £250 VOUCHER TOWARDS YOUR NEXT HOLIDAY?
-      - paragraph [ref=e378]: Sign up for your chance to win and keep yourself 'in the snow' with our top deals and industry info.
-      - textbox [ref=e379]:
-        - /placeholder: Your email address
-      - button [ref=e381] [cursor=pointer]:
-        - paragraph [ref=e382]:
-          - strong [ref=e383]: SIGN UP NOW
-      - paragraph [ref=e386]:
-        - text: "*By signing up you accept our"
-        - link [ref=e387] [cursor=pointer]:
-          - /url: https://www.igluski.com/terms-and-conditions
-          - text: terms and conditions
+  - region "Cookie banner" [active] [ref=e368]:
+    - alertdialog "Privacy" [ref=e369]:
+      - generic [ref=e370]:
+        - generic [ref=e372]: Cookies are used to access and store information on your device to offer personalised content, analyse site usage and assist in our marketing efforts. By clicking 'Accept' you consent to our use of cookies.
+        - generic [ref=e374]:
+          - button "Accept Cookies & Close" [ref=e376] [cursor=pointer]
+          - button "Cookies Settings" [ref=e377] [cursor=pointer]
 ```

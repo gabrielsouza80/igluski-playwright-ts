@@ -4,53 +4,51 @@ export class HomePage {
   readonly page: Page;
 
   // Header & Navigation
-  readonly logoLink: Locator
-  readonly buyLink: Locator;
-  readonly rentLink: Locator;
-  readonly newDevelopmentsLink: Locator;
-  readonly relocationLink: Locator;
-  readonly commercialLink: Locator;
+  readonly logoLink: Locator;
+  readonly skiHolidaysLink: Locator;
+  readonly skiDestinationsLink: Locator;
+  readonly skiDealsLink: Locator;
+  readonly skiChaletsLink: Locator;
   readonly aboutUsLink: Locator;
-  readonly servicesLink: Locator;
 
-  // Promo Message
-  readonly promoCloseButton: Locator;
-  readonly promoMessage: Locator;
+  // Cookies Modal
+  readonly acceptCookiesButton: Locator;
+  readonly cookiesBanner: Locator;
 
   // Search Components
-  readonly searchInput: Locator;
+  readonly propertiesSearchInput: Locator;
+  readonly countriesSearchInput: Locator;
+  readonly resortsSearchInput: Locator;
   readonly searchButton: Locator;
-  readonly resultsCountLabel: Locator;
 
   // Footer Links
   readonly footerFranceLink: Locator;
-  readonly skiChaletsLink: Locator;
+  readonly footerSkiChaletsLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
 
     // Header & Navigation
-    this.logoLink = page.locator('a[href="/"]').first();
-    this.buyLink = page.locator('a[href="/en/buy"]').first();
-    this.rentLink = page.locator('a[href="/en/rent"]').first();
-    this.newDevelopmentsLink = page.locator('a[href="/en/new-developments"]').first();
-    this.relocationLink = page.locator('a[href="/en/expertise/relocation-service"]').first();
-    this.commercialLink = page.locator('a[href="/en/commercial"]').first();
-    this.aboutUsLink = page.locator('a[href="/en/about-us"]').first();
-    this.servicesLink = page.locator('a[href="/en/expertise"]').first();
+    this.logoLink = page.locator('a[href="/"]').filter({ has: page.locator('img[alt*="Iglu Ski"]') }).first();
+    this.skiHolidaysLink = page.locator('(//a[@href="/ski-holidays"])[2]');
+    this.skiDestinationsLink = page.locator('a[href="/ski-resorts"]').first();
+    this.skiDealsLink = page.locator('(//a[contains(@href, "/ski-deals")])[2]');
+    this.skiChaletsLink = page.locator('(//a[contains(@href, "/ski-chalet")])[5]');
+    this.aboutUsLink = page.locator('a[href="/about"]').first();
 
-    // Promo Message
-    this.promoMessage = page.locator('.promo-message');
-    this.promoCloseButton = page.locator('.promo-message button.close');
+    // Cookies Modal - Múltiplas estratégias para encontrar o botão
+    this.cookiesBanner = page.locator('//div[@aria-label="Cookie banner"]');
+    this.acceptCookiesButton = page.locator('//button[text()="Accept Cookies & Close"]');
 
     // Search
-    this.searchInput = page.locator('#homepage-search-input');
-    this.searchButton = page.locator('#homepage-search-button');
-    this.resultsCountLabel = page.locator('text=properties found');
+    this.propertiesSearchInput = page.locator('input[aria-label*="Search properties"]');
+    this.countriesSearchInput = page.locator('input[aria-label*="Search countries"]');
+    this.resortsSearchInput = page.locator('input[aria-label*="Search resorts"]');
+    this.searchButton = page.locator('button:has-text("Search")').first();
 
     // Footer
-    this.footerFranceLink = page.locator('//a[title()="France"]');
-    this.skiChaletsLink = page.locator('//a[contains(text(),"Ski chalets")]');
+    this.footerFranceLink = page.locator('footer a[href*="/france"]').first();
+    this.footerSkiChaletsLink = page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
   }
 
   // --------------------------
@@ -58,18 +56,43 @@ export class HomePage {
   // --------------------------
 
   async navigate() {
-    await this.page.goto('/');
+    await this.page.goto('https://www.igluski.com/', { waitUntil: 'domcontentloaded' });
+    
+    // Aguarda um pouco para o modal de cookies aparecer
+    await this.page.waitForTimeout(3000);
+    
+    // Fecha o modal de cookies
+    await this.acceptCookies();
   }
 
-  async closePromoIfVisible() {
-    if (await this.promoMessage.isVisible().catch(() => false)) {
-      await this.promoCloseButton.click();
+  async acceptCookies() {
+    try {
+      // Tenta múltiplas formas de encontrar e clicar o botão
+      const button = await this.page.locator('button:has-text("Accept Cookies & Close")').first();
+      
+      if (await button.isVisible({ timeout: 5000 })) {
+        await button.click({ timeout: 5000 });
+        await this.page.waitForTimeout(500);
+      }
+    } catch (e) {
+      // Se não encontrou de uma forma, tenta de outras
+      try {
+        const altButton = await this.page.locator('button:has-text("Accept")').first();
+        if (await altButton.isVisible({ timeout: 3000 })) {
+          await altButton.click();
+          await this.page.waitForTimeout(500);
+        }
+      } catch (e2) {
+        // Cookie banner pode não existir ou já foi fechado
+        console.log('Cookie banner não encontrado ou já foi fechado');
+      }
     }
   }
 
   async searchFor(text: string) {
-    await this.searchInput.fill(text);
-    await this.searchButton.click();
+    await this.resortsSearchInput.fill(text, { timeout: 5000 });
+    await this.page.waitForTimeout(1000);
+    await this.resortsSearchInput.press('Enter');
   }
 
   // --------------------------
@@ -86,7 +109,7 @@ export class HomePage {
 
   async verifyPageLoaded(expectedUrl: string): Promise<boolean> {
     try {
-      await this.page.waitForURL(expectedUrl, { timeout: 15000 });
+      await this.page.waitForURL(`**${expectedUrl}*`, { timeout: 15000 });
       return this.page.url().includes(expectedUrl);
     } catch {
       return false;
@@ -95,8 +118,8 @@ export class HomePage {
 
   async getSearchResults(): Promise<string> {
     try {
-      const resultText = await this.resultsCountLabel.textContent({ timeout: 5000 });
-      return resultText || '';
+      const resultsText = await this.page.locator('text=/results? found/i').first().textContent({ timeout: 5000 });
+      return resultsText || '';
     } catch {
       return '';
     }
