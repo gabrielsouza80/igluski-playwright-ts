@@ -58,7 +58,7 @@ export class HomePage {
   // --------------------------
 
   async navigate() {
-    await this.page.goto('https://www.example.com');
+    await this.page.goto('/');
   }
 
   async closePromoIfVisible() {

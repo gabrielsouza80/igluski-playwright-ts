@@ -10,7 +10,8 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "playwright"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["tests/**/*.ts", "pages/**/*.ts"]
+  "include": ["tests/**/*.ts", "pages/**/*.ts", "utils/**/*.ts"]
 }
