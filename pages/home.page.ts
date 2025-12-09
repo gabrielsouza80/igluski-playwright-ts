@@ -31,7 +31,7 @@ export class HomePage extends HelperBase {
   // --------------------------
 
   async navigate() {
-    await this.page.goto('https://www.igluski.com/', { waitUntil: 'domcontentloaded' });
+    await this.page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // Aguarda um pouco para o modal de cookies aparecer
     await this.page.waitForTimeout(3000);
