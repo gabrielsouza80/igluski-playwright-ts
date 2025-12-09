@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/home.page';
 
-test.describe('Home Page - Test Suite Completo', () => {
+test.describe('Home Page', () => {
 
   test.beforeEach(async ({ page }) => {
     const home = new HomePage(page);
@@ -15,6 +15,7 @@ test.describe('Home Page - Test Suite Completo', () => {
   test('Validar elementos principais do header', async ({ page }) => {
     const home = new HomePage(page);
 
+    await page.waitForTimeout(50000000);
     await expect(home.logoLink).toBeVisible();
     await expect(home.buyLink).toBeVisible();
     await expect(home.rentLink).toBeVisible();
