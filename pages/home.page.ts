@@ -1,7 +1,8 @@
 import { Page, Locator } from '@playwright/test';
+import { HelperBase } from './utils/HelperBase';
 
-export class HomePage {
-  constructor(page: Page){super(page)}
+export class HomePage extends HelperBase {
+  constructor(page: Page) { super(page) }
 
   // Header & Navigation
   readonly logoLink: Locator = this.page.locator('a[href="/"]').filter({ has: this.page.locator('img[alt*="Iglu Ski"]') }).first();
@@ -25,17 +26,16 @@ export class HomePage {
   readonly footerFranceLink: Locator = this.page.locator('footer a[href*="/france"]').first();
   readonly footerSkiChaletsLink: Locator = this.page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
 
-
   // --------------------------
   // Page Actions
   // --------------------------
 
   async navigate() {
     await this.page.goto('https://www.igluski.com/', { waitUntil: 'domcontentloaded' });
-    
+
     // Aguarda um pouco para o modal de cookies aparecer
     await this.page.waitForTimeout(3000);
-    
+
     // Fecha o modal de cookies
     await this.acceptCookies();
   }
@@ -44,7 +44,7 @@ export class HomePage {
     try {
       // Tenta múltiplas formas de encontrar e clicar o botão
       const button = await this.page.locator('button:has-text("Accept Cookies & Close")').first();
-      
+
       if (await button.isVisible({ timeout: 5000 })) {
         await button.click({ timeout: 5000 });
         await this.page.waitForTimeout(500);
