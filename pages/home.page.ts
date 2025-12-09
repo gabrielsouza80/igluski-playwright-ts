@@ -1,66 +1,41 @@
 import { Page, Locator } from '@playwright/test';
+import { HelperBase } from './utils/HelperBase';
 
-export class HomePage {
-  readonly page: Page;
+export class HomePage extends HelperBase {
+  constructor(page: Page) { super(page) }
 
   // Header & Navigation
-  readonly logoLink: Locator;
-  readonly skiHolidaysLink: Locator;
-  readonly skiDestinationsLink: Locator;
-  readonly skiDealsLink: Locator;
-  readonly skiChaletsLink: Locator;
-  readonly aboutUsLink: Locator;
+  readonly logoLink: Locator = this.page.locator('a[href="/"]').filter({ has: this.page.locator('img[alt*="Iglu Ski"]') }).first();
+  readonly skiHolidaysLink: Locator = this.page.locator('(//a[@href="/ski-holidays"])[2]');
+  readonly skiDestinationsLink: Locator = this.page.locator('a[href="/ski-resorts"]').first();
+  readonly skiDealsLink: Locator = this.page.locator('(//a[contains(@href, "/ski-deals")])[2]');
+  readonly skiChaletsLink: Locator = this.page.locator('(//a[contains(@href, "/ski-chalet")])[5]');
+  readonly aboutUsLink: Locator = this.page.locator('a[href="/about"]').first();
 
   // Cookies Modal
-  readonly acceptCookiesButton: Locator;
-  readonly cookiesBanner: Locator;
+  readonly acceptCookiesButton: Locator = this.page.locator('button:has-text("Accept Cookies & Close")').first();
+  readonly cookiesBanner: Locator = this.page.locator('//div[@aria-label="Cookie banner"]');
 
   // Search Components
-  readonly propertiesSearchInput: Locator;
-  readonly countriesSearchInput: Locator;
-  readonly resortsSearchInput: Locator;
-  readonly searchButton: Locator;
+  readonly propertiesSearchInput: Locator = this.page.locator('input[aria-label*="Search properties"]');
+  readonly countriesSearchInput: Locator = this.page.locator('input[aria-label*="Search countries"]');
+  readonly resortsSearchInput: Locator = this.page.locator('input[aria-label*="Search resorts"]');
+  readonly searchButton: Locator = this.page.locator('button:has-text("Search")').first();
 
   // Footer Links
-  readonly footerFranceLink: Locator;
-  readonly footerSkiChaletsLink: Locator;
-
-  constructor(page: Page) {
-    this.page = page;
-
-    // Header & Navigation
-    this.logoLink = page.locator('a[href="/"]').filter({ has: page.locator('img[alt*="Iglu Ski"]') }).first();
-    this.skiHolidaysLink = page.locator('(//a[@href="/ski-holidays"])[2]');
-    this.skiDestinationsLink = page.locator('a[href="/ski-resorts"]').first();
-    this.skiDealsLink = page.locator('(//a[contains(@href, "/ski-deals")])[2]');
-    this.skiChaletsLink = page.locator('(//a[contains(@href, "/ski-chalet")])[5]');
-    this.aboutUsLink = page.locator('a[href="/about"]').first();
-
-    // Cookies Modal - Múltiplas estratégias para encontrar o botão
-    this.cookiesBanner = page.locator('//div[@aria-label="Cookie banner"]');
-    this.acceptCookiesButton = page.locator('//button[text()="Accept Cookies & Close"]');
-
-    // Search
-    this.propertiesSearchInput = page.locator('input[aria-label*="Search properties"]');
-    this.countriesSearchInput = page.locator('input[aria-label*="Search countries"]');
-    this.resortsSearchInput = page.locator('input[aria-label*="Search resorts"]');
-    this.searchButton = page.locator('button:has-text("Search")').first();
-
-    // Footer
-    this.footerFranceLink = page.locator('footer a[href*="/france"]').first();
-    this.footerSkiChaletsLink = page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
-  }
+  readonly footerFranceLink: Locator = this.page.locator('footer a[href*="/france"]').first();
+  readonly footerSkiChaletsLink: Locator = this.page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
 
   // --------------------------
   // Page Actions
   // --------------------------
 
   async navigate() {
-    await this.page.goto('https://www.igluski.com/', { waitUntil: 'domcontentloaded' });
-    
+    await this.page.goto('/', { waitUntil: 'domcontentloaded' });
+
     // Aguarda um pouco para o modal de cookies aparecer
     await this.page.waitForTimeout(3000);
-    
+
     // Fecha o modal de cookies
     await this.acceptCookies();
   }
@@ -69,7 +44,7 @@ export class HomePage {
     try {
       // Tenta múltiplas formas de encontrar e clicar o botão
       const button = await this.page.locator('button:has-text("Accept Cookies & Close")').first();
-      
+
       if (await button.isVisible({ timeout: 5000 })) {
         await button.click({ timeout: 5000 });
         await this.page.waitForTimeout(500);

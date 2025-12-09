@@ -24,7 +24,7 @@ export default defineConfig({
     trace: 'on-first-retry',
 
     /* URL base para seus testes */
-    baseURL: 'https://www.igluski.com/',
+    baseURL: 'https://www.igluski.com',
   },
 
   /* Navegadores e dispositivos */
