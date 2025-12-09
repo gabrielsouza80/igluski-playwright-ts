@@ -12,7 +12,7 @@
             - text: 
         - listitem [ref=e11]:
           - link "Customer portal icon Customer portal" [ref=e12] [cursor=pointer]:
-            - /url: https://customerportal.igluski.com/?_its=eJwljkuOwyAQRO_SayzRmJ-5QRbZzAUsDGUNkoMlTGYTxWcfOVlWqZ5eveivZArEzAYABmvlMmhMafCwfkjGjZCsDNZEgo4eOyhQ2_rJzho16ZHducWaTzUzSz_NuTSkPrs0Sq-1gWan_KSlVMsKuTCYrYQnQbH3VpZnL3ul8KK8P2KpFIgENaxoDe2b0m-sFdstU_g4BB0t3fd8Xfnq6FP9YL2At6CjdFxzo_T7H4cmQzI
+            - /url: https://customerportal.igluski.com/?_its=eJwljkuOwyAQRO9SayzRGMznBllkMxewwLQ1SA6WMJlNFJ995GRZpXp69cJfyQjwJrP2lgc3ZR70ZNYhaaLBJBqlTN5JayBw9NgZAW3rJ9nJKK9HsucWaz7VTCSdn3NpvPTZLqN0WhvWZJXzWkqVVpaJmGiS7CAQe28lPXvZK8ILeX_EUhEAgcYrt8btm5bfWCtvt4zwcQgcbbnv-bry1eFT_fB6AW-Bo3S-5kbp9z_-o0J5
             - img "Customer portal icon" [ref=e13]
             - text: Customer portal
     - generic [ref=e15]:
@@ -26,7 +26,7 @@
             - /url: /contact-us
         - generic [ref=e23]:
           - generic "Phone icon" [ref=e24]: 
-          - text: 020 3993 4298
+          - text: 020 3811 3985
       - text: 
     - navigation [ref=e27]:
       - list [ref=e28]:
@@ -349,7 +349,7 @@
         - generic [ref=e213]:
           - generic [ref=e215]: 
           - generic [ref=e216]: Speak to a ski expert
-          - generic [ref=e217] [cursor=pointer]: 020 3993 4298
+          - generic [ref=e217] [cursor=pointer]: 020 3811 3985
         - generic [ref=e219]:
           - generic [ref=e221]: 
           - generic [ref=e222]: Email about a ski holiday
@@ -536,21 +536,4 @@
         - /url: https://wa.me/447777135734?text=Hey+there%2c+chat+to+one+of+our+ski+experts+and+we%27ll+find+you+an+amazing+holiday.
         - generic [ref=e365]: 
   - button "Cookies Settings" [ref=e366] [cursor=pointer]
-  - generic [ref=e368]:
-    - generic:
-      - button [ref=e370] [cursor=pointer]:
-        - img [ref=e371]
-      - paragraph [ref=e374]:
-        - strong [ref=e375]: WANT A £250 VOUCHER TOWARDS YOUR NEXT HOLIDAY?
-      - paragraph [ref=e378]: Sign up for your chance to win and keep yourself 'in the snow' with our top deals and industry info.
-      - textbox [ref=e379]:
-        - /placeholder: Your email address
-      - button [ref=e381] [cursor=pointer]:
-        - paragraph [ref=e382]:
-          - strong [ref=e383]: SIGN UP NOW
-      - paragraph [ref=e386]:
-        - text: "*By signing up you accept our"
-        - link [ref=e387] [cursor=pointer]:
-          - /url: https://www.igluski.com/terms-and-conditions
-          - text: terms and conditions
 ```
