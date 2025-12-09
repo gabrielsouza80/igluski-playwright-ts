@@ -1,5 +1,4 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
@@ -10,7 +9,8 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["node", "playwright"]
+    "types": ["node", "playwright"],
+    "skipLibCheck": true
   },
   "include": ["tests/**/*.ts", "pages/**/*.ts"]
 }
