@@ -11,15 +11,22 @@ test.describe('Home Page', () => {
   });
 
   // ===========================
-  // 1️⃣ Teste: Validar header
+  // Teste 1: Validar Logo da Iglu Ski
   // ===========================
-  test('Validar elementos principais do header', async ({ page }) => {
+  test.only('Validar Logo da Iglu Ski', async ({ page }) => {
     const home = new HomePage(page);
 
-    await expect(home.logoLink).toBeVisible();
-    await expect(home.skiHolidaysLink).toBeVisible();
-    await expect(home.skiDestinationsLink).toBeVisible();
-    await expect(home.skiDealsLink).toBeVisible();
+    await home.validateLogo()
+  });
+
+  // ===========================
+  // Teste 2: Validar Menu de Navegação Principal
+  // ===========================
+  test.only('Validar Menu e o SubMenu da Navegação Principal', async ({ page }) => {
+    const home = new HomePage(page);
+
+    await home.validateMenuNavigation();
+    await home.validateSubMenuNavigation();
   });
 
   // ===========================
@@ -49,7 +56,7 @@ test.describe('Home Page', () => {
   // ===========================
   test('Validar que o input de pesquisa está visível', async ({ page }) => {
     const home = new HomePage(page);
-    
+
     await expect(home.resortsSearchInput).toBeVisible();
   });
 

@@ -24,7 +24,7 @@ export default defineConfig({
     trace: 'on-first-retry',
 
     /* URL base para seus testes */
-    baseURL: 'https://www.igluski.com',
+    baseURL: 'https://www.igluski.com/',
   },
 
   /* Navegadores e dispositivos */
@@ -33,14 +33,14 @@ export default defineConfig({
       name: 'chrome',
       use: { ...devices['Desktop Chrome'] },
     }
-      // {
-      //   name: 'firefox',
-      //   use: { ...devices['Desktop Firefox'] },
-      // },
-    ],
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
+  ],
 
-    /* Opcional: caminho dos relatórios */
-    reporter: [
-      ['html', { open: 'never' }]
-    ],
+  /* Opcional: caminho dos relatórios */
+  reporter: [
+    ['html', { open: 'never' }]
+  ],
 });

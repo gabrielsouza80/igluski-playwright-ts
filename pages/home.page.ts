@@ -1,15 +1,26 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import { HelperBase } from './utils/HelperBase';
+import { Actions } from './utils/Actions';
 
 export class HomePage extends HelperBase {
-  constructor(page: Page) { super(page) }
+  private actions: Actions;
+
+  constructor(page: Page) {
+    super(page);
+    this.actions = new Actions(page);
+  }
 
   // Header & Navigation
-  readonly logoLink: Locator = this.page.locator('a[href="/"]').filter({ has: this.page.locator('img[alt*="Iglu Ski"]') }).first();
+  readonly logoLink: Locator = this.page.locator('a[title="Iglu Ski logo"]')
   readonly skiHolidaysLink: Locator = this.page.locator('(//a[@href="/ski-holidays"])[2]');
   readonly skiDestinationsLink: Locator = this.page.locator('a[href="/ski-resorts"]').first();
   readonly skiDealsLink: Locator = this.page.locator('(//a[contains(@href, "/ski-deals")])[2]');
-  readonly skiChaletsLink: Locator = this.page.locator('(//a[contains(@href, "/ski-chalet")])[5]');
+  readonly snowReportsLink: Locator = this.page.locator('(//a[@href="/snow-reports"])[1]');
+  readonly skiblogguidesLink: Locator = this.page.locator('(//a[@href="/blog"])[1]');
+  readonly enquireLink: Locator = this.page.locator('(//a[contains(@href, "/enquire")])[1]');
+  readonly contactusLink: Locator = this.page.locator('(//a[@href="/contact-us"])[1]');
+
+  readonly skiChaletsLink: Locator = this.page.locator('(//a[contains(@href, "/ski-chalet")])[4]');
   readonly aboutUsLink: Locator = this.page.locator('a[href="/about"]').first();
 
   // Cookies Modal
@@ -29,6 +40,26 @@ export class HomePage extends HelperBase {
   // --------------------------
   // Page Actions
   // --------------------------
+
+  async validateLogo() {
+    await this.actions.validateRedirectButton(this.logoLink, '/' /*URL esperada ao clicar no logo*/);
+  }
+
+  async validateMenuNavigation() {
+    await this.actions.validateRedirectButton(this.skiHolidaysLink, '/ski-holidays' /*URL esperada ao clicar no link*/);
+    await this.actions.validateRedirectButton(this.skiDestinationsLink, '/ski-resorts' /*URL esperada ao clicar no link*/);
+    await this.actions.validateRedirectButton(this.skiDealsLink, '/ski-deals' /*URL esperada ao clicar no link*/);
+    await this.actions.validateRedirectButton(this.snowReportsLink, '/snow-reports' /*URL esperada ao clicar no link*/);
+    await this.actions.validateRedirectButton(this.skiblogguidesLink, '/blog' /*URL esperada ao clicar no link*/);
+    await this.actions.validateRedirectButton(this.enquireLink, '/enquire' /*URL esperada ao clicar no link*/);
+    await this.actions.validateRedirectButton(this.contactusLink, '/contact-us' /*URL esperada ao clicar no link*/);
+  }
+
+  async validateSubMenuNavigation() {
+    await this.skiHolidaysLink.hover();
+    await this.actions.validateRedirectButton(this.skiHolidaysLink, '/ski-holidays' /*URL esperada ao clicar no link*/);
+   
+  }
 
   async navigate() {
     await this.page.goto('/', { waitUntil: 'domcontentloaded' });
