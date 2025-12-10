@@ -24,30 +24,31 @@ test.describe('Home Page', () => {
   });
 
   test('should book first ski holiday package and reach payment page', async ({ page }) => {
-    // 1. Navegar para a página de resultados
+    // 1. Navigate to search page
     const home = new HomePage(page);
     const search = new SearchPage(page);
     await home.searchForCountry('France');
     await home.clickOnSearchButton()
     const resultsText = await search.hasSearchResults();
     expect(resultsText).toBeTruthy();
-    // 2. Validar que há pelo menos um resultado
+
+    // 2. Validate that there is at least one result
 
     const resultsCount = await search.getResultsCount();
     console.log(`✓ Found ${resultsCount} ski holiday packages`);
 
-    // 3. Clicar no botão "Book Online" do primeiro resultado
+    // 3. Click on the "Book Online" button of the first result
     await search.clickFirstBookOnline();
     await page.waitForLoadState('networkidle');
     
     console.log('✓ Clicked Book Online on first result');
 
-    // 4. Esperar pela página de detalhes/booking
+    // 4. Wait for the booking details page
     await page.waitForURL(/book|booking|details/i, { timeout: 10000 });
 
     const bookingPage = new BookingDetailsPage(page);
 
-    // 5. Preencher dados do hóspede
+    // 5. Fill guest details
     await bookingPage.fillGuestDetails(
       'João',
       'Silva',
@@ -56,24 +57,24 @@ test.describe('Home Page', () => {
     );
     console.log('✓ Filled guest details');
 
-    // 6. Aceitar termos e condições
+    // 6. Accept terms and conditions
     await bookingPage.acceptTermsAndConditions();
     console.log('✓ Accepted terms and conditions');
 
-    // 7. Proceder para pagamento
+    // 7. Proceed to payment
     await bookingPage.proceedToPayment();
     await page.waitForLoadState('networkidle');
 
     console.log('✓ Clicked proceed to payment');
 
-    // 8. Validar que chegámos à página de pagamento
+    // 8. Validate that we reached the payment page
     const paymentPage = new PaymentPage(page);
     const isOnPaymentPage = await paymentPage.isPaymentPageDisplayed();
     expect(isOnPaymentPage).toBe(true);
 
     console.log('✓ Successfully reached payment page');
 
-    // 9. Extrair resumo do pedido
+    // 9. Extract order summary
     const orderSummary = await paymentPage.getOrderSummary();
     console.log(`Order Summary: ${orderSummary}`);
   });
