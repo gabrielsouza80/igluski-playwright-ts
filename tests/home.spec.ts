@@ -99,4 +99,5 @@ test.describe('Home Page', () => {
     const result = await home.verifyPageLoaded('/about');
     expect(result).toBe(true);
   });
+
 });
