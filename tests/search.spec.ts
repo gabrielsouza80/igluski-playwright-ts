@@ -2,11 +2,16 @@ import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/home.page';
 import { SearchPage } from '../pages/search.page';
 import { BookingDetailsPage } from '../pages/bookingDetails.page';
+import { PeopleAndContactDetailsPage } from '../pages/people.page';
 import { PaymentPage } from '../pages/payment.page';
+import { AccommodationPage } from '../pages/accomodation.page';
+import { ExtrasPage } from '../pages/extras.page';
+import { TravelOptionsPage } from '../pages/travelOption.page';
+import { SummaryPage } from '../pages/summary.page';
 
 test.describe('Home Page', () => {
   // ===========================
-  // Antes de cada teste: Navegar e aceitar cookies
+  // Before teste: Navegar e aceitar cookies
   // ===========================
   test.beforeEach(async ({ page }) => {
     const home = new HomePage(page);
@@ -24,7 +29,6 @@ test.describe('Home Page', () => {
   });
 
   test('should book first ski holiday package and reach payment page', async ({ page }) => {
-    // 1. Navigate to search page
     const home = new HomePage(page);
     const search = new SearchPage(page);
     await home.searchForCountry('France');
@@ -32,38 +36,67 @@ test.describe('Home Page', () => {
     const resultsText = await search.hasSearchResults();
     expect(resultsText).toBeTruthy();
 
-    // 2. Validate that there is at least one result
-
     const resultsCount = await search.getResultsCount();
     console.log(`✓ Found ${resultsCount} ski holiday packages`);
 
-    // 3. Click on the "Book Online" button of the first result
     await search.clickFirstBookOnline();
     await page.waitForLoadState('networkidle');
     
     console.log('✓ Clicked Book Online on first result');
 
-    // 4. Wait for the booking details page
     await page.waitForURL(/book|booking|details/i, { timeout: 10000 });
+
+    const accomodation = new AccommodationPage(page);
+
+    await accomodation.clickConfirmNumberOfPeople()
+    console.log('✓ Clicked Accomodation - Confirm Number of People');
+    
+    await accomodation.clickAddRoom()
+    console.log('✓ Clicked Accomodation - Add Room');
+    
+    await accomodation.allocateRoomOccupancy()
+
+    await accomodation.continueToTravelOptions()
+
+    console.log('✓ Clicked Accomodation - Continue to Travel page');
+
+    const travelPage = new TravelOptionsPage(page);
+
+    await travelPage.continueToExtras();
+
+    console.log('✓ Clicked Travel - Continue to Extras page');
+
+    const extrasPage = new ExtrasPage(page);
+    await extrasPage.isExtrasPageLoaded()
+    await extrasPage.continueToSummary();
+
+    console.log('✓ Clicked Extras - Continue to Summary page');
+
+    const summaryPage = new SummaryPage(page);
+
+    await summaryPage.isSummaryPageLoaded()
+    await summaryPage.clickBookOnline()
+
+    console.log('✓ Clicked Summary - Continue to People page');
+
+    const peoplePage = new PeopleAndContactDetailsPage(page);
+
+    await peoplePage.fillMultiplePassengers();
+    console.log('✓ Filled People - Mandatory fields');
+
+    await peoplePage.clickContinueToBooking()
+    console.log('✓ Clicked People - Continue to Book page');
+
 
     const bookingPage = new BookingDetailsPage(page);
 
-    // 5. Fill guest details
-    await bookingPage.fillGuestDetails(
-      'João',
-      'Silva',
-      'joao.silva@example.com',
-      '919999999'
-    );
-    console.log('✓ Filled guest details');
-
     // 6. Accept terms and conditions
+    await bookingPage.acceptErratas();
     await bookingPage.acceptTermsAndConditions();
     console.log('✓ Accepted terms and conditions');
 
     // 7. Proceed to payment
     await bookingPage.proceedToPayment();
-    await page.waitForLoadState('networkidle');
 
     console.log('✓ Clicked proceed to payment');
 
@@ -74,8 +107,5 @@ test.describe('Home Page', () => {
 
     console.log('✓ Successfully reached payment page');
 
-    // 9. Extract order summary
-    const orderSummary = await paymentPage.getOrderSummary();
-    console.log(`Order Summary: ${orderSummary}`);
   });
 });

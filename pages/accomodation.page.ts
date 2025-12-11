@@ -9,6 +9,8 @@ export class AccommodationPage  extends HelperBase {
   readonly main: Locator = this.page.locator('.main.body-additional-bottom-margin');
   readonly confirmNumberOfPeopleBtn: Locator = this.page.getByRole('button', { name: /Confirm Number of People/i });
   readonly addRoomBtn: Locator = this.page.getByRole('button', { name: /Add Room/i });
+  readonly addRoomBtnModal: Locator = this.page.locator('.modal-footer button.btn-primary');
+
   readonly numberOfAdultsInput: Locator = this.page.locator('#number-of-adults-input');
   readonly numberOfChildrenInput: Locator = this.page.locator('#number-of-children-input');
   readonly numberOfInfantsInput: Locator = this.page.locator('#number-of-infants-input');
@@ -31,10 +33,16 @@ export class AccommodationPage  extends HelperBase {
     await this.confirmNumberOfPeopleBtn.click();
   }
 
+  async clickAddRoom(): Promise<void> {
+    await this.addRoomBtn.click();
+    await this.addRoomBtnModal.click();
+
+  }
+
   async selectAdultForRoom(adultNumber: 1 | 2): Promise<void> {
     // Seleciona Adult 1 ou Adult 2 nos checkboxes do modal
-    const adultCheckbox = this.page.locator(`text=/Adult ${adultNumber}/`).first().locator('..').locator('[type="checkbox"]');
-    await adultCheckbox.check();
+    const adultCheckbox = this.page.locator(`text=/Adult ${adultNumber}/`)
+    await adultCheckbox.click();
   }
 
   async allocateRoomOccupancy(): Promise<void> {
@@ -54,7 +62,7 @@ export class AccommodationPage  extends HelperBase {
   }
 
   async continueToTravelOptions(): Promise<void> {
-    const continueBtn = this.page.locator('button:has-text("Continue to Travel Options")').last();
+    const continueBtn = this.page.locator('(//button[contains(@data-button-type,"goToTravelBtn")])[2]')
     await continueBtn.click();
   }
 

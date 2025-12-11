@@ -15,7 +15,7 @@ export class SummaryPage    extends HelperBase {
     return await this.totalPrice.textContent() || '';
   }
 
-  async bookOnline(): Promise<void> {
+  async clickBookOnline(): Promise<void> {
     await this.bookOnlineBtn.last().click();
   }
 

@@ -8,6 +8,7 @@ export class PeopleAndContactDetailsPage extends HelperBase {
   readonly bookingConfirmationSection: Locator = this.page.locator('text=/Booking Confirmation|Review Your Booking/i');;
   readonly continueToPaymentBtn: Locator = this.page.getByRole('button', { name: /Continue to Payment|Proceed to Payment/i });
   readonly insuranceCheckbox: Locator = this.page.locator('input[type="checkbox"][id*="insurance"]').first();
+  readonly savebutton: Locator = this.page.locator('')
 
 
   async addInsurance(add: boolean): Promise<void> {
