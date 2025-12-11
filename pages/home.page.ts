@@ -18,9 +18,9 @@ export class HomePage extends HelperBase {
 
   // Search Components
   readonly propertiesSearchInput: Locator = this.page.locator('input[aria-label*="Search properties"]');
-  readonly countriesSearchInput: Locator = this.page.locator('input[aria-label*="Search countries"]');
+  readonly countriesSearchInput: Locator = this.page.locator('input[aria-label*="Search countries"], #where');
   readonly resortsSearchInput: Locator = this.page.locator('input[aria-label*="Search resorts"]');
-  readonly searchButton: Locator = this.page.locator('button:has-text("Search")').first();
+  readonly searchButton: Locator = this.page.locator('button.search-item__cta');
 
   // Footer Links
   readonly footerFranceLink: Locator = this.page.locator('footer a[href*="/france"]').first();
@@ -70,6 +70,21 @@ export class HomePage extends HelperBase {
     await this.resortsSearchInput.press('Enter');
   }
 
+  async searchForCountry(text: string) {
+    await this.countriesSearchInput.fill(text, { timeout: 5000 });
+    await this.page.waitForTimeout(1000);
+    await this.countriesSearchInput.press('Enter');
+  }
+
+  async searchForProperty(text: string) {
+    await this.propertiesSearchInput.fill(text, { timeout: 5000 });
+    await this.page.waitForTimeout(1000);
+    await this.propertiesSearchInput.press('Enter');
+  }
+
+  async clickOnSearchButton() {
+    await this.searchButton.click();
+  }
   // --------------------------
   // Assertions & Validations
   // --------------------------
@@ -99,4 +114,6 @@ export class HomePage extends HelperBase {
       return '';
     }
   }
+
+  
 }
