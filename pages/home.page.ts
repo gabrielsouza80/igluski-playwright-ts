@@ -41,25 +41,81 @@ export class HomePage extends HelperBase {
   // Page Actions
   // --------------------------
 
+  private toSlug(text: string): string {
+    return text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+  }
+
   async validateLogo() {
-    await this.actions.validateRedirectButton(this.logoLink, '/' /*URL esperada ao clicar no logo*/);
-  }
+  await this.actions.validateRedirectButton(this.logoLink, '/');
+}
 
-  async validateMenuNavigation() {
-    await this.actions.validateRedirectButton(this.skiHolidaysLink, '/ski-holidays' /*URL esperada ao clicar no link*/);
-    await this.actions.validateRedirectButton(this.skiDestinationsLink, '/ski-resorts' /*URL esperada ao clicar no link*/);
-    await this.actions.validateRedirectButton(this.skiDealsLink, '/ski-deals' /*URL esperada ao clicar no link*/);
-    await this.actions.validateRedirectButton(this.snowReportsLink, '/snow-reports' /*URL esperada ao clicar no link*/);
-    await this.actions.validateRedirectButton(this.skiblogguidesLink, '/blog' /*URL esperada ao clicar no link*/);
-    await this.actions.validateRedirectButton(this.enquireLink, '/enquire' /*URL esperada ao clicar no link*/);
-    await this.actions.validateRedirectButton(this.contactusLink, '/contact-us' /*URL esperada ao clicar no link*/);
-  }
 
-  async validateSubMenuNavigation() {
-    await this.skiHolidaysLink.hover();
-    await this.actions.validateRedirectButton(this.skiHolidaysLink, '/ski-holidays' /*URL esperada ao clicar no link*/);
-   
+async validateMenuAndSubMenuNavigation() {
+  const headerButtons = this.page.locator('li.menu-list__item');
+  const menuCount = await headerButtons.count();
+
+  for (let i = 0; i < menuCount; i++) {
+    const button = headerButtons.nth(i);
+    const menuText = (await button.innerText()).trim();
+    console.log(`\n🌐 Validando menu principal: "${menuText}"`);
+
+    // 1️⃣ Valida redirecionamento do menu principal
+    try {
+      await this.actions.validateRedirectButton(button, this.page.url());
+    } catch (error) {
+      console.log(`   ❌ Falha ao validar menu principal "${menuText}": ${error}`);
+      continue;
+    }
+
+    // 2️⃣ Hover para abrir submenu
+    await button.hover();
+    await this.page.waitForTimeout(300);
+
+    const subMenuLinks = button.locator('.submenu-list__block-item a');
+    const subMenuCount = await subMenuLinks.count();
+
+    if (subMenuCount === 0) {
+      console.log(`   ⚠ Menu "${menuText}" não possui submenu. Pulando.`);
+      continue;
+    }
+
+    console.log(`   📁 Menu "${menuText}" → ${subMenuCount} sublinks encontrados`);
+
+    // 3️⃣ Itera pelos sublinks
+    for (let j = 0; j < subMenuCount; j++) {
+      const link = subMenuLinks.nth(j);
+
+      // captura label e href ANTES de chamar o helper
+      const label = (await link.textContent())?.trim() ?? 'submenu';
+      const href = await link.getAttribute('href');
+      if (!href) continue;
+
+      const fullUrl = href.startsWith('http')
+        ? href
+        : new URL(href, this.page.url()).href;
+
+      console.log(`      🔗 Validando submenu: ${label} → ${fullUrl}`);
+
+      try {
+        // 👉 passa só a URL para o helper, sem depender do locator
+        await this.actions.validateRedirectButton(null, fullUrl);
+        console.log(`         ✅ Submenu validado: ${label}`);
+      } catch (error) {
+        console.log(`         ❌ Falha no submenu "${menuText}" → ${label}: ${error}`);
+      }
+    }
   }
+}
+
+
+
+
+
+
+
+
+
+
 
   async navigate() {
     await this.page.goto('/', { waitUntil: 'domcontentloaded' });

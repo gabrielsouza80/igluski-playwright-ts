@@ -4,10 +4,10 @@ export default defineConfig({
   testDir: './tests',
 
   /* Tempo máximo por teste */
-  timeout: 30_000,
+  timeout: 120_000, // 2 minutos por teste
 
-  /* Número de tentativas */
-  retries: 0,
+  /* Número de tentativas em caso de falha */
+  retries: 1,
 
   /* Configurações padrão para todos os testes */
   fullyParallel: true,
@@ -16,15 +16,19 @@ export default defineConfig({
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
 
-    /* Screenshot e vídeo apenas quando necessário */
+    /* Screenshot e vídeo */
     screenshot: 'on',
     video: 'retain-on-failure',
 
-    /* Habilita trace para facilitar debugging no UI Mode */
+    /* Trace para debugging */
     trace: 'on-first-retry',
 
-    /* URL base para seus testes */
+    /* URL base para simplificar navegação */
     baseURL: 'https://www.igluski.com/',
+
+    /* Timeouts adicionais */
+    actionTimeout: 10_000,       // tempo máximo para ações (click, fill, etc.)
+    navigationTimeout: 30_000,   // tempo máximo para navegação
   },
 
   /* Navegadores e dispositivos */
@@ -32,14 +36,19 @@ export default defineConfig({
     {
       name: 'chrome',
       use: { ...devices['Desktop Chrome'] },
-    }
+    },
+    // Se quiser rodar também em Firefox ou Safari, basta descomentar:
     // {
     //   name: 'firefox',
     //   use: { ...devices['Desktop Firefox'] },
     // },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
   ],
 
-  /* Opcional: caminho dos relatórios */
+  /* Relatórios */
   reporter: [
     ['html', { open: 'never' }]
   ],

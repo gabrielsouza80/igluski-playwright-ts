@@ -13,7 +13,7 @@ test.describe('Home Page', () => {
   // ===========================
   // Teste 1: Validar Logo da Iglu Ski
   // ===========================
-  test.only('Validar Logo da Iglu Ski', async ({ page }) => {
+  test('Validar Logo da Iglu Ski', async ({ page }) => {
     const home = new HomePage(page);
 
     await home.validateLogo()
@@ -22,11 +22,10 @@ test.describe('Home Page', () => {
   // ===========================
   // Teste 2: Validar Menu de Navegação Principal
   // ===========================
-  test.only('Validar Menu e o SubMenu da Navegação Principal', async ({ page }) => {
+  test('Validar Menu e o SubMenu da Navegação Principal', async ({ page }) => {
     const home = new HomePage(page);
 
-    await home.validateMenuNavigation();
-    await home.validateSubMenuNavigation();
+    await home.validateMenuAndSubMenuNavigation()
   });
 
   // ===========================

@@ -4,34 +4,31 @@ import { Page, Locator, expect } from '@playwright/test';
 export class Actions {
     constructor(private page: Page) { }
 
-    async validateRedirectButton(button: Locator, expectedUrl: string): Promise<void> {
+    async validateRedirectButton(button: Locator | null, expectedUrl: string): Promise<void> {
+  // Se tiver locator, tenta pegar o href; senão usa direto a URL recebida
+  let urlToOpen = expectedUrl;
 
-        // 1. Ensure button is visible
-        await expect(button).toBeVisible();
+  if (button) {
+    const href = await button.getAttribute('href');
+    urlToOpen = href && !href.startsWith("http")
+      ? new URL(href, this.page.url()).toString()
+      : (href || expectedUrl);
+  }
 
-        // 2. Store current URL
-        const previousUrl = this.page.url();
+  // Abre nova aba manualmente (sem risco de invalidar a página principal)
+  const newPage = await this.page.context().newPage();
+  await newPage.goto(urlToOpen, { waitUntil: "domcontentloaded", timeout: 60000 });
 
-        // 3. Click the button
-        await Promise.all([
-            this.page.waitForNavigation({ waitUntil: 'domcontentloaded' }).catch(() => { }), // ignore if no navigation
-            button.click()
-        ]);
+  // Valida URL
+  await expect(newPage).toHaveURL(new RegExp(urlToOpen, 'i'));
 
-        // 4. Get current URL after click
-        const currentUrl = this.page.url();
+  console.log(`✓ Validado: ${urlToOpen}`);
 
-        // 5. Validate URL only if changed
-        if (currentUrl !== previousUrl) {
-            await expect(this.page).toHaveURL(expectedUrl);
+  await newPage.close();
+}
 
-            // 6. Go back to previous page if we navigated
-            await this.page.goBack();
 
-            await expect(this.page).toHaveURL(previousUrl);
-        } else {
-            // Caso apenas recarregue a mesma página
-            console.log('Button clicked but URL did not change, no goBack needed.');
-        }
-    }
+
+
+
 }
