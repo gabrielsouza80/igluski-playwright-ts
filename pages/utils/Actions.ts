@@ -163,57 +163,57 @@ export class Actions {
  * - Log detalhado se falhar
  */
   async validateSubMenus(menuLocator: Locator) {
-  const subLinks = menuLocator.locator('.submenu-list__block-item a');
-  const count = await subLinks.count();
+    const subLinks = menuLocator.locator('.submenu-list__block-item a');
+    const count = await subLinks.count();
 
-  console.log(`📁 Menu → ${count} sublinks encontrados`);
+    console.log(`📁 Menu → ${count} sublinks encontrados`);
 
-  for (let i = 0; i < count; i++) {
-    const subLink = subLinks.nth(i);
-    let label = "submenu";
-    let url: string | null = null;
+    for (let i = 0; i < count; i++) {
+      const subLink = subLinks.nth(i);
+      let label = "submenu";
+      let url: string | null = null;
 
-    try {
-      // Espera até o link estar visível (até 90s)
-      await subLink.waitFor({ state: 'visible', timeout: 90000 });
+      try {
+        // Espera até o link estar visível (até 90s)
+        await subLink.waitFor({ state: 'visible', timeout: 90000 });
 
-      // Pega o texto do link
-      label = (await subLink.innerText({ timeout: 90000 }))?.trim() || "submenu";
+        // Pega o texto do link
+        label = (await subLink.innerText({ timeout: 90000 }))?.trim() || "submenu";
 
-      // Extrai URL do link
-      url = await this.extractFullUrl(subLink);
+        // Extrai URL do link
+        url = await this.extractFullUrl(subLink);
 
-      if (!url) {
-        console.warn(`⚠ Submenu "${label}" não possui URL válida`);
-        continue; // Pula para o próximo submenu
+        if (!url) {
+          console.warn(`⚠ Submenu "${label}" não possui URL válida`);
+          continue; // Pula para o próximo submenu
+        }
+
+        // Abre nova aba para validar sem interferir na principal
+        const newPage = await this.page.context().newPage();
+        await newPage.goto(url, { waitUntil: 'domcontentloaded', timeout: 90000 });
+
+        // Valida URL
+        if (newPage.url().includes(url)) {
+          console.log(`✓ URL válida → ${url}`);
+        } else {
+          console.warn(`⚠ URL do submenu "${label}" difere → Esperado: ${url} | Atual: ${newPage.url()}`);
+        }
+
+        // Valida breadcrumb (contém)
+        const breadcrumb = await newPage.locator('ol.breadcrumb li').first();
+        const breadcrumbText = await breadcrumb.innerText({ timeout: 90000 }).catch(() => null);
+        if (!breadcrumbText || !breadcrumbText.toLowerCase().includes(label.toLowerCase())) {
+          console.warn(`⚠ Breadcrumb "${label}" não encontrado ou diferente na página "${url}"`);
+        } else {
+          console.log(`✓ Breadcrumb válido → ${breadcrumbText}`);
+        }
+
+        // Fecha aba
+        await newPage.close();
+
+      } catch (err: any) {
+        console.error(`❌ Falha submenu "${label}" → ${err.message}`);
       }
-
-      // Abre nova aba para validar sem interferir na principal
-      const newPage = await this.page.context().newPage();
-      await newPage.goto(url, { waitUntil: 'domcontentloaded', timeout: 90000 });
-
-      // Valida URL
-      if (newPage.url().includes(url)) {
-        console.log(`✓ URL válida → ${url}`);
-      } else {
-        console.warn(`⚠ URL do submenu "${label}" difere → Esperado: ${url} | Atual: ${newPage.url()}`);
-      }
-
-      // Valida breadcrumb (contém)
-      const breadcrumb = await newPage.locator('ol.breadcrumb li').first();
-      const breadcrumbText = await breadcrumb.innerText({ timeout: 90000 }).catch(() => null);
-      if (!breadcrumbText || !breadcrumbText.toLowerCase().includes(label.toLowerCase())) {
-        console.warn(`⚠ Breadcrumb "${label}" não encontrado ou diferente na página "${url}"`);
-      } else {
-        console.log(`✓ Breadcrumb válido → ${breadcrumbText}`);
-      }
-
-      // Fecha aba
-      await newPage.close();
-
-    } catch (err: any) {
-      console.error(`❌ Falha submenu "${label}" → ${err.message}`);
     }
   }
-}
 }

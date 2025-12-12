@@ -221,180 +221,180 @@ export class HomePage extends HelperBase {
 
 
 
-/**
- * Valida menus principais e submenus:
- * - Verifica se cada página tem um <h1> coerente com o nome do menu/submenu.
- * - Loga duplicados mostrando com quem está duplicado (Label + URL).
- * - Aceita singular/plural e palavras extra no título (fallback inteligente).
- * - Executa tudo de forma sequencial (não paralela).
- * - No final, imprime um resumo com todos os duplicados agrupados por menu.
- */
-async validateMenuAndSubMenuNavigation(): Promise<void> {
-  // ✅ Estrutura para guardar duplicados por menu
-  const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
-
   /**
-   * Função interna para validar se o <h1> da página contém o texto esperado.
-   * Lógica:
-   * 1. Full match
-   * 2. Partial match com palavras significativas
-   * 3. Fallback: todas as palavras relevantes do label aparecem no título
+   * Valida menus principais e submenus:
+   * - Verifica se cada página tem um <h1> coerente com o nome do menu/submenu.
+   * - Loga duplicados mostrando com quem está duplicado (Label + URL).
+   * - Aceita singular/plural e palavras extra no título (fallback inteligente).
+   * - Executa tudo de forma sequencial (não paralela).
+   * - No final, imprime um resumo com todos os duplicados agrupados por menu.
    */
-  const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
-    const normalizedLabel = this.normalizeText(label);
+  async validateMenuAndSubMenuNavigation(): Promise<void> {
+    // ✅ Estrutura para guardar duplicados por menu
+    const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
 
-    // ✅ Passo 1: Full match via XPath
-    try {
-      const xpathFull = `//div[contains(@class, "main body-additional-bottom-margin")]//h1[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), "${normalizedLabel}")]`;
-      const locatorFull = page.locator(xpathFull);
-      if (await locatorFull.count() > 0) {
-        const text = (await locatorFull.first().innerText()).trim();
-        console.log(`✓ Título válido (full match) → "${text}"`);
-        return true;
-      }
-    } catch {}
+    /**
+     * Função interna para validar se o <h1> da página contém o texto esperado.
+     * Lógica:
+     * 1. Full match
+     * 2. Partial match com palavras significativas
+     * 3. Fallback: todas as palavras relevantes do label aparecem no título
+     */
+    const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
+      const normalizedLabel = this.normalizeText(label);
 
-    // ✅ Passo 2: Partial match com palavras significativas
-    const stopwords = new Set(['the', 'and', 'for', 'from', 'with', 'to', 'of', 'in', 'on', 'at', 'by']);
-    const words = label.split(/\s+/).map(w => this.normalizeText(w)).filter(w => w.length > 3 && !stopwords.has(w));
-
-    for (const w of words) {
+      // ✅ Passo 1: Full match via XPath
       try {
-        const xpathPart = `//div[contains(@class, "main body-additional-bottom-margin")]//h1[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), "${w}")]`;
-        const locatorPart = page.locator(xpathPart);
-        if (await locatorPart.count() > 0) {
-          const text = (await locatorPart.first().innerText()).trim();
-          console.log(`✓ Título válido (partial match) → palavra "${w}" encontrada em: "${text}"`);
+        const xpathFull = `//div[contains(@class, "main body-additional-bottom-margin")]//h1[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), "${normalizedLabel}")]`;
+        const locatorFull = page.locator(xpathFull);
+        if (await locatorFull.count() > 0) {
+          const text = (await locatorFull.first().innerText()).trim();
+          console.log(`✓ Título válido (full match) → "${text}"`);
           return true;
         }
-      } catch {}
-    }
+      } catch { }
 
-    // ✅ Passo 3: Fallback inteligente (todas as palavras relevantes aparecem no título)
-    try {
-      const h1Text = (await page.locator('h1').first().innerText()).toLowerCase();
-      const labelWords = normalizedLabel.replace(/-/g, ' ').split(' ').filter(w => w.length > 2);
-      const allWordsFound = labelWords.every(w => h1Text.includes(w));
-      if (allWordsFound) {
-        console.log(`✓ Título válido (contains all words) → "${h1Text}"`);
-        return true;
+      // ✅ Passo 2: Partial match com palavras significativas
+      const stopwords = new Set(['the', 'and', 'for', 'from', 'with', 'to', 'of', 'in', 'on', 'at', 'by']);
+      const words = label.split(/\s+/).map(w => this.normalizeText(w)).filter(w => w.length > 3 && !stopwords.has(w));
+
+      for (const w of words) {
+        try {
+          const xpathPart = `//div[contains(@class, "main body-additional-bottom-margin")]//h1[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), "${w}")]`;
+          const locatorPart = page.locator(xpathPart);
+          if (await locatorPart.count() > 0) {
+            const text = (await locatorPart.first().innerText()).trim();
+            console.log(`✓ Título válido (partial match) → palavra "${w}" encontrada em: "${text}"`);
+            return true;
+          }
+        } catch { }
       }
-    } catch {}
 
-    // ⚠ Se não encontrou nada, loga aviso
-    console.warn(`⚠ Nenhuma correspondência encontrada no <h1> para: "${label}"`);
-    return false;
-  };
+      // ✅ Passo 3: Fallback inteligente (todas as palavras relevantes aparecem no título)
+      try {
+        const h1Text = (await page.locator('h1').first().innerText()).toLowerCase();
+        const labelWords = normalizedLabel.replace(/-/g, ' ').split(' ').filter(w => w.length > 2);
+        const allWordsFound = labelWords.every(w => h1Text.includes(w));
+        if (allWordsFound) {
+          console.log(`✓ Título válido (contains all words) → "${h1Text}"`);
+          return true;
+        }
+      } catch { }
 
-  // ✅ Captura menus e submenus do DOM principal
-  const menusSnapshot = await this.page.$$eval('li.menu-list__item', (items) => {
-    return items.map((li) => {
-      const mainLink = li.querySelector('a');
-      const mainHref = mainLink ? mainLink.getAttribute('href') : null;
-      const mainLabel = mainLink ? (mainLink.textContent?.trim() || '') : (li.textContent?.trim() || '');
-      const subAnchors = Array.from(li.querySelectorAll('.submenu-list__block-item a'));
-      const sublinks = subAnchors.map((a) => ({
-        label: a.textContent?.trim() || '',
-        href: a.getAttribute('href')
-      }));
-      return { mainLabel, mainHref, sublinks };
+      // ⚠ Se não encontrou nada, loga aviso
+      console.warn(`⚠ Nenhuma correspondência encontrada no <h1> para: "${label}"`);
+      return false;
+    };
+
+    // ✅ Captura menus e submenus do DOM principal
+    const menusSnapshot = await this.page.$$eval('li.menu-list__item', (items) => {
+      return items.map((li) => {
+        const mainLink = li.querySelector('a');
+        const mainHref = mainLink ? mainLink.getAttribute('href') : null;
+        const mainLabel = mainLink ? (mainLink.textContent?.trim() || '') : (li.textContent?.trim() || '');
+        const subAnchors = Array.from(li.querySelectorAll('.submenu-list__block-item a'));
+        const sublinks = subAnchors.map((a) => ({
+          label: a.textContent?.trim() || '',
+          href: a.getAttribute('href')
+        }));
+        return { mainLabel, mainHref, sublinks };
+      });
     });
-  });
 
-  console.log(`🌐 Validando ${menusSnapshot.length} menus principais`);
+    console.log(`🌐 Validando ${menusSnapshot.length} menus principais`);
 
-  // ✅ Itera por cada menu principal
-  for (const menu of menusSnapshot) {
-    const menuLabel = menu.mainLabel || 'menu';
-    const menuHref = this.extractFullUrl(menu.mainHref);
+    // ✅ Itera por cada menu principal
+    for (const menu of menusSnapshot) {
+      const menuLabel = menu.mainLabel || 'menu';
+      const menuHref = this.extractFullUrl(menu.mainHref);
 
-    console.log(`\n🌐 Validando menu principal: "${menuLabel}"`);
+      console.log(`\n🌐 Validando menu principal: "${menuLabel}"`);
 
-    if (!menuHref) {
-      console.warn(`⚠ Menu "${menuLabel}" sem URL válida. Pulando.`);
-      continue;
-    }
-
-    console.log(`✓ URL válida → ${menuHref}`);
-
-    let menuPage: Page | null = null;
-
-    try {
-      // ✅ Abre nova aba para validar o menu principal
-      menuPage = await this.page.context().newPage();
-      await menuPage.goto(menuHref, { waitUntil: 'domcontentloaded', timeout: 120000 });
-
-      // ✅ Valida título da página do menu
-      await validateTitleContains(menuPage, menuLabel);
-
-      const sublinks = menu.sublinks || [];
-      console.log(`📁 Menu "${menuLabel}" → Encontrados ${sublinks.length} sublinks`);
-
-      if (sublinks.length === 0) {
-        console.warn(`⚠ Menu "${menuLabel}" não possui sublinks.`);
-        await menuPage.close();
+      if (!menuHref) {
+        console.warn(`⚠ Menu "${menuLabel}" sem URL válida. Pulando.`);
         continue;
       }
 
-      const allSublinks: Array<{ label: string; href: string }> = [];
-      const seen = new Map<string, string>(); // URL -> primeiro label
+      console.log(`✓ URL válida → ${menuHref}`);
 
-      for (const s of sublinks) {
-        const full = this.extractFullUrl(s.href);
-        if (!full) continue;
+      let menuPage: Page | null = null;
 
-        // ✅ Loga duplicados mostrando com quem está duplicado
-        if (seen.has(full)) {
-          const duplicateWith = seen.get(full)!;
-          console.warn(`⚠ Duplicado encontrado → "${s.label}" duplicado com "${duplicateWith}" (URL: ${full})`);
+      try {
+        // ✅ Abre nova aba para validar o menu principal
+        menuPage = await this.page.context().newPage();
+        await menuPage.goto(menuHref, { waitUntil: 'domcontentloaded', timeout: 120000 });
 
-          // ✅ Adiciona ao resumo final
-          if (!duplicatesSummary[menuLabel]) duplicatesSummary[menuLabel] = [];
-          duplicatesSummary[menuLabel].push({ label: s.label, duplicateWith, url: full });
-        } else {
-          seen.set(full, s.label);
+        // ✅ Valida título da página do menu
+        await validateTitleContains(menuPage, menuLabel);
+
+        const sublinks = menu.sublinks || [];
+        console.log(`📁 Menu "${menuLabel}" → Encontrados ${sublinks.length} sublinks`);
+
+        if (sublinks.length === 0) {
+          console.warn(`⚠ Menu "${menuLabel}" não possui sublinks.`);
+          await menuPage.close();
+          continue;
         }
 
-        // ✅ Adiciona sempre para validar todos (mesmo duplicados)
-        allSublinks.push({ label: s.label || full, href: full });
-      }
+        const allSublinks: Array<{ label: string; href: string }> = [];
+        const seen = new Map<string, string>(); // URL -> primeiro label
 
-      console.log(`📁 Menu "${menuLabel}" → Validando ${allSublinks.length} sublinks`);
+        for (const s of sublinks) {
+          const full = this.extractFullUrl(s.href);
+          if (!full) continue;
 
-      // ✅ Abre uma aba para validar todos os sublinks sequencialmente
-      const subPage = await this.page.context().newPage();
-      for (const s of allSublinks) {
-        try {
-          await subPage.goto(s.href, { waitUntil: 'domcontentloaded', timeout: 90000 });
-          await validateTitleContains(subPage, s.label);
-          console.log(`      ✓ Submenu validado: ${s.label}`);
-        } catch (err: any) {
-          console.error(`❌ Falha no submenu "${s.label}" → ${err?.message || err}`);
+          // ✅ Loga duplicados mostrando com quem está duplicado
+          if (seen.has(full)) {
+            const duplicateWith = seen.get(full)!;
+            console.warn(`⚠ Duplicado encontrado → "${s.label}" duplicado com "${duplicateWith}" (URL: ${full})`);
+
+            // ✅ Adiciona ao resumo final
+            if (!duplicatesSummary[menuLabel]) duplicatesSummary[menuLabel] = [];
+            duplicatesSummary[menuLabel].push({ label: s.label, duplicateWith, url: full });
+          } else {
+            seen.set(full, s.label);
+          }
+
+          // ✅ Adiciona sempre para validar todos (mesmo duplicados)
+          allSublinks.push({ label: s.label || full, href: full });
         }
+
+        console.log(`📁 Menu "${menuLabel}" → Validando ${allSublinks.length} sublinks`);
+
+        // ✅ Abre uma aba para validar todos os sublinks sequencialmente
+        const subPage = await this.page.context().newPage();
+        for (const s of allSublinks) {
+          try {
+            await subPage.goto(s.href, { waitUntil: 'domcontentloaded', timeout: 90000 });
+            await validateTitleContains(subPage, s.label);
+            console.log(`      ✓ Submenu validado: ${s.label}`);
+          } catch (err: any) {
+            console.error(`❌ Falha no submenu "${s.label}" → ${err?.message || err}`);
+          }
+        }
+        await subPage.close().catch(() => null);
+      } catch (err: any) {
+        console.error(`❌ Erro ao validar menu "${menuLabel}" → ${err?.message || err}`);
+      } finally {
+        if (menuPage) await menuPage.close().catch(() => null);
       }
-      await subPage.close().catch(() => null);
-    } catch (err: any) {
-      console.error(`❌ Erro ao validar menu "${menuLabel}" → ${err?.message || err}`);
-    } finally {
-      if (menuPage) await menuPage.close().catch(() => null);
     }
-  }
 
-  // ✅ Resumo final dos duplicados
-  console.log(`\n📊 RESUMO DE DUPLICADOS ENCONTRADOS:`);
-  if (Object.keys(duplicatesSummary).length === 0) {
-    console.log(`✅ Nenhum duplicado encontrado.`);
-  } else {
-    for (const [menu, duplicates] of Object.entries(duplicatesSummary)) {
-      console.log(`\nMenu: ${menu}`);
-      duplicates.forEach(d => {
-               console.log(`  - "${d.label}" duplicado com "${d.duplicateWith}" (URL: ${d.url})`);
-      });
+    // ✅ Resumo final dos duplicados
+    console.log(`\n📊 RESUMO DE DUPLICADOS ENCONTRADOS:`);
+    if (Object.keys(duplicatesSummary).length === 0) {
+      console.log(`✅ Nenhum duplicado encontrado.`);
+    } else {
+      for (const [menu, duplicates] of Object.entries(duplicatesSummary)) {
+        console.log(`\nMenu: ${menu}`);
+        duplicates.forEach(d => {
+          console.log(`  - "${d.label}" duplicado com "${d.duplicateWith}" (URL: ${d.url})`);
+        });
+      }
     }
-  }
 
-  return;
-}
+    return;
+  }
 
   // -------------------------------
   // EXTRAS: funções utilitárias menores

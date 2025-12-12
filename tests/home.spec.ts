@@ -24,64 +24,64 @@ test.describe('Home Page', () => {
     await home.navigate(); // Navega e aceita cookies
   });
 
-  
-/**
- * ================================================================
- * TESTE 1 — Validar Logo da Iglu Ski
- * ================================================================
- * Este teste verifica se o clique na logo redireciona para a página inicial.
- */
-test('Validar Logo da Iglu Ski', async ({ page }) => {
-  const home = new HomePage(page);
-  await home.validateLogo();
-});
 
-/**
- * ================================================================
- * TESTE 2 — Validar Menu + Submenus com navegação
- * ================================================================
- * Este teste:
- * - Valida todos os menus principais e seus sublinks.
- * - Verifica se cada página tem um <h1> coerente com o nome do menu/submenu.
- * - Loga duplicados mostrando com quem está duplicado (Label + URL).
- * - Aceita singular/plural e palavras extra no título.
- * - No final, imprime um resumo com todos os duplicados agrupados por menu.
- *
- * Ajustes importantes:
- * - Timeout aumentado para evitar falhas em menus com muitos sublinks.
- * - Durante debug, pode limitar sublinks por menu (ex.: 10) para acelerar.
- */
-test('Validar Menu e SubMenu da Navegação Principal', async ({ page }) => {
-  // ✅ Aumenta timeout global para este teste (5 minutos)
-  test.setTimeout(300000);
+  /**
+   * ================================================================
+   * TESTE 1 — Validar Logo da Iglu Ski
+   * ================================================================
+   * Este teste verifica se o clique na logo redireciona para a página inicial.
+   */
+  test('Validar Logo da Iglu Ski', async ({ page }) => {
+    const home = new HomePage(page);
+    await home.validateLogo();
+  });
 
-  const home = new HomePage(page);
+  /**
+   * ================================================================
+   * TESTE 2 — Validar Menu + Submenus com navegação
+   * ================================================================
+   * Este teste:
+   * - Valida todos os menus principais e seus sublinks.
+   * - Verifica se cada página tem um <h1> coerente com o nome do menu/submenu.
+   * - Loga duplicados mostrando com quem está duplicado (Label + URL).
+   * - Aceita singular/plural e palavras extra no título.
+   * - No final, imprime um resumo com todos os duplicados agrupados por menu.
+   *
+   * Ajustes importantes:
+   * - Timeout aumentado para evitar falhas em menus com muitos sublinks.
+   * - Durante debug, pode limitar sublinks por menu (ex.: 10) para acelerar.
+   */
+  test('Validar Menu e SubMenu da Navegação Principal', async ({ page }) => {
+    // ✅ Aumenta timeout global para este teste (5 minutos)
+    test.setTimeout(300000);
 
-  // ✅ Valida todos os sublinks (ilimitado)
-  // await home.validateMenuAndSubMenuNavigation();
+    const home = new HomePage(page);
 
-  // ✅ Durante debug, limita sublinks por menu para evitar demoras:
-  await home.validateMenuAndSubMenuNavigation(10); // <-- Ajusta para null para validar  await home.validateMenuAndSubMenuNavigation(10); // <-- Ajusta para null para validar todos
-});   
+    // ✅ Valida todos os sublinks (ilimitado)
+    // await home.validateMenuAndSubMenuNavigation();
+
+    // ✅ Durante debug, limita sublinks por menu para evitar demoras:
+    await home.validateMenuAndSubMenuNavigation(10); // <-- Ajusta para null para validar  await home.validateMenuAndSubMenuNavigation(10); // <-- Ajusta para null para validar todos
+  });
 
 
-/**
- * ================================================================
- *  TESTE 3 — Validar Footer
- *  - Apenas verifica se links principais aparecem
- * ================================================================
- */
-test('Validar links do footer', async ({ page }) => {
-  const home = new HomePage(page);
+  /**
+   * ================================================================
+   *  TESTE 3 — Validar Footer
+   *  - Apenas verifica se links principais aparecem
+   * ================================================================
+   */
+  test('Validar links do footer', async ({ page }) => {
+    const home = new HomePage(page);
 
-  await expect(home.footerFranceLink).toBeVisible();
-  await expect(home.footerSkiChaletsLink).toBeVisible();
-});
+    await expect(home.footerFranceLink).toBeVisible();
+    await expect(home.footerSkiChaletsLink).toBeVisible();
+  });
 
-// ===========================
-// 3️⃣ Teste: Pesquisa simples
-// ===========================
-test('Pesquisar por resort e validar resultados', async ({ page }) => {
+  // ===========================
+  // 3️⃣ Teste: Pesquisa simples
+  // ===========================
+  test('Pesquisar por resort e validar resultados', async ({ page }) => {
     const home = new HomePage(page);
 
     await home.searchFor('Val Thorens');
@@ -137,13 +137,13 @@ test('Pesquisar por resort e validar resultados', async ({ page }) => {
   // ===========================
   // 8️⃣ Teste: Navegar para About
   // ===========================
-    test('Clicar em About e validar URL', async ({ page }) => {
-      const home = new HomePage(page);
-  
-      await home.aboutUsLink.click();
-  
-      const result = await home.verifyPageLoaded('/about');
-      expect(result).toBe(true);
-    });
+  test('Clicar em About e validar URL', async ({ page }) => {
+    const home = new HomePage(page);
+
+    await home.aboutUsLink.click();
+
+    const result = await home.verifyPageLoaded('/about');
+    expect(result).toBe(true);
   });
+});
 
