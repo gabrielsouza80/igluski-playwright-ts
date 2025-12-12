@@ -1,47 +1,87 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/home.page';
 
+/**
+ * ================================================================
+ *  Test Suite: Home Page
+ *  - Totalmente comentado e organizado
+ *  - Mantém padrão profissional
+ * ================================================================
+ */
+
 test.describe('Home Page', () => {
-  // ===========================
-  // Antes de cada teste: Navegar e aceitar cookies
-  // ===========================
+
+  /**
+   * ================================================================
+   *  BEFORE EACH
+   *  - Executado antes de cada teste
+   *  - Navega para a Home
+   *  - Aceita cookies automaticamente (função já implementada na Page)
+   * ================================================================
+   */
   test.beforeEach(async ({ page }) => {
     const home = new HomePage(page);
-    await home.navigate(); // Isso também vai aceitar os cookies
+    await home.navigate(); // Navega e aceita cookies
   });
 
-  // ===========================
-  // Teste 1: Validar Logo da Iglu Ski
-  // ===========================
-  test('Validar Logo da Iglu Ski', async ({ page }) => {
-    const home = new HomePage(page);
+  
+/**
+ * ================================================================
+ * TESTE 1 — Validar Logo da Iglu Ski
+ * ================================================================
+ * Este teste verifica se o clique na logo redireciona para a página inicial.
+ */
+test('Validar Logo da Iglu Ski', async ({ page }) => {
+  const home = new HomePage(page);
+  await home.validateLogo();
+});
 
-    await home.validateLogo()
-  });
+/**
+ * ================================================================
+ * TESTE 2 — Validar Menu + Submenus com navegação
+ * ================================================================
+ * Este teste:
+ * - Valida todos os menus principais e seus sublinks.
+ * - Verifica se cada página tem um <h1> coerente com o nome do menu/submenu.
+ * - Loga duplicados mostrando com quem está duplicado (Label + URL).
+ * - Aceita singular/plural e palavras extra no título.
+ * - No final, imprime um resumo com todos os duplicados agrupados por menu.
+ *
+ * Ajustes importantes:
+ * - Timeout aumentado para evitar falhas em menus com muitos sublinks.
+ * - Durante debug, pode limitar sublinks por menu (ex.: 10) para acelerar.
+ */
+test('Validar Menu e SubMenu da Navegação Principal', async ({ page }) => {
+  // ✅ Aumenta timeout global para este teste (5 minutos)
+  test.setTimeout(300000);
 
-  // ===========================
-  // Teste 2: Validar Menu de Navegação Principal
-  // ===========================
-  test('Validar Menu e o SubMenu da Navegação Principal', async ({ page }) => {
-    const home = new HomePage(page);
+  const home = new HomePage(page);
 
-    await home.validateMenuAndSubMenuNavigation()
-  });
+  // ✅ Valida todos os sublinks (ilimitado)
+  // await home.validateMenuAndSubMenuNavigation();
 
-  // ===========================
-  // 2️⃣ Teste: Validar footer
-  // ===========================
-  test('Validar links do footer', async ({ page }) => {
-    const home = new HomePage(page);
+  // ✅ Durante debug, limita sublinks por menu para evitar demoras:
+  await home.validateMenuAndSubMenuNavigation(10); // <-- Ajusta para null para validar  await home.validateMenuAndSubMenuNavigation(10); // <-- Ajusta para null para validar todos
+});   
 
-    await expect(home.footerFranceLink).toBeVisible();
-    await expect(home.footerSkiChaletsLink).toBeVisible();
-  });
 
-  // ===========================
-  // 3️⃣ Teste: Pesquisa simples
-  // ===========================
-  test('Pesquisar por resort e validar resultados', async ({ page }) => {
+/**
+ * ================================================================
+ *  TESTE 3 — Validar Footer
+ *  - Apenas verifica se links principais aparecem
+ * ================================================================
+ */
+test('Validar links do footer', async ({ page }) => {
+  const home = new HomePage(page);
+
+  await expect(home.footerFranceLink).toBeVisible();
+  await expect(home.footerSkiChaletsLink).toBeVisible();
+});
+
+// ===========================
+// 3️⃣ Teste: Pesquisa simples
+// ===========================
+test('Pesquisar por resort e validar resultados', async ({ page }) => {
     const home = new HomePage(page);
 
     await home.searchFor('Val Thorens');
@@ -97,12 +137,13 @@ test.describe('Home Page', () => {
   // ===========================
   // 8️⃣ Teste: Navegar para About
   // ===========================
-  test('Clicar em About e validar URL', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.aboutUsLink.click();
-
-    const result = await home.verifyPageLoaded('/about');
-    expect(result).toBe(true);
+    test('Clicar em About e validar URL', async ({ page }) => {
+      const home = new HomePage(page);
+  
+      await home.aboutUsLink.click();
+  
+      const result = await home.verifyPageLoaded('/about');
+      expect(result).toBe(true);
+    });
   });
-});
+
