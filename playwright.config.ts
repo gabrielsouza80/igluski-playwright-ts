@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: './tests',
 
   /* Set timeout */
-  timeout: 90_000,
+  timeout: 60_000,
 
   /* Número de tentativas */
   retries: 0,
