@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/home.page';
+import { Actions } from '../pages/utils/Actions';
 
 /**
  * ================================================================
  *  Test Suite: Home Page
- *  - Totalmente comentado e organizado
- *  - Mantém padrão profissional
  * ================================================================
  */
 
@@ -58,10 +57,18 @@ test.describe('Home Page', () => {
     const home = new HomePage(page);
 
     // ✅ Valida todos os sublinks (ilimitado)
-    // await home.validateMenuAndSubMenuNavigation();
+    await home.validateMenuAndSubMenuNavigation();
 
-    // ✅ Durante debug, limita sublinks por menu para evitar demoras:
-    await home.validateMenuAndSubMenuNavigation(10); // <-- Ajusta para null para validar  await home.validateMenuAndSubMenuNavigation(10); // <-- Ajusta para null para validar todos
+  });
+
+  test('Clicar no menu e opcionalmente no submenu', async ({ page }) => {
+    const actions = new Actions(page);
+
+    // ✅ Apenas clicar no menu principal:
+    await actions.clickMenu("Ski Holidays");
+
+    // ✅ Clicar no menu e depois num submenu:
+    await actions.clickMenu("Ski Holidays", "Family Ski Holidays");
   });
 
 

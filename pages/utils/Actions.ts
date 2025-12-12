@@ -216,4 +216,52 @@ export class Actions {
       }
     }
   }
+
+  
+
+
+
+
+
+async clickMenu(menuName: string, subMenuName?: string): Promise<void> {
+  console.log(`🔍 Iniciando processo para clicar no menu: "${menuName}"${subMenuName ? ` e submenu: "${subMenuName}"` : ''}`);
+
+  console.log(`➡️ Localizando menu principal com texto: "${menuName}"`);
+  const menuButton = this.page.locator(`li.menu-list__item > a.menu-list__item-link:has-text("${menuName}")`);
+
+  const menuCount = await menuButton.count();
+  console.log(`📊 Verificação: Encontrados ${menuCount} elementos para o menu "${menuName}"`);
+  if (menuCount === 0) {
+    console.error(`❌ Menu "${menuName}" não encontrado.`);
+    return;
+  }
+
+  if (!subMenuName) {
+    console.log(`✅ Nenhum submenu informado. Clicando diretamente no menu "${menuName}"`);
+    await menuButton.click();
+    console.log(`✓ Clicou no menu: ${menuName}`);
+  } else {
+    console.log(`➡️ Submenu informado: "${subMenuName}". Preparando para abrir submenu...`);
+    await menuButton.hover();
+    console.log(`⏳ Aguardar 500ms para garantir que o submenu carregue`);
+    await this.page.waitForTimeout(500);
+
+    console.log(`➡️ Localizando submenu com texto: "${subMenuName}"`);
+    const subMenuLink = this.page.locator(`.submenu-list__block-item a:has-text("${subMenuName}")`);
+
+    const subMenuCount = await subMenuLink.count();
+    console.log(`📊 Verificação: Encontrados ${subMenuCount} elementos para o submenu "${subMenuName}"`);
+    if (subMenuCount === 0) {
+      console.error(`❌ Submenu "${subMenuName}" não encontrado dentro de "${menuName}".`);
+      return;
+    }
+
+    console.log(`✅ Submenu encontrado. Clicando no submenu "${subMenuName}"`);
+    await subMenuLink.click();
+    console.log(`✓ Clicou no submenu: ${subMenuName} dentro do menu: ${menuName}`);
+  }
+
+  console.log(`🏁 Processo concluído para menu "${menuName}"${subMenuName ? ` e submenu "${subMenuName}"` : ''}`);
+} // ✅ Esta chave fecha a função corretamente
+
 }
