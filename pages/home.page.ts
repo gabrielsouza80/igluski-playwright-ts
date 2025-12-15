@@ -3,82 +3,47 @@ import { HelperBase } from './utils/HelperBase';
 import { Actions } from './utils/Actions';
 
 
-// home.page.ts - Página principal (comentários em português, uma linha cada)
+// home.page.ts - Página principal
 
 export class HomePage extends HelperBase {
-  // Instância de Actions para reutilizar utilitários genéricos
+  // Instância de Actions para utilitários genéricos
   private actions: Actions;
 
-  // -------------------------------
-  // LOCATORS (agrupados e com comentários)
-  // -------------------------------
-  // Cabeçalho / navegação principal
-  readonly logoLink: Locator;
-  readonly skiHolidaysLink: Locator;
-  readonly skiDestinationsLink: Locator;
-  readonly skiDealsLink: Locator;
-  readonly snowReportsLink: Locator;
-  readonly skiblogguidesLink: Locator;
-  readonly enquireLink: Locator;
-  readonly contactusLink: Locator;
-  readonly skiChaletsLink: Locator;
-  readonly aboutUsLink: Locator;
+  // LOCATORS: Cabeçalho e navegação principal
+  readonly logoLink: Locator = this.page.locator('a[title="Iglu Ski logo"]');
+  readonly skiHolidaysLink: Locator = this.page.locator('(//a[@href="/ski-holidays"])[2]');
+  readonly skiDestinationsLink: Locator = this.page.locator('a[href="/ski-resorts"]').first();
+  readonly skiDealsLink: Locator = this.page.locator('(//a[contains(@href, "/ski-deals")])[2]');
+  readonly snowReportsLink: Locator = this.page.locator('(//a[@href="/snow-reports"])[1]');
+  readonly skiblogguidesLink: Locator = this.page.locator('(//a[@href="/blog"])[1]');
+  readonly enquireLink: Locator = this.page.locator('(//a[contains(@href, "/enquire")])[1]');
+  readonly contactusLink: Locator = this.page.locator('(//a[@href="/contact-us"])[1]');
+  readonly skiChaletsLink: Locator = this.page.locator('(//a[contains(@href, "/ski-chalet")])[4]');
+  readonly aboutUsLink: Locator = this.page.locator('a[href="/about"]').first();
 
-  // Cookies modal
-  readonly acceptCookiesButton: Locator;
-  readonly cookiesBanner: Locator;
+  // LOCATORS: Modal de cookies
+  readonly acceptCookiesButton: Locator = this.page.locator('button:has-text("Accept Cookies & Close")').first();
+  readonly cookiesBanner: Locator = this.page.locator('//div[@aria-label="Cookie banner"]');
 
-  // Search Components
+  // LOCATORS: Componentes de busca
   readonly propertiesSearchInput: Locator = this.page.locator('input[aria-label*="Search properties"]');
   readonly countriesSearchInput: Locator = this.page.locator('input[aria-label*="Search countries"], #where');
   readonly resortsSearchInput: Locator = this.page.locator('input[aria-label*="Search resorts"]');
   readonly searchButton: Locator = this.page.locator('button.search-item__cta');
 
-  // Footer links (exemplos)
-  readonly footerFranceLink: Locator;
-  readonly footerSkiChaletsLink: Locator;
+  // LOCATORS: Links do rodapé
+  readonly footerFranceLink: Locator = this.page.locator('footer a[href*="/france"]').first();
+  readonly footerSkiChaletsLink: Locator = this.page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
 
-  // -------------------------------
-  // Construtor
-  // -------------------------------
+  // Construtor da página
   constructor(page: Page) {
     super(page);
     this.actions = new Actions(page);
-
-    // Inicializa locators no construtor para centralizar alterações
-    // em um único lugar caso o markup mude.
-    this.logoLink = this.page.locator('a[title="Iglu Ski logo"]');
-    this.skiHolidaysLink = this.page.locator('(//a[@href="/ski-holidays"])[2]');
-    this.skiDestinationsLink = this.page.locator('a[href="/ski-resorts"]').first();
-    this.skiDealsLink = this.page.locator('(//a[contains(@href, "/ski-deals")])[2]');
-    this.snowReportsLink = this.page.locator('(//a[@href="/snow-reports"])[1]');
-    this.skiblogguidesLink = this.page.locator('(//a[@href="/blog"])[1]');
-    this.enquireLink = this.page.locator('(//a[contains(@href, "/enquire")])[1]');
-    this.contactusLink = this.page.locator('(//a[@href="/contact-us"])[1]');
-    this.skiChaletsLink = this.page.locator('(//a[contains(@href, "/ski-chalet")])[4]');
-    this.aboutUsLink = this.page.locator('a[href="/about"]').first();
-
-    this.acceptCookiesButton = this.page.locator('button:has-text("Accept Cookies & Close")').first();
-    this.cookiesBanner = this.page.locator('//div[@aria-label="Cookie banner"]');
-
-    this.propertiesSearchInput = this.page.locator('input[aria-label*="Search properties"]');
-    this.countriesSearchInput = this.page.locator('input[aria-label*="Search countries"]');
-    this.resortsSearchInput = this.page.locator('input[aria-label*="Search resorts"]');
-    this.searchButton = this.page.locator('button:has-text("Search")').first();
-
-    this.footerFranceLink = this.page.locator('footer a[href*="/france"]').first();
-    this.footerSkiChaletsLink = this.page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
   }
 
-  // Utilitários privados (normalizeText foi movido para Actions)
-  // toSlug: utilitário privado da HomePage
-  // Utilitários privados (normalizeText foi movido para Actions)
+  // Utilitário privado: toSlug usado internamente pela HomePage
+  // NAVEGAÇÃO E COOKIES: Navega para a home e aceita cookies
 
-  // -------------------------------
-  // NAVEGAÇÃO / COOKIES
-  // -------------------------------
-
-  // Navega para a home e aceita cookies (uma linha em português)
   async navigate(): Promise<void> {
     await this.page.goto('/', { waitUntil: 'domcontentloaded' });
     // small pause for dynamic elements
@@ -109,15 +74,16 @@ export class HomePage extends HelperBase {
               await this.resortsSearchInput.waitFor({ state: 'visible', timeout: 2000 });
               break;
             } catch {
-              // continue trying other toggles
+              // tenta próximo toggle
             }
           }
         } catch {
-          // ignore errors and try next selector
+          // ignora erros e continua
         }
       }
     }
-    // Remove persistent cookie/privacy overlays that may intercept clicks
+    // Remove overlays persistentes que interceptam cliques
+
     try {
       await this.page.evaluate(() => {
         try {
@@ -131,16 +97,18 @@ export class HomePage extends HelperBase {
       });
       await this.page.waitForTimeout(200);
     } catch {
-      // ignore
+      // ignore erros
     }
   }
 
-
+  // Ação: busca por país preenchendo input e enviando Enter
   async searchForCountry(text: string) {
     await this.countriesSearchInput.fill(text, { timeout: 5000 });
     await this.page.waitForTimeout(1000);
     await this.countriesSearchInput.press('Enter');
   }
+
+  // Ação: busca por propriedade preenchendo input e enviando Enter
 
   async searchForProperty(text: string) {
     await this.propertiesSearchInput.fill(text, { timeout: 5000 });
@@ -148,6 +116,7 @@ export class HomePage extends HelperBase {
     await this.propertiesSearchInput.press('Enter');
   }
 
+  // Ação: clica no botão de busca
   async clickOnSearchButton() {
     await this.searchButton.click();
   }
@@ -155,48 +124,49 @@ export class HomePage extends HelperBase {
   // Assertions & Validations
   // --------------------------
 
-  // Verifica se um locator está visível (delegado para Actions)
+  // ASSERTIONS: Verifica se um locator está visível usando Actions
   async verifyElementVisible(locator: Locator): Promise<boolean> {
     return await this.actions.verifyElementVisible(locator);
   }
 
-  // Aguarda a página carregar com a URL esperada (delegado para Actions)
+  // ASSERTIONS: Aguarda URL esperada usando Actions
   async verifyPageLoaded(expectedUrl: string): Promise<boolean> {
     return await this.actions.verifyPageLoaded(expectedUrl);
   }
 
-  // ===========================
-  // Validação da Logo
-  // ===========================
+  // VALIDAÇÕES: Valida redirecionamento do logo
   async validateLogo() {
     await this.validateRedirectButton(this.logoLink, '/');
   }
 
+  // VALIDAÇÕES: Coleta informações de contato no cabeçalho
+  async validateHeaderContactInfo() {
+    const phoneLocator = this.page.locator('header a[href^="tel:"]').first();
+    const emailLocator = this.page.locator('header a[href^="mailto:"]').first();
+  }
 
-
-
-
-  // Valida menus principais e submenus: verifica <h1>, loga duplicados e imprime resumo
+  // VALIDAÇÕES: Valida menus principais e submenus, títulos e duplicados
   async validateMenuAndSubMenuNavigation(): Promise<void> {
-    // ✅ Estrutura para guardar duplicados por menu
+    // armazena resumo de duplicados por menu
     const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
 
-    // Função interna: valida se o <h1> contém o texto esperado (full/partial/fallback)
+    // função interna: valida se o <h1> contém o texto esperado
     const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
       const normalizedLabel = this.actions.normalizeText(label);
 
-      // ✅ Passo 1: Full match via XPath
+      // tentativa 1: match completo via XPath
       try {
         const xpathFull = `//div[contains(@class, "main body-additional-bottom-margin")]//h1[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), "${normalizedLabel}")]`;
         const locatorFull = page.locator(xpathFull);
-          if (await locatorFull.count() > 0) {
-            const text = (await locatorFull.first().innerText()).trim();
-            console.log(`✓ Valid title (full match) → "${text}"`);
+        if (await locatorFull.count() > 0) {
+          const text = (await locatorFull.first().innerText()).trim();
+          console.log(`✓ Valid title (full match) → "${text}"`);
           return true;
         }
       } catch { }
 
-      // ✅ Passo 2: Partial match com palavras significativas
+      // tentativa 2: match parcial por palavras significativas
+
       const stopwords = new Set(['the', 'and', 'for', 'from', 'with', 'to', 'of', 'in', 'on', 'at', 'by']);
       const words = label.split(/\s+/).map(w => this.actions.normalizeText(w)).filter(w => w.length > 3 && !stopwords.has(w));
 
@@ -212,7 +182,8 @@ export class HomePage extends HelperBase {
         } catch { }
       }
 
-      // ✅ Passo 3: Fallback inteligente (todas as palavras relevantes aparecem no título)
+      // tentativa 3: fallback verificando se todas as palavras relevantes aparecem no título
+
       try {
         const h1Text = (await page.locator('h1').first().innerText()).toLowerCase();
         const labelWords = normalizedLabel.replace(/-/g, ' ').split(' ').filter(w => w.length > 2);
@@ -285,7 +256,7 @@ export class HomePage extends HelperBase {
           const full = this.actions.extractFullUrlFromString(s.href);
           if (!full) continue;
 
-          // If URL already seen, mark as duplicate
+          // marca duplicados se a URL já foi vista
           if (seen.has(full)) {
             const duplicateWith = seen.get(full)!;
             console.warn(`⚠ Duplicate found → "${s.label}" duplicate with "${duplicateWith}" (URL: ${full})`);
@@ -305,7 +276,7 @@ export class HomePage extends HelperBase {
         // ✅ Abre uma aba para validar todos os sublinks sequencialmente
         const subPage = await this.page.context().newPage();
         for (const s of allSublinks) {
-            try {
+          try {
             await subPage.goto(s.href, { waitUntil: 'domcontentloaded', timeout: 90000 });
             await validateTitleContains(subPage, s.label);
             console.log(`      ✓ Submenu validated: ${s.label}`);
@@ -337,12 +308,8 @@ export class HomePage extends HelperBase {
     return;
   }
 
-  // -------------------------------
-  // EXTRAS: funções utilitárias menores
-  // -------------------------------
+  // EXTRAS: realiza busca simples pelo campo de resorts e aguarda resultados
 
-  // Busca resultados de pesquisa na página (exemplo adaptado)
-  // Realiza uma busca simples pelo campo de resorts e aguarda resultados
   async searchFor(query: string): Promise<void> {
     // Clicar e preencher o input de resorts
     await this.resortsSearchInput.click();
