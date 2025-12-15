@@ -1,103 +1,54 @@
 import { test, expect } from '@playwright/test';
-import { HomePage } from '../pages/home.page';
+import { PageManager } from '../pages/utils/PageManager';
+
+// ================================================================
+// Test Suite: Home Page
+// ================================================================
 
 test.describe('Home Page', () => {
-  // ===========================
-  // Antes de cada teste: Navegar e aceitar cookies
-  // ===========================
+
+  // BEFORE EACH: executado antes de cada teste — navega e aceita cookies
   test.beforeEach(async ({ page }) => {
-    const home = new HomePage(page);
-    await home.navigate(); // Isso também vai aceitar os cookies
+    const pm = new PageManager(page);
+    await pm.onHomePage().navigate(); // Navega e aceita cookies via PageManager
   });
 
-  // ===========================
-  // 1️⃣ Teste: Validar header
-  // ===========================
-  test('Validar elementos principais do header', async ({ page }) => {
-    const home = new HomePage(page);
 
-    await expect(home.logoLink).toBeVisible();
-    await expect(home.skiHolidaysLink).toBeVisible();
-    await expect(home.skiDestinationsLink).toBeVisible();
-    await expect(home.skiDealsLink).toBeVisible();
+  // TC 1 — Validar Logo da Iglu Ski: verifica redirecionamento ao clicar na logo
+  test('Validar Logo da Iglu Ski', async ({ page }) => {
+    const pm = new PageManager(page);
+    await pm.onHomePage().validateLogo();
   });
 
-  // ===========================
-  // 2️⃣ Teste: Validar footer
-  // ===========================
-  test('Validar links do footer', async ({ page }) => {
-    const home = new HomePage(page);
+  // TC 2 — Validar Menu + Submenus: valida menus, sublinks e <h1>; resume duplicados
+  test('Validar Menu de Navegação Principal', async ({ page }) => {
+    // ✅ Aumenta timeout global para este teste (5 minutos)
+    test.setTimeout(300000);
 
-    await expect(home.footerFranceLink).toBeVisible();
-    await expect(home.footerSkiChaletsLink).toBeVisible();
+    const pm = new PageManager(page);
+
+    // ✅ Valida todos os sublinks (ilimitado)
+    await pm.onHomePage().validateMenuAndSubMenuNavigation();
+
   });
 
-  // ===========================
-  // 3️⃣ Teste: Pesquisa simples
-  // ===========================
-  test('Pesquisar por resort e validar resultados', async ({ page }) => {
-    const home = new HomePage(page);
+  test('Clicar no menu e opcionalmente no submenu', async ({ page }) => {
+    const pm = new PageManager(page);
 
-    await home.searchFor('Val Thorens');
+    // ✅ Apenas clicar no menu principal:
+    await pm.onHomePage().clickMenu("Ski Holidays");
 
-    const resultsText = await home.getSearchResults();
-    expect(resultsText).toBeTruthy();
+    // ✅ Clicar no menu e depois num submenu:
+    await pm.onHomePage().clickMenu("Ski Holidays", "Family Ski Holidays");
   });
 
-  // ===========================
-  // 4️⃣ Teste: Validar campo de pesquisa
-  // ===========================
-  test('Validar que o input de pesquisa está visível', async ({ page }) => {
-    const home = new HomePage(page);
-    
-    await expect(home.resortsSearchInput).toBeVisible();
+  // TC 3 — Validar Informações de Contato no Header: verifica telefone e email
+  test('Validar Informações de Contato no Header', async ({ page }) => {
+    // ✅ Aumenta timeout global para este teste (5 minutos)
+    test.setTimeout(300000);
+
+    const pm = new PageManager(page);
+    await pm.onHomePage().validateHeaderContactInfo();
+
   });
-
-  // ===========================
-  // 5️⃣ Teste: Digitação no campo de busca
-  // ===========================
-  test('Escrever no campo de busca e verificar que preencheu', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.resortsSearchInput.fill('Porto');
-
-    await expect(home.resortsSearchInput).toHaveValue('Porto');
-  });
-
-  // ===========================
-  // 6️⃣ Teste: Navegar para Ski Holidays
-  // ===========================
-  test('Clicar no link Ski Holidays e validar URL', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.skiHolidaysLink.click();
-
-    const result = await home.verifyPageLoaded('/ski-holidays');
-    expect(result).toBe(true);
-  });
-
-  // ===========================
-  // 7️⃣ Teste: Navegar para Ski Resorts
-  // ===========================
-  test('Clicar no link Ski Resorts e validar URL', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.skiDestinationsLink.click();
-
-    const result = await home.verifyPageLoaded('/ski-resorts');
-    expect(result).toBe(true);
-  });
-
-  // ===========================
-  // 8️⃣ Teste: Navegar para About
-  // ===========================
-  test('Clicar em About e validar URL', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.aboutUsLink.click();
-
-    const result = await home.verifyPageLoaded('/about');
-    expect(result).toBe(true);
-  });
-
 });

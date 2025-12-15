@@ -21,7 +21,25 @@
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.57.0",
-    "@types/node": "^24.10.2",
+    "@types/node": "^24.10.3",
+    "playwright": "^1.57.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "playwright-core": "^1.57.0",
+    "undici-types": "^7.16.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielsouza80/igluski-playwright-ts.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gabrielsouza80/igluski-playwright-ts/issues"
+  },
+  "homepage": "https://github.com/gabrielsouza80/igluski-playwright-ts#readme"
 }
