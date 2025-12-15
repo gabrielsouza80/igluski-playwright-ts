@@ -5,7 +5,7 @@
 /**
  * Títulos disponíveis no formulário
  */
-export const AVAILABLE_TITLES = ['Dr', 'Lady', 'Lord', 'Mast', 'Miss', 'Mr', 'Mrs', 'Ms', 'Professor', 'Rev', 'Rt Revd', 'Sir', 'Other'];
+export const AVAILABLE_TITLES = ['Dr', 'Miss', 'Mr', 'Mrs', 'Ms'];
 
 /**
  * Primeiros nomes comuns (aleatórios)
@@ -154,6 +154,39 @@ export function generateMobilePhone(): string {
   const prefix = '+447911'; // Número fixo válido do UK
   const randomDigits = String(getRandomNumber(100000, 999999));
   return `${prefix}${randomDigits}`;
+}
+
+/**
+ * Gera um número de telefone sem código do país (apenas dígitos)
+ * Formato: 7911123456
+ */
+export function generatePhoneNumber(): string {
+  const prefix = '7911'; // Prefixo válido do UK sem +44
+  const randomDigits = String(getRandomNumber(100000, 999999));
+  return `${prefix}${randomDigits}`;
+}
+
+/**
+ * Gera um código de país para telefone aleatório
+ * Retorna o nome do país ou código, dependendo do formato esperado
+ */
+export function generatePhoneCountryCode(): string {
+  const countries = ['+44', '+1', '+33', '+49'];
+  return getRandomElement(countries);
+}
+
+/**
+ * Gera um número aleatório de adultos (1-4)
+ */
+export function generateAdultsCount(): string {
+  return String(getRandomNumber(1, 4));
+}
+
+/**
+ * Gera um número aleatório de crianças (0-2)
+ */
+export function generateChildrenCount(): string {
+  return String(getRandomNumber(0, 2));
 }
 
 /**

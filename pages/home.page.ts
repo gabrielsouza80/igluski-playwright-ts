@@ -145,8 +145,6 @@ export class HomePage extends HelperBase {
     const emailLocator = this.page.locator('header a[href^="mailto:"]').first();
   }
 
-
-
   // VALIDAÇÕES: Valida menus principais e submenus, títulos e duplicados
   async validateMenuAndSubMenuNavigation(): Promise<void> {
     // armazena resumo de duplicados por menu
