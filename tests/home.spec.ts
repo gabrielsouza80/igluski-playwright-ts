@@ -14,14 +14,14 @@ test.describe('Home Page', () => {
   });
 
 
-  // TESTE 1 — Validar Logo da Iglu Ski: verifica redirecionamento ao clicar na logo
+  // TC 1 — Validar Logo da Iglu Ski: verifica redirecionamento ao clicar na logo
   test('Validar Logo da Iglu Ski', async ({ page }) => {
     const pm = new PageManager(page);
     await pm.onHomePage().validateLogo();
   });
 
-  // TESTE 2 — Validar Menu + Submenus: valida menus, sublinks e <h1>; resume duplicados
-  test('Validar Menu e SubMenu da Navegação Principal', async ({ page }) => {
+  // TC 2 — Validar Menu + Submenus: valida menus, sublinks e <h1>; resume duplicados
+  test('Validar Menu de Navegação Principal', async ({ page }) => {
     // ✅ Aumenta timeout global para este teste (5 minutos)
     test.setTimeout(300000);
 
@@ -42,4 +42,18 @@ test.describe('Home Page', () => {
     await pm.onHomePage().clickMenu("Ski Holidays", "Family Ski Holidays");
   });
 
+  // TC 3 — Validar Informações de Contato no Header: verifica telefone e email
+  test('Validar Informações de Contato no Header', async ({ page }) => {
+    // ✅ Aumenta timeout global para este teste (5 minutos)
+    test.setTimeout(300000);
+
+    const pm = new PageManager(page);
+    await pm.onHomePage().validateHeaderContactInfo();
+    await pm.onHomePage().validateHeaderEmail();
+    await pm.onHomePage().validateHeaderPhone();
+    await pm.onHomePage().validateHeaderPhoneLink();
+    await pm.onHomePage().validateHeaderEmailLink();
+    
+
+  });
 });

@@ -3,14 +3,13 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
 
-  /* Set timeout */
-  timeout: 90_000,
-
+  // Tempo máximo por teste
+  timeout: 60_000,
 
   // Número de tentativas em caso de falha
   retries: 1,
 
-  // Configurações padrão para todos os testes
+  // Configurações padrão
   fullyParallel: true,
   use: {
     headless: false,
@@ -24,29 +23,22 @@ export default defineConfig({
     // Trace para debugging
     trace: 'on-first-retry',
 
-    // URL base para simplificar navegação
+    // URL base
     baseURL: 'https://www.igluski.com/',
 
-    // Timeouts adicionais
-    actionTimeout: 10_000,       // tempo máximo para ações (click, fill, etc.)
-    navigationTimeout: 30_000,   // tempo máximo para navegação
+    // Timeouts específicos
+    actionTimeout: 10_000,
+    navigationTimeout: 90_000,
   },
 
-  // Navegadores e dispositivos
+  // Navegadores
   projects: [
     {
       name: 'chrome',
       use: { ...devices['Desktop Chrome'] },
     },
-    // Se quiser rodar também em Firefox ou Safari, basta descomentar:
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
+    // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
 
   // Relatórios
