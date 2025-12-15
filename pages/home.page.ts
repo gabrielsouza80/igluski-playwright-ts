@@ -2,32 +2,11 @@ import { Page, Locator, expect } from '@playwright/test';
 import { HelperBase } from './utils/HelperBase';
 import { Actions } from './utils/Actions';
 
-/**
- * home.page.ts - Versão refatorada e comentada (extensos comentários)
- * -----------------------------------------------------------------
- * Objetivo:
- * - Arquivo refatorado com padrões consistentes, nomes padronizados e
- *   logging claro.
- * - Substitui validação por breadcrumb por validação por título (<h1>),
- *   com "partial match" (aceita apenas uma palavra do submenu quando
- *   aplicável). Isso reduz falsos negativos quando o breadcrumb varia.
- * - Otimizações de performance: reduz criação de abas desnecessárias,
- *   trata timeouts de forma centralizada e oferece logs explicativos.
- *
- * Como usar:
- * - Substitua seu atual pages/home.page.ts por este arquivo (ou copie o
- *   conteúdo para o mesmo arquivo). Todas as funções públicas mantêm
- *   interface compatível com o uso atual nos testes.
- *
- * Observações:
- * - A classe extende HelperBase (presumo que HelperBase exponha `this.page`).
- * - A classe Actions é usada para validações auxiliares (mantive a injeção
- *   para compatibilidade com seu código atual).
- */
+
+// home.page.ts - Página principal (comentários em português, uma linha cada)
 
 export class HomePage extends HelperBase {
-  // Instância de Actions para reutilizar utilitários (redundante se não for
-  // usada — mantive por compatibilidade com seu projeto atual)
+  // Instância de Actions para reutilizar utilitários genéricos
   private actions: Actions;
 
   // -------------------------------
@@ -91,172 +70,120 @@ export class HomePage extends HelperBase {
     this.footerSkiChaletsLink = this.page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
   }
 
-  // -------------------------------
-  // UTILITÁRIOS (helpers privados)
-  // -------------------------------
-
-  /**
-   * Normaliza texto para comparações: remove múltiplos espaços, acentos
-   * e pontuação, deixa em minúsculas.
-   * - Mantém apenas letras/números/espacos para comparação segura.
-   */
-  private normalizeText(s?: string | null): string {
-    if (!s) return '';
-    // remove acentuação básica, depois remove não-alfanuméricos e normaliza espaços
-    return s
-      .normalize('NFD') // separa acentos
-      .replace(/\p{Diacritic}/gu, '') // remove diacríticos
-      .replace(/\s+/g, ' ')
-      .replace(/[^\w\s]/g, '')
-      .trim()
-      .toLowerCase();
-  }
-
-  /**
-   * Gera uma URL absoluta a partir de um href relativo ou absoluto.
-   * Retorna null se não for possível gerar a URL.
-   */
-  extractFullUrl(linkHref: string | null): string | null {
-    if (!linkHref) return null;
-    try {
-      return linkHref.startsWith('http') ? linkHref : new URL(linkHref, this.page.url()).href;
-    } catch {
-      return null;
-    }
-  }
-
-  /**
-   * Gera slug simples (ex: "Tailor-made ski" -> "tailor-made-ski").
-   * Útil se precisar gerar expectativas de URLs ou IDs.
-   */
-  private toSlug(text: string): string {
-    return text
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/\p{Diacritic}/gu, '')
-      .replace(/\s+/g, '-')
-      .replace(/[^\w-]/g, '')
-      .replace(/-+/g, '-')
-      .trim();
-  }
+  // Utilitários privados (normalizeText foi movido para Actions)
+  // toSlug: utilitário privado da HomePage
+  // Utilitários privados (normalizeText foi movido para Actions)
 
   // -------------------------------
   // NAVEGAÇÃO / COOKIES
   // -------------------------------
 
-  /**
-   * Navega para a home e aceita cookies (se existirem).
-   * Usa timeouts conservadores para evitar falsos positivos.
-   */
+  // Navega para a home e aceita cookies (uma linha em português)
   async navigate(): Promise<void> {
     await this.page.goto('/', { waitUntil: 'domcontentloaded' });
-    // pequena pausa para permitir carregamento de elementos dinâmicos
+    // small pause for dynamic elements
     await this.page.waitForTimeout(1500);
     await this.acceptCookies();
-  }
-
-  /**
-   * Tenta fechar o banner de cookies por diferentes seletores.
-   * Não lança erro se não encontrar: comportamento idempotente.
-   */
-  async acceptCookies(): Promise<void> {
+    // Garantir que o campo de busca de resorts esteja visível.
+    // Se não estiver, tenta abrir painéis/seletores que geralmente exibem o campo.
     try {
-      const button = this.acceptCookiesButton;
-      if (await button.count() > 0 && await button.isVisible({ timeout: 3000 })) {
-        await button.click();
-        await this.page.waitForTimeout(300);
-        return;
-      }
-    } catch (e) {
-      // tenta alternativa
-    }
-
-    try {
-      const alt = this.page.locator('button:has-text("Accept")').first();
-      if (await alt.count() > 0 && await alt.isVisible({ timeout: 2000 })) {
-        await alt.click();
-        await this.page.waitForTimeout(300);
-      }
+      await this.resortsSearchInput.waitFor({ state: 'visible', timeout: 2000 });
+      return;
     } catch {
-      // se não achou, não faz nada — é seguro
+      const toggles = [
+        'button:has-text("Search")',
+        'a:has-text("Search")',
+        'button[aria-label*="Search"]',
+        '.search-toggle',
+        '.site-search-toggle',
+        '.search-open'
+      ];
+
+      for (const sel of toggles) {
+        try {
+          const t = this.page.locator(sel).first();
+          if (await t.count() > 0 && await t.isVisible({ timeout: 1000 }).catch(() => false)) {
+            await t.click();
+            await this.page.waitForTimeout(300);
+            try {
+              await this.resortsSearchInput.waitFor({ state: 'visible', timeout: 2000 });
+              break;
+            } catch {
+              // continue trying other toggles
+            }
+          }
+        } catch {
+          // ignore errors and try next selector
+        }
+      }
+    }
+    // Remove persistent cookie/privacy overlays that may intercept clicks
+    try {
+      await this.page.evaluate(() => {
+        try {
+          const ids = ['onetrust-consent-sdk', 'onetrust-pc-wrapper', 'onetrust-banner-sdk'];
+          ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+          });
+          document.querySelectorAll('.onetrust-pc-dark-filter, .onetrust-pc-sdk, #onetrust-pc').forEach(e => e.remove());
+        } catch { /* ignore */ }
+      });
+      await this.page.waitForTimeout(200);
+    } catch {
+      // ignore
     }
   }
+
 
   // -------------------------------
   // AÇÕES SIMPLES (reutilizáveis)
   // -------------------------------
 
-  /**
-   * Valida que um locator está visível (try/catch para evitar falhas no teste)
-   */
+  // Verifica se um locator está visível (delegado para Actions)
   async verifyElementVisible(locator: Locator): Promise<boolean> {
-    try {
-      return await locator.isVisible({ timeout: 5000 });
-    } catch {
-      return false;
-    }
+    return await this.actions.verifyElementVisible(locator);
   }
 
-  /**
-   * Aguarda a página atual conter expectedUrl (substring) — útil para
-   * verificar navegações relativas.
-   */
+  // Aguarda a página carregar com a URL esperada (delegado para Actions)
   async verifyPageLoaded(expectedUrl: string): Promise<boolean> {
-    try {
-      await this.page.waitForURL(`**${expectedUrl}*`, { timeout: 15000 });
-      return this.page.url().includes(expectedUrl);
-    } catch {
-      return false;
-    }
+    return await this.actions.verifyPageLoaded(expectedUrl);
   }
 
   // ===========================
   // Validação da Logo
   // ===========================
   async validateLogo() {
-    await this.actions.validateRedirectButton(this.logoLink, '/');
+    await this.validateRedirectButton(this.logoLink, '/');
   }
 
 
 
 
 
-  /**
-   * Valida menus principais e submenus:
-   * - Verifica se cada página tem um <h1> coerente com o nome do menu/submenu.
-   * - Loga duplicados mostrando com quem está duplicado (Label + URL).
-   * - Aceita singular/plural e palavras extra no título (fallback inteligente).
-   * - Executa tudo de forma sequencial (não paralela).
-   * - No final, imprime um resumo com todos os duplicados agrupados por menu.
-   */
+  // Valida menus principais e submenus: verifica <h1>, loga duplicados e imprime resumo
   async validateMenuAndSubMenuNavigation(): Promise<void> {
     // ✅ Estrutura para guardar duplicados por menu
     const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
 
-    /**
-     * Função interna para validar se o <h1> da página contém o texto esperado.
-     * Lógica:
-     * 1. Full match
-     * 2. Partial match com palavras significativas
-     * 3. Fallback: todas as palavras relevantes do label aparecem no título
-     */
+    // Função interna: valida se o <h1> contém o texto esperado (full/partial/fallback)
     const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
-      const normalizedLabel = this.normalizeText(label);
+      const normalizedLabel = this.actions.normalizeText(label);
 
       // ✅ Passo 1: Full match via XPath
       try {
         const xpathFull = `//div[contains(@class, "main body-additional-bottom-margin")]//h1[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), "${normalizedLabel}")]`;
         const locatorFull = page.locator(xpathFull);
-        if (await locatorFull.count() > 0) {
-          const text = (await locatorFull.first().innerText()).trim();
-          console.log(`✓ Título válido (full match) → "${text}"`);
+          if (await locatorFull.count() > 0) {
+            const text = (await locatorFull.first().innerText()).trim();
+            console.log(`✓ Valid title (full match) → "${text}"`);
           return true;
         }
       } catch { }
 
       // ✅ Passo 2: Partial match com palavras significativas
       const stopwords = new Set(['the', 'and', 'for', 'from', 'with', 'to', 'of', 'in', 'on', 'at', 'by']);
-      const words = label.split(/\s+/).map(w => this.normalizeText(w)).filter(w => w.length > 3 && !stopwords.has(w));
+      const words = label.split(/\s+/).map(w => this.actions.normalizeText(w)).filter(w => w.length > 3 && !stopwords.has(w));
 
       for (const w of words) {
         try {
@@ -264,7 +191,7 @@ export class HomePage extends HelperBase {
           const locatorPart = page.locator(xpathPart);
           if (await locatorPart.count() > 0) {
             const text = (await locatorPart.first().innerText()).trim();
-            console.log(`✓ Título válido (partial match) → palavra "${w}" encontrada em: "${text}"`);
+            console.log(`✓ Valid title (partial match) → word "${w}" found in: "${text}"`);
             return true;
           }
         } catch { }
@@ -276,13 +203,13 @@ export class HomePage extends HelperBase {
         const labelWords = normalizedLabel.replace(/-/g, ' ').split(' ').filter(w => w.length > 2);
         const allWordsFound = labelWords.every(w => h1Text.includes(w));
         if (allWordsFound) {
-          console.log(`✓ Título válido (contains all words) → "${h1Text}"`);
+          console.log(`✓ Valid title (contains all words) → "${h1Text}"`);
           return true;
         }
       } catch { }
 
       // ⚠ Se não encontrou nada, loga aviso
-      console.warn(`⚠ Nenhuma correspondência encontrada no <h1> para: "${label}"`);
+      console.warn(`⚠ No match found in <h1> for: "${label}"`);
       return false;
     };
 
@@ -301,21 +228,21 @@ export class HomePage extends HelperBase {
       });
     });
 
-    console.log(`🌐 Validando ${menusSnapshot.length} menus principais`);
+    console.log(`🌐 Validating ${menusSnapshot.length} main menus`);
 
     // ✅ Itera por cada menu principal
     for (const menu of menusSnapshot) {
       const menuLabel = menu.mainLabel || 'menu';
-      const menuHref = this.extractFullUrl(menu.mainHref);
+      const menuHref = this.actions.extractFullUrlFromString(menu.mainHref);
 
-      console.log(`\n🌐 Validando menu principal: "${menuLabel}"`);
+      console.log(`\n🌐 Validating menu: "${menuLabel}"`);
 
       if (!menuHref) {
-        console.warn(`⚠ Menu "${menuLabel}" sem URL válida. Pulando.`);
+        console.warn(`⚠ Menu "${menuLabel}" has no valid URL. Skipping.`);
         continue;
       }
 
-      console.log(`✓ URL válida → ${menuHref}`);
+      console.log(`✓ Valid URL → ${menuHref}`);
 
       let menuPage: Page | null = null;
 
@@ -328,7 +255,7 @@ export class HomePage extends HelperBase {
         await validateTitleContains(menuPage, menuLabel);
 
         const sublinks = menu.sublinks || [];
-        console.log(`📁 Menu "${menuLabel}" → Encontrados ${sublinks.length} sublinks`);
+        console.log(`📁 Menu "${menuLabel}" → Found ${sublinks.length} sublinks`);
 
         if (sublinks.length === 0) {
           console.warn(`⚠ Menu "${menuLabel}" não possui sublinks.`);
@@ -340,15 +267,14 @@ export class HomePage extends HelperBase {
         const seen = new Map<string, string>(); // URL -> primeiro label
 
         for (const s of sublinks) {
-          const full = this.extractFullUrl(s.href);
+          const full = this.actions.extractFullUrlFromString(s.href);
           if (!full) continue;
 
-          // ✅ Loga duplicados mostrando com quem está duplicado
+          // If URL already seen, mark as duplicate
           if (seen.has(full)) {
             const duplicateWith = seen.get(full)!;
-            console.warn(`⚠ Duplicado encontrado → "${s.label}" duplicado com "${duplicateWith}" (URL: ${full})`);
+            console.warn(`⚠ Duplicate found → "${s.label}" duplicate with "${duplicateWith}" (URL: ${full})`);
 
-            // ✅ Adiciona ao resumo final
             if (!duplicatesSummary[menuLabel]) duplicatesSummary[menuLabel] = [];
             duplicatesSummary[menuLabel].push({ label: s.label, duplicateWith, url: full });
           } else {
@@ -359,17 +285,17 @@ export class HomePage extends HelperBase {
           allSublinks.push({ label: s.label || full, href: full });
         }
 
-        console.log(`📁 Menu "${menuLabel}" → Validando ${allSublinks.length} sublinks`);
+        console.log(`📁 Menu "${menuLabel}" → Validating ${allSublinks.length} sublinks`);
 
         // ✅ Abre uma aba para validar todos os sublinks sequencialmente
         const subPage = await this.page.context().newPage();
         for (const s of allSublinks) {
-          try {
+            try {
             await subPage.goto(s.href, { waitUntil: 'domcontentloaded', timeout: 90000 });
             await validateTitleContains(subPage, s.label);
-            console.log(`      ✓ Submenu validado: ${s.label}`);
+            console.log(`      ✓ Submenu validated: ${s.label}`);
           } catch (err: any) {
-            console.error(`❌ Falha no submenu "${s.label}" → ${err?.message || err}`);
+            console.error(`❌ Submenu "${s.label}" failed → ${err?.message || err}`);
           }
         }
         await subPage.close().catch(() => null);
@@ -380,15 +306,15 @@ export class HomePage extends HelperBase {
       }
     }
 
-    // ✅ Resumo final dos duplicados
-    console.log(`\n📊 RESUMO DE DUPLICADOS ENCONTRADOS:`);
+    // Final duplicates summary
+    console.log(`\n📊 DUPLICATES SUMMARY:`);
     if (Object.keys(duplicatesSummary).length === 0) {
-      console.log(`✅ Nenhum duplicado encontrado.`);
+      console.log(`✅ No duplicates found.`);
     } else {
       for (const [menu, duplicates] of Object.entries(duplicatesSummary)) {
         console.log(`\nMenu: ${menu}`);
         duplicates.forEach(d => {
-          console.log(`  - "${d.label}" duplicado com "${d.duplicateWith}" (URL: ${d.url})`);
+          console.log(`  - "${d.label}" duplicate with "${d.duplicateWith}" (URL: ${d.url})`);
         });
       }
     }
@@ -400,13 +326,68 @@ export class HomePage extends HelperBase {
   // EXTRAS: funções utilitárias menores
   // -------------------------------
 
-  /**
-   * Busca resultados de pesquisa na página (exemplo adaptado)
-   */
+  // Busca resultados de pesquisa na página (exemplo adaptado)
+  // Realiza uma busca simples pelo campo de resorts e aguarda resultados
+  async searchFor(query: string): Promise<void> {
+    // Clicar e preencher o input de resorts
+    await this.resortsSearchInput.click();
+    await this.resortsSearchInput.fill(query);
+
+    // Envia a busca
+    await this.page.keyboard.press('Enter');
+
+    // Tenta detectar um painel de resultados/sugestões comum
+    const possibleSelectors = [
+      'ul[role="listbox"]',
+      '.search-results',
+      '.search-autocomplete',
+      '.results-list',
+      '.searchResults',
+      '.autosuggest'
+    ];
+
+    for (const sel of possibleSelectors) {
+      try {
+        const locator = this.page.locator(sel).first();
+        if (await locator.count() > 0) {
+          await locator.waitFor({ state: 'visible', timeout: 5000 });
+          return;
+        }
+      } catch {
+        // ignore and try next selector
+      }
+    }
+
+    // Fallback: aguarda um pequeno tempo para o resultado AJAX carregar
+    await this.page.waitForTimeout(1000);
+  }
+
+  // Recupera texto representativo dos resultados de busca
   async getSearchResults(): Promise<string> {
+    const candidates = [
+      'ul[role="listbox"] li',
+      '.search-results .result, .search-results li',
+      '.search-autocomplete li',
+      '.results-list li',
+      '.autosuggest li'
+    ];
+
+    for (const sel of candidates) {
+      try {
+        const locator = this.page.locator(sel).first();
+        if (await locator.count() > 0) {
+          const txt = (await locator.textContent({ timeout: 3000 })) || '';
+          if (txt.trim().length > 0) return txt.trim();
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    // Último recurso: retornar o valor atual do input de busca
     try {
-      const resultsText = await this.page.locator('text=/results? found/i').first().textContent({ timeout: 5000 });
-      return resultsText || '';
+      const val = await this.resortsSearchInput.inputValue();
+      return val || '';
     } catch {
       return '';
     }
