@@ -28,11 +28,11 @@ export class HomePage extends HelperBase {
   readonly acceptCookiesButton: Locator;
   readonly cookiesBanner: Locator;
 
-  // Search inputs
-  readonly propertiesSearchInput: Locator;
-  readonly countriesSearchInput: Locator;
-  readonly resortsSearchInput: Locator;
-  readonly searchButton: Locator;
+  // Search Components
+  readonly propertiesSearchInput: Locator = this.page.locator('input[aria-label*="Search properties"]');
+  readonly countriesSearchInput: Locator = this.page.locator('input[aria-label*="Search countries"], #where');
+  readonly resortsSearchInput: Locator = this.page.locator('input[aria-label*="Search resorts"]');
+  readonly searchButton: Locator = this.page.locator('button.search-item__cta');
 
   // Footer links (exemplos)
   readonly footerFranceLink: Locator;
@@ -136,9 +136,24 @@ export class HomePage extends HelperBase {
   }
 
 
-  // -------------------------------
-  // AÇÕES SIMPLES (reutilizáveis)
-  // -------------------------------
+  async searchForCountry(text: string) {
+    await this.countriesSearchInput.fill(text, { timeout: 5000 });
+    await this.page.waitForTimeout(1000);
+    await this.countriesSearchInput.press('Enter');
+  }
+
+  async searchForProperty(text: string) {
+    await this.propertiesSearchInput.fill(text, { timeout: 5000 });
+    await this.page.waitForTimeout(1000);
+    await this.propertiesSearchInput.press('Enter');
+  }
+
+  async clickOnSearchButton() {
+    await this.searchButton.click();
+  }
+  // --------------------------
+  // Assertions & Validations
+  // --------------------------
 
   // Verifica se um locator está visível (delegado para Actions)
   async verifyElementVisible(locator: Locator): Promise<boolean> {

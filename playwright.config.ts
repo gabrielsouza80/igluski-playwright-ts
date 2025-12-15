@@ -3,8 +3,9 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
 
-  // Tempo máximo por teste
-  timeout: 120_000, // 2 minutos por teste
+  /* Set timeout */
+  timeout: 90_000,
+
 
   // Número de tentativas em caso de falha
   retries: 1,

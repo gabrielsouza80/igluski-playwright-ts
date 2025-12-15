@@ -10,14 +10,14 @@ test.describe('Home Page', () => {
   // BEFORE EACH: executado antes de cada teste — navega e aceita cookies
   test.beforeEach(async ({ page }) => {
     const pm = new PageManager(page);
-    await pm.home.navigate(); // Navega e aceita cookies via PageManager
+    await pm.onHomePage().navigate(); // Navega e aceita cookies via PageManager
   });
 
 
   // TESTE 1 — Validar Logo da Iglu Ski: verifica redirecionamento ao clicar na logo
   test('Validar Logo da Iglu Ski', async ({ page }) => {
     const pm = new PageManager(page);
-    await pm.home.validateLogo();
+    await pm.onHomePage().validateLogo();
   });
 
   // TESTE 2 — Validar Menu + Submenus: valida menus, sublinks e <h1>; resume duplicados
@@ -28,7 +28,7 @@ test.describe('Home Page', () => {
     const pm = new PageManager(page);
 
     // ✅ Valida todos os sublinks (ilimitado)
-    await pm.home.validateMenuAndSubMenuNavigation();
+    await pm.onHomePage().validateMenuAndSubMenuNavigation();
 
   });
 
@@ -36,12 +36,10 @@ test.describe('Home Page', () => {
     const pm = new PageManager(page);
 
     // ✅ Apenas clicar no menu principal:
-    await pm.home.clickMenu("Ski Holidays");
+    await pm.onHomePage().clickMenu("Ski Holidays");
 
     // ✅ Clicar no menu e depois num submenu:
-    await pm.home.clickMenu("Ski Holidays", "Family Ski Holidays");
+    await pm.onHomePage().clickMenu("Ski Holidays", "Family Ski Holidays");
   });
 
-
 });
-
