@@ -6,41 +6,51 @@ export default defineConfig({
   /* Set timeout */
   timeout: 60_000,
 
-  /* Número de tentativas */
-  retries: 0,
 
-  /* Configurações padrão para todos os testes */
+  // Número de tentativas em caso de falha
+  retries: 1,
+
+  // Configurações padrão para todos os testes
   fullyParallel: true,
   use: {
     headless: false,
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
 
-    /* Screenshot e vídeo apenas quando necessário */
+    // Screenshot e vídeo
     screenshot: 'on',
     video: 'retain-on-failure',
 
-    /* Habilita trace para facilitar debugging no UI Mode */
+    // Trace para debugging
     trace: 'on-first-retry',
 
-    /* URL base para seus testes */
-    baseURL: 'https://www.igluski.com',
+    // URL base para simplificar navegação
+    baseURL: 'https://www.igluski.com/',
+
+    // Timeouts adicionais
+    actionTimeout: 10_000,       // tempo máximo para ações (click, fill, etc.)
+    navigationTimeout: 30_000,   // tempo máximo para navegação
   },
 
-  /* Navegadores e dispositivos */
+  // Navegadores e dispositivos
   projects: [
     {
       name: 'chrome',
       use: { ...devices['Desktop Chrome'] },
-    }
-      // {
-      //   name: 'firefox',
-      //   use: { ...devices['Desktop Firefox'] },
-      // },
-    ],
+    },
+    // Se quiser rodar também em Firefox ou Safari, basta descomentar:
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
+  ],
 
-    /* Opcional: caminho dos relatórios */
-    reporter: [
-      ['html', { open: 'never' }]
-    ],
+  // Relatórios
+  reporter: [
+    ['html', { open: 'never' }]
+  ],
 });
