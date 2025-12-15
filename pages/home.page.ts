@@ -32,8 +32,10 @@ export class HomePage extends HelperBase {
   readonly searchButton: Locator = this.page.locator('button.search-item__cta');
 
   // LOCATORS: Links do rodapé
+  readonly phoneLocator = this.page.locator('(xpath://span[@title="Call Our Team"])[1]');
   readonly footerFranceLink: Locator = this.page.locator('footer a[href*="/france"]').first();
   readonly footerSkiChaletsLink: Locator = this.page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
+
 
   // Construtor da página
   constructor(page: Page) {
@@ -373,6 +375,48 @@ export class HomePage extends HelperBase {
     } catch {
       return '';
     }
+  }
+
+// clickMenu: clica em menu principal e opcionalmente em submenu (específico da estrutura HTML do site)
+  async clickMenu(menuName: string, subMenuName?: string): Promise<void> {
+    console.log(`🔍 Iniciando processo para clicar no menu: "${menuName}"${subMenuName ? ` e submenu: "${subMenuName}"` : ''}`);
+
+    console.log(`➡️ Localizando menu principal com texto: "${menuName}"`);
+    const menuButton = this.page.locator(`li.menu-list__item > a.menu-list__item-link:has-text("${menuName}")`);
+
+    const menuCount = await menuButton.count();
+    console.log(`📊 Found ${menuCount} elements for menu "${menuName}"`);
+    if (menuCount === 0) {
+      console.error(`❌ Menu "${menuName}" not found.`);
+      return;
+    }
+
+    if (!subMenuName) {
+      console.log(`✅ Nenhum submenu informado. Clicando diretamente no menu "${menuName}"`);
+      await menuButton.click();
+      console.log(`✓ Clicou no menu: ${menuName}`);
+    } else {
+      console.log(`➡️ Submenu informado: "${subMenuName}". Preparando para abrir submenu...`);
+      await menuButton.hover();
+      console.log(`⏳ Waiting 500ms to ensure submenu loads`);
+      await this.page.waitForTimeout(500);
+
+      console.log(`➡️ Localizando submenu com texto: "${subMenuName}"`);
+      const subMenuLink = this.page.locator(`.submenu-list__block-item a:has-text("${subMenuName}")`);
+
+      const subMenuCount = await subMenuLink.count();
+      console.log(`📊 Found ${subMenuCount} elements for submenu "${subMenuName}"`);
+      if (subMenuCount === 0) {
+        console.error(`❌ Submenu "${subMenuName}" not found inside "${menuName}".`);
+        return;
+      }
+
+      console.log(`✅ Submenu encontrado. Clicando no submenu "${subMenuName}"`);
+      await subMenuLink.click();
+      console.log(`✓ Clicou no submenu: ${subMenuName} dentro do menu: ${menuName}`);
+    }
+
+    console.log(`🏁 Processo concluído para menu "${menuName}"${subMenuName ? ` e submenu "${subMenuName}"` : ''}`);
   }
 
 }

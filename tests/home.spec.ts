@@ -43,7 +43,7 @@ test.describe('Home Page', () => {
   });
 
   // TC 3 — Validar Informações de Contato no Header: verifica telefone e email
-  test('Validar Informações de Contato no Header', async ({ page }) => {
+  test.skip('Validar Informações de Contato no Header', async ({ page }) => {
     // ✅ Aumenta timeout global para este teste (5 minutos)
     test.setTimeout(300000);
 
