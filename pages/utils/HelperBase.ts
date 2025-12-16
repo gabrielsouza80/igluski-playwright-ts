@@ -34,6 +34,15 @@ export class HelperBase {
     await locator.click({ timeout }).catch(() => null);
   }
 
+  async waitSpinnerToDisappear(timeout = 20000): Promise<void> {
+    const spinner = this.page.locator('.spinner.hide');
+    try {
+      await spinner.waitFor({ state: 'hidden', timeout });
+    } catch (e) {
+      console.log('Spinner did not disappear within the timeout period.');
+    }
+  }
+
   // Try closing the cookie banner using different (site-specific) selectors.
   async acceptCookies() {
     try {

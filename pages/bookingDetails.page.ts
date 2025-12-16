@@ -6,7 +6,7 @@ export class BookingDetailsPage extends HelperBase {
 
   readonly termsCheckbox: Locator = this.page.locator('#sob-terms-conditions');
   readonly bookNowBtn: Locator = this.page.locator('(//button[@data-location-attribute="/book/createbooking"][contains(text(),"Book Now")])[2]');
-  readonly errataCheckbox: Locator = this.page.locator('#sob-errata');
+  readonly errataCheckbox: Locator = this.page.locator('input#sob-errata');
 
 
   async fillGuestDetails(firstName: string, lastName: string, email: string, phone: string): Promise<void> {
@@ -28,7 +28,7 @@ export class BookingDetailsPage extends HelperBase {
     await this.termsCheckbox.check();
   }
 
-  async acceptErratas(): Promise<void> {
+  async acceptErratas(){
     await this.errataCheckbox.click();
     await this.errataCheckbox.check();
   }
