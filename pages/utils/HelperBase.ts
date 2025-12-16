@@ -118,9 +118,9 @@ export class HelperBase {
     });
   }
 
-/**
-* Scroll to the top of the page
-*/
+  /**
+  * Scroll to the top of the page
+  */
   async scrollToTop(): Promise<void> {
     await this.page.evaluate(() => {
       window.scrollTo(0, 0);

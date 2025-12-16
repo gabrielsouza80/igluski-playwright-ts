@@ -54,7 +54,7 @@ export class HomePage extends HelperBase {
     await this.page.goto('/', { waitUntil: 'domcontentloaded' });
     await this.page.waitForTimeout(1500);
     await this.acceptCookies();
- 
+
   }
 
   async searchForCountry(text: string) {
@@ -119,135 +119,135 @@ export class HomePage extends HelperBase {
   }
 
   // VALIDATIONS: Validates main menus and submenus, titles, and duplicates.
-async validateMenuAndSubMenuNavigation(): Promise<void> {
-  const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
+  async validateMenuAndSubMenuNavigation(): Promise<void> {
+    const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
 
-  const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
-    const normalize = (txt: string) =>
-      txt.toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9\s]/gi, " ")
-        .trim();
+    const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
+      const normalize = (txt: string) =>
+        txt.toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9\s]/gi, " ")
+          .trim();
 
-    const normalizedLabel = normalize(label);
+      const normalizedLabel = normalize(label);
 
-    try {
-      const h1TextRaw = await page.locator("h1").first().innerText();
-      const h1Text = normalize(h1TextRaw);
-      const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
-      const anyWordFound = labelWords.some(w => h1Text.includes(w));
+      try {
+        const h1TextRaw = await page.locator("h1").first().innerText();
+        const h1Text = normalize(h1TextRaw);
+        const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
+        const anyWordFound = labelWords.some(w => h1Text.includes(w));
 
-      if (anyWordFound) {
-        console.log(`✓ Valid title for "${label}" → "${h1TextRaw}"`);
-        return true;
-      }
-    } catch { }
-
-    console.warn(`⚠ No match found in <h1> for: "${label}"`);
-    return false;
-  };
-
-  const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
-    return items.map((li) => {
-      const mainLink = li.querySelector("a");
-      const mainHref = mainLink ? mainLink.getAttribute("href") : null;
-      const mainLabel = mainLink ? (mainLink.textContent?.trim() || "") : (li.textContent?.trim() || "");
-      const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
-      const sublinks = subAnchors.map((a) => ({
-        label: a.textContent?.trim() || "",
-        href: a.getAttribute("href")
-      }));
-      return { mainLabel, mainHref, sublinks };
-    });
-  });
-
-  console.log(`🌐 Validating ${menusSnapshot.length} main menus`);
-
-  for (const menu of menusSnapshot) {
-    const menuLabel = menu.mainLabel || "menu";
-    const menuHref = this.actions.extractFullUrlFromString(menu.mainHref);
-
-    console.log(`\n🌐 Validating menu: "${menuLabel}"`);
-
-    if (!menuHref) {
-      console.warn(`⚠ Menu "${menuLabel}" has no valid URL. Skipping.`);
-      continue;
-    }
-
-    let menuPage: Page | null = null;
-
-    try {
-      menuPage = await this.page.context().newPage();
-      await menuPage.goto(menuHref, { waitUntil: "domcontentloaded", timeout: 120000 });
-
-      // ✅ Special case: validate whether the "Search" menu opens the search field
-      if (/search/i.test(menuLabel)) {
-        try {
-          await this.resortsSearchInput.waitFor({ state: "visible", timeout: 2000 });
-          console.log(`✓ Search menu validated: campo de busca visível`);
-        } catch {
-          console.warn(`⚠ Search menu não abriu o campo de busca`);
+        if (anyWordFound) {
+          console.log(`✓ Valid title for "${label}" → "${h1TextRaw}"`);
+          return true;
         }
-      } else {
-        await validateTitleContains(menuPage, menuLabel);
-      }
+      } catch { }
 
-      const sublinks = menu.sublinks || [];
-      console.log(`📁 Menu "${menuLabel}" → Found ${sublinks.length} sublinks`);
+      console.warn(`⚠ No match found in <h1> for: "${label}"`);
+      return false;
+    };
 
-      if (sublinks.length === 0) {
-        await menuPage.close();
+    const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
+      return items.map((li) => {
+        const mainLink = li.querySelector("a");
+        const mainHref = mainLink ? mainLink.getAttribute("href") : null;
+        const mainLabel = mainLink ? (mainLink.textContent?.trim() || "") : (li.textContent?.trim() || "");
+        const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
+        const sublinks = subAnchors.map((a) => ({
+          label: a.textContent?.trim() || "",
+          href: a.getAttribute("href")
+        }));
+        return { mainLabel, mainHref, sublinks };
+      });
+    });
+
+    console.log(`🌐 Validating ${menusSnapshot.length} main menus`);
+
+    for (const menu of menusSnapshot) {
+      const menuLabel = menu.mainLabel || "menu";
+      const menuHref = this.actions.extractFullUrlFromString(menu.mainHref);
+
+      console.log(`\n🌐 Validating menu: "${menuLabel}"`);
+
+      if (!menuHref) {
+        console.warn(`⚠ Menu "${menuLabel}" has no valid URL. Skipping.`);
         continue;
       }
 
-      const allSublinks: Array<{ label: string; href: string }> = [];
-      const seen = new Map<string, string>();
+      let menuPage: Page | null = null;
 
-      for (const s of sublinks) {
-        const full = this.actions.extractFullUrlFromString(s.href);
-        if (!full) continue;
+      try {
+        menuPage = await this.page.context().newPage();
+        await menuPage.goto(menuHref, { waitUntil: "domcontentloaded", timeout: 120000 });
 
-        if (seen.has(full)) {
-          const duplicateWith = seen.get(full)!;
-          console.warn(`⚠ Duplicate found → "${s.label}" duplicate with "${duplicateWith}" (URL: ${full})`);
-          if (!duplicatesSummary[menuLabel]) duplicatesSummary[menuLabel] = [];
-          duplicatesSummary[menuLabel].push({ label: s.label, duplicateWith, url: full });
+        // ✅ Special case: validate whether the "Search" menu opens the search field
+        if (/search/i.test(menuLabel)) {
+          try {
+            await this.resortsSearchInput.waitFor({ state: "visible", timeout: 2000 });
+            console.log(`✓ Search menu validated: campo de busca visível`);
+          } catch {
+            console.warn(`⚠ Search menu não abriu o campo de busca`);
+          }
         } else {
-          seen.set(full, s.label);
+          await validateTitleContains(menuPage, menuLabel);
         }
 
-        allSublinks.push({ label: s.label || full, href: full });
-      }
+        const sublinks = menu.sublinks || [];
+        console.log(`📁 Menu "${menuLabel}" → Found ${sublinks.length} sublinks`);
 
-      const subPage = await this.page.context().newPage();
-      for (const s of allSublinks) {
-        try {
-          await subPage.goto(s.href, { waitUntil: "domcontentloaded", timeout: 90000 });
-          await validateTitleContains(subPage, s.label);
-          console.log(`      ✓ Submenu validated: ${s.label}`);
-        } catch (err: any) {
-          console.error(`❌ Submenu "${s.label}" failed → ${err?.message || err}`);
+        if (sublinks.length === 0) {
+          await menuPage.close();
+          continue;
         }
-      }
-      await subPage.close().catch(() => null);
-    } finally {
-      if (menuPage) await menuPage.close().catch(() => null);
-    }
-  }
 
-  console.log(`\n📊 DUPLICATES SUMMARY:`);
-  if (Object.keys(duplicatesSummary).length === 0) {
-    console.log(`✅ No duplicates found.`);
-  } else {
-    for (const [menu, duplicates] of Object.entries(duplicatesSummary)) {
-      console.log(`\nMenu: ${menu}`);
-      duplicates.forEach(d => {
-        console.log(`  - "${d.label}" duplicate with "${d.duplicateWith}" (URL: ${d.url})`);
-      });
+        const allSublinks: Array<{ label: string; href: string }> = [];
+        const seen = new Map<string, string>();
+
+        for (const s of sublinks) {
+          const full = this.actions.extractFullUrlFromString(s.href);
+          if (!full) continue;
+
+          if (seen.has(full)) {
+            const duplicateWith = seen.get(full)!;
+            console.warn(`⚠ Duplicate found → "${s.label}" duplicate with "${duplicateWith}" (URL: ${full})`);
+            if (!duplicatesSummary[menuLabel]) duplicatesSummary[menuLabel] = [];
+            duplicatesSummary[menuLabel].push({ label: s.label, duplicateWith, url: full });
+          } else {
+            seen.set(full, s.label);
+          }
+
+          allSublinks.push({ label: s.label || full, href: full });
+        }
+
+        const subPage = await this.page.context().newPage();
+        for (const s of allSublinks) {
+          try {
+            await subPage.goto(s.href, { waitUntil: "domcontentloaded", timeout: 90000 });
+            await validateTitleContains(subPage, s.label);
+            console.log(`      ✓ Submenu validated: ${s.label}`);
+          } catch (err: any) {
+            console.error(`❌ Submenu "${s.label}" failed → ${err?.message || err}`);
+          }
+        }
+        await subPage.close().catch(() => null);
+      } finally {
+        if (menuPage) await menuPage.close().catch(() => null);
+      }
+    }
+
+    console.log(`\n📊 DUPLICATES SUMMARY:`);
+    if (Object.keys(duplicatesSummary).length === 0) {
+      console.log(`✅ No duplicates found.`);
+    } else {
+      for (const [menu, duplicates] of Object.entries(duplicatesSummary)) {
+        console.log(`\nMenu: ${menu}`);
+        duplicates.forEach(d => {
+          console.log(`  - "${d.label}" duplicate with "${d.duplicateWith}" (URL: ${d.url})`);
+        });
+      }
     }
   }
-}
 
 
 
@@ -349,17 +349,17 @@ async validateMenuAndSubMenuNavigation(): Promise<void> {
     }
   }
 
-async validateCarouselHome() {
-  await expect(this.tituloHomePage).toBeVisible();
+  async validateCarouselHome() {
+    await expect(this.tituloHomePage).toBeVisible();
 
-  const txtTituloHomePage = await this.tituloHomePage.innerText();
-  expect(txtTituloHomePage).toContain('Welcome To The Home Of Ski');  //criar parametro
-  console.log(`Homepage Title Text: ${txtTituloHomePage}`);
-
-  
+    const txtTituloHomePage = await this.tituloHomePage.innerText();
+    expect(txtTituloHomePage).toContain('Welcome To The Home Of Ski');  //criar parametro
+    console.log(`Homepage Title Text: ${txtTituloHomePage}`);
 
 
-}
+
+
+  }
 
 
   // EXTRAS: Performs a simple search by resort category and waits for results.
