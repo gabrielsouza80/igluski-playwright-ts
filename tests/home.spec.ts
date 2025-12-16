@@ -59,7 +59,7 @@ test.describe('Home Page', () => {
 //TC 16 — Validate carousel of promotions and country banners on the homepage"
   test.skip('Validar Carrossel de Banners (Países)"', async ({ page }) => {
     const pm = new PageManager(page);
-    await pm.onHomePage().validateRecentlyViewedButton();
+    await pm.onHomePage().validateCarouselHome();
   });
 
 //TC 20 — Validate Footer Links

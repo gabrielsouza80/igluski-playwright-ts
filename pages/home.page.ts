@@ -22,6 +22,9 @@ export class HomePage extends HelperBase {
   readonly btnRecentlyViewedHeader: Locator = this.page.locator('//a[contains(@class, "top-bar__info-link")]');
   readonly resultRecentlyViewedHeader: Locator = this.page.locator('//div[contains(@class, "top-bar__rv-no-result")]');
 
+  // LOCATORS: Main content of the homepage
+  readonly tituloHomePage: Locator = this.page.locator('//h1[@class="h1-title"]');
+
   // Locators: Cookie Model
   readonly acceptCookiesButton: Locator = this.page.locator('button:has-text("Accept Cookies & Close")').first();
   readonly cookiesBanner: Locator = this.page.locator('//div[@aria-label="Cookie banner"]');
@@ -346,7 +349,17 @@ async validateMenuAndSubMenuNavigation(): Promise<void> {
     }
   }
 
+async validateCarouselHome() {
+  await expect(this.tituloHomePage).toBeVisible();
 
+  const txtTituloHomePage = await this.tituloHomePage.innerText();
+  expect(txtTituloHomePage).toContain('Welcome To The Home Of Ski');  //criar parametro
+  console.log(`Homepage Title Text: ${txtTituloHomePage}`);
+
+  
+
+
+}
 
 
   // EXTRAS: Performs a simple search by resort category and waits for results.
