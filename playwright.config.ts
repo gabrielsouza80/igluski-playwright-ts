@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: './tests',
 
   /* Set timeout */
-  timeout: 60_000,
+  timeout: 90_000,
 
 
   // Number of attempts in case of failure.
@@ -28,7 +28,7 @@ export default defineConfig({
     baseURL: 'https://www.igluski.com/',
 
     // Specific timeouts
-    actionTimeout: 10_000,
+    actionTimeout: 90_000,
     navigationTimeout: 90_000,
   },
 

@@ -58,6 +58,8 @@ test.describe('Home Page', () => {
 
     const travelPage = new TravelOptionsPage(page);
 
+    await travelPage.isTravelPageLoaded();
+
     await travelPage.continueToExtras();
 
     console.log('✓ Clicked Travel - Continue to Extras page');

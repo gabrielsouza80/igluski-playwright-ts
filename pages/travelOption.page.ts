@@ -6,10 +6,10 @@ export class TravelOptionsPage   extends HelperBase {
 
   readonly logoLink: Locator = this.page.locator('a[href="/"]').filter({ has: this.page.locator('img[alt*="Iglu Ski"]') }).first();
 
-  readonly flightsSection: Locator = this.page.locator('text=FLIGHTS').first();
+  readonly flightsSection: Locator = this.page.locator('//h1[contains(@class,"sob-page-header sob-h1-title")][text()="Travel Details"]')
   readonly defaultFlightOption: Locator = this.page.locator('text=/Flight Option \\(Default\\)').first();
-  readonly flightOption1: Locator = this.page.locator('text=/Flight Option 1/').first();
-  readonly continueToExtrasBtn: Locator = this.page.getByRole('button', { name: /Continue to Extras/i });
+  readonly flightOption1: Locator = this.page.locator('text=/Flight Option 1/').first(); 
+  readonly continueToExtrasBtn: Locator = this.page.locator('.chalet-details .sob-step-navigation.hidden-sm button[data-button-type="goToExtrasBtn"]');
 
   async selectDefaultFlight(): Promise<void> {
     // Flight Option (Default) já vem selecionada
@@ -22,11 +22,13 @@ export class TravelOptionsPage   extends HelperBase {
     await selectBtn.click({ force: true });
   }
 
-  async continueToExtras(): Promise<void> {
-    await this.continueToExtrasBtn.last().click();
+  async continueToExtras(){
+  // await this.page.waitForTimeout(8000);
+    await this.continueToExtrasBtn.click();
   }
-
+  
   async isTravelPageLoaded(): Promise<boolean> {
-    return await this.flightsSection.isVisible({ timeout: 5000 }).catch(() => false);
+    await this.waitSpinnerToDisappear();
+    return await this.flightsSection.isVisible().catch(() => false);
   }
 }
