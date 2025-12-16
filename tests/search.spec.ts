@@ -10,12 +10,9 @@ import { TravelOptionsPage } from '../pages/travelOption.page';
 import { SummaryPage } from '../pages/summary.page';
 
 test.describe('Home Page', () => {
-  // ===========================
-  // Before teste: Navegar e aceitar cookies
-  // ===========================
   test.beforeEach(async ({ page }) => {
     const home = new HomePage(page);
-    await home.navigate(); // Isso também vai aceitar os cookies
+    await home.navigateAndAcceptCookies(); 
   });
 
 
@@ -23,7 +20,6 @@ test.describe('Home Page', () => {
     const home = new HomePage(page);
     const search = new SearchPage(page);
     await home.searchForCountry('France');
-    await home.clickOnSearchButton()
     const resultsText = await search.hasSearchResults();
     expect(resultsText).toBeTruthy();
   });
