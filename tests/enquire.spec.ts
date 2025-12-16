@@ -6,9 +6,9 @@ import { EnquirePage } from '../pages/enquire.page';
 test.describe('Enquire Page', () => {
   test.beforeEach(async ({ page }) => {
     const homePage = new HomePage(page);
-    await homePage.navigate();    
+    await homePage.navigateAndAcceptCookies();    
     const enquirePage = new EnquirePage(page);
-    await enquirePage.navigate(); 
+    await enquirePage.navigateAndAcceptCookies(); 
   });
 
 

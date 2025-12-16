@@ -29,7 +29,7 @@ export class HomePage extends HelperBase {
   readonly propertiesSearchInput: Locator = this.page.locator('input[aria-label*="Search properties"]');
   readonly countriesSearchInput: Locator = this.page.locator('input[aria-label*="Search countries"], #where');
   readonly resortsSearchInput: Locator = this.page.locator('input[aria-label*="Search resorts"]');
-  readonly searchButton: Locator = this.page.locator('button.search-item__cta');
+  readonly searchButton: Locator = this.page.locator('button.search-item__cta , .search-bar__form-submit');
 
   // LOCATORS: Links do rodapé
   readonly footerFranceLink: Locator = this.page.locator('footer a[href*="/france"]').first();
@@ -44,71 +44,28 @@ export class HomePage extends HelperBase {
   // Utilitário privado: toSlug usado internamente pela HomePage
   // NAVEGAÇÃO E COOKIES: Navega para a home e aceita cookies
 
-  async navigate(): Promise<void> {
+  async navigateAndAcceptCookies(): Promise<void> {
     await this.page.goto('/', { waitUntil: 'domcontentloaded' });
-    // small pause for dynamic elements
     await this.page.waitForTimeout(1500);
     await this.acceptCookies();
-    // Garantir que o campo de busca de resorts esteja visível.
-    // Se não estiver, tenta abrir painéis/seletores que geralmente exibem o campo.
-    try {
-      await this.resortsSearchInput.waitFor({ state: 'visible', timeout: 2000 });
-      return;
-    } catch {
-      const toggles = [
-        'button:has-text("Search")',
-        'a:has-text("Search")',
-        'button[aria-label*="Search"]',
-        '.search-toggle',
-        '.site-search-toggle',
-        '.search-open'
-      ];
+ 
+  }
 
-      for (const sel of toggles) {
-        try {
-          const t = this.page.locator(sel).first();
-          if (await t.count() > 0 && await t.isVisible({ timeout: 1000 }).catch(() => false)) {
-            await t.click();
-            await this.page.waitForTimeout(300);
-            try {
-              await this.resortsSearchInput.waitFor({ state: 'visible', timeout: 2000 });
-              break;
-            } catch {
-              // tenta próximo toggle
-            }
-          }
-        } catch {
-          // ignora erros e continua
-        }
+  async searchForCountry(text: string) {
+    try {
+      await this.countriesSearchInput.fill(text, { timeout: 5000 });
+      await this.page.waitForTimeout(1000);
+    } catch (error) {
+      console.warn('searchForCountry: fill failed, will still try to click search button', error);
+    } finally {
+      try {
+        await this.searchButton.click();
+      } catch (clickErr) {
+        console.error('searchForCountry: search button click failed', clickErr);
       }
     }
-    // Remove overlays persistentes que interceptam cliques
-
-    try {
-      await this.page.evaluate(() => {
-        try {
-          const ids = ['onetrust-consent-sdk', 'onetrust-pc-wrapper', 'onetrust-banner-sdk'];
-          ids.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.remove();
-          });
-          document.querySelectorAll('.onetrust-pc-dark-filter, .onetrust-pc-sdk, #onetrust-pc').forEach(e => e.remove());
-        } catch { /* ignore */ }
-      });
-      await this.page.waitForTimeout(200);
-    } catch {
-      // ignore erros
-    }
   }
 
-  // Ação: busca por país preenchendo input e enviando Enter
-  async searchForCountry(text: string) {
-    await this.countriesSearchInput.fill(text, { timeout: 5000 });
-    await this.page.waitForTimeout(1000);
-    await this.countriesSearchInput.press('Enter');
-  }
-
-  // Ação: busca por propriedade preenchendo input e enviando Enter
 
   async searchForProperty(text: string) {
     await this.propertiesSearchInput.fill(text, { timeout: 5000 });
