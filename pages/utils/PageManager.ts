@@ -1,5 +1,5 @@
-// PageManager: centraliza a criação e acesso às Page Objects e helpers.
-// Use para obter instâncias compartilhadas de páginas (ex: HomePage) sem instanciá-las no teste.
+// PageManager: centralizes the creation and access to Page Objects and helpers.
+// Use to obtain shared instances of pages (e.g., HomePage) without instantiating them in the test.
 import { Page } from '@playwright/test';
 import { HomePage } from '../../pages/home.page';
 import { SearchPage } from '../../pages/search.page';

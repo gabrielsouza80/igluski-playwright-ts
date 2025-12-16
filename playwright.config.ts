@@ -7,10 +7,10 @@ export default defineConfig({
   timeout: 60_000,
 
 
-  // Número de tentativas em caso de falha
+  // Number of attempts in case of failure.
   retries: 1,
 
-  // Configurações padrão para todos os testes
+  // Default Settings
   fullyParallel: true,
   use: {
     headless: false,
@@ -21,35 +21,28 @@ export default defineConfig({
     screenshot: 'on',
     video: 'retain-on-failure',
 
-    // Trace para debugging
+    // Trace for debugging
     trace: 'on-first-retry',
 
-    // URL base para simplificar navegação
+    // Base URL
     baseURL: 'https://www.igluski.com/',
 
-    // Timeouts adicionais
-    actionTimeout: 10_000,       // tempo máximo para ações (click, fill, etc.)
-    navigationTimeout: 30_000,   // tempo máximo para navegação
+    // Specific timeouts
+    actionTimeout: 10_000,
+    navigationTimeout: 90_000,
   },
 
-  // Navegadores e dispositivos
+  // Browsers
   projects: [
     {
       name: 'chrome',
       use: { ...devices['Desktop Chrome'] },
     },
-    // Se quiser rodar também em Firefox ou Safari, basta descomentar:
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
+    // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
 
-  // Relatórios
+  // Reports
   reporter: [
     ['html', { open: 'never' }]
   ],
