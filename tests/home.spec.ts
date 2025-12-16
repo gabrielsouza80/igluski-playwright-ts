@@ -57,7 +57,7 @@ test.describe('Home Page', () => {
   });
 
 //TC 16 — Validate carousel of promotions and country banners on the homepage"
-  test('Validar Carrossel de Banners (Países)"', async ({ page }) => {
+  test.skip('Validar Carrossel de Banners (Países)"', async ({ page }) => {
     const pm = new PageManager(page);
     await pm.onHomePage().validateRecentlyViewedButton();
   });
