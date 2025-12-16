@@ -34,7 +34,7 @@ export class EnquirePage extends HelperBase {
   // Submit button
   readonly enquireButton: Locator = this.page.locator('#ab-track-enquire');
 
-  async navigate(): Promise<void> {
+  async navigateAndAcceptCookies(): Promise<void> {
     await this.page.goto('/enquire', { waitUntil: 'load' });
       try {
         const timeout = (config as any)?.timeout ?? 5000;

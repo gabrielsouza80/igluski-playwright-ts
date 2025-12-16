@@ -10,7 +10,7 @@ test.describe('Home Page', () => {
   // BEFORE EACH: Executed before each test — browse and accept cookies
   test.beforeEach(async ({ page }) => {
     const pm = new PageManager(page);
-    await pm.onHomePage().navigate(); // Navega e aceita cookies via PageManager
+    await pm.onHomePage().navigateAndAcceptCookies(); // Navega e aceita cookies via PageManager
   });
 
 

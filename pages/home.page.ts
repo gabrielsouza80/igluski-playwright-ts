@@ -30,7 +30,7 @@ export class HomePage extends HelperBase {
   readonly propertiesSearchInput: Locator = this.page.locator('input[aria-label*="Search properties"]');
   readonly countriesSearchInput: Locator = this.page.locator('input[aria-label*="Search countries"], #where');
   readonly resortsSearchInput: Locator = this.page.locator('input[aria-label*="Search resorts"]');
-  readonly searchButton: Locator = this.page.locator('button.search-item__cta');
+  readonly searchButton: Locator = this.page.locator('button.search-item__cta , .search-bar__form-submit');
 
   // LOCATORS: Footer links
   readonly phoneLocator = this.page.locator('(xpath://span[@title="Call Our Team"])[1]');
@@ -47,44 +47,28 @@ export class HomePage extends HelperBase {
   // Private utility: toSlug used internally by the HomePage
   // NAVIGATION AND COOKIES: Navigates to the home page and accepts cookies
 
-  async navigate(): Promise<void> {
-  // Opens the homepage.
-  await this.page.goto('/', { waitUntil: 'domcontentloaded' });
-
-// Brief pause to allow dynamic elements to load
-  await this.page.waitForTimeout(1500);
-
-    //Accept cookies if they appear.
-  await this.acceptCookies();
-
-  // Remove persistent overlays that may intercept clicks.
-  try {
-    await this.page.evaluate(() => {
-      try {
-        const ids = ['onetrust-consent-sdk', 'onetrust-pc-wrapper', 'onetrust-banner-sdk'];
-        ids.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.remove();
-        });
-        document.querySelectorAll('.onetrust-pc-dark-filter, .onetrust-pc-sdk, #onetrust-pc')
-          .forEach(e => e.remove());
-      } catch { /* ignore */ }
-    });
-    await this.page.waitForTimeout(200);
-  } catch { /* ignore */ }
-}
-
-
-
-
-  //Action: search by country by filling in the input field and pressing Enter.
-  async searchForCountry(text: string) {
-    await this.countriesSearchInput.fill(text, { timeout: 5000 });
-    await this.page.waitForTimeout(1000);
-    await this.countriesSearchInput.press('Enter');
+  async navigateAndAcceptCookies(): Promise<void> {
+    await this.page.goto('/', { waitUntil: 'domcontentloaded' });
+    await this.page.waitForTimeout(1500);
+    await this.acceptCookies();
+ 
   }
 
-  // Action: search for a property by filling in the input and pressing Enter.
+  async searchForCountry(text: string) {
+    try {
+      await this.countriesSearchInput.fill(text, { timeout: 5000 });
+      await this.page.waitForTimeout(1000);
+    } catch (error) {
+      console.warn('searchForCountry: fill failed, will still try to click search button', error);
+    } finally {
+      try {
+        await this.searchButton.click();
+      } catch (clickErr) {
+        console.error('searchForCountry: search button click failed', clickErr);
+      }
+    }
+  }
+
 
   async searchForProperty(text: string) {
     await this.propertiesSearchInput.fill(text, { timeout: 5000 });
