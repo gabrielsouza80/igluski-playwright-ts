@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { PageManager } from '../pages/utils/PageManager';
 
 // ================================================================
@@ -11,6 +11,7 @@ test.describe('Home Page', () => {
   test.beforeEach(async ({ page }) => {
     const pm = new PageManager(page);
     await pm.onHomePage().navigateAndAcceptCookies(); // Navega e aceita cookies via PageManager
+    //await pm.onHomePage().closeAdIfVisible();
   });
 
 
@@ -57,7 +58,7 @@ test.describe('Home Page', () => {
   });
 
   //TC 16 — Validate carousel of promotions and country banners on the homepage"
-  test.skip('Validar Carrossel de Banners (Países)"', async ({ page }) => {
+  test('Validar Carrossel de Banners (Países)"', async ({ page }) => {
     const pm = new PageManager(page);
     await pm.onHomePage().validateCarouselHome();
   });

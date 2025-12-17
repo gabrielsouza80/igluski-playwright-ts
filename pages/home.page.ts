@@ -24,6 +24,8 @@ export class HomePage extends HelperBase {
 
   // LOCATORS: Main content of the homepage
   readonly tituloHomePage: Locator = this.page.locator('//h1[@class="h1-title"]');
+  readonly carouselhome: Locator = this.page.locator('*[data-ski-widget="content-carousel"]');
+  readonly closeAdButton: Locator = this.page.locator('sleeknote-p72idi-bottom >>> div[data-sn-type="close"] >>> button');
 
   // Locators: Cookie Model
   readonly acceptCookiesButton: Locator = this.page.locator('button:has-text("Accept Cookies & Close")').first();
@@ -56,6 +58,17 @@ export class HomePage extends HelperBase {
     await this.acceptCookies();
 
   }
+
+  async closeAdIfVisible() {
+    if (await this.closeAdButton.isVisible()) {
+      await this.closeAdButton.click();
+      console.log('Anúncio fechado');
+    } else {
+      console.log('Botão de fechar não encontrado');
+    }
+  }
+
+
 
   async searchForCountry(text: string) {
     try {
@@ -349,18 +362,109 @@ export class HomePage extends HelperBase {
     }
   }
 
-  async validateCarouselHome() {
-    await expect(this.tituloHomePage).toBeVisible();
+  // Função que imprime no console todos os slides e indicadores do carrossel,
+  // mostrando quais estão ativos no momento.
+  async logCarouselSlides() {
+    // Localiza todos os elementos de slide dentro do carrossel
+    const slides = await this.carouselhome.locator('.content-carousel__inner__item').all();
+    console.log(`Total de slides encontrados: ${slides.length}`);
 
-    const txtTituloHomePage = await this.tituloHomePage.innerText();
-    expect(txtTituloHomePage).toContain('Welcome To The Home Of Ski');  //criar parametro
-    console.log(`Homepage Title Text: ${txtTituloHomePage}`);
+    // Percorre cada slide encontrado
+    for (let i = 0; i < slides.length; i++) {
+      const slide = slides[i];
 
+      // Pega o link (href) associado ao slide
+      const href = await slide.locator('a').getAttribute('href');
 
+      // Pega todas as classes aplicadas ao slide
+      const className = await slide.getAttribute('class');
 
+      // Verifica se o slide contém a classe que indica que está ativo
+      const isActive = className?.includes('content-carousel__inner__item--active');
 
+      // Imprime no console o índice, o link e as classes do slide
+      // Se estiver ativo, adiciona a tag [ACTIVE] para destacar
+      console.log(`Slide ${i}: href=${href}, classes=${className}${isActive ? ' [ACTIVE]' : ''}`);
+    }
+
+    // Localiza todos os indicadores (bolinhas de navegação) do carrossel
+    const indicators = await this.carouselhome.locator('.content-carousel__indicators__item').all();
+
+    // Percorre cada indicador
+    for (let i = 0; i < indicators.length; i++) {
+      const indicator = indicators[i];
+
+      // Pega as classes aplicadas ao indicador
+      const className = await indicator.getAttribute('class');
+
+      // Verifica se o indicador contém a classe que indica que está ativo
+      const isActive = className?.includes('content-carousel__indicators__item--active');
+
+      // Imprime no console o índice e as classes do indicador
+      // Se estiver ativo, adiciona a tag [ACTIVE] para destacar
+      console.log(`Indicator ${i}: classes=${className}${isActive ? ' [ACTIVE]' : ''}`);
+    }
   }
 
+  async validateCarouselHome() {
+    // 1. Valida se o título da homepage está visível
+    await expect(this.tituloHomePage).toBeVisible();
+
+    // 2. Lê o texto do título e confirma que contém a frase esperada
+    const titulo = await this.tituloHomePage.innerText();
+    expect(titulo).toContain('Welcome To The Home Of Ski');
+    console.log(`Homepage Title: ${titulo}`);
+
+    // 3. Espera que o carrossel esteja visível na página
+    await expect(this.carouselhome).toBeVisible();
+
+    // 4. Localiza o slide que está ativo inicialmente
+    let activeSlide = this.carouselhome.locator('.content-carousel__inner__item--active').first();
+
+    // 5. Obtém o link (href) do slide ativo inicial
+    const initialHref = await activeSlide.locator('a').getAttribute('href') ?? '';
+    console.log(`Slide inicial: ${initialHref}`);
+
+    // 6. Clica no botão NEXT (avançar carrossel)
+    await this.carouselhome.locator('.content-carousel__control--right').click({ force: true });
+
+    // 7. Espera até que o slide ativo mude para um diferente do inicial
+    await this.page.waitForFunction(
+      (expectedHref) => {
+        const active = document.querySelector('.content-carousel__inner__item--active a');
+        return active && active.getAttribute('href') !== expectedHref;
+      },
+      initialHref // passa o href inicial como referência
+    );
+
+    // 8. Obtém o novo slide ativo após clicar NEXT
+    activeSlide = this.carouselhome.locator('.content-carousel__inner__item--active').first();
+    const nextHref = await activeSlide.locator('a').getAttribute('href') ?? '';
+    console.log(`Slide após NEXT: ${nextHref}`);
+
+    // 9. Confirma que o novo slide é diferente do inicial
+    expect(nextHref).not.toBe(initialHref);
+
+    // 10. Clica no botão PREVIOUS (voltar carrossel)
+    await this.carouselhome.locator('.content-carousel__control--left').click({ force: true });
+
+    // 11. Espera até que o slide ativo volte a ser o inicial
+    await this.page.waitForFunction(
+      (expectedHref) => {
+        const active = document.querySelector('.content-carousel__inner__item--active a');
+        return active && active.getAttribute('href') === expectedHref;
+      },
+      initialHref
+    );
+
+    // 12. Obtém o slide ativo após clicar PREVIOUS
+    activeSlide = this.carouselhome.locator('.content-carousel__inner__item--active').first();
+    const prevHref = await activeSlide.locator('a').getAttribute('href') ?? '';
+    console.log(`Slide após PREVIOUS: ${prevHref}`);
+
+    // 13. Confirma que voltou ao slide inicial
+    expect(prevHref).toBe(initialHref);
+  }
 
   // EXTRAS: Performs a simple search by resort category and waits for results.
 
