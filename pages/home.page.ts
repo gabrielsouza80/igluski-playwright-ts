@@ -28,8 +28,9 @@ export class HomePage extends HelperBase {
   readonly closeAdButton: Locator = this.page.locator('sleeknote-p72idi-bottom >>> div[data-sn-type="close"] >>> button');
 
   // Locators: Cookie Model
-  readonly acceptCookiesButton: Locator = this.page.locator('button:has-text("Accept Cookies & Close")').first();
-  readonly cookiesBanner: Locator = this.page.locator('//div[@aria-label="Cookie banner"]');
+  readonly acceptCookiesBtn: Locator = this.page.locator('#onetrust-accept-btn-handler').first();
+  readonly cookiesBanner: Locator = this.page.locator('#onetrust-banner-sdk');
+  readonly acceptCookiesBtnRecommended: Locator = this.page.locator('#accept-recommended-btn-handler');
 
   // LOCATORS: Search components
   readonly propertiesSearchInput: Locator = this.page.locator('input[aria-label*="Search properties"]');
@@ -56,34 +57,29 @@ export class HomePage extends HelperBase {
     // Navigate to the home page.
     await this.page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    // OneTrust banner locators
-    const btnAccept = this.page.locator('#onetrust-accept-btn-handler');
-    const btnAcceptRecommended = this.page.locator('#accept-recommended-btn-handler');
-    const banner = this.page.locator('#onetrust-banner-sdk');
-
-    // Please wait up to 3 seconds for the banner to appear.
+    // Please wait up to 3 seconds for the Banner to appear.
     try {
-      await banner.waitFor({ state: 'visible', timeout: 60000 });
-      console.log("Cookie banner detected");
+      await this.cookiesBanner.waitFor({ state: 'visible', timeout: 60000 });
+      console.log("Cookie Banner detected");
     } catch {
-      console.log("No cookie banner appeared within the time limit.");
-      return; // Exit the function if there is no banner.
+      console.log("No cookie Banner appeared within the time limit.");
+      return; // Exit the function if there is no Banner.
     }
 
     // It handles the different possible buttons.
-    if (await btnAccept.isVisible()) {
-      await btnAccept.click();
+    if (await this.acceptCookiesBtn.isVisible()) {
+      await this.acceptCookiesBtn.click();
       console.log("✅ Cookies accepted (default button)");
-    } else if (await btnAcceptRecommended.isVisible()) {
-      await btnAcceptRecommended.click();
+    } else if (await this.acceptCookiesBtnRecommended.isVisible()) {
+      await this.acceptCookiesBtnRecommended.click();
       console.log("✅ Cookies accepted (Allow all)");
     } else {
       console.log("ℹ️ No visible accept button");
     }
 
-    // Wait for the banner to disappear to ensure it doesn't block clicks.
-    await banner.waitFor({ state: 'hidden', timeout: 5000 });
-    console.log("✅ Cookie banner removed");
+    // Wait for the Banner to disappear to ensure it doesn't block clicks.
+    await this.cookiesBanner.waitFor({ state: 'hidden', timeout: 5000 });
+    console.log("✅ Cookie Banner removed");
   }
 
   async searchForCountry(text: string) {
@@ -148,9 +144,12 @@ export class HomePage extends HelperBase {
 
   // VALIDATIONS: Validates main menus and submenus, titles, and duplicates.
   async validateMenuAndSubMenuNavigation(): Promise<void> {
+    // Object to store duplicate submenu entries found during validation
     const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
 
+    // Helper function: checks if the <h1> title of a page contains words from the menu/submenu label
     const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
+      // Normalize text: lowercase, remove accents, remove special characters
       const normalize = (txt: string) =>
         txt.toLowerCase()
           .normalize("NFD")
@@ -161,9 +160,14 @@ export class HomePage extends HelperBase {
       const normalizedLabel = normalize(label);
 
       try {
+        // Get the first <h1> text from the page
         const h1TextRaw = await page.locator("h1").first().innerText();
         const h1Text = normalize(h1TextRaw);
+
+        // Split the label into words longer than 2 characters
         const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
+
+        // Check if any of those words are present in the <h1> text
         const anyWordFound = labelWords.some(w => h1Text.includes(w));
 
         if (anyWordFound) {
@@ -176,28 +180,34 @@ export class HomePage extends HelperBase {
       return false;
     };
 
+    // Take a snapshot of all main menus and their submenus from the DOM
     const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
       return items.map((li) => {
         const mainLink = li.querySelector("a");
         const mainHref = mainLink ? mainLink.getAttribute("href") : null;
         const mainLabel = mainLink ? (mainLink.textContent?.trim() || "") : (li.textContent?.trim() || "");
+
+        // Collect all submenu links inside this menu
         const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
         const sublinks = subAnchors.map((a) => ({
           label: a.textContent?.trim() || "",
           href: a.getAttribute("href")
         }));
+
         return { mainLabel, mainHref, sublinks };
       });
     });
 
     console.log(`🌐 Validating ${menusSnapshot.length} main menus`);
 
+    // Iterate through each main menu
     for (const menu of menusSnapshot) {
       const menuLabel = menu.mainLabel || "menu";
       const menuHref = this.actions.extractFullUrlFromString(menu.mainHref);
 
       console.log(`\n🌐 Validating menu: "${menuLabel}"`);
 
+      // Skip menus without a valid URL
       if (!menuHref) {
         console.warn(`⚠ Menu "${menuLabel}" has no valid URL. Skipping.`);
         continue;
@@ -206,29 +216,33 @@ export class HomePage extends HelperBase {
       let menuPage: Page | null = null;
 
       try {
+        // Open the menu link in a new page
         menuPage = await this.page.context().newPage();
         await menuPage.goto(menuHref, { waitUntil: "domcontentloaded", timeout: 120000 });
 
-        // ✅ Special case: validate whether the "Search" menu opens the search field
+        // Special case: if the menu is "Search", validate that the search field appears
         if (/search/i.test(menuLabel)) {
           try {
             await this.resortsSearchInput.waitFor({ state: "visible", timeout: 2000 });
-            console.log(`✓ Search menu validated: campo de busca visível`);
+            console.log(`✓ Search menu validated: search field visible`);
           } catch {
-            console.warn(`⚠ Search menu não abriu o campo de busca`);
+            console.warn(`⚠ Search menu did not open the search field`);
           }
         } else {
+          // Otherwise, validate that the page title matches the menu label
           await validateTitleContains(menuPage, menuLabel);
         }
 
         const sublinks = menu.sublinks || [];
         console.log(`📁 Menu "${menuLabel}" → Found ${sublinks.length} sublinks`);
 
+        // If no sublinks, close the page and continue
         if (sublinks.length === 0) {
           await menuPage.close();
           continue;
         }
 
+        // Prepare to check all sublinks and detect duplicates
         const allSublinks: Array<{ label: string; href: string }> = [];
         const seen = new Map<string, string>();
 
@@ -236,6 +250,7 @@ export class HomePage extends HelperBase {
           const full = this.actions.extractFullUrlFromString(s.href);
           if (!full) continue;
 
+          // Detect duplicates: if the same URL appears with different labels
           if (seen.has(full)) {
             const duplicateWith = seen.get(full)!;
             console.warn(`⚠ Duplicate found → "${s.label}" duplicate with "${duplicateWith}" (URL: ${full})`);
@@ -248,6 +263,7 @@ export class HomePage extends HelperBase {
           allSublinks.push({ label: s.label || full, href: full });
         }
 
+        // Open each submenu link in a new page and validate its title
         const subPage = await this.page.context().newPage();
         for (const s of allSublinks) {
           try {
@@ -260,10 +276,12 @@ export class HomePage extends HelperBase {
         }
         await subPage.close().catch(() => null);
       } finally {
+        // Ensure the menu page is closed even if an error occurs
         if (menuPage) await menuPage.close().catch(() => null);
       }
     }
 
+    // Print a summary of duplicate submenus found
     console.log(`\n📊 DUPLICATES SUMMARY:`);
     if (Object.keys(duplicatesSummary).length === 0) {
       console.log(`✅ No duplicates found.`);
@@ -278,98 +296,112 @@ export class HomePage extends HelperBase {
   }
 
   // VALIDATIONS: Validates all items in the footer.
-  async validateFooterItems(): Promise<void> {
-    const duplicatesSummary: Array<{ label: string; duplicateWith: string; url: string }> = [];
+async validateFooterItems(): Promise<void> {
+  // Array to store duplicate footer items found during validation
+  const duplicatesSummary: Array<{ label: string; duplicateWith: string; url: string }> = [];
 
-    const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
-      const normalize = (txt: string) =>
-        txt.toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-z0-9\s]/gi, " ")
-          .trim();
+  // Helper function: checks if the <h1> title of a page contains words from the footer item label
+  const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
+    // Normalize text: lowercase, remove accents, remove special characters
+    const normalize = (txt: string) =>
+      txt.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/gi, " ")
+        .trim();
 
-      const normalizedLabel = normalize(label);
+    const normalizedLabel = normalize(label);
 
-      try {
-        const h1TextRaw = await page.locator("h1").first().innerText();
-        const h1Text = normalize(h1TextRaw);
+    try {
+      // Get the first <h1> text from the page
+      const h1TextRaw = await page.locator("h1").first().innerText();
+      const h1Text = normalize(h1TextRaw);
 
-        const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
-        const anyWordFound = labelWords.some(w => h1Text.includes(w));
+      // Split the label into words longer than 2 characters
+      const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
 
-        if (anyWordFound) {
-          console.log(`✓ Valid title for footer item "${label}" → "${h1TextRaw}"`);
-          return true;
-        }
-      } catch { }
+      // Check if any of those words are present in the <h1> text
+      const anyWordFound = labelWords.some(w => h1Text.includes(w));
 
-      console.warn(`⚠ No match found in <h1> for footer item: "${label}"`);
-      return false;
-    };
+      if (anyWordFound) {
+        console.log(`✓ Valid title for footer item "${label}" → "${h1TextRaw}"`);
+        return true;
+      }
+    } catch { }
 
-    // ✅ Captures all items from the footer
-    const footerItems = await this.page.$$eval('//li[@class="footer-list__item"]', (items) => {
-      return items.map((li) => {
-        const anchor = li.querySelector('a');
-        return {
-          label: anchor?.textContent?.trim() || li.textContent?.trim() || '',
-          href: anchor?.getAttribute('href') || null
-        };
-      });
+    console.warn(`⚠ No match found in <h1> for footer item: "${label}"`);
+    return false;
+  };
+
+  // ✅ Capture all footer items from the DOM
+  const footerItems = await this.page.$$eval('//li[@class="footer-list__item"]', (items) => {
+    return items.map((li) => {
+      const anchor = li.querySelector('a');
+      return {
+        label: anchor?.textContent?.trim() || li.textContent?.trim() || '',
+        href: anchor?.getAttribute('href') || null
+      };
     });
+  });
 
-    console.log(`🌐 Validating ${footerItems.length} footer items`);
+  console.log(`🌐 Validating ${footerItems.length} footer items`);
 
-    const seen = new Map<string, string>();
+  // Map to track seen URLs and detect duplicates
+  const seen = new Map<string, string>();
 
-    for (const f of footerItems) {
-      const fullUrl = this.actions.extractFullUrlFromString(f.href);
-      if (!fullUrl) {
-        console.warn(`⚠ Footer item "${f.label}" has no valid URL. Skipping.`);
-        continue;
-      }
+  // Iterate through each footer item
+  for (const f of footerItems) {
+    const fullUrl = this.actions.extractFullUrlFromString(f.href);
 
-      if (seen.has(fullUrl)) {
-        const duplicateWith = seen.get(fullUrl)!;
-        console.warn(`⚠ Duplicate found → "${f.label}" duplicate with "${duplicateWith}" (URL: ${fullUrl})`);
-        duplicatesSummary.push({ label: f.label, duplicateWith, url: fullUrl });
-      } else {
-        seen.set(fullUrl, f.label);
-      }
-
-      // ✅ Before opening a new tab, scroll down to the item in the footer.
-      try {
-        const locator = this.page.locator(`//li[@class="footer-list__item"] >> text=${f.label}`);
-        await locator.scrollIntoViewIfNeeded();
-        await this.page.waitForTimeout(500); // pequena pausa para ver o scroll
-      } catch {
-        console.warn(`⚠ Could not scroll to footer item "${f.label}"`);
-      }
-
-      // ✅ Opens a new tab to validate each item in the footer.
-      let footerPage: Page | null = null;
-      try {
-        footerPage = await this.page.context().newPage();
-        await footerPage.goto(fullUrl, { waitUntil: 'domcontentloaded', timeout: 90000 });
-        await validateTitleContains(footerPage, f.label);
-        console.log(`✓ Footer item validated: ${f.label}`);
-      } catch (err: any) {
-        console.error(`❌ Footer item "${f.label}" failed → ${err?.message || err}`);
-      } finally {
-        if (footerPage) await footerPage.close().catch(() => null);
-      }
+    // Skip items without a valid URL
+    if (!fullUrl) {
+      console.warn(`⚠ Footer item "${f.label}" has no valid URL. Skipping.`);
+      continue;
     }
 
-    console.log(`\n📊 FOOTER DUPLICATES SUMMARY:`);
-    if (duplicatesSummary.length === 0) {
-      console.log(`✅ No duplicates found in footer.`);
+    // Check for duplicates: same URL with different labels
+    if (seen.has(fullUrl)) {
+      const duplicateWith = seen.get(fullUrl)!;
+      console.warn(`⚠ Duplicate found → "${f.label}" duplicate with "${duplicateWith}" (URL: ${fullUrl})`);
+      duplicatesSummary.push({ label: f.label, duplicateWith, url: fullUrl });
     } else {
-      duplicatesSummary.forEach(d => {
-        console.log(`  - "${d.label}" duplicate with "${d.duplicateWith}" (URL: ${d.url})`);
-      });
+      seen.set(fullUrl, f.label);
+    }
+
+    // ✅ Scroll into view before opening a new tab (helps simulate user interaction)
+    try {
+      const locator = this.page.locator(`//li[@class="footer-list__item"] >> text=${f.label}`);
+      await locator.scrollIntoViewIfNeeded();
+      await this.page.waitForTimeout(500); // small pause to visualize the scroll
+    } catch {
+      console.warn(`⚠ Could not scroll to footer item "${f.label}"`);
+    }
+
+    // ✅ Open a new tab to validate each footer item
+    let footerPage: Page | null = null;
+    try {
+      footerPage = await this.page.context().newPage();
+      await footerPage.goto(fullUrl, { waitUntil: 'domcontentloaded', timeout: 90000 });
+      await validateTitleContains(footerPage, f.label);
+      console.log(`✓ Footer item validated: ${f.label}`);
+    } catch (err: any) {
+      console.error(`❌ Footer item "${f.label}" failed → ${err?.message || err}`);
+    } finally {
+      // Ensure the tab is closed even if an error occurs
+      if (footerPage) await footerPage.close().catch(() => null);
     }
   }
+
+  // Print a summary of duplicate footer items found
+  console.log(`\n📊 FOOTER DUPLICATES SUMMARY:`);
+  if (duplicatesSummary.length === 0) {
+    console.log(`✅ No duplicates found in footer.`);
+  } else {
+    duplicatesSummary.forEach(d => {
+      console.log(`  - "${d.label}" duplicate with "${d.duplicateWith}" (URL: ${d.url})`);
+    });
+  }
+}
 
   // This function prints all slides and indicators from the carousel to the console.
   // showing which ones are active at the moment.
@@ -413,6 +445,10 @@ export class HomePage extends HelperBase {
       // If it's active, adds the [ACTIVE] tag for highlighting
       console.log(`Indicator ${i}: classes=${className}${isActive ? ' [ACTIVE]' : ''}`);
     }
+  }
+
+  async validateBannersHome() {
+    
   }
 
   async validateCarouselHome() {
