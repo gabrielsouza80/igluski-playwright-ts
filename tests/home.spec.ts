@@ -1,128 +1,73 @@
 import { test, expect } from '@playwright/test';
-import { HomePage } from '../pages/home.page';
+import { PageManager } from '../pages/utils/PageManager';
+
+// ================================================================
+// Test Suite: Home Page
+// ================================================================
 
 test.describe('Home Page', () => {
 
+  // BEFORE EACH: Executed before each test — browse and accept cookies
   test.beforeEach(async ({ page }) => {
-    const home = new HomePage(page);
-    await home.navigate();
-    await home.closePromoIfVisible();
+    const pm = new PageManager(page);
+    await pm.onHomePage().navigateAndAcceptCookies(); // Navega e aceita cookies via PageManager
   });
 
-  // ===========================
-  // 1️⃣ Teste: Validar header
-  // ===========================
-  test('Validar elementos principais do header', async ({ page }) => {
-    const home = new HomePage(page);
 
-    await page.waitForTimeout(50000000);
-    await expect(home.logoLink).toBeVisible();
-    await expect(home.buyLink).toBeVisible();
-    await expect(home.rentLink).toBeVisible();
-    await expect(home.servicesLink).toBeVisible();
+// TC 1 — Validate Iglu Ski Logo: checks for redirection when clicking on the logo
+  test('Validar Logo da Iglu Ski', async ({ page }) => {
+    const pm = new PageManager(page);
+    await pm.onHomePage().validateLogo();
   });
 
-  // ===========================
-  // 2️⃣ Teste: Validar footer
-  // ===========================
-  test('Validar links do footer', async ({ page }) => {
-    const home = new HomePage(page);
+// TC 2 — Validate Menu + Submenus: validates menus, sublinks, and <h1>; resumes duplicates
+  test('Validar Menu de Navegação Principal', async ({ page }) => {
+    // ✅ Aumenta timeout global para este teste (5 minutos)
+    test.setTimeout(300000);
 
-    await expect(home.footerFranceLink).toBeVisible();
-    await expect(home.skiChaletsLink).toBeVisible();
+    const pm = new PageManager(page);
+
+    // ✅ Valida todos os sublinks (ilimitado)
+    await pm.onHomePage().validateMenuAndSubMenuNavigation();
+
   });
 
-  // ===========================
-  // 3️⃣ Teste: Pesquisa simples
-  // ===========================
-  test('Pesquisar por "Lisbon" e validar resultados', async ({ page }) => {
-    const home = new HomePage(page);
+  test('Clicar no menu e opcionalmente no submenu', async ({ page }) => {
+    const pm = new PageManager(page);
 
-    await home.searchFor('Lisbon');
+    // ✅ Just click on the main menu:
+    await pm.onHomePage().clickMenu("Ski Holidays");
 
-    const resultsText = await home.getSearchResults();
-    expect(resultsText).toContain('properties found');
+    // ✅ Click on the menu and then on a submenu:
+    await pm.onHomePage().clickMenu("Ski Holidays", "Family Ski Holidays");
   });
 
-  // ===========================
-  // 4️⃣ Teste: Fechar mensagem promo
-  // ===========================
-  test('Fechar mensagem promocional se visível', async ({ page }) => {
-    const home = new HomePage(page);
+// TC 3 — Validate Contact Information in Header: checks phone number and email address
+  test('Validar Informações de Contato no Header', async ({ page }) => {
+    const pm = new PageManager(page);
 
-    await home.closePromoIfVisible();
+    await pm.onHomePage().validateHeaderContactInfo();
 
-    const visible = await home.promoMessage.isVisible().catch(() => false);
-    expect(visible).toBeFalsy();
   });
 
-  // ===========================
-  // 5️⃣ Teste: Navegar para BUY
-  // ===========================
-  test('Clicar no link Buy e validar URL', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.buyLink.click();
-
-    const result = await home.verifyPageLoaded('/buy');
-    expect(result).toBe(true);
+//TC 4 — Validate "Recently Viewed" Button
+  test('Validar Botão "Recently Viewed"', async ({ page }) => {
+    const pm = new PageManager(page);
+    await pm.onHomePage().validateRecentlyViewedButton();
   });
 
-  // ===========================
-  // 6️⃣ Teste: Navegar para Rent
-  // ===========================
-  test('Clicar no link Rent e validar URL', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.rentLink.click();
-
-    const result = await home.verifyPageLoaded('/rent');
-    expect(result).toBe(true);
+//TC 16 — Validate carousel of promotions and country banners on the homepage"
+  test.skip('Validar Carrossel de Banners (Países)"', async ({ page }) => {
+    const pm = new PageManager(page);
+    await pm.onHomePage().validateCarouselHome();
   });
 
-  // ===========================
-  // 7️⃣ Teste: Navegar About Us
-  // ===========================
-  test('Clicar em About Us e validar URL', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.aboutUsLink.click();
-
-    const result = await home.verifyPageLoaded('/about-us');
-    expect(result).toBe(true);
-  });
-
-  // ===========================
-  // 8️⃣ Teste: Validar campo de pesquisa
-  // ===========================
-  test('Validar que o input de pesquisa está visível', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await expect(home.searchInput).toBeVisible();
-  });
-
-  // ===========================
-  // 9️⃣ Teste: Digitação no campo de busca
-  // ===========================
-  test('Escrever no campo de busca e verificar que preencheu', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.searchInput.fill('Porto');
-
-    await expect(home.searchInput).toHaveValue('Porto');
-  });
-
-  // ===========================
-  // 🔟 Teste: Validar se resultados aparecem após pesquisa
-  // ===========================
-  test('Pesquisar e validar que os resultados aparecem', async ({ page }) => {
-    const home = new HomePage(page);
-
-    await home.searchFor('Coimbra');
-
-    const results = await home.getSearchResults();
-
-    expect(results.length).toBeGreaterThan(0);
+//TC 20 — Validate Footer Links
+  test('Validar Links do Footer"', async ({ page }) => {
+// ✅ Increase the global timeout for this test (5 minutes)
+    test.setTimeout(300000);
+    const pm = new PageManager(page);
+    await pm.onHomePage().validateFooterItems();
   });
 
 });

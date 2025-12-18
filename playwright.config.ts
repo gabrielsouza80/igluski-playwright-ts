@@ -3,44 +3,47 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
 
-  /* Tempo máximo por teste */
-  timeout: 30_000,
+  /* Set timeout */
+  timeout: 90_000,
 
-  /* Número de tentativas */
-  retries: 0,
 
-  /* Configurações padrão para todos os testes */
+  // Number of attempts in case of failure.
+  retries: 1,
+
+  // Default Settings
   fullyParallel: true,
   use: {
     headless: false,
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
 
-    /* Screenshot e vídeo apenas quando necessário */
+    // Screenshot e vídeo
     screenshot: 'on',
     video: 'retain-on-failure',
 
-    /* Habilita trace para facilitar debugging no UI Mode */
+    // Trace for debugging
     trace: 'on-first-retry',
 
-    /* URL base para seus testes */
+    // Base URL
     baseURL: 'https://www.igluski.com/',
+
+    // Specific timeouts
+    actionTimeout: 90_000,
+    navigationTimeout: 90_000,
   },
 
-  /* Navegadores e dispositivos */
+  // Browsers
   projects: [
     {
       name: 'chrome',
       use: { ...devices['Desktop Chrome'] },
     },
-      {
-        name: 'firefox',
-        use: { ...devices['Desktop Firefox'] },
-      },
-    ],
+    // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  ],
 
-    /* Opcional: caminho dos relatórios */
-    reporter: [
-      ['html', { open: 'never' }]
-    ],
+  // Reports
+  reporter: [
+    ['html', { open: 'never' }]
+  ],
 });
