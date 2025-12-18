@@ -53,20 +53,35 @@ export class HomePage extends HelperBase {
   // NAVIGATION AND COOKIES: Navigates to the home page and accepts cookies
 
   async navigateAndAcceptCookies(): Promise<void> {
-    await this.page.goto('/', { waitUntil: 'domcontentloaded' });
-    await this.page.waitForTimeout(1500);
-    await this.acceptCookies();
+  // Navega para a home
+  await this.page.goto('/', { waitUntil: 'domcontentloaded' });
 
+  // Localizadores do banner OneTrust
+  const btnAccept = this.page.locator('#onetrust-accept-btn-handler');
+  const btnClose = this.page.locator('.onetrust-close-btn-handler');
+  const overlay = this.page.locator('#onetrust-consent-sdk');
+
+  // Se aparecer botão de aceitar
+  if (await btnAccept.isVisible()) {
+    await btnAccept.click();
+    console.log("Cookies aceites");
+  }
+  // Se aparecer botão de fechar
+  else if (await btnClose.isVisible()) {
+    await btnClose.click();
+    console.log("Banner de cookies fechado");
+  } else {
+    console.log("Nenhum banner de cookies visível");
   }
 
-  async closeAdIfVisible() {
-    if (await this.closeAdButton.isVisible()) {
-      await this.closeAdButton.click();
-      console.log('Anúncio fechado');
-    } else {
-      console.log('Botão de fechar não encontrado');
-    }
+  // Aguarda o overlay desaparecer para garantir que não bloqueia cliques
+  if (await overlay.isVisible()) {
+    await overlay.waitFor({ state: 'hidden' });
+    console.log("Overlay removido");
   }
+}
+
+
 
 
 

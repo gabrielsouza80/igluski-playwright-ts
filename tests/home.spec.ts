@@ -11,7 +11,6 @@ test.describe('Home Page', () => {
   test.beforeEach(async ({ page }) => {
     const pm = new PageManager(page);
     await pm.onHomePage().navigateAndAcceptCookies(); // Navega e aceita cookies via PageManager
-    //await pm.onHomePage().closeAdIfVisible();
   });
 
 
