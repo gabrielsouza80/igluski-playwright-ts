@@ -34,12 +34,12 @@ test.describe('Home Page', () => {
 
   test('Clicar no menu e opcionalmente no submenu', async ({ page }) => {
     const pm = new PageManager(page);
-
+    
     // ✅ Just click on the main menu:
     await pm.onHomePage().clickMenu("Ski Holidays");
 
     // ✅ Click on the menu and then on a submenu:
-    await pm.onHomePage().clickMenu("Ski Holidays", "Family Ski Holidays");
+    await pm.onHomePage().clickMenu("Ski Holidays", "Family ski holidays");
   });
 
   // TC 3 — Validate Contact Information in Header: checks phone number and email address
@@ -60,7 +60,7 @@ test.describe('Home Page', () => {
   test('Validar Carrossel de Banners (Países)"', async ({ page }) => {
     const pm = new PageManager(page);
     await pm.onHomePage().validateCarouselHome();
-  });
+  }); 
 
   //TC 20 — Validate Footer Links
   test('Validar Links do Footer"', async ({ page }) => {

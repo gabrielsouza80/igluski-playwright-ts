@@ -53,37 +53,38 @@ export class HomePage extends HelperBase {
   // NAVIGATION AND COOKIES: Navigates to the home page and accepts cookies
 
   async navigateAndAcceptCookies(): Promise<void> {
-  // Navega para a home
-  await this.page.goto('/', { waitUntil: 'domcontentloaded' });
+    // Navigate to the home page.
+    await this.page.goto('/', { waitUntil: 'domcontentloaded' });
 
-  // Localizadores do banner OneTrust
-  const btnAccept = this.page.locator('#onetrust-accept-btn-handler');
-  const btnClose = this.page.locator('.onetrust-close-btn-handler');
-  const overlay = this.page.locator('#onetrust-consent-sdk');
+    // OneTrust banner locators
+    const btnAccept = this.page.locator('#onetrust-accept-btn-handler');
+    const btnAcceptRecommended = this.page.locator('#accept-recommended-btn-handler');
+    const banner = this.page.locator('#onetrust-banner-sdk');
 
-  // Se aparecer botão de aceitar
-  if (await btnAccept.isVisible()) {
-    await btnAccept.click();
-    console.log("Cookies aceites");
+    // Please wait up to 3 seconds for the banner to appear.
+    try {
+      await banner.waitFor({ state: 'visible', timeout: 60000 });
+      console.log("Cookie banner detected");
+    } catch {
+      console.log("No cookie banner appeared within the time limit.");
+      return; // Exit the function if there is no banner.
+    }
+
+    // It handles the different possible buttons.
+    if (await btnAccept.isVisible()) {
+      await btnAccept.click();
+      console.log("✅ Cookies accepted (default button)");
+    } else if (await btnAcceptRecommended.isVisible()) {
+      await btnAcceptRecommended.click();
+      console.log("✅ Cookies accepted (Allow all)");
+    } else {
+      console.log("ℹ️ No visible accept button");
+    }
+
+    // Wait for the banner to disappear to ensure it doesn't block clicks.
+    await banner.waitFor({ state: 'hidden', timeout: 5000 });
+    console.log("✅ Cookie banner removed");
   }
-  // Se aparecer botão de fechar
-  else if (await btnClose.isVisible()) {
-    await btnClose.click();
-    console.log("Banner de cookies fechado");
-  } else {
-    console.log("Nenhum banner de cookies visível");
-  }
-
-  // Aguarda o overlay desaparecer para garantir que não bloqueia cliques
-  if (await overlay.isVisible()) {
-    await overlay.waitFor({ state: 'hidden' });
-    console.log("Overlay removido");
-  }
-}
-
-
-
-
 
   async searchForCountry(text: string) {
     try {
@@ -99,7 +100,6 @@ export class HomePage extends HelperBase {
       }
     }
   }
-
 
   async searchForProperty(text: string) {
     await this.propertiesSearchInput.fill(text, { timeout: 5000 });
@@ -277,12 +277,6 @@ export class HomePage extends HelperBase {
     }
   }
 
-
-
-
-
-
-
   // VALIDATIONS: Validates all items in the footer.
   async validateFooterItems(): Promise<void> {
     const duplicatesSummary: Array<{ label: string; duplicateWith: string; url: string }> = [];
@@ -377,93 +371,93 @@ export class HomePage extends HelperBase {
     }
   }
 
-  // Função que imprime no console todos os slides e indicadores do carrossel,
-  // mostrando quais estão ativos no momento.
+  // This function prints all slides and indicators from the carousel to the console.
+  // showing which ones are active at the moment.
   async logCarouselSlides() {
-    // Localiza todos os elementos de slide dentro do carrossel
+    // Locates all slide elements within the carousel.
     const slides = await this.carouselhome.locator('.content-carousel__inner__item').all();
-    console.log(`Total de slides encontrados: ${slides.length}`);
+    console.log(`Total number of slides found: ${slides.length}`);
 
-    // Percorre cada slide encontrado
+    // Browse through each slide found.
     for (let i = 0; i < slides.length; i++) {
       const slide = slides[i];
 
-      // Pega o link (href) associado ao slide
+      // Get the link (href) associated with the slide.
       const href = await slide.locator('a').getAttribute('href');
 
-      // Pega todas as classes aplicadas ao slide
+      // Retrieves all classes applied to the slide.
       const className = await slide.getAttribute('class');
 
-      // Verifica se o slide contém a classe que indica que está ativo
+      // Verifies if the slide contains the class indicating it is active
       const isActive = className?.includes('content-carousel__inner__item--active');
 
-      // Imprime no console o índice, o link e as classes do slide
-      // Se estiver ativo, adiciona a tag [ACTIVE] para destacar
+      // Prints to the console the index, link, and classes of the slide
+      // If it's active, adds the [ACTIVE] tag for highlighting
       console.log(`Slide ${i}: href=${href}, classes=${className}${isActive ? ' [ACTIVE]' : ''}`);
     }
 
-    // Localiza todos os indicadores (bolinhas de navegação) do carrossel
+    // Locates all indicator elements (navigation dots) within the carousel
     const indicators = await this.carouselhome.locator('.content-carousel__indicators__item').all();
 
-    // Percorre cada indicador
+    // Browse through each indicator
     for (let i = 0; i < indicators.length; i++) {
       const indicator = indicators[i];
 
-      // Pega as classes aplicadas ao indicador
+      // Retrieves all classes applied to the indicator
       const className = await indicator.getAttribute('class');
 
-      // Verifica se o indicador contém a classe que indica que está ativo
+      // Verifies if the indicator contains the class indicating it is active
       const isActive = className?.includes('content-carousel__indicators__item--active');
 
-      // Imprime no console o índice e as classes do indicador
-      // Se estiver ativo, adiciona a tag [ACTIVE] para destacar
+      // Prints to the console the index and classes of the indicator
+      // If it's active, adds the [ACTIVE] tag for highlighting
       console.log(`Indicator ${i}: classes=${className}${isActive ? ' [ACTIVE]' : ''}`);
     }
   }
 
   async validateCarouselHome() {
-    // 1. Valida se o título da homepage está visível
+    // 1. Checks if the homepage title is visible.
     await expect(this.tituloHomePage).toBeVisible();
 
-    // 2. Lê o texto do título e confirma que contém a frase esperada
+    // 2. Reads the title text and confirms it contains the expected phrase
     const titulo = await this.tituloHomePage.innerText();
     expect(titulo).toContain('Welcome To The Home Of Ski');
     console.log(`Homepage Title: ${titulo}`);
 
-    // 3. Espera que o carrossel esteja visível na página
+    // 3. Waits for the carousel to be visible on the page
     await expect(this.carouselhome).toBeVisible();
 
-    // 4. Localiza o slide que está ativo inicialmente
+    // 4. Locates the slide that is initially active
     let activeSlide = this.carouselhome.locator('.content-carousel__inner__item--active').first();
 
-    // 5. Obtém o link (href) do slide ativo inicial
+    // 5. Gets the link (href) of the initially active slide
     const initialHref = await activeSlide.locator('a').getAttribute('href') ?? '';
-    console.log(`Slide inicial: ${initialHref}`);
+    console.log(`Initial slide: ${initialHref}`);
 
-    // 6. Clica no botão NEXT (avançar carrossel)
+    // 6. Clicks the NEXT button (advance carousel)
     await this.carouselhome.locator('.content-carousel__control--right').click({ force: true });
 
-    // 7. Espera até que o slide ativo mude para um diferente do inicial
+    // 7. Waits until the active slide changes to one different from the initial
     await this.page.waitForFunction(
       (expectedHref) => {
         const active = document.querySelector('.content-carousel__inner__item--active a');
         return active && active.getAttribute('href') !== expectedHref;
       },
-      initialHref // passa o href inicial como referência
+      initialHref // Checks if the homepage title is visible.
     );
 
-    // 8. Obtém o novo slide ativo após clicar NEXT
+    // 8. The new slide becomes active after clicking NEXT.
     activeSlide = this.carouselhome.locator('.content-carousel__inner__item--active').first();
     const nextHref = await activeSlide.locator('a').getAttribute('href') ?? '';
-    console.log(`Slide após NEXT: ${nextHref}`);
+    console.log(`Slide after NEXT: ${nextHref}`);
 
-    // 9. Confirma que o novo slide é diferente do inicial
+    // 9. Confirms that the new slide is different from the initial one
     expect(nextHref).not.toBe(initialHref);
 
-    // 10. Clica no botão PREVIOUS (voltar carrossel)
+    // 10. Clicks the PREVIOUS button (go back in the carousel)
     await this.carouselhome.locator('.content-carousel__control--left').click({ force: true });
 
-    // 11. Espera até que o slide ativo volte a ser o inicial
+    // 11. Wait until the active slide reverts to the initial slide.
     await this.page.waitForFunction(
       (expectedHref) => {
         const active = document.querySelector('.content-carousel__inner__item--active a');
@@ -472,12 +466,12 @@ export class HomePage extends HelperBase {
       initialHref
     );
 
-    // 12. Obtém o slide ativo após clicar PREVIOUS
+    // 12. Get the active slide after clicking PREVIOUS.
     activeSlide = this.carouselhome.locator('.content-carousel__inner__item--active').first();
     const prevHref = await activeSlide.locator('a').getAttribute('href') ?? '';
-    console.log(`Slide após PREVIOUS: ${prevHref}`);
+    console.log(`Slide after PREVIOUS: ${prevHref}`);
 
-    // 13. Confirma que voltou ao slide inicial
+    // 13. Confirms that it returned to the initial slide
     expect(prevHref).toBe(initialHref);
   }
 
@@ -549,45 +543,31 @@ export class HomePage extends HelperBase {
   }
 
   // clickMenu: clicks on the main menu and optionally on submenus (specific to the site's HTML structure)
-  async clickMenu(menuName: string, subMenuName?: string): Promise<void> {
-    console.log(`🔍 Iniciando processo para clicar no menu: "${menuName}"${subMenuName ? ` e submenu: "${subMenuName}"` : ''}`);
+  async clickMenu(menuName: string, subMenuName?: string) {
+    // Main menu locator
+    const menu = this.page.locator(`//li[@class="menu-list__item"]//a[text()="${menuName}"]`);
 
-    console.log(`➡️ Localizando menu principal com texto: "${menuName}"`);
-    const menuButton = this.page.locator(`li.menu-list__item > a.menu-list__item-link:has-text("${menuName}")`);
-
-    const menuCount = await menuButton.count();
-    console.log(`📊 Found ${menuCount} elements for menu "${menuName}"`);
-    if (menuCount === 0) {
-      console.error(`❌ Menu "${menuName}" not found.`);
+    // If you only go through the Name menu → click on the menu
+    if (!subMenuName) {
+      await menu.click();
+      console.log(`✓ Clicked only on the menu: ${menuName}`);
       return;
     }
 
-    if (!subMenuName) {
-      console.log(`✅ Nenhum submenu informado. Clicando diretamente no menu "${menuName}"`);
-      await menuButton.click();
-      console.log(`✓ Clicou no menu: ${menuName}`);
-    } else {
-      console.log(`➡️ Submenu informado: "${subMenuName}". Preparando para abrir submenu...`);
-      await menuButton.hover();
-      console.log(`⏳ Waiting 500ms to ensure submenu loads`);
-      await this.page.waitForTimeout(500);
+    // If you also pass the subMenuName → hover on the menu and try to click on the submenu
+    await menu.hover();
 
-      console.log(`➡️ Localizando submenu com texto: "${subMenuName}"`);
-      const subMenuLink = this.page.locator(`.submenu-list__block-item a:has-text("${subMenuName}")`);
+    // Submenu locator (you will fill in with your XPath)
+    const subMenu = this.page.locator(`//li[@class="submenu-list__item"]//a[text()="${subMenuName}"]`);
 
-      const subMenuCount = await subMenuLink.count();
-      console.log(`📊 Found ${subMenuCount} elements for submenu "${subMenuName}"`);
-      if (subMenuCount === 0) {
-        console.error(`❌ Submenu "${subMenuName}" not found inside "${menuName}".`);
-        return;
-      }
-
-      console.log(`✅ Submenu encontrado. Clicando no submenu "${subMenuName}"`);
-      await subMenuLink.click();
-      console.log(`✓ Clicou no submenu: ${subMenuName} dentro do menu: ${menuName}`);
+    // Check if the submenu exists and is visible.
+    const count = await subMenu.count();
+    if (count === 0) {
+      console.log(`⚠️ There is no submenu labeled with that name. "${subMenuName}" inside the menu "${menuName}"`);
+      return;
     }
 
-    console.log(`🏁 Processo concluído para menu "${menuName}"${subMenuName ? ` e submenu "${subMenuName}"` : ''}`);
+    await subMenu.click();
+    console.log(`✓ Clicked on the submenu: "${subMenuName}" inside the menu: "${menuName}"`);
   }
-
 }
