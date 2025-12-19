@@ -18,8 +18,8 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
 
     // Screenshot e vídeo
-    screenshot: 'on',
-    video: 'retain-on-failure',
+    screenshot: 'off',
+    video: 'off',
 
     // Trace for debugging
     trace: 'on-first-retry',
