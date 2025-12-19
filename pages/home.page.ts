@@ -19,10 +19,13 @@ export class HomePage extends HelperBase {
   readonly enquireLink: Locator = this.page.locator('(//a[contains(@href, "/enquire")])[1]');
   readonly contactusLink: Locator = this.page.locator('(//a[@href="/contact-us"])[1]');
   readonly phoneLocatorHeader: Locator = this.page.locator('(//span[@title="Call Our Team"])[1]');
+  readonly btnAccessCustomerPortal: Locator = this.page.locator('//img[contains(@alt, "Customer portal icon")]//..');
   readonly btnRecentlyViewedHeader: Locator = this.page.locator('//a[contains(@class, "top-bar__info-link")]');
   readonly resultRecentlyViewedHeader: Locator = this.page.locator('//div[contains(@class, "top-bar__rv-no-result")]');
+  readonly btnReviewLinkHeader: Locator = this.page.locator('//a[@class="header-headline__review-link"]');
 
   // LOCATORS: Main content of the homepage
+  readonly tituloBannerHome: Locator = this.page.locator('(//h2[@class="h2-title"])[2]');
   readonly tituloHomePage: Locator = this.page.locator('//h1[@class="h1-title"]');
   readonly carouselhome: Locator = this.page.locator('*[data-ski-widget="content-carousel"]');
   readonly closeAdButton: Locator = this.page.locator('sleeknote-p72idi-bottom >>> div[data-sn-type="close"] >>> button');
@@ -57,29 +60,43 @@ export class HomePage extends HelperBase {
     // Navigate to the home page.
     await this.page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    // Please wait up to 3 seconds for the Banner to appear.
+    console.log(`\n==================== COOKIES — INITIAL STATE ====================`);
+    console.log(`• Navigated to home page (domcontentloaded).`);
+    console.log(`• Waiting for cookie banner to appear...`);
+    console.log(`---------------------------------------------------------------`);
+
+    // Please wait up to 60 seconds for the Banner to appear.
     try {
       await this.cookiesBanner.waitFor({ state: 'visible', timeout: 60000 });
-      console.log("Cookie Banner detected");
+      console.log(`• Cookie banner detected.`);
     } catch {
-      console.log("No cookie Banner appeared within the time limit.");
-      return; // Exit the function if there is no Banner.
+      console.log(`• No cookie banner appeared within the time limit.`);
+      console.log(`==================== COOKIES — NO BANNER =======================\n`);
+      return; // Exit the function if there is no banner.
     }
+
+    console.log(`---------------------------------------------------------------`);
+    console.log(`• Checking available accept buttons...`);
 
     // It handles the different possible buttons.
     if (await this.acceptCookiesBtn.isVisible()) {
       await this.acceptCookiesBtn.click();
-      console.log("✅ Cookies accepted (default button)");
+      console.log(`• Clicked default accept button.`);
+      console.log(`✅ Cookies accepted (default button).`);
     } else if (await this.acceptCookiesBtnRecommended.isVisible()) {
       await this.acceptCookiesBtnRecommended.click();
-      console.log("✅ Cookies accepted (Allow all)");
+      console.log(`• Clicked "Allow all" button.`);
+      console.log(`✅ Cookies accepted (Allow all).`);
     } else {
-      console.log("ℹ️ No visible accept button");
+      console.log(`ℹ️ No visible accept button found.`);
     }
 
     // Wait for the Banner to disappear to ensure it doesn't block clicks.
     await this.cookiesBanner.waitFor({ state: 'hidden', timeout: 5000 });
-    console.log("✅ Cookie Banner removed");
+
+    console.log(`---------------------------------------------------------------`);
+    console.log(`• Cookie banner is now hidden.`);
+    console.log(`==================== COOKIES — COMPLETED =======================\n`);
   }
 
   async searchForCountry(text: string) {
@@ -123,16 +140,35 @@ export class HomePage extends HelperBase {
 
   // VALIDATIONS: Validates logo redirection
   async validateLogo() {
+    console.log(`\n==================== LOGO — VALIDATION START ====================`);
+    console.log(`• Checking logo redirection...`);
+    console.log(`---------------------------------------------------------------`);
+
     await this.validateRedirectButton(this.logoLink, '/');
+
+    console.log(`• Logo redirects correctly to home page ("/")`);
+    console.log(`==================== LOGO — VALIDATION COMPLETE =================\n`);
   }
 
   // VALIDATIONS: Collects contact information in the header.
   async validateHeaderContactInfo() {
-    const txtphoneLocatorHeader = await this.phoneLocatorHeader.innerText();
-    console.log(`Header Phone Info: ${txtphoneLocatorHeader}`);
-    const txtcontactusLink = await this.contactusLink.innerText();
-    console.log(`Header Contact Us Link Text: ${txtcontactusLink}`);
-    await this.validateRedirectButton(this.contactusLink, '/contact-us');
+  console.log(`\n==================== HEADER — CONTACT INFO CHECK ====================`);
+  console.log(`• Validating header contact information...`);
+  console.log(`---------------------------------------------------------------`);
+
+  // Phone text
+  const txtphoneLocatorHeader = await this.phoneLocatorHeader.innerText();
+  console.log(`• Header phone text: ${txtphoneLocatorHeader}`);
+
+  // Contact Us link text
+  const txtcontactusLink = await this.contactusLink.innerText();
+  console.log(`• Contact Us link text: ${txtcontactusLink}`);
+
+  // Validate redirect
+  console.log(`• Validating Contact Us redirection...`);
+  await this.validateRedirectButton(this.contactusLink, '/contact-us');
+
+  console.log(`==================== HEADER — CONTACT INFO COMPLETE ==================\n`);
   }
 
   async validateRecentlyViewedButton() {
@@ -142,161 +178,194 @@ export class HomePage extends HelperBase {
     console.log(`Recently Viewed Result Text: ${txtResult}`);
   }
 
+  async validateAccessCustomerPortal() {
+    
+    await this.validateRedirectButton(this.btnAccessCustomerPortal, 'https://customerportal.igluski.com/Login?ReturnUrl=%2F'); 
+  }
+
+  async validateRatingsAndReviews(){
+    await this.validateRedirectButton(this.btnReviewLinkHeader, 'https://www.igluski.com/customer-reviews');
+  }
+
   // VALIDATIONS: Validates main menus and submenus, titles, and duplicates.
-  async validateMenuAndSubMenuNavigation(): Promise<void> {
-    // Object to store duplicate submenu entries found during validation
-    const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
+async validateMenuAndSubMenuNavigation(): Promise<void> {
+  console.log(`\n==================== MENUS — VALIDATION START ====================`);
 
-    // Helper function: checks if the <h1> title of a page contains words from the menu/submenu label
-    const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
-      // Normalize text: lowercase, remove accents, remove special characters
-      const normalize = (txt: string) =>
-        txt.toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-z0-9\s]/gi, " ")
-          .trim();
+  // Object to store duplicate submenu entries found during validation
+  const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
 
-      const normalizedLabel = normalize(label);
+  // Helper function: checks if the <h1> title of a page contains words from the menu/submenu label
+  const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
+    // Normalize text: lowercase, remove accents, remove special characters
+    const normalize = (txt: string) =>
+      txt.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/gi, " ")
+        .trim();
 
-      try {
-        // Get the first <h1> text from the page
-        const h1TextRaw = await page.locator("h1").first().innerText();
-        const h1Text = normalize(h1TextRaw);
+    const normalizedLabel = normalize(label);
 
-        // Split the label into words longer than 2 characters
-        const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
+    try {
+      // Get the first <h1> text from the page
+      const h1TextRaw = await page.locator("h1").first().innerText();
+      const h1Text = normalize(h1TextRaw);
 
-        // Check if any of those words are present in the <h1> text
-        const anyWordFound = labelWords.some(w => h1Text.includes(w));
+      // Split the label into words longer than 2 characters
+      const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
 
-        if (anyWordFound) {
-          console.log(`✓ Valid title for "${label}" → "${h1TextRaw}"`);
-          return true;
-        }
-      } catch { }
+      // Check if any of those words are present in the <h1> text
+      const anyWordFound = labelWords.some(w => h1Text.includes(w));
 
-      console.warn(`⚠ No match found in <h1> for: "${label}"`);
-      return false;
-    };
+      if (anyWordFound) {
+        console.log(`      • Title OK for "${label}" → "${h1TextRaw}"`);
+        return true;
+      }
+    } catch {
+      // Ignore and fall through to warning
+    }
 
-    // Take a snapshot of all main menus and their submenus from the DOM
-    const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
-      return items.map((li) => {
-        const mainLink = li.querySelector("a");
-        const mainHref = mainLink ? mainLink.getAttribute("href") : null;
-        const mainLabel = mainLink ? (mainLink.textContent?.trim() || "") : (li.textContent?.trim() || "");
+    console.warn(`      • Warning: No <h1> match found for "${label}"`);
+    return false;
+  };
 
-        // Collect all submenu links inside this menu
-        const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
-        const sublinks = subAnchors.map((a) => ({
-          label: a.textContent?.trim() || "",
-          href: a.getAttribute("href")
-        }));
+  // Take a snapshot of all main menus and their submenus from the DOM
+  const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
+    return items.map((li) => {
+      const mainLink = li.querySelector("a");
+      const mainHref = mainLink ? mainLink.getAttribute("href") : null;
+      const mainLabel = mainLink ? (mainLink.textContent?.trim() || "") : (li.textContent?.trim() || "");
 
-        return { mainLabel, mainHref, sublinks };
-      });
+      // Collect all submenu links inside this menu
+      const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
+      const sublinks = subAnchors.map((a) => ({
+        label: a.textContent?.trim() || "",
+        href: a.getAttribute("href")
+      }));
+
+      return { mainLabel, mainHref, sublinks };
     });
+  });
 
-    console.log(`🌐 Validating ${menusSnapshot.length} main menus`);
+  console.log(`• Total main menus detected: ${menusSnapshot.length}`);
+  console.log(`---------------------------------------------------------------`);
 
-    // Iterate through each main menu
-    for (const menu of menusSnapshot) {
-      const menuLabel = menu.mainLabel || "menu";
-      const menuHref = this.actions.extractFullUrlFromString(menu.mainHref);
+  // Iterate through each main menu
+  for (const menu of menusSnapshot) {
+    const menuLabel = menu.mainLabel || "menu";
+    const menuHref = this.actions.extractFullUrlFromString(menu.mainHref);
 
-      console.log(`\n🌐 Validating menu: "${menuLabel}"`);
+    console.log(`\n==================== MENU ====================`);
+    console.log(`• Menu label: "${menuLabel}"`);
+    console.log(`• Menu URL: ${menuHref || "(no valid URL)"}`);
+    console.log(`---------------------------------------------------------------`);
 
-      // Skip menus without a valid URL
-      if (!menuHref) {
-        console.warn(`⚠ Menu "${menuLabel}" has no valid URL. Skipping.`);
+    // Skip menus without a valid URL
+    if (!menuHref) {
+      console.warn(`• Skipping menu "${menuLabel}" — no valid URL.`);
+      continue;
+    }
+
+    let menuPage: Page | null = null;
+
+    try {
+      // Open the menu link in a new page
+      console.log(`• Opening menu page: ${menuHref}`);
+      menuPage = await this.page.context().newPage();
+      await menuPage.goto(menuHref, { waitUntil: "domcontentloaded", timeout: 120000 });
+
+      // Special case: if the menu is "Search", validate that the search field appears
+      if (/search/i.test(menuLabel)) {
+        console.log(`• Menu identified as Search. Validating search field...`);
+        try {
+          await this.resortsSearchInput.waitFor({ state: "visible", timeout: 2000 });
+          console.log(`  ✓ Search field is visible.`);
+        } catch {
+          console.warn(`  • Warning: Search menu did not open the search field.`);
+        }
+      } else {
+        console.log(`• Validating page title for menu "${menuLabel}"...`);
+        await validateTitleContains(menuPage, menuLabel);
+      }
+
+      const sublinks = menu.sublinks || [];
+      console.log(`• Submenus found for "${menuLabel}": ${sublinks.length}`);
+
+      // If no sublinks, close the page and continue
+      if (sublinks.length === 0) {
+        console.log(`• No submenus to validate for "${menuLabel}".`);
+        await menuPage.close();
         continue;
       }
 
-      let menuPage: Page | null = null;
+      // Prepare to check all sublinks and detect duplicates
+      const allSublinks: Array<{ label: string; href: string }> = [];
+      const seen = new Map<string, string>();
 
-      try {
-        // Open the menu link in a new page
-        menuPage = await this.page.context().newPage();
-        await menuPage.goto(menuHref, { waitUntil: "domcontentloaded", timeout: 120000 });
+      console.log(`• Checking submenu URLs and detecting duplicates...`);
 
-        // Special case: if the menu is "Search", validate that the search field appears
-        if (/search/i.test(menuLabel)) {
-          try {
-            await this.resortsSearchInput.waitFor({ state: "visible", timeout: 2000 });
-            console.log(`✓ Search menu validated: search field visible`);
-          } catch {
-            console.warn(`⚠ Search menu did not open the search field`);
-          }
+      for (const s of sublinks) {
+        const full = this.actions.extractFullUrlFromString(s.href);
+        if (!full) continue;
+
+        // Detect duplicates: if the same URL appears with different labels
+        if (seen.has(full)) {
+          const duplicateWith = seen.get(full)!;
+          console.warn(`  • Duplicate URL detected → "${s.label}" duplicate of "${duplicateWith}" (URL: ${full})`);
+          if (!duplicatesSummary[menuLabel]) duplicatesSummary[menuLabel] = [];
+          duplicatesSummary[menuLabel].push({ label: s.label, duplicateWith, url: full });
         } else {
-          // Otherwise, validate that the page title matches the menu label
-          await validateTitleContains(menuPage, menuLabel);
+          seen.set(full, s.label);
         }
 
-        const sublinks = menu.sublinks || [];
-        console.log(`📁 Menu "${menuLabel}" → Found ${sublinks.length} sublinks`);
-
-        // If no sublinks, close the page and continue
-        if (sublinks.length === 0) {
-          await menuPage.close();
-          continue;
-        }
-
-        // Prepare to check all sublinks and detect duplicates
-        const allSublinks: Array<{ label: string; href: string }> = [];
-        const seen = new Map<string, string>();
-
-        for (const s of sublinks) {
-          const full = this.actions.extractFullUrlFromString(s.href);
-          if (!full) continue;
-
-          // Detect duplicates: if the same URL appears with different labels
-          if (seen.has(full)) {
-            const duplicateWith = seen.get(full)!;
-            console.warn(`⚠ Duplicate found → "${s.label}" duplicate with "${duplicateWith}" (URL: ${full})`);
-            if (!duplicatesSummary[menuLabel]) duplicatesSummary[menuLabel] = [];
-            duplicatesSummary[menuLabel].push({ label: s.label, duplicateWith, url: full });
-          } else {
-            seen.set(full, s.label);
-          }
-
-          allSublinks.push({ label: s.label || full, href: full });
-        }
-
-        // Open each submenu link in a new page and validate its title
-        const subPage = await this.page.context().newPage();
-        for (const s of allSublinks) {
-          try {
-            await subPage.goto(s.href, { waitUntil: "domcontentloaded", timeout: 90000 });
-            await validateTitleContains(subPage, s.label);
-            console.log(`      ✓ Submenu validated: ${s.label}`);
-          } catch (err: any) {
-            console.error(`❌ Submenu "${s.label}" failed → ${err?.message || err}`);
-          }
-        }
-        await subPage.close().catch(() => null);
-      } finally {
-        // Ensure the menu page is closed even if an error occurs
-        if (menuPage) await menuPage.close().catch(() => null);
+        allSublinks.push({ label: s.label || full, href: full });
       }
-    }
 
-    // Print a summary of duplicate submenus found
-    console.log(`\n📊 DUPLICATES SUMMARY:`);
-    if (Object.keys(duplicatesSummary).length === 0) {
-      console.log(`✅ No duplicates found.`);
-    } else {
-      for (const [menu, duplicates] of Object.entries(duplicatesSummary)) {
-        console.log(`\nMenu: ${menu}`);
-        duplicates.forEach(d => {
-          console.log(`  - "${d.label}" duplicate with "${d.duplicateWith}" (URL: ${d.url})`);
-        });
+      // Open each submenu link in a new page and validate its title
+      const subPage = await this.page.context().newPage();
+      console.log(`• Validating ${allSublinks.length} submenu pages for "${menuLabel}"...`);
+
+      for (const s of allSublinks) {
+        console.log(`  -----------------------------------------------------------`);
+        console.log(`  • Submenu label: "${s.label}"`);
+        console.log(`  • Submenu URL: ${s.href}`);
+
+        try {
+          await subPage.goto(s.href, { waitUntil: "domcontentloaded", timeout: 90000 });
+          await validateTitleContains(subPage, s.label);
+          console.log(`  ✓ Submenu validated successfully: "${s.label}"`);
+        } catch (err: any) {
+          console.error(`  ❌ Submenu "${s.label}" failed → ${err?.message || err}`);
+        }
       }
+
+      await subPage.close().catch(() => null);
+    } finally {
+      // Ensure the menu page is closed even if an error occurs
+      if (menuPage) await menuPage.close().catch(() => null);
     }
   }
 
+  // Print a summary of duplicate submenus found
+  console.log(`\n==================== MENUS — DUPLICATES SUMMARY ====================`);
+  if (Object.keys(duplicatesSummary).length === 0) {
+    console.log(`• No duplicate submenu URLs found.`);
+  } else {
+    for (const [menu, duplicates] of Object.entries(duplicatesSummary)) {
+      console.log(`• Menu: ${menu}`);
+      duplicates.forEach(d => {
+        console.log(`  - "${d.label}" duplicate of "${d.duplicateWith}" (URL: ${d.url})`);
+      });
+    }
+  }
+
+  console.log(`==================== MENUS — VALIDATION COMPLETE ==================\n`);
+}
+
   // VALIDATIONS: Validates all items in the footer.
 async validateFooterItems(): Promise<void> {
+  console.log(`\n==================== FOOTER — VALIDATION START ====================`);
+
   // Array to store duplicate footer items found during validation
   const duplicatesSummary: Array<{ label: string; duplicateWith: string; url: string }> = [];
 
@@ -324,27 +393,33 @@ async validateFooterItems(): Promise<void> {
       const anyWordFound = labelWords.some(w => h1Text.includes(w));
 
       if (anyWordFound) {
-        console.log(`✓ Valid title for footer item "${label}" → "${h1TextRaw}"`);
+        console.log(`      • Title OK for footer item "${label}" → "${h1TextRaw}"`);
         return true;
       }
-    } catch { }
+    } catch {
+      // Ignore and fall through to warning
+    }
 
-    console.warn(`⚠ No match found in <h1> for footer item: "${label}"`);
+    console.warn(`      • Warning: No <h1> match found for footer item "${label}"`);
     return false;
   };
 
-  // ✅ Capture all footer items from the DOM
-  const footerItems = await this.page.$$eval('//li[@class="footer-list__item"]', (items) => {
-    return items.map((li) => {
-      const anchor = li.querySelector('a');
-      return {
-        label: anchor?.textContent?.trim() || li.textContent?.trim() || '',
-        href: anchor?.getAttribute('href') || null
-      };
-    });
-  });
+  // Capture all footer items from the DOM
+  const footerItems = await this.page.$$eval(
+    '//li[@class="footer-list__item"]',
+    (items) => {
+      return items.map((li) => {
+        const anchor = li.querySelector('a');
+        return {
+          label: anchor?.textContent?.trim() || li.textContent?.trim() || '',
+          href: anchor?.getAttribute('href') || null
+        };
+      });
+    }
+  );
 
-  console.log(`🌐 Validating ${footerItems.length} footer items`);
+  console.log(`• Total footer items detected: ${footerItems.length}`);
+  console.log(`---------------------------------------------------------------`);
 
   // Map to track seen URLs and detect duplicates
   const seen = new Map<string, string>();
@@ -353,39 +428,57 @@ async validateFooterItems(): Promise<void> {
   for (const f of footerItems) {
     const fullUrl = this.actions.extractFullUrlFromString(f.href);
 
+    console.log(`\n==================== FOOTER ITEM ====================`);
+    console.log(`• Label: "${f.label}"`);
+    console.log(`• Raw URL: ${f.href || "(no href attribute)"}`);
+
     // Skip items without a valid URL
     if (!fullUrl) {
-      console.warn(`⚠ Footer item "${f.label}" has no valid URL. Skipping.`);
+      console.warn(`• Skipping footer item "${f.label}" — no valid URL.`);
       continue;
     }
+
+    console.log(`• Resolved URL: ${fullUrl}`);
 
     // Check for duplicates: same URL with different labels
     if (seen.has(fullUrl)) {
       const duplicateWith = seen.get(fullUrl)!;
-      console.warn(`⚠ Duplicate found → "${f.label}" duplicate with "${duplicateWith}" (URL: ${fullUrl})`);
+      console.warn(
+        `• Duplicate URL detected → "${f.label}" duplicate of "${duplicateWith}" (URL: ${fullUrl})`
+      );
       duplicatesSummary.push({ label: f.label, duplicateWith, url: fullUrl });
     } else {
       seen.set(fullUrl, f.label);
     }
 
-    // ✅ Scroll into view before opening a new tab (helps simulate user interaction)
+    // Scroll into view before opening a new tab (helps simulate user interaction)
     try {
-      const locator = this.page.locator(`//li[@class="footer-list__item"] >> text=${f.label}`);
+      const locator = this.page.locator(
+        `//li[@class="footer-list__item"] >> text=${f.label}`
+      );
       await locator.scrollIntoViewIfNeeded();
-      await this.page.waitForTimeout(500); // small pause to visualize the scroll
+      await this.page.waitForTimeout(500);
+      console.log(`• Scrolled into view.`);
     } catch {
-      console.warn(`⚠ Could not scroll to footer item "${f.label}"`);
+      console.warn(`• Warning: Could not scroll to footer item "${f.label}".`);
     }
 
-    // ✅ Open a new tab to validate each footer item
+    // Open a new tab to validate each footer item
     let footerPage: Page | null = null;
     try {
+      console.log(`• Opening footer URL in new tab...`);
       footerPage = await this.page.context().newPage();
-      await footerPage.goto(fullUrl, { waitUntil: 'domcontentloaded', timeout: 90000 });
+      await footerPage.goto(fullUrl, {
+        waitUntil: 'domcontentloaded',
+        timeout: 90000
+      });
+
       await validateTitleContains(footerPage, f.label);
-      console.log(`✓ Footer item validated: ${f.label}`);
+      console.log(`• Footer item validated successfully: "${f.label}"`);
     } catch (err: any) {
-      console.error(`❌ Footer item "${f.label}" failed → ${err?.message || err}`);
+      console.error(
+        `❌ Footer item "${f.label}" failed → ${err?.message || err}`
+      );
     } finally {
       // Ensure the tab is closed even if an error occurs
       if (footerPage) await footerPage.close().catch(() => null);
@@ -393,14 +486,18 @@ async validateFooterItems(): Promise<void> {
   }
 
   // Print a summary of duplicate footer items found
-  console.log(`\n📊 FOOTER DUPLICATES SUMMARY:`);
+  console.log(`\n==================== FOOTER — DUPLICATES SUMMARY ====================`);
   if (duplicatesSummary.length === 0) {
-    console.log(`✅ No duplicates found in footer.`);
+    console.log(`• No duplicate footer URLs found.`);
   } else {
     duplicatesSummary.forEach(d => {
-      console.log(`  - "${d.label}" duplicate with "${d.duplicateWith}" (URL: ${d.url})`);
+      console.log(
+        `• "${d.label}" duplicate of "${d.duplicateWith}" (URL: ${d.url})`
+      );
     });
   }
+
+  console.log(`==================== FOOTER — VALIDATION COMPLETE ==================\n`);
 }
 
   // This function prints all slides and indicators from the carousel to the console.
@@ -448,67 +545,206 @@ async validateFooterItems(): Promise<void> {
   }
 
   async validateBannersHome() {
-    
+
+    // ==================== HOMEPAGE BANNER TITLE ====================
+    await expect(this.tituloBannerHome).toBeVisible();
+    const titulo = await this.tituloBannerHome.innerText();
+    expect(titulo).toContain('Find Your Skiing Holiday');
+
+    console.log(`\n==================== HOMEPAGE BANNER TITLE =====================`);
+    console.log(`• Title detected: ${titulo}`);
+    console.log(`---------------------------------------------------------------\n`);
+
+
+    // ==================== DETECT WHICH ROW CONTAINS FRANCE ====================
+    const detectFranceRow = async () => {
+      const row5 = this.page.locator('(//div[@class="row"])[5]//h2[@class="box-panel__title"]');
+      const row6 = this.page.locator('(//div[@class="row"])[6]//h2[@class="box-panel__title"]');
+
+      const row5Text = await row5.first().innerText().catch(() => "");
+      const row6Text = await row6.first().innerText().catch(() => "");
+
+      if (row6Text.includes("FRANCE")) return 6;
+      if (row5Text.includes("FRANCE")) return 5;
+
+      throw new Error("❌ Could not detect which row contains FRANCE.");
+    };
+
+
+    // ==================== VALIDATION FUNCTION (ORIGINAL LOGIC) ====================
+    const validateRow = async (rowNumber: number) => {
+      const locator = this.page.locator(
+        `(//div[@class="row"])[${rowNumber}]//h2[@class="box-panel__title"]`
+      );
+
+      // Wait for at least one element to appear
+      try {
+        await locator.first().waitFor({ state: "visible", timeout: 10000 });
+      } catch {
+        throw new Error(`❌ Row ${rowNumber} did not load any elements within the expected time.`);
+      }
+
+      const count = await locator.count();
+
+      console.log(`==================== ROW ${rowNumber} — ${count} ELEMENTS ====================\n`);
+
+      if (count === 0) {
+        throw new Error(`❌ Row ${rowNumber} contains zero elements. This should never happen.`);
+      }
+
+      for (let i = 0; i < count; i++) {
+        const titleEl = locator.nth(i);
+
+        await expect(titleEl).toBeVisible();
+
+        const text = await titleEl.innerText();
+
+        console.log(`-------------------- Item ${i + 1} --------------------`);
+        console.log(`Title:\n${text}`);
+
+        const link = titleEl.locator("xpath=ancestor::a");
+        const href = await link.getAttribute("href");
+
+        if (!href) {
+          console.warn(`⚠ No href found for title: "${text}"`);
+          continue;
+        }
+
+        const fullUrl = href.startsWith("http")
+          ? href
+          : `https://www.igluski.com${href}`;
+
+        console.log(`Expected URL: ${fullUrl}`);
+
+        const icon = titleEl.locator('../img[@class="box-panel__icon"]');
+        await expect(icon).toBeVisible();
+
+        await icon.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(300);
+
+        let newPage: Page | null = null;
+
+        try {
+          newPage = await this.page.context().newPage();
+          await newPage.goto(fullUrl, {
+            waitUntil: "domcontentloaded",
+            timeout: 60000,
+          });
+
+          console.log(`Redirect OK → ${newPage.url()}\n`);
+        } catch (err: any) {
+          console.error(`❌ Redirect failed → ${err?.message || err}`);
+          throw err;
+        } finally {
+          if (newPage) await newPage.close().catch(() => null);
+        }
+      }
+
+      console.log(`---------------------------------------------------------------\n`);
+    };
+
+
+    // ==================== EXECUTE VALIDATION BASED ON FRANCE POSITION ====================
+    const franceRow = await detectFranceRow();
+
+    if (franceRow === 6) {
+      await validateRow(6);
+      await validateRow(7);
+    } else {
+      await validateRow(5);
+      await validateRow(6);
+    }
+
+    console.log(`==================== BANNERS VALIDATION COMPLETE ==============\n`);
   }
 
   async validateCarouselHome() {
-    // 1. Checks if the homepage title is visible.
-    await expect(this.tituloHomePage).toBeVisible();
 
-    // 2. Reads the title text and confirms it contains the expected phrase
+    // ==================== CAROUSEL — TITLE CHECK ====================
+    await expect(this.tituloHomePage).toBeVisible();
     const titulo = await this.tituloHomePage.innerText();
     expect(titulo).toContain('Welcome To The Home Of Ski');
-    console.log(`Homepage Title: ${titulo}`);
 
-    // 3. Waits for the carousel to be visible on the page
+    console.log(`\n==================== CAROUSEL — TITLE CHECK ====================`);
+    console.log(`• Title detected: ${titulo}`);
+    console.log(`---------------------------------------------------------------\n`);
+
+
+    // ==================== CAROUSEL — INITIAL STATE ====================
     await expect(this.carouselhome).toBeVisible();
 
-    // 4. Locates the slide that is initially active
-    let activeSlide = this.carouselhome.locator('.content-carousel__inner__item--active').first();
+    let activeSlide = this.carouselhome
+      .locator('.content-carousel__inner__item--active')
+      .first();
 
-    // 5. Gets the link (href) of the initially active slide
-    const initialHref = await activeSlide.locator('a').getAttribute('href') ?? '';
-    console.log(`Initial slide: ${initialHref}`);
+    const initialHref =
+      (await activeSlide.locator('a').getAttribute('href')) ?? '';
 
-    // 6. Clicks the NEXT button (advance carousel)
-    await this.carouselhome.locator('.content-carousel__control--right').click({ force: true });
+    console.log(`==================== CAROUSEL — INITIAL STATE ==================`);
+    console.log(`• Initial slide URL: ${initialHref}`);
+    console.log(`---------------------------------------------------------------\n`);
 
-    // 7. Waits until the active slide changes to one different from the initial
+
+    // ==================== CAROUSEL — NEXT ACTION ====================
+    await this.carouselhome
+      .locator('.content-carousel__control--right')
+      .click({ force: true });
+
     await this.page.waitForFunction(
       (expectedHref) => {
-        const active = document.querySelector('.content-carousel__inner__item--active a');
+        const active = document.querySelector(
+          '.content-carousel__inner__item--active a'
+        );
         return active && active.getAttribute('href') !== expectedHref;
       },
-      initialHref // Checks if the homepage title is visible.
+      initialHref
     );
 
-    // 8. The new slide becomes active after clicking NEXT.
-    activeSlide = this.carouselhome.locator('.content-carousel__inner__item--active').first();
-    const nextHref = await activeSlide.locator('a').getAttribute('href') ?? '';
-    console.log(`Slide after NEXT: ${nextHref}`);
+    activeSlide = this.carouselhome
+      .locator('.content-carousel__inner__item--active')
+      .first();
 
-    // 9. Confirms that the new slide is different from the initial one
+    const nextHref =
+      (await activeSlide.locator('a').getAttribute('href')) ?? '';
+
+    console.log(`==================== CAROUSEL — NEXT ACTION ====================`);
+    console.log(`• Slide after NEXT: ${nextHref}`);
+    console.log(`---------------------------------------------------------------\n`);
+
     expect(nextHref).not.toBe(initialHref);
 
-    // 10. Clicks the PREVIOUS button (go back in the carousel)
-    await this.carouselhome.locator('.content-carousel__control--left').click({ force: true });
 
-    // 11. Wait until the active slide reverts to the initial slide.
+    // ==================== CAROUSEL — PREVIOUS ACTION ====================
+    await this.carouselhome
+      .locator('.content-carousel__control--left')
+      .click({ force: true });
+
     await this.page.waitForFunction(
       (expectedHref) => {
-        const active = document.querySelector('.content-carousel__inner__item--active a');
+        const active = document.querySelector(
+          '.content-carousel__inner__item--active a'
+        );
         return active && active.getAttribute('href') === expectedHref;
       },
       initialHref
     );
 
-    // 12. Get the active slide after clicking PREVIOUS.
-    activeSlide = this.carouselhome.locator('.content-carousel__inner__item--active').first();
-    const prevHref = await activeSlide.locator('a').getAttribute('href') ?? '';
-    console.log(`Slide after PREVIOUS: ${prevHref}`);
+    activeSlide = this.carouselhome
+      .locator('.content-carousel__inner__item--active')
+      .first();
 
-    // 13. Confirms that it returned to the initial slide
+    const prevHref =
+      (await activeSlide.locator('a').getAttribute('href')) ?? '';
+
+    console.log(`==================== CAROUSEL — PREVIOUS ACTION ================`);
+    console.log(`• Slide after PREVIOUS: ${prevHref}`);
+    console.log(`---------------------------------------------------------------\n`);
+
     expect(prevHref).toBe(initialHref);
+
+
+    // ==================== CAROUSEL VALIDATION COMPLETE ====================
+    console.log(`==================== CAROUSEL VALIDATION COMPLETE ==============\n`);
   }
 
   // EXTRAS: Performs a simple search by resort category and waits for results.
@@ -580,30 +816,40 @@ async validateFooterItems(): Promise<void> {
 
   // clickMenu: clicks on the main menu and optionally on submenus (specific to the site's HTML structure)
   async clickMenu(menuName: string, subMenuName?: string) {
-    // Main menu locator
-    const menu = this.page.locator(`//li[@class="menu-list__item"]//a[text()="${menuName}"]`);
+  console.log(`\n==================== MENU — INTERACTION START ====================`);
+  console.log(`• Target menu: "${menuName}"`);
+  if (subMenuName) console.log(`• Target submenu: "${subMenuName}"`);
+  console.log(`---------------------------------------------------------------`);
 
-    // If you only go through the Name menu → click on the menu
-    if (!subMenuName) {
-      await menu.click();
-      console.log(`✓ Clicked only on the menu: ${menuName}`);
-      return;
-    }
+  // Main menu locator
+  const menu = this.page.locator(`//li[@class="menu-list__item"]//a[text()="${menuName}"]`);
 
-    // If you also pass the subMenuName → hover on the menu and try to click on the submenu
-    await menu.hover();
-
-    // Submenu locator (you will fill in with your XPath)
-    const subMenu = this.page.locator(`//li[@class="submenu-list__item"]//a[text()="${subMenuName}"]`);
-
-    // Check if the submenu exists and is visible.
-    const count = await subMenu.count();
-    if (count === 0) {
-      console.log(`⚠️ There is no submenu labeled with that name. "${subMenuName}" inside the menu "${menuName}"`);
-      return;
-    }
-
-    await subMenu.click();
-    console.log(`✓ Clicked on the submenu: "${subMenuName}" inside the menu: "${menuName}"`);
+  // If only the main menu is clicked
+  if (!subMenuName) {
+    await menu.click();
+    console.log(`• Clicked main menu: "${menuName}"`);
+    console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
+    return;
   }
+
+  // Hover to reveal submenu
+  console.log(`• Hovering menu: "${menuName}" to reveal submenu...`);
+  await menu.hover();
+
+  // Submenu locator
+  const subMenu = this.page.locator(`//li[@class="submenu-list__item"]//a[text()="${subMenuName}"]`);
+
+  // Check if submenu exists
+  const count = await subMenu.count();
+  if (count === 0) {
+    console.log(`• Submenu not found: "${subMenuName}" inside "${menuName}"`);
+    console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
+    return;
+  }
+
+  // Click submenu
+  await subMenu.click();
+  console.log(`• Clicked submenu: "${subMenuName}" inside menu "${menuName}"`);
+  console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
+}
 }

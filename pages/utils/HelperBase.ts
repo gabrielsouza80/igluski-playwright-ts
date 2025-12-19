@@ -70,32 +70,42 @@ export class HelperBase {
 
   // validateRedirectButton: opens the link in a new tab and validates the URL (specific to the site)
   async validateRedirectButton(button: Locator | null, expectedUrl: string): Promise<void> {
+  console.log(`\n==================== REDIRECT — VALIDATION START ====================`);
 
-    // If you have a locator, try extracting href.
-    let urlToOpen = expectedUrl;
+  // Determine the URL to open
+  let urlToOpen = expectedUrl;
 
-    if (button) {
-      const href = await button.getAttribute('href');
-      urlToOpen = href && !href.startsWith("http")
-        ? new URL(href, this.page.url()).toString()
-        : (href || expectedUrl);
-    }
+  if (button) {
+    const href = await button.getAttribute('href');
 
-    // Open new tab
-    const newPage = await this.page.context().newPage();
+    urlToOpen = href && !href.startsWith("http")
+      ? new URL(href, this.page.url()).toString()
+      : (href || expectedUrl);
 
-    await newPage.goto(urlToOpen, {
-      waitUntil: "domcontentloaded",
-      timeout: 60000,
-    });
-
-    // Validate URL
-    await expect(newPage).toHaveURL(new RegExp(urlToOpen, 'i'));
-
-    console.log(`✓ Validated: ${urlToOpen}`);
-
-    await newPage.close();
+    console.log(`• Extracted URL from element: ${urlToOpen}`);
+  } else {
+    console.log(`• No element provided. Using expected URL: ${expectedUrl}`);
   }
+
+  console.log(`• Opening new tab to validate redirection...`);
+  console.log(`---------------------------------------------------------------`);
+
+  // Open new tab
+  const newPage = await this.page.context().newPage();
+
+  await newPage.goto(urlToOpen, {
+    waitUntil: "domcontentloaded",
+    timeout: 60000,
+  });
+
+  // Validate URL
+  await expect(newPage).toHaveURL(new RegExp(urlToOpen, 'i'));
+  console.log(`• Redirect OK → ${urlToOpen}`);
+
+  await newPage.close();
+
+  console.log(`==================== REDIRECT — VALIDATION COMPLETE ==================\n`);
+}
 
   // extractFullUrl: automatically generates absolute URLs (site-specific)
   async extractFullUrl(button: Locator): Promise<string | null> {

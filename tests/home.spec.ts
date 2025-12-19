@@ -5,7 +5,7 @@ import { PageManager } from '../pages/utils/PageManager';
 // Test Suite: Home Page
 // ================================================================
 
-test.describe('Home Page', () => {
+test.describe.only('Home Page', () => {
 
   // BEFORE EACH: Executed before each test — browse and accept cookies
   test.beforeEach(async ({ page }) => {
@@ -51,13 +51,25 @@ test.describe('Home Page', () => {
   });
 
   //TC 4 — Validate "Recently Viewed" Button
-  test('Validate "Recently Viewed" button"', async ({ page }) => {
+  test('Validate "Recently Viewed" button', async ({ page }) => {
     const pm = new PageManager(page);
     await pm.onHomePage().validateRecentlyViewedButton();
   });
 
+  //TC 5 — Validate Access to the Customer Portal
+  test('Validate Access to the Customer Portal', async ({ page }) => {
+    const pm = new PageManager(page);
+    await pm.onHomePage().validateAccessCustomerPortal();
+  });
+
+  //TC 6 — Validate Ratings and Reviews in the Header
+  test('Validate Ratings and Reviews in the Header', async ({ page }) => {
+    const pm = new PageManager(page);
+    await pm.onHomePage().validateRatingsAndReviews();
+  });
+
   //TC 16 — Validate carousel of promotions and country banners on the homepage"
-  test.skip('Validate Carousel of Banners (Countries)"', async ({ page }) => {
+  test('Validate Carousel of Banners (Countries)"', async ({ page }) => {
     const pm = new PageManager(page);
     await pm.onHomePage().validateCarouselHome();
     await pm.onHomePage().validateBannersHome();
