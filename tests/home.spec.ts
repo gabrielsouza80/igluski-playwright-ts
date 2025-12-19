@@ -5,7 +5,7 @@ import { PageManager } from '../pages/utils/PageManager';
 // Test Suite: Home Page
 // ================================================================
 
-test.describe.only('Home Page', () => {
+test.describe('Home Page', () => {
 
   // BEFORE EACH: Executed before each test — browse and accept cookies
   test.beforeEach(async ({ page }) => {
@@ -78,12 +78,22 @@ test.describe.only('Home Page', () => {
     ]);
   });
 
-  //TC 16 — Validate carousel of promotions and country banners on the homepage"
-  test('Validate Carousel of Banners (Countries)"', async ({ page }) => {
+  //TC 16 — Validate carousel of promotions and country banners on the homepage
+  test('Validate carousel of promotions and country banners on the homepage', async ({ page }) => {
     const pm = new PageManager(page);
     await pm.onHomePage().validateCarouselHome();
-    await pm.onHomePage().validateBannersHome();
+    await pm.onHomePage().validateCountryBanners();
   });
+
+   //TC 17 — Validate CTA Boxes (Call To Action)
+  test('Validate CTA Boxes (Call To Action)', async ({ page }) => {
+  const pm = new PageManager(page);
+  await pm.onHomePage().validateCtaBoxes([
+    "TALK TO A SKI EXPERT",
+    "ABOUT IGLU SKI",
+    "SIGN UP TO OUR NEWSLETTER"
+  ]);
+});
 
   //TC 20 — Validate Footer Links
   test('Validate Footer Links"', async ({ page }) => {

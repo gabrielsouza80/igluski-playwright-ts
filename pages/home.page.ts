@@ -25,8 +25,8 @@ export class HomePage extends HelperBase {
   readonly btnReviewLinkHeader: Locator = this.page.locator('//a[@class="header-headline__review-link"]');
 
   // LOCATORS: Main content of the homepage
-  readonly tituloBannerHome: Locator = this.page.locator('(//h2[@class="h2-title"])[2]');
-  readonly tituloHomePage: Locator = this.page.locator('//h1[@class="h1-title"]');
+  readonly titleBannerHome: Locator = this.page.locator('(//h2[@class="h2-title"])[2]');
+  readonly titleHomePage: Locator = this.page.locator('//h1[@class="h1-title"]');
   readonly carouselhome: Locator = this.page.locator('*[data-ski-widget="content-carousel"]');
   readonly closeAdButton: Locator = this.page.locator('sleeknote-p72idi-bottom >>> div[data-sn-type="close"] >>> button');
 
@@ -553,11 +553,11 @@ export class HomePage extends HelperBase {
     }
   }
 
-  async validateBannersHome() {
+  async validateCountryBanners() {
 
     // ==================== HOMEPAGE BANNER TITLE ====================
-    await expect(this.tituloBannerHome).toBeVisible();
-    const titulo = await this.tituloBannerHome.innerText();
+    await expect(this.titleBannerHome).toBeVisible();
+    const titulo = await this.titleBannerHome.innerText();
     expect(titulo).toContain('Find Your Skiing Holiday');
 
     console.log(`\n==================== HOMEPAGE BANNER TITLE =====================`);
@@ -670,8 +670,8 @@ export class HomePage extends HelperBase {
   async validateCarouselHome() {
 
     // ==================== CAROUSEL — TITLE CHECK ====================
-    await expect(this.tituloHomePage).toBeVisible();
-    const titulo = await this.tituloHomePage.innerText();
+    await expect(this.titleHomePage).toBeVisible();
+    const titulo = await this.titleHomePage.innerText();
     expect(titulo).toContain('Welcome To The Home Of Ski');
 
     console.log(`\n==================== CAROUSEL — TITLE CHECK ====================`);
@@ -910,4 +910,76 @@ export class HomePage extends HelperBase {
 
     console.log(`\n==================== TITLE CHECK — COMPLETE ==================\n`);
   }
+  async validateCtaBoxes(expectedTitles: string[]) {
+  console.log(`\n==================== CTA BOXES — VALIDATION START ====================`);
+  console.log(`• Searching for CTA Boxes section dynamically...`);
+  console.log(`• Expected CTA titles:`);
+  expectedTitles.forEach(t => console.log(`  • "${t}"`));
+  console.log(`---------------------------------------------------------------`);
+
+  // Rows where CTA Boxes or similar sections may appear
+  const possibleRows = [4, 5, 6, 7];
+
+  // Normalize helper
+  const normalize = (txt: string) =>
+    txt.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+
+  const expectedNorm = expectedTitles.map(t => normalize(t));
+
+  let foundRow: number | null = null;
+  let foundTitles: string[] = [];
+
+  // Try each row until we find one that contains the expected titles
+  for (const row of possibleRows) {
+    const locator = this.page.locator(`(//div[@class="row"])[${row}]`);
+
+    // Skip if row is not visible
+    if (!(await locator.isVisible().catch(() => false))) continue;
+
+    // Collect all inner texts inside this row
+    const titles = await locator.locator('*').allInnerTexts();
+
+    const normalizedTitles = titles.map(t => normalize(t));
+
+    const matches = expectedNorm.every(exp =>
+      normalizedTitles.some(t => t.includes(exp))
+    );
+
+    if (matches) {
+      foundRow = row;
+      foundTitles = titles;
+      break;
+    }
+  }
+
+  if (!foundRow) {
+    throw new Error(`❌ CTA Boxes not found in rows 4, 5, 6 or 7`);
+  }
+
+  console.log(`• CTA Boxes found in row: ${foundRow}`);
+  console.log(`• Titles found in this row:`);
+  foundTitles.forEach((t, i) => console.log(`  • [${i + 1}] ${t}`));
+
+  console.log(`---------------------------------------------------------------`);
+  console.log(`• Validating CTA titles...\n`);
+
+  for (const expected of expectedTitles) {
+    const expectedNormSingle = normalize(expected);
+
+    const found = foundTitles.some(t =>
+      normalize(t).includes(expectedNormSingle)
+    );
+
+    if (found) {
+      console.log(`• OK → Found CTA title: "${expected}"`);
+    } else {
+      throw new Error(`❌ CTA title not found: "${expected}"`);
+    }
+  }
+
+  console.log(`\n==================== CTA BOXES — VALIDATION COMPLETE ==================\n`);
+}
 }
