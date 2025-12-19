@@ -13,13 +13,13 @@ export default defineConfig({
   // Default Settings
   fullyParallel: true,
   use: {
-    headless: false,
+    headless: true,
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
 
     // Screenshot e vídeo
-    screenshot: 'on',
-    video: 'retain-on-failure',
+    screenshot: 'off',
+    video: 'off',
 
     // Trace for debugging
     trace: 'on-first-retry',
@@ -35,19 +35,22 @@ export default defineConfig({
   // Browsers
   projects: [
     {
-      name: 'chrome',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'chromium',
+      use: { ...devices['Desktop Chromium'] },
     },
-    // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // }
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    {name: 'Mobile Chrome', use: { ...devices['Pixel 5'] }},
+    {name: 'Mobile Safari', use: { ...devices['iPhone 12'] }},
   ],
 
   // Reports
   reporter: [
+    ['list'],
+    ['allure-playwright'],
+    ['junit', { outputFile: 'results.xml' }],
     ['html', { open: 'never' }]
   ],
+
+  outputDir: 'test-results/',
 });
