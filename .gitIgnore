@@ -22,3 +22,6 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+allure-report-single.html
+allure-single-file/index.html
+allure-report-single.html
