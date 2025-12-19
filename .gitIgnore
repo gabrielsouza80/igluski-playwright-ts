@@ -1,3 +1,19 @@
+node_modules/
+dist/
+.env
+.idea/
+.vscode/
+/*.log
+
+# Playwright
+.playwright-report/
+
+# Allure
+allure-results/
+allure-report/
+
+# type coverage
+coverage/
 /test-results/
 /playwright-report/
 
@@ -6,3 +22,6 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+allure-report-single.html
+allure-single-file/index.html
+allure-report-single.html
