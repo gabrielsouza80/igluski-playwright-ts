@@ -72,13 +72,72 @@ npm install
 npx playwright install
 
 4. Run all tests:
+```bash
 npx playwright test
+```
 
 5. Run tests with UI:
+```bash
 npx playwright test --ui
+```
 
 6. Show HTML report:
+```bash
 npx playwright show-report
+```
+
+---
+
+## 🧾 Generate a single-file Allure report
+If you want a single self-contained HTML file with the Allure report (handy to attach to issues), you can use the included helper script.
+
+1. Produce the Allure HTML report (this writes `allure-report/`):
+```bash
+npm run allure:generate
+```
+
+2. Create a single-file HTML (`allure-report-single.html`) by inlining CSS/JS/assets:
+```bash
+npm run allure:single
+```
+
+3. Open the single file in your browser:
+```bash
+start allure-report-single.html    # Windows (PowerShell/CMD)
+open allure-report-single.html     # macOS
+xdg-open allure-report-single.html # Linux
+```
+
+---
+
+## 🧾 Optional: Allure Report
+This project also supports generating an Allure report from Playwright results.
+
+1. Install the dev dependencies (already added to package.json):
+```bash
+npm install
+```
+
+2. Run tests while producing Allure results:
+```bash
+npx playwright test --reporter=allure-playwright
+```
+
+3. Generate the Allure report (output folder `allure-report`):
+```bash
+npx allure generate allure-results --clean -o allure-report
+```
+
+4. Open the generated report in your browser:
+```bash
+npx allure open allure-report
+```
+
+You can also use the included npm scripts:
+- `npm run test:allure` — run tests with Allure reporter and HTML reporter
+- `npm run allure:generate` — generate the report
+- `npm run allure:open` — open the report
+
 
 👤 Author
 Gabriel Souza – QA Automation Engineer
