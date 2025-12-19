@@ -152,353 +152,362 @@ export class HomePage extends HelperBase {
 
   // VALIDATIONS: Collects contact information in the header.
   async validateHeaderContactInfo() {
-  console.log(`\n==================== HEADER — CONTACT INFO CHECK ====================`);
-  console.log(`• Validating header contact information...`);
-  console.log(`---------------------------------------------------------------`);
+    console.log(`\n==================== HEADER — CONTACT INFO CHECK ====================`);
+    console.log(`• Validating header contact information...`);
+    console.log(`---------------------------------------------------------------`);
 
-  // Phone text
-  const txtphoneLocatorHeader = await this.phoneLocatorHeader.innerText();
-  console.log(`• Header phone text: ${txtphoneLocatorHeader}`);
+    // Phone text
+    const txtphoneLocatorHeader = await this.phoneLocatorHeader.innerText();
+    console.log(`• Header phone text: ${txtphoneLocatorHeader}`);
 
-  // Contact Us link text
-  const txtcontactusLink = await this.contactusLink.innerText();
-  console.log(`• Contact Us link text: ${txtcontactusLink}`);
+    // Contact Us link text
+    const txtcontactusLink = await this.contactusLink.innerText();
+    console.log(`• Contact Us link text: ${txtcontactusLink}`);
 
-  // Validate redirect
-  console.log(`• Validating Contact Us redirection...`);
-  await this.validateRedirectButton(this.contactusLink, '/contact-us');
+    // Validate redirect
+    console.log(`• Validating Contact Us redirection...`);
+    await this.validateRedirectButton(this.contactusLink, '/contact-us');
 
-  console.log(`==================== HEADER — CONTACT INFO COMPLETE ==================\n`);
+    console.log(`==================== HEADER — CONTACT INFO COMPLETE ==================\n`);
   }
 
   async validateRecentlyViewedButton() {
+    console.log(`\n==================== RECENTLY VIEWED — VALIDATION START ====================`);
+    console.log(`• Clicking Recently Viewed button...`);
+    console.log(`---------------------------------------------------------------`);
+
     await this.btnRecentlyViewedHeader.click();
+
+    console.log(`• Waiting for Recently Viewed result to appear...`);
     await expect(this.resultRecentlyViewedHeader).toBeVisible();
+
     const txtResult = await this.resultRecentlyViewedHeader.innerText();
-    console.log(`Recently Viewed Result Text: ${txtResult}`);
+    console.log(`• Recently Viewed result text: ${txtResult}`);
+
+    console.log(`==================== RECENTLY VIEWED — VALIDATION COMPLETE ==================\n`);
   }
 
   async validateAccessCustomerPortal() {
-    
-    await this.validateRedirectButton(this.btnAccessCustomerPortal, 'https://customerportal.igluski.com/Login?ReturnUrl=%2F'); 
+
+    await this.validateRedirectButton(this.btnAccessCustomerPortal, 'https://customerportal.igluski.com/Login?ReturnUrl=%2F');
   }
 
-  async validateRatingsAndReviews(){
+  async validateRatingsAndReviews() {
     await this.validateRedirectButton(this.btnReviewLinkHeader, 'https://www.igluski.com/customer-reviews');
   }
 
   // VALIDATIONS: Validates main menus and submenus, titles, and duplicates.
-async validateMenuAndSubMenuNavigation(): Promise<void> {
-  console.log(`\n==================== MENUS — VALIDATION START ====================`);
+  async validateMenuAndSubMenuNavigation(): Promise<void> {
+    console.log(`\n==================== MENUS — VALIDATION START ====================`);
 
-  // Object to store duplicate submenu entries found during validation
-  const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
+    // Object to store duplicate submenu entries found during validation
+    const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
 
-  // Helper function: checks if the <h1> title of a page contains words from the menu/submenu label
-  const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
-    // Normalize text: lowercase, remove accents, remove special characters
-    const normalize = (txt: string) =>
-      txt.toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9\s]/gi, " ")
-        .trim();
+    // Helper function: checks if the <h1> title of a page contains words from the menu/submenu label
+    const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
+      // Normalize text: lowercase, remove accents, remove special characters
+      const normalize = (txt: string) =>
+        txt.toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9\s]/gi, " ")
+          .trim();
 
-    const normalizedLabel = normalize(label);
+      const normalizedLabel = normalize(label);
 
-    try {
-      // Get the first <h1> text from the page
-      const h1TextRaw = await page.locator("h1").first().innerText();
-      const h1Text = normalize(h1TextRaw);
+      try {
+        // Get the first <h1> text from the page
+        const h1TextRaw = await page.locator("h1").first().innerText();
+        const h1Text = normalize(h1TextRaw);
 
-      // Split the label into words longer than 2 characters
-      const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
+        // Split the label into words longer than 2 characters
+        const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
 
-      // Check if any of those words are present in the <h1> text
-      const anyWordFound = labelWords.some(w => h1Text.includes(w));
+        // Check if any of those words are present in the <h1> text
+        const anyWordFound = labelWords.some(w => h1Text.includes(w));
 
-      if (anyWordFound) {
-        console.log(`      • Title OK for "${label}" → "${h1TextRaw}"`);
-        return true;
+        if (anyWordFound) {
+          console.log(`      • Title OK for "${label}" → "${h1TextRaw}"`);
+          return true;
+        }
+      } catch {
+        // Ignore and fall through to warning
       }
-    } catch {
-      // Ignore and fall through to warning
-    }
 
-    console.warn(`      • Warning: No <h1> match found for "${label}"`);
-    return false;
-  };
+      console.warn(`      • Warning: No <h1> match found for "${label}"`);
+      return false;
+    };
 
-  // Take a snapshot of all main menus and their submenus from the DOM
-  const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
-    return items.map((li) => {
-      const mainLink = li.querySelector("a");
-      const mainHref = mainLink ? mainLink.getAttribute("href") : null;
-      const mainLabel = mainLink ? (mainLink.textContent?.trim() || "") : (li.textContent?.trim() || "");
+    // Take a snapshot of all main menus and their submenus from the DOM
+    const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
+      return items.map((li) => {
+        const mainLink = li.querySelector("a");
+        const mainHref = mainLink ? mainLink.getAttribute("href") : null;
+        const mainLabel = mainLink ? (mainLink.textContent?.trim() || "") : (li.textContent?.trim() || "");
 
-      // Collect all submenu links inside this menu
-      const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
-      const sublinks = subAnchors.map((a) => ({
-        label: a.textContent?.trim() || "",
-        href: a.getAttribute("href")
-      }));
+        // Collect all submenu links inside this menu
+        const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
+        const sublinks = subAnchors.map((a) => ({
+          label: a.textContent?.trim() || "",
+          href: a.getAttribute("href")
+        }));
 
-      return { mainLabel, mainHref, sublinks };
+        return { mainLabel, mainHref, sublinks };
+      });
     });
-  });
 
-  console.log(`• Total main menus detected: ${menusSnapshot.length}`);
-  console.log(`---------------------------------------------------------------`);
-
-  // Iterate through each main menu
-  for (const menu of menusSnapshot) {
-    const menuLabel = menu.mainLabel || "menu";
-    const menuHref = this.actions.extractFullUrlFromString(menu.mainHref);
-
-    console.log(`\n==================== MENU ====================`);
-    console.log(`• Menu label: "${menuLabel}"`);
-    console.log(`• Menu URL: ${menuHref || "(no valid URL)"}`);
+    console.log(`• Total main menus detected: ${menusSnapshot.length}`);
     console.log(`---------------------------------------------------------------`);
 
-    // Skip menus without a valid URL
-    if (!menuHref) {
-      console.warn(`• Skipping menu "${menuLabel}" — no valid URL.`);
-      continue;
-    }
+    // Iterate through each main menu
+    for (const menu of menusSnapshot) {
+      const menuLabel = menu.mainLabel || "menu";
+      const menuHref = this.actions.extractFullUrlFromString(menu.mainHref);
 
-    let menuPage: Page | null = null;
+      console.log(`\n==================== MENU ====================`);
+      console.log(`• Menu label: "${menuLabel}"`);
+      console.log(`• Menu URL: ${menuHref || "(no valid URL)"}`);
+      console.log(`---------------------------------------------------------------`);
 
-    try {
-      // Open the menu link in a new page
-      console.log(`• Opening menu page: ${menuHref}`);
-      menuPage = await this.page.context().newPage();
-      await menuPage.goto(menuHref, { waitUntil: "domcontentloaded", timeout: 120000 });
-
-      // Special case: if the menu is "Search", validate that the search field appears
-      if (/search/i.test(menuLabel)) {
-        console.log(`• Menu identified as Search. Validating search field...`);
-        try {
-          await this.resortsSearchInput.waitFor({ state: "visible", timeout: 2000 });
-          console.log(`  ✓ Search field is visible.`);
-        } catch {
-          console.warn(`  • Warning: Search menu did not open the search field.`);
-        }
-      } else {
-        console.log(`• Validating page title for menu "${menuLabel}"...`);
-        await validateTitleContains(menuPage, menuLabel);
-      }
-
-      const sublinks = menu.sublinks || [];
-      console.log(`• Submenus found for "${menuLabel}": ${sublinks.length}`);
-
-      // If no sublinks, close the page and continue
-      if (sublinks.length === 0) {
-        console.log(`• No submenus to validate for "${menuLabel}".`);
-        await menuPage.close();
+      // Skip menus without a valid URL
+      if (!menuHref) {
+        console.warn(`• Skipping menu "${menuLabel}" — no valid URL.`);
         continue;
       }
 
-      // Prepare to check all sublinks and detect duplicates
-      const allSublinks: Array<{ label: string; href: string }> = [];
-      const seen = new Map<string, string>();
+      let menuPage: Page | null = null;
 
-      console.log(`• Checking submenu URLs and detecting duplicates...`);
+      try {
+        // Open the menu link in a new page
+        console.log(`• Opening menu page: ${menuHref}`);
+        menuPage = await this.page.context().newPage();
+        await menuPage.goto(menuHref, { waitUntil: "domcontentloaded", timeout: 120000 });
 
-      for (const s of sublinks) {
-        const full = this.actions.extractFullUrlFromString(s.href);
-        if (!full) continue;
-
-        // Detect duplicates: if the same URL appears with different labels
-        if (seen.has(full)) {
-          const duplicateWith = seen.get(full)!;
-          console.warn(`  • Duplicate URL detected → "${s.label}" duplicate of "${duplicateWith}" (URL: ${full})`);
-          if (!duplicatesSummary[menuLabel]) duplicatesSummary[menuLabel] = [];
-          duplicatesSummary[menuLabel].push({ label: s.label, duplicateWith, url: full });
+        // Special case: if the menu is "Search", validate that the search field appears
+        if (/search/i.test(menuLabel)) {
+          console.log(`• Menu identified as Search. Validating search field...`);
+          try {
+            await this.resortsSearchInput.waitFor({ state: "visible", timeout: 2000 });
+            console.log(`  ✓ Search field is visible.`);
+          } catch {
+            console.warn(`  • Warning: Search menu did not open the search field.`);
+          }
         } else {
-          seen.set(full, s.label);
+          console.log(`• Validating page title for menu "${menuLabel}"...`);
+          await validateTitleContains(menuPage, menuLabel);
         }
 
-        allSublinks.push({ label: s.label || full, href: full });
-      }
+        const sublinks = menu.sublinks || [];
+        console.log(`• Submenus found for "${menuLabel}": ${sublinks.length}`);
 
-      // Open each submenu link in a new page and validate its title
-      const subPage = await this.page.context().newPage();
-      console.log(`• Validating ${allSublinks.length} submenu pages for "${menuLabel}"...`);
-
-      for (const s of allSublinks) {
-        console.log(`  -----------------------------------------------------------`);
-        console.log(`  • Submenu label: "${s.label}"`);
-        console.log(`  • Submenu URL: ${s.href}`);
-
-        try {
-          await subPage.goto(s.href, { waitUntil: "domcontentloaded", timeout: 90000 });
-          await validateTitleContains(subPage, s.label);
-          console.log(`  ✓ Submenu validated successfully: "${s.label}"`);
-        } catch (err: any) {
-          console.error(`  ❌ Submenu "${s.label}" failed → ${err?.message || err}`);
+        // If no sublinks, close the page and continue
+        if (sublinks.length === 0) {
+          console.log(`• No submenus to validate for "${menuLabel}".`);
+          await menuPage.close();
+          continue;
         }
+
+        // Prepare to check all sublinks and detect duplicates
+        const allSublinks: Array<{ label: string; href: string }> = [];
+        const seen = new Map<string, string>();
+
+        console.log(`• Checking submenu URLs and detecting duplicates...`);
+
+        for (const s of sublinks) {
+          const full = this.actions.extractFullUrlFromString(s.href);
+          if (!full) continue;
+
+          // Detect duplicates: if the same URL appears with different labels
+          if (seen.has(full)) {
+            const duplicateWith = seen.get(full)!;
+            console.warn(`  • Duplicate URL detected → "${s.label}" duplicate of "${duplicateWith}" (URL: ${full})`);
+            if (!duplicatesSummary[menuLabel]) duplicatesSummary[menuLabel] = [];
+            duplicatesSummary[menuLabel].push({ label: s.label, duplicateWith, url: full });
+          } else {
+            seen.set(full, s.label);
+          }
+
+          allSublinks.push({ label: s.label || full, href: full });
+        }
+
+        // Open each submenu link in a new page and validate its title
+        const subPage = await this.page.context().newPage();
+        console.log(`• Validating ${allSublinks.length} submenu pages for "${menuLabel}"...`);
+
+        for (const s of allSublinks) {
+          console.log(`  -----------------------------------------------------------`);
+          console.log(`  • Submenu label: "${s.label}"`);
+          console.log(`  • Submenu URL: ${s.href}`);
+
+          try {
+            await subPage.goto(s.href, { waitUntil: "domcontentloaded", timeout: 90000 });
+            await validateTitleContains(subPage, s.label);
+            console.log(`  ✓ Submenu validated successfully: "${s.label}"`);
+          } catch (err: any) {
+            console.error(`  ❌ Submenu "${s.label}" failed → ${err?.message || err}`);
+          }
+        }
+
+        await subPage.close().catch(() => null);
+      } finally {
+        // Ensure the menu page is closed even if an error occurs
+        if (menuPage) await menuPage.close().catch(() => null);
       }
-
-      await subPage.close().catch(() => null);
-    } finally {
-      // Ensure the menu page is closed even if an error occurs
-      if (menuPage) await menuPage.close().catch(() => null);
     }
-  }
 
-  // Print a summary of duplicate submenus found
-  console.log(`\n==================== MENUS — DUPLICATES SUMMARY ====================`);
-  if (Object.keys(duplicatesSummary).length === 0) {
-    console.log(`• No duplicate submenu URLs found.`);
-  } else {
-    for (const [menu, duplicates] of Object.entries(duplicatesSummary)) {
-      console.log(`• Menu: ${menu}`);
-      duplicates.forEach(d => {
-        console.log(`  - "${d.label}" duplicate of "${d.duplicateWith}" (URL: ${d.url})`);
-      });
+    // Print a summary of duplicate submenus found
+    console.log(`\n==================== MENUS — DUPLICATES SUMMARY ====================`);
+    if (Object.keys(duplicatesSummary).length === 0) {
+      console.log(`• No duplicate submenu URLs found.`);
+    } else {
+      for (const [menu, duplicates] of Object.entries(duplicatesSummary)) {
+        console.log(`• Menu: ${menu}`);
+        duplicates.forEach(d => {
+          console.log(`  - "${d.label}" duplicate of "${d.duplicateWith}" (URL: ${d.url})`);
+        });
+      }
     }
-  }
 
-  console.log(`==================== MENUS — VALIDATION COMPLETE ==================\n`);
-}
+    console.log(`==================== MENUS — VALIDATION COMPLETE ==================\n`);
+  }
 
   // VALIDATIONS: Validates all items in the footer.
-async validateFooterItems(): Promise<void> {
-  console.log(`\n==================== FOOTER — VALIDATION START ====================`);
+  async validateFooterItems(): Promise<void> {
+    console.log(`\n==================== FOOTER — VALIDATION START ====================`);
 
-  // Array to store duplicate footer items found during validation
-  const duplicatesSummary: Array<{ label: string; duplicateWith: string; url: string }> = [];
+    // Array to store duplicate footer items found during validation
+    const duplicatesSummary: Array<{ label: string; duplicateWith: string; url: string }> = [];
 
-  // Helper function: checks if the <h1> title of a page contains words from the footer item label
-  const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
-    // Normalize text: lowercase, remove accents, remove special characters
-    const normalize = (txt: string) =>
-      txt.toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9\s]/gi, " ")
-        .trim();
+    // Helper function: checks if the <h1> title of a page contains words from the footer item label
+    const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
+      // Normalize text: lowercase, remove accents, remove special characters
+      const normalize = (txt: string) =>
+        txt.toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9\s]/gi, " ")
+          .trim();
 
-    const normalizedLabel = normalize(label);
+      const normalizedLabel = normalize(label);
 
-    try {
-      // Get the first <h1> text from the page
-      const h1TextRaw = await page.locator("h1").first().innerText();
-      const h1Text = normalize(h1TextRaw);
+      try {
+        // Get the first <h1> text from the page
+        const h1TextRaw = await page.locator("h1").first().innerText();
+        const h1Text = normalize(h1TextRaw);
 
-      // Split the label into words longer than 2 characters
-      const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
+        // Split the label into words longer than 2 characters
+        const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
 
-      // Check if any of those words are present in the <h1> text
-      const anyWordFound = labelWords.some(w => h1Text.includes(w));
+        // Check if any of those words are present in the <h1> text
+        const anyWordFound = labelWords.some(w => h1Text.includes(w));
 
-      if (anyWordFound) {
-        console.log(`      • Title OK for footer item "${label}" → "${h1TextRaw}"`);
-        return true;
+        if (anyWordFound) {
+          console.log(`      • Title OK for footer item "${label}" → "${h1TextRaw}"`);
+          return true;
+        }
+      } catch {
+        // Ignore and fall through to warning
       }
-    } catch {
-      // Ignore and fall through to warning
+
+      console.warn(`      • Warning: No <h1> match found for footer item "${label}"`);
+      return false;
+    };
+
+    // Capture all footer items from the DOM
+    const footerItems = await this.page.$$eval(
+      '//li[@class="footer-list__item"]',
+      (items) => {
+        return items.map((li) => {
+          const anchor = li.querySelector('a');
+          return {
+            label: anchor?.textContent?.trim() || li.textContent?.trim() || '',
+            href: anchor?.getAttribute('href') || null
+          };
+        });
+      }
+    );
+
+    console.log(`• Total footer items detected: ${footerItems.length}`);
+    console.log(`---------------------------------------------------------------`);
+
+    // Map to track seen URLs and detect duplicates
+    const seen = new Map<string, string>();
+
+    // Iterate through each footer item
+    for (const f of footerItems) {
+      const fullUrl = this.actions.extractFullUrlFromString(f.href);
+
+      console.log(`\n==================== FOOTER ITEM ====================`);
+      console.log(`• Label: "${f.label}"`);
+      console.log(`• Raw URL: ${f.href || "(no href attribute)"}`);
+
+      // Skip items without a valid URL
+      if (!fullUrl) {
+        console.warn(`• Skipping footer item "${f.label}" — no valid URL.`);
+        continue;
+      }
+
+      console.log(`• Resolved URL: ${fullUrl}`);
+
+      // Check for duplicates: same URL with different labels
+      if (seen.has(fullUrl)) {
+        const duplicateWith = seen.get(fullUrl)!;
+        console.warn(
+          `• Duplicate URL detected → "${f.label}" duplicate of "${duplicateWith}" (URL: ${fullUrl})`
+        );
+        duplicatesSummary.push({ label: f.label, duplicateWith, url: fullUrl });
+      } else {
+        seen.set(fullUrl, f.label);
+      }
+
+      // Scroll into view before opening a new tab (helps simulate user interaction)
+      try {
+        const locator = this.page.locator(
+          `//li[@class="footer-list__item"] >> text=${f.label}`
+        );
+        await locator.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(500);
+        console.log(`• Scrolled into view.`);
+      } catch {
+        console.warn(`• Warning: Could not scroll to footer item "${f.label}".`);
+      }
+
+      // Open a new tab to validate each footer item
+      let footerPage: Page | null = null;
+      try {
+        console.log(`• Opening footer URL in new tab...`);
+        footerPage = await this.page.context().newPage();
+        await footerPage.goto(fullUrl, {
+          waitUntil: 'domcontentloaded',
+          timeout: 90000
+        });
+
+        await validateTitleContains(footerPage, f.label);
+        console.log(`• Footer item validated successfully: "${f.label}"`);
+      } catch (err: any) {
+        console.error(
+          `❌ Footer item "${f.label}" failed → ${err?.message || err}`
+        );
+      } finally {
+        // Ensure the tab is closed even if an error occurs
+        if (footerPage) await footerPage.close().catch(() => null);
+      }
     }
 
-    console.warn(`      • Warning: No <h1> match found for footer item "${label}"`);
-    return false;
-  };
-
-  // Capture all footer items from the DOM
-  const footerItems = await this.page.$$eval(
-    '//li[@class="footer-list__item"]',
-    (items) => {
-      return items.map((li) => {
-        const anchor = li.querySelector('a');
-        return {
-          label: anchor?.textContent?.trim() || li.textContent?.trim() || '',
-          href: anchor?.getAttribute('href') || null
-        };
-      });
-    }
-  );
-
-  console.log(`• Total footer items detected: ${footerItems.length}`);
-  console.log(`---------------------------------------------------------------`);
-
-  // Map to track seen URLs and detect duplicates
-  const seen = new Map<string, string>();
-
-  // Iterate through each footer item
-  for (const f of footerItems) {
-    const fullUrl = this.actions.extractFullUrlFromString(f.href);
-
-    console.log(`\n==================== FOOTER ITEM ====================`);
-    console.log(`• Label: "${f.label}"`);
-    console.log(`• Raw URL: ${f.href || "(no href attribute)"}`);
-
-    // Skip items without a valid URL
-    if (!fullUrl) {
-      console.warn(`• Skipping footer item "${f.label}" — no valid URL.`);
-      continue;
-    }
-
-    console.log(`• Resolved URL: ${fullUrl}`);
-
-    // Check for duplicates: same URL with different labels
-    if (seen.has(fullUrl)) {
-      const duplicateWith = seen.get(fullUrl)!;
-      console.warn(
-        `• Duplicate URL detected → "${f.label}" duplicate of "${duplicateWith}" (URL: ${fullUrl})`
-      );
-      duplicatesSummary.push({ label: f.label, duplicateWith, url: fullUrl });
+    // Print a summary of duplicate footer items found
+    console.log(`\n==================== FOOTER — DUPLICATES SUMMARY ====================`);
+    if (duplicatesSummary.length === 0) {
+      console.log(`• No duplicate footer URLs found.`);
     } else {
-      seen.set(fullUrl, f.label);
-    }
-
-    // Scroll into view before opening a new tab (helps simulate user interaction)
-    try {
-      const locator = this.page.locator(
-        `//li[@class="footer-list__item"] >> text=${f.label}`
-      );
-      await locator.scrollIntoViewIfNeeded();
-      await this.page.waitForTimeout(500);
-      console.log(`• Scrolled into view.`);
-    } catch {
-      console.warn(`• Warning: Could not scroll to footer item "${f.label}".`);
-    }
-
-    // Open a new tab to validate each footer item
-    let footerPage: Page | null = null;
-    try {
-      console.log(`• Opening footer URL in new tab...`);
-      footerPage = await this.page.context().newPage();
-      await footerPage.goto(fullUrl, {
-        waitUntil: 'domcontentloaded',
-        timeout: 90000
+      duplicatesSummary.forEach(d => {
+        console.log(
+          `• "${d.label}" duplicate of "${d.duplicateWith}" (URL: ${d.url})`
+        );
       });
-
-      await validateTitleContains(footerPage, f.label);
-      console.log(`• Footer item validated successfully: "${f.label}"`);
-    } catch (err: any) {
-      console.error(
-        `❌ Footer item "${f.label}" failed → ${err?.message || err}`
-      );
-    } finally {
-      // Ensure the tab is closed even if an error occurs
-      if (footerPage) await footerPage.close().catch(() => null);
     }
-  }
 
-  // Print a summary of duplicate footer items found
-  console.log(`\n==================== FOOTER — DUPLICATES SUMMARY ====================`);
-  if (duplicatesSummary.length === 0) {
-    console.log(`• No duplicate footer URLs found.`);
-  } else {
-    duplicatesSummary.forEach(d => {
-      console.log(
-        `• "${d.label}" duplicate of "${d.duplicateWith}" (URL: ${d.url})`
-      );
-    });
+    console.log(`==================== FOOTER — VALIDATION COMPLETE ==================\n`);
   }
-
-  console.log(`==================== FOOTER — VALIDATION COMPLETE ==================\n`);
-}
 
   // This function prints all slides and indicators from the carousel to the console.
   // showing which ones are active at the moment.
@@ -816,40 +825,89 @@ async validateFooterItems(): Promise<void> {
 
   // clickMenu: clicks on the main menu and optionally on submenus (specific to the site's HTML structure)
   async clickMenu(menuName: string, subMenuName?: string) {
-  console.log(`\n==================== MENU — INTERACTION START ====================`);
-  console.log(`• Target menu: "${menuName}"`);
-  if (subMenuName) console.log(`• Target submenu: "${subMenuName}"`);
-  console.log(`---------------------------------------------------------------`);
+    console.log(`\n==================== MENU — INTERACTION START ====================`);
+    console.log(`• Target menu: "${menuName}"`);
+    if (subMenuName) console.log(`• Target submenu: "${subMenuName}"`);
+    console.log(`---------------------------------------------------------------`);
 
-  // Main menu locator
-  const menu = this.page.locator(`//li[@class="menu-list__item"]//a[text()="${menuName}"]`);
+    // Main menu locator
+    const menu = this.page.locator(`//li[@class="menu-list__item"]//a[text()="${menuName}"]`);
 
-  // If only the main menu is clicked
-  if (!subMenuName) {
-    await menu.click();
-    console.log(`• Clicked main menu: "${menuName}"`);
+    // If only the main menu is clicked
+    if (!subMenuName) {
+      await menu.click();
+      console.log(`• Clicked main menu: "${menuName}"`);
+      console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
+      return;
+    }
+
+    // Hover to reveal submenu
+    console.log(`• Hovering menu: "${menuName}" to reveal submenu...`);
+    await menu.hover();
+
+    // Submenu locator
+    const subMenu = this.page.locator(`//li[@class="submenu-list__item"]//a[text()="${subMenuName}"]`);
+
+    // Check if submenu exists
+    const count = await subMenu.count();
+    if (count === 0) {
+      console.log(`• Submenu not found: "${subMenuName}" inside "${menuName}"`);
+      console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
+      return;
+    }
+
+    // Click submenu
+    await subMenu.click();
+    console.log(`• Clicked submenu: "${subMenuName}" inside menu "${menuName}"`);
     console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
-    return;
   }
 
-  // Hover to reveal submenu
-  console.log(`• Hovering menu: "${menuName}" to reveal submenu...`);
-  await menu.hover();
+  async validateMultipleTitles(expected: string | string[]) {
+    console.log(`\n==================== TITLE CHECK — START ====================`);
 
-  // Submenu locator
-  const subMenu = this.page.locator(`//li[@class="submenu-list__item"]//a[text()="${subMenuName}"]`);
+    // Normalize input to array
+    const expectedTitles = Array.isArray(expected) ? expected : [expected];
 
-  // Check if submenu exists
-  const count = await subMenu.count();
-  if (count === 0) {
-    console.log(`• Submenu not found: "${subMenuName}" inside "${menuName}"`);
-    console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
-    return;
+    console.log(`• Titles to validate: ${expectedTitles.length}`);
+    expectedTitles.forEach(t => console.log(`  • "${t}"`));
+
+    console.log(`---------------------------------------------------------------`);
+    console.log(`• Collecting all H1–H6 titles from the page...`);
+
+    // Collect all H1–H6 elements once
+    const allTitles = await this.page.$$eval(
+      'h1, h2, h3, h4, h5, h6',
+      elements => elements.map(el => el.textContent?.trim() || "")
+    );
+
+    console.log(`• Total titles found: ${allTitles.length}`);
+    allTitles.forEach((t, i) => console.log(`  • [${i + 1}] ${t}`));
+
+    console.log(`---------------------------------------------------------------`);
+    console.log(`• Validating required titles...\n`);
+
+    // Normalize helper
+    const normalize = (txt: string) =>
+      txt.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+    const normalizedTitles = allTitles.map(t => normalize(t));
+
+    // Validate each expected title
+    for (const expectedTitle of expectedTitles) {
+      const expectedNorm = normalize(expectedTitle);
+
+      const found = normalizedTitles.some(t => t.includes(expectedNorm));
+
+      if (found) {
+        console.log(`• OK → Found required title: "${expectedTitle}"`);
+      } else {
+        throw new Error(`❌ Required title not found: "${expectedTitle}"`);
+      }
+    }
+
+    console.log(`\n==================== TITLE CHECK — COMPLETE ==================\n`);
   }
-
-  // Click submenu
-  await subMenu.click();
-  console.log(`• Clicked submenu: "${subMenuName}" inside menu "${menuName}"`);
-  console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
-}
 }

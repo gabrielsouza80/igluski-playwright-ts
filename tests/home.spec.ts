@@ -68,6 +68,16 @@ test.describe.only('Home Page', () => {
     await pm.onHomePage().validateRatingsAndReviews();
   });
 
+  //TC 15 — Validate Main Titles on the Homepage
+  test('Validate Main Titles on the Homepage', async ({ page }) => {
+    const pm = new PageManager(page);
+    await pm.onHomePage().validateMultipleTitles([
+      "Welcome To The Home Of Ski",
+      "Speak to the ski experts",
+      "Find Your Skiing Holiday"
+    ]);
+  });
+
   //TC 16 — Validate carousel of promotions and country banners on the homepage"
   test('Validate Carousel of Banners (Countries)"', async ({ page }) => {
     const pm = new PageManager(page);
