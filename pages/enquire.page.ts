@@ -34,6 +34,9 @@ export class EnquirePage extends HelperBase {
   // Submit button
   readonly enquireButton: Locator = this.page.locator('#ab-track-enquire');
 
+  readonly subFooterLinks: Locator = this.page.locator('.sob-footer-links-container');
+
+
   async navigateAndAcceptCookies(): Promise<void> {
     await this.page.goto('/enquire', { waitUntil: 'load' });
       try {
@@ -46,7 +49,30 @@ export class EnquirePage extends HelperBase {
   }
 
   async isPageLoaded(): Promise<boolean> {
-    return await this.firstNameInput.isVisible({ timeout: 5000 }).catch(() => false);
+    const timeout = (config as any)?.timeout ?? 5000;
+    try {
+      // Ensure all mandatory fields are visible
+      const visibleChecks = await Promise.all([
+        this.firstNameInput.isVisible({ timeout }).catch(() => false),
+        this.lastNameInput.isVisible({ timeout }).catch(() => false),
+        this.emailInput.isVisible({ timeout }).catch(() => false),
+        this.phoneNumberInput.isVisible({ timeout }).catch(() => false),
+        this.subFooterLinks.isVisible({ timeout }).catch(() => false),
+      ]);
+      if (!visibleChecks.every(Boolean)) return false;
+
+      // Ensure all mandatory fields are enabled
+      const enabledChecks = await Promise.all([
+        this.firstNameInput.isEnabled().catch(() => false),
+        this.lastNameInput.isEnabled().catch(() => false),
+        this.emailInput.isEnabled().catch(() => false),
+        this.phoneNumberInput.isEnabled().catch(() => false),
+      ]);
+
+      return enabledChecks.every(Boolean);
+    } catch {
+      return false;
+    }
   }
 
   async fillAllMandatoryFields(): Promise<void> {
@@ -142,6 +168,7 @@ export class EnquirePage extends HelperBase {
     expect(await this.getErrorMessageForField('LastName')).not.toBeNull();
     expect(await this.getErrorMessageForField('PhoneNumber')).not.toBeNull();
     expect(await this.getErrorMessageForField('Email')).not.toBeNull();
+    expect(await this.getErrorMessageForField('PhoneNumberCountryCode')).not.toBeNull();
   }
 
   async getErrorMessageForField(fieldName: string): Promise<string | null> {

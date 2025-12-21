@@ -1,106 +1,83 @@
-import { test, expect } from '@playwright/test';
-import { HomePage } from '../pages/home.page';
-import { SearchPage } from '../pages/search.page';
-import { BookingDetailsPage } from '../pages/bookingDetails.page';
-import { PeopleAndContactDetailsPage } from '../pages/people.page';
-import { PaymentPage } from '../pages/payment.page';
-import { AccommodationPage } from '../pages/accomodation.page';
-import { ExtrasPage } from '../pages/extras.page';
-import { TravelOptionsPage } from '../pages/travelOption.page';
-import { SummaryPage } from '../pages/summary.page';
+import { test, expect } from '../support/baseTest';
 
 test.describe('Home Page', () => {
-  test.beforeEach(async ({ page }) => {
-    const home = new HomePage(page);
-    await home.navigateAndAcceptCookies(); 
+  test.beforeEach(async ({ page, pm }) => {
+    await pm.onHomePage().navigateAndAcceptCookies(); 
   });
 
 
-  test('End-2-end test: Search and book holiday', async ({ page }) => {
-    const home = new HomePage(page);
-    const search = new SearchPage(page);
-    await home.searchForCountry('France');
-    const resultsText = await search.hasSearchResults();
+  test('End-2-end test: Search and book holiday', async ({ page, pm }) => {
+    await pm.onHomePage().searchForCountry('France');
+    const resultsText = await pm.onSearchPage().hasSearchResults();
     expect(resultsText).toBeTruthy();
   });
 
-  test('should book first ski holiday package and reach payment page', async ({ page }) => {
-    const home = new HomePage(page);
-    const search = new SearchPage(page);
-    await home.searchForCountry('France');
-    await home.clickOnSearchButton()
-    const resultsText = await search.hasSearchResults();
+  test('should book first ski holiday package and reach payment page', async ({ page, pm }) => {
+    await pm.onHomePage().searchForCountry('France');
+    await pm.onHomePage().clickOnSearchButton()
+    const resultsText = await pm.onSearchPage().hasSearchResults();
     expect(resultsText).toBeTruthy();
 
-    const resultsCount = await search.getResultsCount();
+    const resultsCount = await pm.onSearchPage().getResultsCount();
     console.log(`✓ Found ${resultsCount} ski holiday packages`);
 
-    await search.clickFirstBookOnline();
+    await pm.onSearchPage().clickFirstBookOnline();
     await page.waitForLoadState('networkidle');
     
     console.log('✓ Clicked Book Online on first result');
 
     await page.waitForURL(/book|booking|details/i, { timeout: 10000 });
 
-    const accomodation = new AccommodationPage(page);
 
-    await accomodation.clickConfirmNumberOfPeople()
+    await pm.onAccommodationPage().clickConfirmNumberOfPeople()
     console.log('✓ Clicked Accomodation - Confirm Number of People');
     
-    await accomodation.clickAddRoom()
+    await pm.onAccommodationPage().clickAddRoom()
     console.log('✓ Clicked Accomodation - Add Room');
     
-    await accomodation.allocateRoomOccupancy()
+    await pm.onAccommodationPage().allocateRoomOccupancy()
 
-    await accomodation.continueToTravelOptions()
+    await pm.onAccommodationPage().continueToTravelOptions()
 
     console.log('✓ Clicked Accomodation - Continue to Travel page');
 
-    const travelPage = new TravelOptionsPage(page);
+    await pm.onTravelOptionsPage().isTravelPageLoaded();
 
-    await travelPage.isTravelPageLoaded();
-
-    await travelPage.continueToExtras();
+    await pm.onTravelOptionsPage().continueToExtras();
 
     console.log('✓ Clicked Travel - Continue to Extras page');
 
-    const extrasPage = new ExtrasPage(page);
-    await extrasPage.isExtrasPageLoaded()
-    await extrasPage.continueToSummary();
+    await pm.onExtrasPage().isExtrasPageLoaded()
+    await pm.onExtrasPage().continueToSummary();
 
     console.log('✓ Clicked Extras - Continue to Summary page');
 
-    const summaryPage = new SummaryPage(page);
 
-    await summaryPage.isSummaryPageLoaded()
-    await summaryPage.clickBookOnline()
+    await pm.onSummaryPage().isSummaryPageLoaded()
+    await pm.onSummaryPage().clickBookOnline()
 
     console.log('✓ Clicked Summary - Continue to People page');
 
-    const peoplePage = new PeopleAndContactDetailsPage(page);
 
-    await peoplePage.fillMultiplePassengers();
+    await pm.onPeopleAndContactDetailsPage().fillMultiplePassengers();
     console.log('✓ Filled People - Mandatory fields');
 
-    await peoplePage.clickContinueToBooking()
+    await pm.onPeopleAndContactDetailsPage().clickContinueToBooking()
     console.log('✓ Clicked People - Continue to Book page');
 
 
-    const bookingPage = new BookingDetailsPage(page);
-
     // 6. Accept terms and conditions
-    await bookingPage.acceptErratas();
-    await bookingPage.acceptTermsAndConditions();
+    await pm.onBookingDetailsPage().acceptErratas();
+    await pm.onBookingDetailsPage().acceptTermsAndConditions();
     console.log('✓ Accepted terms and conditions');
 
     // 7. Proceed to payment
-    await bookingPage.proceedToPayment();
+    await pm.onBookingDetailsPage().proceedToPayment();
 
     console.log('✓ Clicked proceed to payment');
 
     // 8. Validate that we reached the payment page
-    const paymentPage = new PaymentPage(page);
-    const isOnPaymentPage = await paymentPage.isPaymentPageDisplayed();
+    const isOnPaymentPage = await pm.onPaymentPage().isPaymentPageDisplayed();
     expect(isOnPaymentPage).toBe(true);
 
     console.log('✓ Successfully reached payment page');
