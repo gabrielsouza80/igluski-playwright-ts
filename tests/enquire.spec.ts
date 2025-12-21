@@ -1,3 +1,4 @@
+import { log } from 'console';
 import { test, expect } from '../support/baseTest';
 import enquireData from './fixtures/enquire.json';
 
@@ -69,8 +70,10 @@ test.describe('Enquire Page', () => {
 
     test('Validate invalid phone format - too many digits', async ({ page, pm }) => {
     // Fill everything with valid data, then replace phone with an invalid value
+    const length = 20 + Math.floor(Math.random() * 31);
+    const longNumber = Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
     await pm.onEnquirePage().fillAllMandatoryFields();
-    await pm.onEnquirePage().fillField('phone', '987987987987897987897987897897897987987987');
+    await pm.onEnquirePage().fillField('phone', longNumber);
 
     await pm.onEnquirePage().submitEnquiry();
 
@@ -95,5 +98,32 @@ test.describe('Enquire Page', () => {
     expect(errLast).not.toBeNull();
     expect((errFirst || '').trim().length).toBeGreaterThan(0);
     expect((errLast || '').trim().length).toBeGreaterThan(0);
+  });
+
+  test('Validate mandatory fields reject only spaces', async ({ page, pm }) => {
+    // Fill with valid data then replace mandatory fields with spaces
+    await pm.onEnquirePage().fillAllMandatoryFields();
+    const spaces = '   ';
+    await pm.onEnquirePage().fillField('firstName', spaces);
+    await pm.onEnquirePage().fillField('lastName', spaces);
+    await pm.onEnquirePage().fillField('email', spaces);
+    await pm.onEnquirePage().fillField('phone', spaces);
+
+    await pm.onEnquirePage().submitEnquiry();
+
+    const errFirst = await pm.onEnquirePage().getErrorMessageForField('FirstName');
+    const errLast = await pm.onEnquirePage().getErrorMessageForField('LastName');
+    const errEmail = await pm.onEnquirePage().getErrorMessageForField('Email');
+    const errPhone = await pm.onEnquirePage().getErrorMessageForField('PhoneNumber');
+
+    expect(errFirst).not.toBeNull();
+    expect(errLast).not.toBeNull();
+    expect(errEmail).not.toBeNull();
+    expect(errPhone).not.toBeNull();
+
+    expect((errFirst || '').trim().length).toBeGreaterThan(0);
+    expect((errLast || '').trim().length).toBeGreaterThan(0);
+    expect((errEmail || '').trim().length).toBeGreaterThan(0);
+    expect((errPhone || '').trim().length).toBeGreaterThan(0);
   });
 });
