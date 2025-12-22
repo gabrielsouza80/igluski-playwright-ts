@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="11" failures="0" skipped="0" errors="0" time="161.15116900000012">
-<testsuite name="home.spec.ts" timestamp="2025-12-22T13:03:20.962Z" hostname="chromium" tests="11" failures="0" skipped="0" time="338.315" errors="0">
-<testcase name="Home Page › Validate Iglu Ski Logo" classname="home.spec.ts" time="13.636">
+<testsuites id="" name="" tests="11" failures="0" skipped="0" errors="0" time="158.19924099999992">
+<testsuite name="home.spec.ts" timestamp="2025-12-22T13:30:59.153Z" hostname="chromium" tests="11" failures="0" skipped="0" time="384.398" errors="0">
+<testcase name="Home Page › Validate Iglu Ski Logo" classname="home.spec.ts" time="17.131">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -34,7 +34,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Main Navigation Menu" classname="home.spec.ts" time="157.769">
+<testcase name="Home Page › Validate Main Navigation Menu" classname="home.spec.ts" time="154.848">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -701,7 +701,7 @@
 ]]>
 </system-err>
 </testcase>
-<testcase name="Home Page › Click on the menu and optionally on the submenu." classname="home.spec.ts" time="14.464">
+<testcase name="Home Page › Click on the menu and optionally on the submenu." classname="home.spec.ts" time="20.073">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -736,7 +736,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Contact Information in the Header" classname="home.spec.ts" time="10.842">
+<testcase name="Home Page › Validate Contact Information in the Header" classname="home.spec.ts" time="12.488">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -772,7 +772,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate &quot;Recently Viewed&quot; button" classname="home.spec.ts" time="12.575">
+<testcase name="Home Page › Validate &quot;Recently Viewed&quot; button" classname="home.spec.ts" time="9.329">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -799,7 +799,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Access to the Customer Portal" classname="home.spec.ts" time="12.023">
+<testcase name="Home Page › Validate Access to the Customer Portal" classname="home.spec.ts" time="13.574">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -826,7 +826,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Ratings and Reviews in the Header" classname="home.spec.ts" time="12.556">
+<testcase name="Home Page › Validate Ratings and Reviews in the Header" classname="home.spec.ts" time="13.221">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -853,7 +853,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Main Titles on the Homepage" classname="home.spec.ts" time="11.515">
+<testcase name="Home Page › Validate Main Titles on the Homepage" classname="home.spec.ts" time="9.007">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -917,7 +917,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate carousel of promotions and country banners on the homepage" classname="home.spec.ts" time="22.126">
+<testcase name="Home Page › Validate carousel of promotions and country banners on the homepage" classname="home.spec.ts" time="27.251">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1026,7 +1026,7 @@ Redirect OK → https://www.igluski.com/ski-resorts/japan
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="5.14">
+<testcase name="Home Page › Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="7.535">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1075,7 +1075,7 @@ IGLU SKI
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Footer Links&quot;" classname="home.spec.ts" time="65.669">
+<testcase name="Home Page › Validate Footer Links&quot;" classname="home.spec.ts" time="99.941">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
