@@ -14,7 +14,7 @@ export class AccommodationPage  extends HelperBase {
   readonly numberOfAdultsInput: Locator = this.page.locator('#number-of-adults-input');
   readonly numberOfChildrenInput: Locator = this.page.locator('#number-of-children-input');
   readonly numberOfInfantsInput: Locator = this.page.locator('#number-of-infants-input');
-  readonly showRoomOptionsBtn: Locator = this.page.getByRole('button', { name: /Show Room Options/i });
+  readonly showRoomOptionsBtn: Locator = this.page.getByRole('button', { name: /Choose Your Room/i });
   readonly continueToTravelOptionsBtn: Locator = this.page.getByRole('button', { name: /Continue to Travel Options/i });
 
   async setNumberOfAdults(count: number): Promise<void> {
