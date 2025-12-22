@@ -27,33 +27,69 @@ test.describe('Home Page', () => {
 
   });
 
-  test('Clicar no menu e opcionalmente no submenu', async ({ page, pm }) => {
+  test('Click on the menu and optionally on the submenu.', async ({ page, pm }) => {
     // ✅ Just click on the main menu:
     await pm.onHomePage().clickMenu("Ski Holidays");
 
     // ✅ Click on the menu and then on a submenu:
-    await pm.onHomePage().clickMenu("Ski Holidays", "Family Ski Holidays");
+    await pm.onHomePage().clickMenu("Ski Holidays", "Family ski holidays");
   });
 
 // TC 3 — Validate Contact Information in Header: checks phone number and email address
-  test('Validar Informações de Contato no Header', async ({ page, pm }) => {
+  test('Validate Contact Information in the Header', async ({ page, pm }) => {
     await pm.onHomePage().validateHeaderContactInfo();
 
   });
 
-//TC 4 — Validate "Recently Viewed" Button
-  test('Validar Botão "Recently Viewed"', async ({ page, pm }) => {
+  //TC 4 — Validate "Recently Viewed" Button
+  test('Validate "Recently Viewed" button', async ({ page, pm }) => {
     await pm.onHomePage().validateRecentlyViewedButton();
   });
 
-//TC 16 — Validate carousel of promotions and country banners on the homepage"
-  test.skip('Validar Carrossel de Banners (Países)"', async ({ page, pm }) => {
-    await pm.onHomePage().validateCarouselHome();
+  //TC 5 — Validate Access to the Customer Portal
+  test('Validate Access to the Customer Portal', async ({ page, pm }) => {
+    await pm.onHomePage().validateAccessCustomerPortal();
   });
 
-//TC 20 — Validate Footer Links
-  test('Validar Links do Footer"', async ({ page, pm }) => {
-// ✅ Increase the global timeout for this test (5 minutes)
+  //TC 6 — Validate Ratings and Reviews in the Header
+  test('Validate Ratings and Reviews in the Header', async ({ page, pm }) => {
+    await pm.onHomePage().validateRatingsAndReviews();
+  });
+
+  //TC 15 — Validate Main Titles on the Homepage
+  test('Validate Main Titles on the Homepage', async ({ page, pm }) => {
+    await pm.onHomePage().validateMultipleTitles([
+      "Welcome To The Home Of Ski",
+      "Speak to the ski experts",
+      "Find Your Skiing Holiday"
+    ]);
+  });
+
+  //TC 16 — Validate carousel of promotions and country banners on the homepage
+  test('Validate carousel of promotions and country banners on the homepage', async ({ page, pm }) => {
+    await pm.onHomePage().validateCarouselHome();
+    await pm.onHomePage().validateCountryBanners();
+  });
+
+   // TC 17 — Validate CTA Boxes (Call To Action)
+test('Validate CTA Boxes (Call To Action)', async ({ pm }) => {
+  await pm.onHomePage().validateCtaBoxes(
+    [
+      "TALK TO A SKI EXPERT",
+      "ABOUT IGLU SKI",
+      "SIGN UP TO OUR NEWSLETTER"
+    ],
+    [
+      "/enquire",
+      "/about",
+      "/signup"
+    ]
+  );
+});
+
+  //TC 20 — Validate Footer Links
+  test('Validate Footer Links"', async ({ page, pm }) => {
+    // ✅ Increase the global timeout for this test (5 minutes)
     test.setTimeout(300000);
     await pm.onHomePage().validateFooterItems();
   });

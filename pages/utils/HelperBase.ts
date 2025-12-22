@@ -3,9 +3,18 @@
 // Contains custom actions and validations for the platform.
 
 import { Page, Locator, expect } from '@playwright/test';
+import fs from "fs";
+import path from "path";
 
 export class HelperBase {
+
   protected readonly page: Page;
+
+  // Load JSON once and keep it as a protected property
+  protected readonly urls: Record<string, string> = JSON.parse(
+    fs.readFileSync(path.join(process.cwd(), "secrets/secrets.urls.json"), "utf-8")
+  );
+
 
   constructor(page: Page) {
     this.page = page;
@@ -70,16 +79,25 @@ export class HelperBase {
 
   // validateRedirectButton: opens the link in a new tab and validates the URL (specific to the site)
   async validateRedirectButton(button: Locator | null, expectedUrl: string): Promise<void> {
+    console.log(`\n==================== REDIRECT — VALIDATION START ====================`);
 
-    // If you have a locator, try extracting href.
+    // Determine the URL to open
     let urlToOpen = expectedUrl;
 
     if (button) {
       const href = await button.getAttribute('href');
+
       urlToOpen = href && !href.startsWith("http")
         ? new URL(href, this.page.url()).toString()
         : (href || expectedUrl);
+
+      console.log(`• Extracted URL from element: ${urlToOpen}`);
+    } else {
+      console.log(`• No element provided. Using expected URL: ${expectedUrl}`);
     }
+
+    console.log(`• Opening new tab to validate redirection...`);
+    console.log(`---------------------------------------------------------------`);
 
     // Open new tab
     const newPage = await this.page.context().newPage();
@@ -91,10 +109,11 @@ export class HelperBase {
 
     // Validate URL
     await expect(newPage).toHaveURL(new RegExp(urlToOpen, 'i'));
-
-    console.log(`✓ Validated: ${urlToOpen}`);
+    console.log(`• Redirect OK → ${urlToOpen}`);
 
     await newPage.close();
+
+    console.log(`==================== REDIRECT — VALIDATION COMPLETE ==================\n`);
   }
 
   // extractFullUrl: automatically generates absolute URLs (site-specific)
@@ -127,9 +146,9 @@ export class HelperBase {
     });
   }
 
-/**
-* Scroll to the top of the page
-*/
+  /**
+  * Scroll to the top of the page
+  */
   async scrollToTop(): Promise<void> {
     await this.page.evaluate(() => {
       window.scrollTo(0, 0);

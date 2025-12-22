@@ -1,5 +1,5 @@
-// Actions.ts - Métodos genéricos reutilizáveis em múltiplos testes
-// Contém funções de utilidade que não são específicas de nenhum website
+// Actions.ts - Generic methods reusable in multiple tests
+// Contains utility functions that are not specific to any website
 
 import { Page, Locator } from '@playwright/test';
 
@@ -7,7 +7,7 @@ export class Actions {
 
   constructor(private page: Page) { }
 
-  // Normaliza texto removendo acentos e caracteres especiais (genérico)
+  // Normalize text by removing accents and special characters (generic)
   normalizeText(s?: string | null): string {
     if (!s) return '';
     return s
@@ -19,7 +19,7 @@ export class Actions {
       .toLowerCase();
   }
 
-  // Gera URL absoluta a partir de um href (genérico)
+  // Generate absolute URL from a (generic) href
   extractFullUrlFromString(linkHref: string | null): string | null {
     if (!linkHref) return null;
     try {
@@ -38,7 +38,7 @@ export class Actions {
     }
   }
 
-  // Aguarda a página carregar com a URL esperada (genérico)
+  // Wait for the page to load with the expected URL (generic).
   async verifyPageLoaded(expectedUrl: string): Promise<boolean> {
     try {
       await this.page.waitForURL(`**${expectedUrl}*`, { timeout: 15000 });

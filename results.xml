@@ -3,7 +3,34 @@
 <testcase name="Enquire Page › Submit enquire" classname="enquire.spec.ts" time="5.668">
 <system-out>
 <![CDATA[
-[[ATTACHMENT|test-results\enquire-Enquire-Page-Submit-enquire-chromium\test-finished-1.png]]
+==================== COOKIES — INITIAL STATE ====================
+• Navigated to home page (domcontentloaded).
+• Waiting for cookie banner to appear...
+---------------------------------------------------------------
+• Cookie banner detected.
+---------------------------------------------------------------
+• Checking available accept buttons...
+• Clicked default accept button.
+✅ Cookies accepted (default button).
+---------------------------------------------------------------
+• Cookie banner is now hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+==================== LOGO — VALIDATION START ====================
+• Checking logo redirection...
+---------------------------------------------------------------
+
+==================== REDIRECT — VALIDATION START ====================
+• Extracted URL from element: https://www.igluski.com/
+• Opening new tab to validate redirection...
+---------------------------------------------------------------
+• Redirect OK → https://www.igluski.com/
+==================== REDIRECT — VALIDATION COMPLETE ==================
+
+• Logo redirects correctly to home page ("/")
+==================== LOGO — VALIDATION COMPLETE =================
+
 ]]>
 </system-out>
 </testcase>
