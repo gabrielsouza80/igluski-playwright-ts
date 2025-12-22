@@ -85,14 +85,21 @@ test.describe('Home Page', () => {
     await pm.onHomePage().validateCountryBanners();
   });
 
-   //TC 17 — Validate CTA Boxes (Call To Action)
-  test('Validate CTA Boxes (Call To Action)', async ({ page }) => {
+   // TC 17 — Validate CTA Boxes (Call To Action)
+test('Validate CTA Boxes (Call To Action)', async ({ page }) => {
   const pm = new PageManager(page);
-  await pm.onHomePage().validateCtaBoxes([
-    "TALK TO A SKI EXPERT",
-    "ABOUT IGLU SKI",
-    "SIGN UP TO OUR NEWSLETTER"
-  ]);
+  await pm.onHomePage().validateCtaBoxes(
+    [
+      "TALK TO A SKI EXPERT",
+      "ABOUT IGLU SKI",
+      "SIGN UP TO OUR NEWSLETTER"
+    ],
+    [
+      "/enquire",
+      "/about",
+      "/signup"
+    ]
+  );
 });
 
   //TC 20 — Validate Footer Links

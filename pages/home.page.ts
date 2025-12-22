@@ -29,6 +29,15 @@ export class HomePage extends HelperBase {
   readonly titleHomePage: Locator = this.page.locator('//h1[@class="h1-title"]');
   readonly carouselhome: Locator = this.page.locator('*[data-ski-widget="content-carousel"]');
   readonly closeAdButton: Locator = this.page.locator('sleeknote-p72idi-bottom >>> div[data-sn-type="close"] >>> button');
+  readonly row5: Locator = this.page.locator('(//div[@class="row"])[5]//h2[@class="box-panel__title"]');
+  readonly row6: Locator = this.page.locator('(//div[@class="row"])[6]//h2[@class="box-panel__title"]');
+  readonly carouselHome: Locator = this.page.locator('*[data-ski-widget="content-carousel"]');
+  readonly carouselNextButton: Locator = this.page.locator('.content-carousel__control--right');
+  readonly carouselPrevButton: Locator = this.page.locator('.content-carousel__control--left');
+  readonly carouselActiveSlide: Locator = this.page.locator('.content-carousel__inner__item--active');
+  readonly ctaRow5: Locator = this.page.locator('(//div[@class="row"])[5]');
+  readonly ctaTitlesRow5: Locator = this.page.locator('(//div[@class="row"])[5]//h2[@class="box-panel__title"]');
+  readonly ctaLinksRow5: Locator = this.page.locator('(//div[@class="row"])[5]//a');
 
   // Locators: Cookie Model
   readonly acceptCookiesBtn: Locator = this.page.locator('#onetrust-accept-btn-handler').first();
@@ -188,12 +197,11 @@ export class HomePage extends HelperBase {
   }
 
   async validateAccessCustomerPortal() {
-
-    await this.validateRedirectButton(this.btnAccessCustomerPortal, 'https://customerportal.igluski.com/Login?ReturnUrl=%2F');
+    await this.validateRedirectButton(this.btnAccessCustomerPortal, this.urls.URLCustomerPortalPage);
   }
 
   async validateRatingsAndReviews() {
-    await this.validateRedirectButton(this.btnReviewLinkHeader, 'https://www.igluski.com/customer-reviews');
+    await this.validateRedirectButton(this.btnReviewLinkHeader, this.urls.URLReviewsPage);
   }
 
   // VALIDATIONS: Validates main menus and submenus, titles, and duplicates.
@@ -554,7 +562,6 @@ export class HomePage extends HelperBase {
   }
 
   async validateCountryBanners() {
-
     // ==================== HOMEPAGE BANNER TITLE ====================
     await expect(this.titleBannerHome).toBeVisible();
     const titulo = await this.titleBannerHome.innerText();
@@ -564,14 +571,10 @@ export class HomePage extends HelperBase {
     console.log(`• Title detected: ${titulo}`);
     console.log(`---------------------------------------------------------------\n`);
 
-
     // ==================== DETECT WHICH ROW CONTAINS FRANCE ====================
     const detectFranceRow = async () => {
-      const row5 = this.page.locator('(//div[@class="row"])[5]//h2[@class="box-panel__title"]');
-      const row6 = this.page.locator('(//div[@class="row"])[6]//h2[@class="box-panel__title"]');
-
-      const row5Text = await row5.first().innerText().catch(() => "");
-      const row6Text = await row6.first().innerText().catch(() => "");
+      const row5Text = await this.row5.first().innerText().catch(() => "");
+      const row6Text = await this.row6.first().innerText().catch(() => "");
 
       if (row6Text.includes("FRANCE")) return 6;
       if (row5Text.includes("FRANCE")) return 5;
@@ -579,35 +582,22 @@ export class HomePage extends HelperBase {
       throw new Error("❌ Could not detect which row contains FRANCE.");
     };
 
-
-    // ==================== VALIDATION FUNCTION (ORIGINAL LOGIC) ====================
+    // ==================== VALIDATION FUNCTION ====================
     const validateRow = async (rowNumber: number) => {
       const locator = this.page.locator(
         `(//div[@class="row"])[${rowNumber}]//h2[@class="box-panel__title"]`
       );
 
-      // Wait for at least one element to appear
-      try {
-        await locator.first().waitFor({ state: "visible", timeout: 10000 });
-      } catch {
-        throw new Error(`❌ Row ${rowNumber} did not load any elements within the expected time.`);
-      }
+      await locator.first().waitFor({ state: "visible", timeout: 10000 });
 
       const count = await locator.count();
-
       console.log(`==================== ROW ${rowNumber} — ${count} ELEMENTS ====================\n`);
-
-      if (count === 0) {
-        throw new Error(`❌ Row ${rowNumber} contains zero elements. This should never happen.`);
-      }
 
       for (let i = 0; i < count; i++) {
         const titleEl = locator.nth(i);
-
         await expect(titleEl).toBeVisible();
 
         const text = await titleEl.innerText();
-
         console.log(`-------------------- Item ${i + 1} --------------------`);
         console.log(`Title:\n${text}`);
 
@@ -619,31 +609,19 @@ export class HomePage extends HelperBase {
           continue;
         }
 
-        const fullUrl = href.startsWith("http")
-          ? href
-          : `https://www.igluski.com${href}`;
-
+        const fullUrl = href.startsWith("http") ? href : `https://www.igluski.com${href}`;
         console.log(`Expected URL: ${fullUrl}`);
 
         const icon = titleEl.locator('../img[@class="box-panel__icon"]');
         await expect(icon).toBeVisible();
-
         await icon.scrollIntoViewIfNeeded();
         await this.page.waitForTimeout(300);
 
         let newPage: Page | null = null;
-
         try {
           newPage = await this.page.context().newPage();
-          await newPage.goto(fullUrl, {
-            waitUntil: "domcontentloaded",
-            timeout: 60000,
-          });
-
+          await newPage.goto(fullUrl, { waitUntil: "domcontentloaded", timeout: 60000 });
           console.log(`Redirect OK → ${newPage.url()}\n`);
-        } catch (err: any) {
-          console.error(`❌ Redirect failed → ${err?.message || err}`);
-          throw err;
         } finally {
           if (newPage) await newPage.close().catch(() => null);
         }
@@ -652,10 +630,8 @@ export class HomePage extends HelperBase {
       console.log(`---------------------------------------------------------------\n`);
     };
 
-
     // ==================== EXECUTE VALIDATION BASED ON FRANCE POSITION ====================
     const franceRow = await detectFranceRow();
-
     if (franceRow === 6) {
       await validateRow(6);
       await validateRow(7);
@@ -668,7 +644,6 @@ export class HomePage extends HelperBase {
   }
 
   async validateCarouselHome() {
-
     // ==================== CAROUSEL — TITLE CHECK ====================
     await expect(this.titleHomePage).toBeVisible();
     const titulo = await this.titleHomePage.innerText();
@@ -678,43 +653,29 @@ export class HomePage extends HelperBase {
     console.log(`• Title detected: ${titulo}`);
     console.log(`---------------------------------------------------------------\n`);
 
-
     // ==================== CAROUSEL — INITIAL STATE ====================
-    await expect(this.carouselhome).toBeVisible();
+    await expect(this.carouselHome).toBeVisible();
 
-    let activeSlide = this.carouselhome
-      .locator('.content-carousel__inner__item--active')
-      .first();
-
-    const initialHref =
-      (await activeSlide.locator('a').getAttribute('href')) ?? '';
+    let activeSlide = this.carouselActiveSlide.first();
+    const initialHref = (await activeSlide.locator('a').getAttribute('href')) ?? '';
 
     console.log(`==================== CAROUSEL — INITIAL STATE ==================`);
     console.log(`• Initial slide URL: ${initialHref}`);
     console.log(`---------------------------------------------------------------\n`);
 
-
     // ==================== CAROUSEL — NEXT ACTION ====================
-    await this.carouselhome
-      .locator('.content-carousel__control--right')
-      .click({ force: true });
+    await this.carouselNextButton.click({ force: true });
 
     await this.page.waitForFunction(
       (expectedHref) => {
-        const active = document.querySelector(
-          '.content-carousel__inner__item--active a'
-        );
+        const active = document.querySelector('.content-carousel__inner__item--active a');
         return active && active.getAttribute('href') !== expectedHref;
       },
       initialHref
     );
 
-    activeSlide = this.carouselhome
-      .locator('.content-carousel__inner__item--active')
-      .first();
-
-    const nextHref =
-      (await activeSlide.locator('a').getAttribute('href')) ?? '';
+    activeSlide = this.carouselActiveSlide.first();
+    const nextHref = (await activeSlide.locator('a').getAttribute('href')) ?? '';
 
     console.log(`==================== CAROUSEL — NEXT ACTION ====================`);
     console.log(`• Slide after NEXT: ${nextHref}`);
@@ -722,35 +683,25 @@ export class HomePage extends HelperBase {
 
     expect(nextHref).not.toBe(initialHref);
 
-
     // ==================== CAROUSEL — PREVIOUS ACTION ====================
-    await this.carouselhome
-      .locator('.content-carousel__control--left')
-      .click({ force: true });
+    await this.carouselPrevButton.click({ force: true });
 
     await this.page.waitForFunction(
       (expectedHref) => {
-        const active = document.querySelector(
-          '.content-carousel__inner__item--active a'
-        );
+        const active = document.querySelector('.content-carousel__inner__item--active a');
         return active && active.getAttribute('href') === expectedHref;
       },
       initialHref
     );
 
-    activeSlide = this.carouselhome
-      .locator('.content-carousel__inner__item--active')
-      .first();
-
-    const prevHref =
-      (await activeSlide.locator('a').getAttribute('href')) ?? '';
+    activeSlide = this.carouselActiveSlide.first();
+    const prevHref = (await activeSlide.locator('a').getAttribute('href')) ?? '';
 
     console.log(`==================== CAROUSEL — PREVIOUS ACTION ================`);
     console.log(`• Slide after PREVIOUS: ${prevHref}`);
     console.log(`---------------------------------------------------------------\n`);
 
     expect(prevHref).toBe(initialHref);
-
 
     // ==================== CAROUSEL VALIDATION COMPLETE ====================
     console.log(`==================== CAROUSEL VALIDATION COMPLETE ==============\n`);
@@ -910,76 +861,61 @@ export class HomePage extends HelperBase {
 
     console.log(`\n==================== TITLE CHECK — COMPLETE ==================\n`);
   }
-  async validateCtaBoxes(expectedTitles: string[]) {
-  console.log(`\n==================== CTA BOXES — VALIDATION START ====================`);
-  console.log(`• Searching for CTA Boxes section dynamically...`);
-  console.log(`• Expected CTA titles:`);
-  expectedTitles.forEach(t => console.log(`  • "${t}"`));
-  console.log(`---------------------------------------------------------------`);
+  async validateCtaBoxes(expectedTitles: string[], expectedLinks: string[]) {
+    console.log(`\n==================== CTA BOXES — VALIDATION START ====================`);
+    console.log(`• Expected CTA titles:`);
+    expectedTitles.forEach(t => console.log(`  • "${t}"`));
+    console.log(`• Expected CTA links:`);
+    expectedLinks.forEach(l => console.log(`  • "${l}"`));
+    console.log(`---------------------------------------------------------------`);
 
-  // Rows where CTA Boxes or similar sections may appear
-  const possibleRows = [4, 5, 6, 7];
+    // Helper function to normalize text (remove line breaks, extra spaces, lowercase)
+    const normalize = (txt: string) =>
+      txt.replace(/\s+/g, " ").trim().toLowerCase();
 
-  // Normalize helper
-  const normalize = (txt: string) =>
-    txt.toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .trim();
+    // Normalize expected titles
+    const expectedNorm = expectedTitles.map(t => normalize(t));
 
-  const expectedNorm = expectedTitles.map(t => normalize(t));
+    // Ensure CTA row is visible
+    await expect(this.ctaRow5).toBeVisible();
 
-  let foundRow: number | null = null;
-  let foundTitles: string[] = [];
-
-  // Try each row until we find one that contains the expected titles
-  for (const row of possibleRows) {
-    const locator = this.page.locator(`(//div[@class="row"])[${row}]`);
-
-    // Skip if row is not visible
-    if (!(await locator.isVisible().catch(() => false))) continue;
-
-    // Collect all inner texts inside this row
-    const titles = await locator.locator('*').allInnerTexts();
-
+    // Collect all titles and links inside CTA row
+    const titles = await this.ctaTitlesRow5.allInnerTexts();
     const normalizedTitles = titles.map(t => normalize(t));
+    const links = await this.ctaLinksRow5.all();
 
-    const matches = expectedNorm.every(exp =>
-      normalizedTitles.some(t => t.includes(exp))
-    );
+    console.log(`• Titles found in row 5:`);
+    titles.forEach((t, i) => console.log(`  • [${i + 1}] ${t}`));
 
-    if (matches) {
-      foundRow = row;
-      foundTitles = titles;
-      break;
+    console.log(`---------------------------------------------------------------`);
+    console.log(`• Validating CTA titles and links...\n`);
+
+    // Validate each expected title and its corresponding link
+    for (let i = 0; i < expectedNorm.length; i++) {
+      const expectedTitleNorm = expectedNorm[i];
+      const expectedTitleRaw = expectedTitles[i];
+      const expectedLink = expectedLinks[i];
+
+      // Validate title
+      const found = normalizedTitles.some(t => t.includes(expectedTitleNorm));
+      if (!found) {
+        throw new Error(`❌ CTA title not found: "${expectedTitleRaw}"`);
+      }
+      console.log(`• OK → Found CTA title: "${expectedTitleRaw}"`);
+
+      // Validate link
+      const href = await links[i].getAttribute("href");
+      if (!href || !href.includes(expectedLink)) {
+        throw new Error(`❌ CTA link mismatch for "${expectedTitleRaw}". Expected: ${expectedLink}, Found: ${href}`);
+      }
+      console.log(`• OK → Link for "${expectedTitleRaw}" is correct: ${href}`);
     }
+
+    console.log(`\n==================== CTA BOXES — VALIDATION COMPLETE ==================\n`);
   }
 
-  if (!foundRow) {
-    throw new Error(`❌ CTA Boxes not found in rows 4, 5, 6 or 7`);
-  }
 
-  console.log(`• CTA Boxes found in row: ${foundRow}`);
-  console.log(`• Titles found in this row:`);
-  foundTitles.forEach((t, i) => console.log(`  • [${i + 1}] ${t}`));
 
-  console.log(`---------------------------------------------------------------`);
-  console.log(`• Validating CTA titles...\n`);
 
-  for (const expected of expectedTitles) {
-    const expectedNormSingle = normalize(expected);
 
-    const found = foundTitles.some(t =>
-      normalize(t).includes(expectedNormSingle)
-    );
-
-    if (found) {
-      console.log(`• OK → Found CTA title: "${expected}"`);
-    } else {
-      throw new Error(`❌ CTA title not found: "${expected}"`);
-    }
-  }
-
-  console.log(`\n==================== CTA BOXES — VALIDATION COMPLETE ==================\n`);
-}
 }
