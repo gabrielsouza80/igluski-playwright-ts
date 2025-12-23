@@ -2,920 +2,768 @@ import { Page, Locator, expect } from '@playwright/test';
 import { HelperBase } from './utils/HelperBase';
 import { Actions } from './utils/Actions';
 
-
-//home.page.ts - Home page
-
 export class HomePage extends HelperBase {
-  // Actions instance for generic utilities
+
   private actions: Actions;
 
-  // LOCATORS: Header and main navigation
-  readonly logoLink: Locator = this.page.locator('a[title="Iglu Ski logo"]');
-  readonly skiHolidaysLink: Locator = this.page.locator('(//a[@href="/ski-holidays"])[2]');
-  readonly skiDestinationsLink: Locator = this.page.locator('a[href="/ski-resorts"]').first();
-  readonly skiDealsLink: Locator = this.page.locator('(//a[contains(@href, "/ski-deals")])[2]');
-  readonly snowReportsLink: Locator = this.page.locator('(//a[@href="/snow-reports"])[1]');
-  readonly skiblogguidesLink: Locator = this.page.locator('(//a[@href="/blog"])[1]');
-  readonly enquireLink: Locator = this.page.locator('(//a[contains(@href, "/enquire")])[1]');
-  readonly contactusLink: Locator = this.page.locator('(//a[@href="/contact-us"])[1]');
-  readonly phoneLocatorHeader: Locator = this.page.locator('(//span[@title="Call Our Team"])[1]');
-  readonly btnAccessCustomerPortal: Locator = this.page.locator('//img[contains(@alt, "Customer portal icon")]//..');
-  readonly btnRecentlyViewedHeader: Locator = this.page.locator('//a[contains(@class, "top-bar__info-link")]');
-  readonly resultRecentlyViewedHeader: Locator = this.page.locator('//div[contains(@class, "top-bar__rv-no-result")]');
-  readonly btnReviewLinkHeader: Locator = this.page.locator('//a[@class="header-headline__review-link"]');
+  // ============================
+  // HEADER & NAVIGATION LOCATORS
+  // ============================
+  readonly logoLink = this.page.locator('a[title="Iglu Ski logo"]');
+  readonly skiHolidaysLink = this.page.locator('(//a[@href="/ski-holidays"])[2]');
+  readonly skiDestinationsLink = this.page.locator('a[href="/ski-resorts"]').first();
+  readonly skiDealsLink = this.page.locator('(//a[contains(@href, "/ski-deals")])[2]');
+  readonly snowReportsLink = this.page.locator('(//a[@href="/snow-reports"])[1]');
+  readonly blogGuidesLink = this.page.locator('(//a[@href="/blog"])[1]');
+  readonly enquireLink = this.page.locator('(//a[contains(@href, "/enquire")])[1]');
+  readonly contactUsLink = this.page.locator('(//a[@href="/contact-us"])[1]');
+  readonly phoneLocatorHeader = this.page.locator('(//span[@title="Call Our Team"])[1]');
+  readonly btnAccessCustomerPortal = this.page.locator('//img[contains(@alt, "Customer portal icon")]//..');
+  readonly btnRecentlyViewedHeader = this.page.locator('//a[contains(@class, "top-bar__info-link")]');
+  readonly resultRecentlyViewedHeader = this.page.locator('//div[contains(@class, "top-bar__rv-no-result")]');
+  readonly btnReviewLinkHeader = this.page.locator('//a[@class="header-headline__review-link"]');
 
-  // LOCATORS: Main content of the homepage
-  readonly titleBannerHome: Locator = this.page.locator('(//h2[@class="h2-title"])[2]');
-  readonly titleHomePage: Locator = this.page.locator('//h1[@class="h1-title"]');
-  readonly carouselhome: Locator = this.page.locator('*[data-ski-widget="content-carousel"]');
-  readonly closeAdButton: Locator = this.page.locator('sleeknote-p72idi-bottom >>> div[data-sn-type="close"] >>> button');
-  readonly row5: Locator = this.page.locator('(//div[@class="row"])[5]//h2[@class="box-panel__title"]');
-  readonly row6: Locator = this.page.locator('(//div[@class="row"])[6]//h2[@class="box-panel__title"]');
-  readonly carouselHome: Locator = this.page.locator('*[data-ski-widget="content-carousel"]');
-  readonly carouselNextButton: Locator = this.page.locator('.content-carousel__control--right');
-  readonly carouselPrevButton: Locator = this.page.locator('.content-carousel__control--left');
-  readonly carouselActiveSlide: Locator = this.page.locator('.content-carousel__inner__item--active');
-  readonly ctaRow5: Locator = this.page.locator('(//div[@class="row"])[5]');
-  readonly ctaTitlesRow5: Locator = this.page.locator('(//div[@class="row"])[5]//h2[@class="box-panel__title"]');
-  readonly ctaLinksRow5: Locator = this.page.locator('(//div[@class="row"])[5]//a');
+  // ============================
+  // HOMEPAGE CONTENT LOCATORS
+  // ============================
+  readonly titleBannerHome = this.page.locator('(//h2[@class="h2-title"])[2]');
+  readonly titleHomePage = this.page.locator('//h1[@class="h1-title"]');
 
-  // Locators: Cookie Model
-  readonly acceptCookiesBtn: Locator = this.page.locator('#onetrust-accept-btn-handler').first();
-  readonly cookiesBanner: Locator = this.page.locator('#onetrust-banner-sdk');
-  readonly acceptCookiesBtnRecommended: Locator = this.page.locator('#accept-recommended-btn-handler');
+  // Carousel
+  readonly carouselHome = this.page.locator('*[data-ski-widget="content-carousel"]');
+  readonly carouselNextButton = this.page.locator('.content-carousel__control--right');
+  readonly carouselPrevButton = this.page.locator('.content-carousel__control--left');
+  readonly carouselActiveSlide = this.page.locator('.content-carousel__inner__item--active');
+  readonly carouselSlides = this.page.locator('//div[contains(@class, "content-carousel__inner__item")]');
 
-  // LOCATORS: Search components
-  readonly propertiesSearchInput: Locator = this.page.locator('input[aria-label*="Search properties"]');
-  readonly countriesSearchInput: Locator = this.page.locator('input[aria-label*="Search countries"], #where');
-  readonly resortsSearchInput: Locator = this.page.locator('input[aria-label*="Search resorts"]');
-  readonly searchButton: Locator = this.page.locator('button.search-item__cta , .search-bar__form-submit');
+  // CTA Rows
+  readonly ctaRow5 = this.page.locator('(//div[@class="row"])[5]');
+  readonly ctaTitlesRow5 = this.page.locator('(//div[@class="row"])[5]//h2[@class="box-panel__title"]');
+  readonly ctaLinksRow5 = this.page.locator('(//div[@class="row"])[5]//a');
 
-  // LOCATORS: Footer links
-  readonly phoneLocator = this.page.locator('(xpath://span[@title="Call Our Team"])[1]');
-  readonly footerFranceLink: Locator = this.page.locator('footer a[href*="/france"]').first();
-  readonly footerSkiChaletsLink: Locator = this.page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
+  // Contact Section
+  readonly contactSection = this.page.locator('(//div[@class="container"])[4]');
+  readonly contactPhoneTitle = this.page.locator('//div[contains(text(), "Speak to a ski expert")]');
+  readonly contactPhoneNumber = this.page.locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]');
 
+  readonly contactEmailTitle = this.page.locator('//div[contains(text(), "Email about a ski holiday")]');
+  readonly contactEmailButton = this.page.locator('//span[contains(text(), "Enquire")]');
+  readonly contactNewsletterTitle = this.page.locator('//div[contains(text(), "Subscribe to our newsletter")]');
+  readonly contactNewsletterButton = this.page.locator('//span[contains(text(), "Sign up")]');
 
-  // Page builder
+  // ============================
+  // COOKIES
+  // ============================
+  readonly cookiesBanner = this.page.locator('#onetrust-banner-sdk');
+  readonly acceptCookiesBtn = this.page.locator('#onetrust-accept-btn-handler').first();
+  readonly acceptCookiesBtnRecommended = this.page.locator('#accept-recommended-btn-handler');
+
+  // ============================
+  // SEARCH
+  // ============================
+  readonly propertiesSearchInput = this.page.locator('input[aria-label*="Search properties"]');
+  readonly countriesSearchInput = this.page.locator('input[aria-label*="Search countries"], #where');
+  readonly resortsSearchInput = this.page.locator('input[aria-label*="Search resorts"]');
+  readonly searchButton = this.page.locator('button.search-item__cta , .search-bar__form-submit');
+
+  // ============================
+  // FOOTER
+  // ============================
+  readonly footerFranceLink = this.page.locator('footer a[href*="/france"]').first();
+  readonly footerSkiChaletsLink = this.page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
+
   constructor(page: Page) {
     super(page);
     this.actions = new Actions(page);
   }
 
-  // Private utility: toSlug used internally by the HomePage
-  // NAVIGATION AND COOKIES: Navigates to the home page and accepts cookies
+  // ============================
+// NAVIGATION & COOKIES
+// ============================
+async navigateAndAcceptCookies(): Promise<void> {
+  console.log(`\n==================== COOKIES — INITIAL STATE ====================`);
+  console.log(`• Navigating to home page...`);
+  console.log(`---------------------------------------------------------------`);
 
-  async navigateAndAcceptCookies(): Promise<void> {
-    // Navigate to the home page.
-    await this.page.goto('/', { waitUntil: 'domcontentloaded' });
+  await this.page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    console.log(`\n==================== COOKIES — INITIAL STATE ====================`);
-    console.log(`• Navigated to home page (domcontentloaded).`);
-    console.log(`• Waiting for cookie banner to appear...`);
-    console.log(`---------------------------------------------------------------`);
-
-    // Please wait up to 60 seconds for the Banner to appear.
-    try {
-      await this.cookiesBanner.waitFor({ state: 'visible', timeout: 60000 });
-      console.log(`• Cookie banner detected.`);
-    } catch {
-      console.log(`• No cookie banner appeared within the time limit.`);
-      console.log(`==================== COOKIES — NO BANNER =======================\n`);
-      return; // Exit the function if there is no banner.
-    }
-
-    console.log(`---------------------------------------------------------------`);
-    console.log(`• Checking available accept buttons...`);
-
-    // It handles the different possible buttons.
-    if (await this.acceptCookiesBtn.isVisible()) {
-      await this.acceptCookiesBtn.click();
-      console.log(`• Clicked default accept button.`);
-      console.log(`✅ Cookies accepted (default button).`);
-    } else if (await this.acceptCookiesBtnRecommended.isVisible()) {
-      await this.acceptCookiesBtnRecommended.click();
-      console.log(`• Clicked "Allow all" button.`);
-      console.log(`✅ Cookies accepted (Allow all).`);
-    } else {
-      console.log(`ℹ️ No visible accept button found.`);
-    }
-
-    // Wait for the Banner to disappear to ensure it doesn't block clicks.
-    await this.cookiesBanner.waitFor({ state: 'hidden', timeout: 5000 });
-
-    console.log(`---------------------------------------------------------------`);
-    console.log(`• Cookie banner is now hidden.`);
-    console.log(`==================== COOKIES — COMPLETED =======================\n`);
+  try {
+    await this.cookiesBanner.waitFor({ state: 'visible', timeout: 60000 });
+    console.log(`• Cookie banner detected.`);
+  } catch {
+    console.log(`• No cookie banner appeared.`);
+    console.log(`==================== COOKIES — NO BANNER =======================\n`);
+    return;
   }
 
-  async searchForCountry(text: string) {
-    try {
-      await this.countriesSearchInput.fill(text, { timeout: 5000 });
-      await this.page.waitForTimeout(1000);
-    } catch (error) {
-      console.warn('searchForCountry: fill failed, will still try to click search button', error);
-    } finally {
-      try {
-        await this.searchButton.click();
-      } catch (clickErr) {
-        console.error('searchForCountry: search button click failed', clickErr);
-      }
-    }
+  console.log(`• Checking available accept buttons...`);
+
+  if (await this.acceptCookiesBtn.isVisible()) {
+    await this.acceptCookiesBtn.click();
+    console.log(`• Clicked default accept button.`);
+  } else if (await this.acceptCookiesBtnRecommended.isVisible()) {
+    await this.acceptCookiesBtnRecommended.click();
+    console.log(`• Clicked recommended accept button.`);
+  } else {
+    console.log(`• No visible accept button found.`);
   }
 
-  async searchForProperty(text: string) {
-    await this.propertiesSearchInput.fill(text, { timeout: 5000 });
-    await this.page.waitForTimeout(1000);
-    await this.propertiesSearchInput.press('Enter');
+  await this.cookiesBanner.waitFor({ state: 'hidden', timeout: 5000 });
+  console.log(`• Cookie banner hidden.`);
+  console.log(`==================== COOKIES — COMPLETED =======================\n`);
+}
+
+// ============================
+// SEARCH FUNCTIONS
+// ============================
+async searchForCountry(text: string) {
+  try {
+    await this.countriesSearchInput.fill(text, { timeout: 5000 });
+    await this.page.waitForTimeout(500);
+  } catch {
+    console.warn('searchForCountry: fill failed, clicking search anyway');
   }
 
-  // Action: Click the search button.
-  async clickOnSearchButton() {
+  try {
     await this.searchButton.click();
+  } catch {
+    console.error('searchForCountry: search button click failed');
   }
-  // --------------------------
-  // Assertions & Validations
-  // --------------------------
+}
 
-  // ASSERTIONS: Checks if a locator is visible using Actions
-  async verifyElementVisible(locator: Locator): Promise<boolean> {
-    return await this.actions.verifyElementVisible(locator);
-  }
+async searchForProperty(text: string) {
+  await this.propertiesSearchInput.fill(text, { timeout: 5000 });
+  await this.page.waitForTimeout(500);
+  await this.propertiesSearchInput.press('Enter');
+}
 
-  // ASSERTIONS: Awaiting expected URL using Actions
-  async verifyPageLoaded(expectedUrl: string): Promise<boolean> {
-    return await this.actions.verifyPageLoaded(expectedUrl);
-  }
+async clickOnSearchButton() {
+  await this.searchButton.click();
+}
 
-  // VALIDATIONS: Validates logo redirection
-  async validateLogo() {
-    console.log(`\n==================== LOGO — VALIDATION START ====================`);
-    console.log(`• Checking logo redirection...`);
-    console.log(`---------------------------------------------------------------`);
+// ============================
+// GENERIC ASSERTIONS
+// ============================
+async verifyElementVisible(locator: Locator): Promise<boolean> {
+  return await this.actions.verifyElementVisible(locator);
+}
 
-    await this.validateRedirectButton(this.logoLink, '/');
+async verifyPageLoaded(expectedUrl: string): Promise<boolean> {
+  return await this.actions.verifyPageLoaded(expectedUrl);
+}
 
-    console.log(`• Logo redirects correctly to home page ("/")`);
-    console.log(`==================== LOGO — VALIDATION COMPLETE =================\n`);
-  }
+// ============================
+// HEADER VALIDATIONS
+// ============================
 
-  // VALIDATIONS: Collects contact information in the header.
-  async validateHeaderContactInfo() {
-    console.log(`\n==================== HEADER — CONTACT INFO CHECK ====================`);
-    console.log(`• Validating header contact information...`);
-    console.log(`---------------------------------------------------------------`);
+async validateLogo() {
+  console.log(`\n==================== LOGO — VALIDATION START ====================`);
+  await this.validateRedirectButton(this.logoLink, '/');
+  console.log(`• Logo redirects correctly to home page`);
+  console.log(`==================== LOGO — VALIDATION COMPLETE =================\n`);
+}
 
-    // Phone text
-    const txtphoneLocatorHeader = await this.phoneLocatorHeader.innerText();
-    console.log(`• Header phone text: ${txtphoneLocatorHeader}`);
+async validateHeaderContactInfo() {
+  console.log(`\n==================== HEADER — CONTACT INFO CHECK ====================`);
 
-    // Contact Us link text
-    const txtcontactusLink = await this.contactusLink.innerText();
-    console.log(`• Contact Us link text: ${txtcontactusLink}`);
+  const phoneText = await this.phoneLocatorHeader.innerText();
+  console.log(`• Header phone text: ${phoneText}`);
 
-    // Validate redirect
-    console.log(`• Validating Contact Us redirection...`);
-    await this.validateRedirectButton(this.contactusLink, '/contact-us');
+  const contactText = await this.contactUsLink.innerText();
+  console.log(`• Contact Us link text: ${contactText}`);
 
-    console.log(`==================== HEADER — CONTACT INFO COMPLETE ==================\n`);
-  }
+  console.log(`• Validating Contact Us redirection...`);
+  await this.validateRedirectButton(this.contactUsLink, '/contact-us');
 
-  async validateRecentlyViewedButton() {
-    console.log(`\n==================== RECENTLY VIEWED — VALIDATION START ====================`);
-    console.log(`• Clicking Recently Viewed button...`);
-    console.log(`---------------------------------------------------------------`);
+  console.log(`==================== HEADER — CONTACT INFO COMPLETE ==================\n`);
+}
 
-    await this.btnRecentlyViewedHeader.click();
+async validateRecentlyViewedButton() {
+  console.log(`\n==================== RECENTLY VIEWED — VALIDATION START ====================`);
 
-    console.log(`• Waiting for Recently Viewed result to appear...`);
-    await expect(this.resultRecentlyViewedHeader).toBeVisible();
+  await this.btnRecentlyViewedHeader.click();
+  await expect(this.resultRecentlyViewedHeader).toBeVisible();
 
-    const txtResult = await this.resultRecentlyViewedHeader.innerText();
-    console.log(`• Recently Viewed result text: ${txtResult}`);
+  const txt = await this.resultRecentlyViewedHeader.innerText();
+  console.log(`• Recently Viewed result text: ${txt}`);
 
-    console.log(`==================== RECENTLY VIEWED — VALIDATION COMPLETE ==================\n`);
-  }
+  console.log(`==================== RECENTLY VIEWED — VALIDATION COMPLETE ==================\n`);
+}
 
-  async validateAccessCustomerPortal() {
-    await this.validateRedirectButton(this.btnAccessCustomerPortal, this.urls.URLCustomerPortalPage);
-  }
+async validateAccessCustomerPortal() {
+  await this.validateRedirectButton(
+    this.btnAccessCustomerPortal,
+    this.urls.URLCustomerPortalPage
+  );
+}
 
-  async validateRatingsAndReviews() {
-    await this.validateRedirectButton(this.btnReviewLinkHeader, this.urls.URLReviewsPage);
-  }
+async validateRatingsAndReviews() {
+  await this.validateRedirectButton(
+    this.btnReviewLinkHeader,
+    this.urls.URLReviewsPage
+  );
+}
 
-  // VALIDATIONS: Validates main menus and submenus, titles, and duplicates.
-  async validateMenuAndSubMenuNavigation(): Promise<void> {
-    console.log(`\n==================== MENUS — VALIDATION START ====================`);
+// ============================
+// MENU & SUBMENU VALIDATION
+// ============================
+async validateMenuAndSubMenuNavigation(): Promise<void> {
+  console.log(`\n==================== MENUS — VALIDATION START ====================`);
 
-    // Object to store duplicate submenu entries found during validation
-    const duplicatesSummary: Record<string, Array<{ label: string; duplicateWith: string; url: string }>> = {};
+  // Snapshot dos menus e submenus
+  const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
+    return items.map((li) => {
+      const mainLink = li.querySelector("a");
+      const mainHref = mainLink?.getAttribute("href") || null;
+      const mainLabel = mainLink?.textContent?.trim() || "";
 
-    // Helper function: checks if the <h1> title of a page contains words from the menu/submenu label
-    const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
-      // Normalize text: lowercase, remove accents, remove special characters
-      const normalize = (txt: string) =>
-        txt.toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-z0-9\s]/gi, " ")
-          .trim();
+      const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
+      const sublinks = subAnchors.map((a) => ({
+        label: a.textContent?.trim() || "",
+        href: a.getAttribute("href")
+      }));
 
-      const normalizedLabel = normalize(label);
-
-      try {
-        // Get the first <h1> text from the page
-        const h1TextRaw = await page.locator("h1").first().innerText();
-        const h1Text = normalize(h1TextRaw);
-
-        // Split the label into words longer than 2 characters
-        const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
-
-        // Check if any of those words are present in the <h1> text
-        const anyWordFound = labelWords.some(w => h1Text.includes(w));
-
-        if (anyWordFound) {
-          console.log(`      • Title OK for "${label}" → "${h1TextRaw}"`);
-          return true;
-        }
-      } catch {
-        // Ignore and fall through to warning
-      }
-
-      console.warn(`      • Warning: No <h1> match found for "${label}"`);
-      return false;
-    };
-
-    // Take a snapshot of all main menus and their submenus from the DOM
-    const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
-      return items.map((li) => {
-        const mainLink = li.querySelector("a");
-        const mainHref = mainLink ? mainLink.getAttribute("href") : null;
-        const mainLabel = mainLink ? (mainLink.textContent?.trim() || "") : (li.textContent?.trim() || "");
-
-        // Collect all submenu links inside this menu
-        const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
-        const sublinks = subAnchors.map((a) => ({
-          label: a.textContent?.trim() || "",
-          href: a.getAttribute("href")
-        }));
-
-        return { mainLabel, mainHref, sublinks };
-      });
+      return { mainLabel, mainHref, sublinks };
     });
+  });
 
-    console.log(`• Total main menus detected: ${menusSnapshot.length}`);
+  console.log(`• Total main menus detected: ${menusSnapshot.length}`);
+  console.log(`---------------------------------------------------------------`);
+
+  // Processa cada menu
+  for (const menu of menusSnapshot) {
+    const menuLabel = menu.mainLabel;
+    const menuUrl = this.resolveUrl(menu.mainHref);
+
+    console.log(`\n==================== MENU ====================`);
+    console.log(`• Menu label: "${menuLabel}"`);
+    console.log(`• Menu URL: ${menuUrl || "(no valid URL)"}`);
     console.log(`---------------------------------------------------------------`);
 
-    // Iterate through each main menu
-    for (const menu of menusSnapshot) {
-      const menuLabel = menu.mainLabel || "menu";
-      const menuHref = this.actions.extractFullUrlFromString(menu.mainHref);
-
-      console.log(`\n==================== MENU ====================`);
-      console.log(`• Menu label: "${menuLabel}"`);
-      console.log(`• Menu URL: ${menuHref || "(no valid URL)"}`);
-      console.log(`---------------------------------------------------------------`);
-
-      // Skip menus without a valid URL
-      if (!menuHref) {
-        console.warn(`• Skipping menu "${menuLabel}" — no valid URL.`);
-        continue;
-      }
-
-      let menuPage: Page | null = null;
-
-      try {
-        // Open the menu link in a new page
-        console.log(`• Opening menu page: ${menuHref}`);
-        menuPage = await this.page.context().newPage();
-        await menuPage.goto(menuHref, { waitUntil: "domcontentloaded", timeout: 120000 });
-
-        // Special case: if the menu is "Search", validate that the search field appears
-        if (/search/i.test(menuLabel)) {
-          console.log(`• Menu identified as Search. Validating search field...`);
-          try {
-            await this.resortsSearchInput.waitFor({ state: "visible", timeout: 2000 });
-            console.log(`  ✓ Search field is visible.`);
-          } catch {
-            console.warn(`  • Warning: Search menu did not open the search field.`);
-          }
-        } else {
-          console.log(`• Validating page title for menu "${menuLabel}"...`);
-          await validateTitleContains(menuPage, menuLabel);
-        }
-
-        const sublinks = menu.sublinks || [];
-        console.log(`• Submenus found for "${menuLabel}": ${sublinks.length}`);
-
-        // If no sublinks, close the page and continue
-        if (sublinks.length === 0) {
-          console.log(`• No submenus to validate for "${menuLabel}".`);
-          await menuPage.close();
-          continue;
-        }
-
-        // Prepare to check all sublinks and detect duplicates
-        const allSublinks: Array<{ label: string; href: string }> = [];
-        const seen = new Map<string, string>();
-
-        console.log(`• Checking submenu URLs and detecting duplicates...`);
-
-        for (const s of sublinks) {
-          const full = this.actions.extractFullUrlFromString(s.href);
-          if (!full) continue;
-
-          // Detect duplicates: if the same URL appears with different labels
-          if (seen.has(full)) {
-            const duplicateWith = seen.get(full)!;
-            console.warn(`  • Duplicate URL detected → "${s.label}" duplicate of "${duplicateWith}" (URL: ${full})`);
-            if (!duplicatesSummary[menuLabel]) duplicatesSummary[menuLabel] = [];
-            duplicatesSummary[menuLabel].push({ label: s.label, duplicateWith, url: full });
-          } else {
-            seen.set(full, s.label);
-          }
-
-          allSublinks.push({ label: s.label || full, href: full });
-        }
-
-        // Open each submenu link in a new page and validate its title
-        const subPage = await this.page.context().newPage();
-        console.log(`• Validating ${allSublinks.length} submenu pages for "${menuLabel}"...`);
-
-        for (const s of allSublinks) {
-          console.log(`  -----------------------------------------------------------`);
-          console.log(`  • Submenu label: "${s.label}"`);
-          console.log(`  • Submenu URL: ${s.href}`);
-
-          try {
-            await subPage.goto(s.href, { waitUntil: "domcontentloaded", timeout: 90000 });
-            await validateTitleContains(subPage, s.label);
-            console.log(`  ✓ Submenu validated successfully: "${s.label}"`);
-          } catch (err: any) {
-            console.error(`  ❌ Submenu "${s.label}" failed → ${err?.message || err}`);
-          }
-        }
-
-        await subPage.close().catch(() => null);
-      } finally {
-        // Ensure the menu page is closed even if an error occurs
-        if (menuPage) await menuPage.close().catch(() => null);
-      }
+    if (!menuUrl) {
+      console.warn(`• Skipping menu "${menuLabel}" — no valid URL.`);
+      continue;
     }
 
-    // Print a summary of duplicate submenus found
-    console.log(`\n==================== MENUS — DUPLICATES SUMMARY ====================`);
-    if (Object.keys(duplicatesSummary).length === 0) {
-      console.log(`• No duplicate submenu URLs found.`);
-    } else {
-      for (const [menu, duplicates] of Object.entries(duplicatesSummary)) {
-        console.log(`• Menu: ${menu}`);
-        duplicates.forEach(d => {
-          console.log(`  - "${d.label}" duplicate of "${d.duplicateWith}" (URL: ${d.url})`);
-        });
-      }
+    // Abre o menu em nova aba
+    const menuPage = await this.page.context().newPage();
+    await menuPage.goto(menuUrl, { waitUntil: "domcontentloaded", timeout: 120000 });
+
+    // Valida título da página
+    await this.validateTitleContains(menuPage, menuLabel);
+
+    const sublinks = menu.sublinks || [];
+    console.log(`• Submenus found: ${sublinks.length}`);
+
+    if (sublinks.length === 0) {
+      await menuPage.close();
+      continue;
     }
 
-    console.log(`==================== MENUS — VALIDATION COMPLETE ==================\n`);
-  }
+    // Processa cada submenu
+    for (const sub of sublinks) {
+      const subUrl = this.resolveUrl(sub.href);
+      if (!subUrl) continue;
 
-  // VALIDATIONS: Validates all items in the footer.
-  async validateFooterItems(): Promise<void> {
-    console.log(`\n==================== FOOTER — VALIDATION START ====================`);
+      console.log(`  -----------------------------------------------------------`);
+      console.log(`  • Submenu label: "${sub.label}"`);
+      console.log(`  • Submenu URL: ${subUrl}`);
 
-    // Array to store duplicate footer items found during validation
-    const duplicatesSummary: Array<{ label: string; duplicateWith: string; url: string }> = [];
-
-    // Helper function: checks if the <h1> title of a page contains words from the footer item label
-    const validateTitleContains = async (page: Page, label: string): Promise<boolean> => {
-      // Normalize text: lowercase, remove accents, remove special characters
-      const normalize = (txt: string) =>
-        txt.toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-z0-9\s]/gi, " ")
-          .trim();
-
-      const normalizedLabel = normalize(label);
+      const subPage = await this.page.context().newPage();
 
       try {
-        // Get the first <h1> text from the page
-        const h1TextRaw = await page.locator("h1").first().innerText();
-        const h1Text = normalize(h1TextRaw);
-
-        // Split the label into words longer than 2 characters
-        const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
-
-        // Check if any of those words are present in the <h1> text
-        const anyWordFound = labelWords.some(w => h1Text.includes(w));
-
-        if (anyWordFound) {
-          console.log(`      • Title OK for footer item "${label}" → "${h1TextRaw}"`);
-          return true;
-        }
-      } catch {
-        // Ignore and fall through to warning
-      }
-
-      console.warn(`      • Warning: No <h1> match found for footer item "${label}"`);
-      return false;
-    };
-
-    // Capture all footer items from the DOM
-    const footerItems = await this.page.$$eval(
-      '//li[@class="footer-list__item"]',
-      (items) => {
-        return items.map((li) => {
-          const anchor = li.querySelector('a');
-          return {
-            label: anchor?.textContent?.trim() || li.textContent?.trim() || '',
-            href: anchor?.getAttribute('href') || null
-          };
-        });
-      }
-    );
-
-    console.log(`• Total footer items detected: ${footerItems.length}`);
-    console.log(`---------------------------------------------------------------`);
-
-    // Map to track seen URLs and detect duplicates
-    const seen = new Map<string, string>();
-
-    // Iterate through each footer item
-    for (const f of footerItems) {
-      const fullUrl = this.actions.extractFullUrlFromString(f.href);
-
-      console.log(`\n==================== FOOTER ITEM ====================`);
-      console.log(`• Label: "${f.label}"`);
-      console.log(`• Raw URL: ${f.href || "(no href attribute)"}`);
-
-      // Skip items without a valid URL
-      if (!fullUrl) {
-        console.warn(`• Skipping footer item "${f.label}" — no valid URL.`);
-        continue;
-      }
-
-      console.log(`• Resolved URL: ${fullUrl}`);
-
-      // Check for duplicates: same URL with different labels
-      if (seen.has(fullUrl)) {
-        const duplicateWith = seen.get(fullUrl)!;
-        console.warn(
-          `• Duplicate URL detected → "${f.label}" duplicate of "${duplicateWith}" (URL: ${fullUrl})`
-        );
-        duplicatesSummary.push({ label: f.label, duplicateWith, url: fullUrl });
-      } else {
-        seen.set(fullUrl, f.label);
-      }
-
-      // Scroll into view before opening a new tab (helps simulate user interaction)
-      try {
-        const locator = this.page.locator(
-          `//li[@class="footer-list__item"] >> text=${f.label}`
-        );
-        await locator.scrollIntoViewIfNeeded();
-        await this.page.waitForTimeout(500);
-        console.log(`• Scrolled into view.`);
-      } catch {
-        console.warn(`• Warning: Could not scroll to footer item "${f.label}".`);
-      }
-
-      // Open a new tab to validate each footer item
-      let footerPage: Page | null = null;
-      try {
-        console.log(`• Opening footer URL in new tab...`);
-        footerPage = await this.page.context().newPage();
-        await footerPage.goto(fullUrl, {
-          waitUntil: 'domcontentloaded',
-          timeout: 90000
-        });
-
-        await validateTitleContains(footerPage, f.label);
-        console.log(`• Footer item validated successfully: "${f.label}"`);
+        await subPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 90000 });
+        await this.validateTitleContains(subPage, sub.label);
+        console.log(`  ✓ Submenu validated successfully`);
       } catch (err: any) {
-        console.error(
-          `❌ Footer item "${f.label}" failed → ${err?.message || err}`
-        );
-      } finally {
-        // Ensure the tab is closed even if an error occurs
-        if (footerPage) await footerPage.close().catch(() => null);
-      }
-    }
-
-    // Print a summary of duplicate footer items found
-    console.log(`\n==================== FOOTER — DUPLICATES SUMMARY ====================`);
-    if (duplicatesSummary.length === 0) {
-      console.log(`• No duplicate footer URLs found.`);
-    } else {
-      duplicatesSummary.forEach(d => {
-        console.log(
-          `• "${d.label}" duplicate of "${d.duplicateWith}" (URL: ${d.url})`
-        );
-      });
-    }
-
-    console.log(`==================== FOOTER — VALIDATION COMPLETE ==================\n`);
-  }
-
-  // This function prints all slides and indicators from the carousel to the console.
-  // showing which ones are active at the moment.
-  async logCarouselSlides() {
-    // Locates all slide elements within the carousel.
-    const slides = await this.carouselhome.locator('.content-carousel__inner__item').all();
-    console.log(`Total number of slides found: ${slides.length}`);
-
-    // Browse through each slide found.
-    for (let i = 0; i < slides.length; i++) {
-      const slide = slides[i];
-
-      // Get the link (href) associated with the slide.
-      const href = await slide.locator('a').getAttribute('href');
-
-      // Retrieves all classes applied to the slide.
-      const className = await slide.getAttribute('class');
-
-      // Verifies if the slide contains the class indicating it is active
-      const isActive = className?.includes('content-carousel__inner__item--active');
-
-      // Prints to the console the index, link, and classes of the slide
-      // If it's active, adds the [ACTIVE] tag for highlighting
-      console.log(`Slide ${i}: href=${href}, classes=${className}${isActive ? ' [ACTIVE]' : ''}`);
-    }
-
-    // Locates all indicator elements (navigation dots) within the carousel
-    const indicators = await this.carouselhome.locator('.content-carousel__indicators__item').all();
-
-    // Browse through each indicator
-    for (let i = 0; i < indicators.length; i++) {
-      const indicator = indicators[i];
-
-      // Retrieves all classes applied to the indicator
-      const className = await indicator.getAttribute('class');
-
-      // Verifies if the indicator contains the class indicating it is active
-      const isActive = className?.includes('content-carousel__indicators__item--active');
-
-      // Prints to the console the index and classes of the indicator
-      // If it's active, adds the [ACTIVE] tag for highlighting
-      console.log(`Indicator ${i}: classes=${className}${isActive ? ' [ACTIVE]' : ''}`);
-    }
-  }
-
-  async validateCountryBanners() {
-    // ==================== HOMEPAGE BANNER TITLE ====================
-    await expect(this.titleBannerHome).toBeVisible();
-    const titulo = await this.titleBannerHome.innerText();
-    expect(titulo).toContain('Find Your Skiing Holiday');
-
-    console.log(`\n==================== HOMEPAGE BANNER TITLE =====================`);
-    console.log(`• Title detected: ${titulo}`);
-    console.log(`---------------------------------------------------------------\n`);
-
-    // ==================== DETECT WHICH ROW CONTAINS FRANCE ====================
-    const detectFranceRow = async () => {
-      const row5Text = await this.row5.first().innerText().catch(() => "");
-      const row6Text = await this.row6.first().innerText().catch(() => "");
-
-      if (row6Text.includes("FRANCE")) return 6;
-      if (row5Text.includes("FRANCE")) return 5;
-
-      throw new Error("❌ Could not detect which row contains FRANCE.");
-    };
-
-    // ==================== VALIDATION FUNCTION ====================
-    const validateRow = async (rowNumber: number) => {
-      const locator = this.page.locator(
-        `(//div[@class="row"])[${rowNumber}]//h2[@class="box-panel__title"]`
-      );
-
-      await locator.first().waitFor({ state: "visible", timeout: 10000 });
-
-      const count = await locator.count();
-      console.log(`==================== ROW ${rowNumber} — ${count} ELEMENTS ====================\n`);
-
-      for (let i = 0; i < count; i++) {
-        const titleEl = locator.nth(i);
-        await expect(titleEl).toBeVisible();
-
-        const text = await titleEl.innerText();
-        console.log(`-------------------- Item ${i + 1} --------------------`);
-        console.log(`Title:\n${text}`);
-
-        const link = titleEl.locator("xpath=ancestor::a");
-        const href = await link.getAttribute("href");
-
-        if (!href) {
-          console.warn(`⚠ No href found for title: "${text}"`);
-          continue;
-        }
-
-        const fullUrl = href.startsWith("http") ? href : `https://www.igluski.com${href}`;
-        console.log(`Expected URL: ${fullUrl}`);
-
-        const icon = titleEl.locator('../img[@class="box-panel__icon"]');
-        await expect(icon).toBeVisible();
-        await icon.scrollIntoViewIfNeeded();
-        await this.page.waitForTimeout(300);
-
-        let newPage: Page | null = null;
-        try {
-          newPage = await this.page.context().newPage();
-          await newPage.goto(fullUrl, { waitUntil: "domcontentloaded", timeout: 60000 });
-          console.log(`Redirect OK → ${newPage.url()}\n`);
-        } finally {
-          if (newPage) await newPage.close().catch(() => null);
-        }
+        console.error(`  ❌ Submenu "${sub.label}" failed → ${err?.message || err}`);
       }
 
-      console.log(`---------------------------------------------------------------\n`);
-    };
-
-    // ==================== EXECUTE VALIDATION BASED ON FRANCE POSITION ====================
-    const franceRow = await detectFranceRow();
-    if (franceRow === 6) {
-      await validateRow(6);
-      await validateRow(7);
-    } else {
-      await validateRow(5);
-      await validateRow(6);
+      await subPage.close();
     }
 
-    console.log(`==================== BANNERS VALIDATION COMPLETE ==============\n`);
+    await menuPage.close();
   }
 
-  async validateCarouselHome() {
-    // ==================== CAROUSEL — TITLE CHECK ====================
-    await expect(this.titleHomePage).toBeVisible();
-    const titulo = await this.titleHomePage.innerText();
-    expect(titulo).toContain('Welcome To The Home Of Ski');
+  console.log(`==================== MENUS — VALIDATION COMPLETE ==================\n`);
+}
 
-    console.log(`\n==================== CAROUSEL — TITLE CHECK ====================`);
-    console.log(`• Title detected: ${titulo}`);
-    console.log(`---------------------------------------------------------------\n`);
+// ============================
+// FOOTER VALIDATION
+// ============================
+async validateFooterItems(): Promise<void> {
+  console.log(`\n==================== FOOTER — VALIDATION START ====================`);
 
-    // ==================== CAROUSEL — INITIAL STATE ====================
-    await expect(this.carouselHome).toBeVisible();
+  // Captura todos os itens do footer
+  const footerItems = await this.page.$$eval(
+    '//li[@class="footer-list__item"]',
+    (items) =>
+      items.map((li) => {
+        const a = li.querySelector("a");
+        return {
+          label: a?.textContent?.trim() || "",
+          href: a?.getAttribute("href") || null,
+        };
+      })
+  );
 
-    let activeSlide = this.carouselActiveSlide.first();
-    const initialHref = (await activeSlide.locator('a').getAttribute('href')) ?? '';
+  console.log(`• Total footer items detected: ${footerItems.length}`);
+  console.log(`---------------------------------------------------------------`);
 
-    console.log(`==================== CAROUSEL — INITIAL STATE ==================`);
-    console.log(`• Initial slide URL: ${initialHref}`);
-    console.log(`---------------------------------------------------------------\n`);
+  for (const item of footerItems) {
+    const label = item.label;
+    const url = this.resolveUrl(item.href ?? null);
 
-    // ==================== CAROUSEL — NEXT ACTION ====================
-    await this.carouselNextButton.click({ force: true });
+    console.log(`\n• Footer item: "${label}"`);
+    console.log(`  URL: ${url || "(invalid)"}\n`);
 
-    await this.page.waitForFunction(
-      (expectedHref) => {
-        const active = document.querySelector('.content-carousel__inner__item--active a');
-        return active && active.getAttribute('href') !== expectedHref;
-      },
-      initialHref
+    if (!url) {
+      console.warn(`  ⚠ Skipping — no valid URL`);
+      continue;
+    }
+
+    // Localiza o item no footer
+    const locator = this.page.locator(
+      `//li[@class="footer-list__item"] >> text=${label}`
     );
 
-    activeSlide = this.carouselActiveSlide.first();
-    const nextHref = (await activeSlide.locator('a').getAttribute('href')) ?? '';
+    // Scroll seguro até o item
+    await this.scrollIntoView(locator);
 
-    console.log(`==================== CAROUSEL — NEXT ACTION ====================`);
-    console.log(`• Slide after NEXT: ${nextHref}`);
-    console.log(`---------------------------------------------------------------\n`);
-
-    expect(nextHref).not.toBe(initialHref);
-
-    // ==================== CAROUSEL — PREVIOUS ACTION ====================
-    await this.carouselPrevButton.click({ force: true });
-
-    await this.page.waitForFunction(
-      (expectedHref) => {
-        const active = document.querySelector('.content-carousel__inner__item--active a');
-        return active && active.getAttribute('href') === expectedHref;
-      },
-      initialHref
-    );
-
-    activeSlide = this.carouselActiveSlide.first();
-    const prevHref = (await activeSlide.locator('a').getAttribute('href')) ?? '';
-
-    console.log(`==================== CAROUSEL — PREVIOUS ACTION ================`);
-    console.log(`• Slide after PREVIOUS: ${prevHref}`);
-    console.log(`---------------------------------------------------------------\n`);
-
-    expect(prevHref).toBe(initialHref);
-
-    // ==================== CAROUSEL VALIDATION COMPLETE ====================
-    console.log(`==================== CAROUSEL VALIDATION COMPLETE ==============\n`);
-  }
-
-  // EXTRAS: Performs a simple search by resort category and waits for results.
-
-  async searchFor(query: string): Promise<void> {
-    // Click and fill in the resorts input.
-    await this.resortsSearchInput.click();
-    await this.resortsSearchInput.fill(query);
-
-    // Send the search
-    await this.page.keyboard.press('Enter');
-
-    // It attempts to detect a common results/suggestions panel.
-    const possibleSelectors = [
-      'ul[role="listbox"]',
-      '.search-results',
-      '.search-autocomplete',
-      '.results-list',
-      '.searchResults',
-      '.autosuggest'
-    ];
-
-    for (const sel of possibleSelectors) {
-      try {
-        const locator = this.page.locator(sel).first();
-        if (await locator.count() > 0) {
-          await locator.waitFor({ state: 'visible', timeout: 5000 });
-          return;
-        }
-      } catch {
-        // Ignore and try the next selector.
-      }
-    }
-
-    // Fallback: Please wait a short time for the AJAX result to load.
-    await this.page.waitForTimeout(1000);
-  }
-
-  // Retrieves representative text from search results.
-  async getSearchResults(): Promise<string> {
-    const candidates = [
-      'ul[role="listbox"] li',
-      '.search-results .result, .search-results li',
-      '.search-autocomplete li',
-      '.results-list li',
-      '.autosuggest li'
-    ];
-
-    for (const sel of candidates) {
-      try {
-        const locator = this.page.locator(sel).first();
-        if (await locator.count() > 0) {
-          const txt = (await locator.textContent({ timeout: 3000 })) || '';
-          if (txt.trim().length > 0) return txt.trim();
-        }
-      } catch {
-        // ignore
-      }
-    }
-
-    // Last resort: return the current value of the search input.
+    // Valida redirecionamento abrindo em nova aba
     try {
-      const val = await this.resortsSearchInput.inputValue();
-      return val || '';
+      await this.openAndValidateUrl(url, new RegExp(url, "i"));
+      console.log(`  ✓ Footer link OK`);
+    } catch (err: any) {
+      console.error(`  ❌ Footer link failed: ${err?.message || err}`);
+    }
+  }
+
+  console.log(`\n==================== FOOTER — VALIDATION COMPLETE ==================\n`);
+}
+
+// ============================
+// CAROUSEL HOME VALIDATION
+// ============================
+async validateCarouselHome(): Promise<void> {
+  console.log(`\n==================== CAROUSEL HOME — VALIDATION START ====================`);
+
+  const totalSlides = await this.carouselSlides.count();
+  console.log(`• Total slides detected: ${totalSlides}`);
+
+  if (totalSlides === 0) {
+    throw new Error("❌ No slides found in carousel");
+  }
+
+  // Loop por todos os slides
+  for (let i = 0; i < totalSlides; i++) {
+    console.log(`\n==================== SLIDE ${i + 1} / ${totalSlides} ====================`);
+
+    // Garante que o slide ativo está visível
+    await expect(this.carouselActiveSlide).toBeVisible();
+
+    // CTA do slide ativo
+    const bannerCTA = this.carouselActiveSlide.locator("a");
+    await bannerCTA.waitFor({ state: "visible", timeout: 7000 });
+
+    const href = await bannerCTA.getAttribute("href");
+    console.log(`• Banner CTA detected: ${href}`);
+
+    // Valida navegação
+    try {
+      await bannerCTA.click({ force: true });
+      await expect(this.page).toHaveURL(/ski-holidays/);
+      console.log(`  ✓ Banner CTA navigation OK → ${this.page.url()}`);
     } catch {
-      return '';
+      console.error(`  ❌ Banner CTA failed on slide ${i + 1}`);
+    }
+
+    // Volta para a home
+    await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+
+    // Avança para o próximo slide
+    if (i < totalSlides - 1) {
+      console.log(`• Moving to next slide...`);
+      await this.carouselNextButton.click({ force: true });
+      await this.waitForCarouselSlideChange(href!);
     }
   }
 
-  // clickMenu: clicks on the main menu and optionally on submenus (specific to the site's HTML structure)
-  async clickMenu(menuName: string, subMenuName?: string) {
-    console.log(`\n==================== MENU — INTERACTION START ====================`);
-    console.log(`• Target menu: "${menuName}"`);
-    if (subMenuName) console.log(`• Target submenu: "${subMenuName}"`);
-    console.log(`---------------------------------------------------------------`);
+  console.log(`\n==================== CAROUSEL HOME — VALIDATION COMPLETE ==================\n`);
+}
 
-    // Main menu locator
-    const menu = this.page.locator(`//li[@class="menu-list__item"]//a[text()="${menuName}"]`);
+// ============================
+// CONTACT SECTION VALIDATION
+// ============================
+async validateContactSection() {
+  console.log(`\n==================== CONTACT SECTION — VALIDATION START ====================`);
 
-    // If only the main menu is clicked
-    if (!subMenuName) {
-      await menu.click();
-      console.log(`• Clicked main menu: "${menuName}"`);
-      console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
-      return;
+  await expect(this.contactSection).toBeVisible();
+  console.log(`• Contact section is visible`);
+  console.log(`---------------------------------------------------------------`);
+
+  const normalize = (t: string) => this.normalizeText(t);
+
+  // ============================
+  // PHONE BLOCK
+  // ============================
+  console.log(`• Validating phone block...`);
+
+  const phoneTitle = normalize(await this.contactPhoneTitle.innerText());
+  if (!phoneTitle.includes("speak to a ski expert")) {
+    throw new Error(`❌ Phone title mismatch. Found: "${phoneTitle}"`);
+  }
+  console.log(`  ✓ Phone title OK`);
+
+  console.log(`  • Clicking phone number to validate navigation...`);
+  await this.contactPhoneNumber.click();
+  await expect(this.page).toHaveURL(/contact-us/);
+  console.log(`  ✓ Phone link navigation OK`);
+
+  await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+  console.log(`---------------------------------------------------------------`);
+
+  // ============================
+  // EMAIL BLOCK
+  // ============================
+  console.log(`• Validating email block...`);
+
+  const emailTitle = normalize(await this.contactEmailTitle.innerText());
+  if (!emailTitle.includes("email about a ski holiday")) {
+    throw new Error(`❌ Email title mismatch. Found: "${emailTitle}"`);
+  }
+  console.log(`  ✓ Email title OK`);
+
+  const emailButtonText = normalize(await this.contactEmailButton.innerText());
+  if (!emailButtonText.includes("enquire")) {
+    throw new Error(`❌ Email button text mismatch. Found: "${emailButtonText}"`);
+  }
+  console.log(`  ✓ Email button text OK`);
+
+  console.log(`  • Clicking ENQUIRE button to validate navigation...`);
+  await this.contactEmailButton.click();
+  await expect(this.page).toHaveURL(/enquire/);
+  console.log(`  ✓ ENQUIRE button navigation OK`);
+
+  await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+  console.log(`---------------------------------------------------------------`);
+
+  // ============================
+  // NEWSLETTER BLOCK
+  // ============================
+  console.log(`• Validating newsletter block...`);
+
+  const newsletterTitle = normalize(await this.contactNewsletterTitle.innerText());
+  if (!newsletterTitle.includes("subscribe to our newsletter")) {
+    throw new Error(`❌ Newsletter title mismatch. Found: "${newsletterTitle}"`);
+  }
+  console.log(`  ✓ Newsletter title OK`);
+
+  const newsletterButtonText = normalize(await this.contactNewsletterButton.innerText());
+  if (!newsletterButtonText.includes("sign up")) {
+    throw new Error(`❌ Newsletter button text mismatch. Found: "${newsletterButtonText}"`);
+  }
+  console.log(`  ✓ Newsletter button text OK`);
+
+  console.log(`  • Clicking SIGN UP button to validate navigation...`);
+  await this.contactNewsletterButton.click();
+  await expect(this.page).toHaveURL(/signup/);
+  console.log(`  ✓ SIGN UP button navigation OK`);
+
+  console.log(`\n==================== CONTACT SECTION — VALIDATION COMPLETE ==================\n`);
+}
+
+// ============================
+// CTA BOXES VALIDATION
+// ============================
+async validateCtaBoxes(): Promise<void> {
+  console.log(`\n==================== CTA BOXES — VALIDATION START ====================`);
+
+  // Find the row that contains the first CTA title
+  const ctaRow = this.page.locator(
+    '//h2[contains(text(), "TALK TO")]/ancestor::div[@class="row"]'
+  );
+
+  // Select the 3 CTA <a> elements inside that row (XPath only)
+  const ctaBoxes = ctaRow.locator('//a');
+  const ctaTitles = ctaRow.locator('//h2[@class="box-panel__title"]');
+
+  const totalCtas = await ctaBoxes.count();
+  console.log(`• Total CTA boxes detected: ${totalCtas}`);
+  console.log(`---------------------------------------------------------------`);
+
+  const expectedPatterns = [
+    /enquire/i,
+    /about/i,
+    /signup/i
+  ];
+
+  for (let i = 0; i < totalCtas; i++) {
+    console.log(`\n==================== CTA ${i + 1} / ${totalCtas} ====================`);
+
+    const cta = ctaBoxes.nth(i);
+    const titleLocator = ctaTitles.nth(i);
+
+    await this.scrollIntoView(titleLocator);
+
+    const rawTitle = await titleLocator.innerText();
+    const normalizedTitle = this.normalizeText(rawTitle);
+
+    console.log(`• CTA title: "${rawTitle}"`);
+    console.log(`• Normalized: "${normalizedTitle}"`);
+
+    const href = await cta.getAttribute("href");
+    const url = this.resolveUrl(href);
+
+    console.log(`• CTA URL: ${url || "(invalid)"}`);
+
+    if (!url) {
+      console.warn(`  ⚠ Skipping CTA — invalid URL`);
+      continue;
     }
 
-    // Hover to reveal submenu
-    console.log(`• Hovering menu: "${menuName}" to reveal submenu...`);
-    await menu.hover();
+    const expectedPattern = expectedPatterns[i];
 
-    // Submenu locator
-    const subMenu = this.page.locator(`//li[@class="submenu-list__item"]//a[text()="${subMenuName}"]`);
-
-    // Check if submenu exists
-    const count = await subMenu.count();
-    if (count === 0) {
-      console.log(`• Submenu not found: "${subMenuName}" inside "${menuName}"`);
-      console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
-      return;
+    try {
+      await this.openAndValidateUrl(url, expectedPattern);
+      console.log(`  ✓ CTA navigation OK`);
+    } catch (err: any) {
+      console.error(`  ❌ CTA navigation failed: ${err?.message || err}`);
     }
 
-    // Click submenu
-    await subMenu.click();
-    console.log(`• Clicked submenu: "${subMenuName}" inside menu "${menuName}"`);
-    console.log(`==================== MENU — INTERACTION COMPLETE ==================\n`);
+    await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+    await this.page.waitForLoadState("domcontentloaded");
   }
 
-  async validateMultipleTitles(expected: string | string[]) {
-    console.log(`\n==================== TITLE CHECK — START ====================`);
+  console.log(`\n==================== CTA BOXES — VALIDATION COMPLETE ==================\n`);
+}
 
-    // Normalize input to array
-    const expectedTitles = Array.isArray(expected) ? expected : [expected];
+// ============================
+// COUNTRY BANNERS VALIDATION
+// ============================
+async validateCountryBanners(): Promise<void> {
+  console.log(`\n==================== COUNTRY BANNERS — VALIDATION START ====================`);
 
-    console.log(`• Titles to validate: ${expectedTitles.length}`);
-    expectedTitles.forEach(t => console.log(`  • "${t}"`));
+  // Captura todos os banners de países
+  const banners = await this.page.$$eval(
+    '//div[contains(@class, "country-banner")]//a',
+    (anchors) =>
+      anchors.map((a) => ({
+        label: a.textContent?.trim() || "",
+        href: a.getAttribute("href") || null,
+      }))
+  );
 
-    console.log(`---------------------------------------------------------------`);
-    console.log(`• Collecting all H1–H6 titles from the page...`);
+  console.log(`• Total country banners detected: ${banners.length}`);
+  console.log(`---------------------------------------------------------------`);
 
-    // Collect all H1–H6 elements once
-    const allTitles = await this.page.$$eval(
-      'h1, h2, h3, h4, h5, h6',
-      elements => elements.map(el => el.textContent?.trim() || "")
+  for (const banner of banners) {
+    const label = banner.label;
+    const url = this.resolveUrl(banner.href ?? null);
+
+    console.log(`\n• Country banner: "${label}"`);
+    console.log(`  URL: ${url || "(invalid)"}\n`);
+
+    if (!url) {
+      console.warn(`  ⚠ Skipping — invalid URL`);
+      continue;
+    }
+
+    // Localiza o banner real no DOM
+    const locator = this.page.locator(
+      `//div[contains(@class, "country-banner")]//a[contains(text(), "${label}")]`
     );
 
-    console.log(`• Total titles found: ${allTitles.length}`);
-    allTitles.forEach((t, i) => console.log(`  • [${i + 1}] ${t}`));
+    // Scroll seguro até o banner
+    await this.scrollIntoView(locator);
 
-    console.log(`---------------------------------------------------------------`);
-    console.log(`• Validating required titles...\n`);
-
-    // Normalize helper
-    const normalize = (txt: string) =>
-      txt.toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .trim();
-
-    const normalizedTitles = allTitles.map(t => normalize(t));
-
-    // Validate each expected title
-    for (const expectedTitle of expectedTitles) {
-      const expectedNorm = normalize(expectedTitle);
-
-      const found = normalizedTitles.some(t => t.includes(expectedNorm));
-
-      if (found) {
-        console.log(`• OK → Found required title: "${expectedTitle}"`);
-      } else {
-        throw new Error(`❌ Required title not found: "${expectedTitle}"`);
-      }
+    // Valida redirecionamento abrindo em nova aba
+    try {
+      await this.openAndValidateUrl(url, new RegExp(url, "i"));
+      console.log(`  ✓ Country banner navigation OK`);
+    } catch (err: any) {
+      console.error(`  ❌ Country banner navigation failed: ${err?.message || err}`);
     }
-
-    console.log(`\n==================== TITLE CHECK — COMPLETE ==================\n`);
-  }
-  async validateCtaBoxes(expectedTitles: string[], expectedLinks: string[]) {
-    console.log(`\n==================== CTA BOXES — VALIDATION START ====================`);
-    console.log(`• Expected CTA titles:`);
-    expectedTitles.forEach(t => console.log(`  • "${t}"`));
-    console.log(`• Expected CTA links:`);
-    expectedLinks.forEach(l => console.log(`  • "${l}"`));
-    console.log(`---------------------------------------------------------------`);
-
-    // Helper function to normalize text (remove line breaks, extra spaces, lowercase)
-    const normalize = (txt: string) =>
-      txt.replace(/\s+/g, " ").trim().toLowerCase();
-
-    // Normalize expected titles
-    const expectedNorm = expectedTitles.map(t => normalize(t));
-
-    // Ensure CTA row is visible
-    await expect(this.ctaRow5).toBeVisible();
-
-    // Collect all titles and links inside CTA row
-    const titles = await this.ctaTitlesRow5.allInnerTexts();
-    const normalizedTitles = titles.map(t => normalize(t));
-    const links = await this.ctaLinksRow5.all();
-
-    console.log(`• Titles found in row 5:`);
-    titles.forEach((t, i) => console.log(`  • [${i + 1}] ${t}`));
-
-    console.log(`---------------------------------------------------------------`);
-    console.log(`• Validating CTA titles and links...\n`);
-
-    // Validate each expected title and its corresponding link
-    for (let i = 0; i < expectedNorm.length; i++) {
-      const expectedTitleNorm = expectedNorm[i];
-      const expectedTitleRaw = expectedTitles[i];
-      const expectedLink = expectedLinks[i];
-
-      // Validate title
-      const found = normalizedTitles.some(t => t.includes(expectedTitleNorm));
-      if (!found) {
-        throw new Error(`❌ CTA title not found: "${expectedTitleRaw}"`);
-      }
-      console.log(`• OK → Found CTA title: "${expectedTitleRaw}"`);
-
-      // Validate link
-      const href = await links[i].getAttribute("href");
-      if (!href || !href.includes(expectedLink)) {
-        throw new Error(`❌ CTA link mismatch for "${expectedTitleRaw}". Expected: ${expectedLink}, Found: ${href}`);
-      }
-      console.log(`• OK → Link for "${expectedTitleRaw}" is correct: ${href}`);
-    }
-
-    console.log(`\n==================== CTA BOXES — VALIDATION COMPLETE ==================\n`);
   }
 
+  console.log(`\n==================== COUNTRY BANNERS — VALIDATION COMPLETE ==================\n`);
+}
 
+// ============================
+// GENERIC HOMEPAGE HELPERS
+// ============================
 
+/**
+ * Validates that the homepage main title is visible and contains expected text.
+ */
+async validateHomePageTitle(expected: string): Promise<void> {
+  console.log(`\n==================== HOMEPAGE TITLE — VALIDATION START ====================`);
 
+  await expect(this.titleHomePage).toBeVisible();
 
+  const rawTitle = await this.titleHomePage.innerText();
+  const normalized = this.normalizeText(rawTitle);
+
+  console.log(`• Found title: "${rawTitle}"`);
+  console.log(`• Normalized: "${normalized}"`);
+
+  if (!normalized.includes(this.normalizeText(expected))) {
+    throw new Error(`❌ Homepage title mismatch. Expected something containing "${expected}"`);
+  }
+
+  console.log(`✓ Homepage title validated successfully`);
+  console.log(`==================== HOMEPAGE TITLE — VALIDATION COMPLETE ==================\n`);
+}
+
+/**
+ * Validates that the banner title is visible and contains expected text.
+ */
+async validateBannerTitle(expected: string): Promise<void> {
+  console.log(`\n==================== BANNER TITLE — VALIDATION START ====================`);
+
+  await expect(this.titleBannerHome).toBeVisible();
+
+  const rawTitle = await this.titleBannerHome.innerText();
+  const normalized = this.normalizeText(rawTitle);
+
+  console.log(`• Found banner title: "${rawTitle}"`);
+  console.log(`• Normalized: "${normalized}"`);
+
+  if (!normalized.includes(this.normalizeText(expected))) {
+    throw new Error(`❌ Banner title mismatch. Expected something containing "${expected}"`);
+  }
+
+  console.log(`✓ Banner title validated successfully`);
+  console.log(`==================== BANNER TITLE — VALIDATION COMPLETE ==================\n`);
+}
+
+/**
+ * Validates that the Ski Holidays link redirects correctly.
+ */
+async validateSkiHolidaysLink(): Promise<void> {
+  console.log(`\n==================== SKI HOLIDAYS LINK — VALIDATION START ====================`);
+  await this.validateRedirectButton(this.skiHolidaysLink, '/ski-holidays');
+  console.log(`✓ Ski Holidays link validated successfully`);
+  console.log(`==================== SKI HOLIDAYS LINK — VALIDATION COMPLETE ==================\n`);
+}
+
+/**
+ * Validates that the Ski Deals link redirects correctly.
+ */
+async validateSkiDealsLink(): Promise<void> {
+  console.log(`\n==================== SKI DEALS LINK — VALIDATION START ====================`);
+  await this.validateRedirectButton(this.skiDealsLink, '/ski-deals');
+  console.log(`✓ Ski Deals link validated successfully`);
+  console.log(`==================== SKI DEALS LINK — VALIDATION COMPLETE ==================\n`);
+}
+
+/**
+ * Validates that the Snow Reports link redirects correctly.
+ */
+async validateSnowReportsLink(): Promise<void> {
+  console.log(`\n==================== SNOW REPORTS LINK — VALIDATION START ====================`);
+  await this.validateRedirectButton(this.snowReportsLink, '/snow-reports');
+  console.log(`✓ Snow Reports link validated successfully`);
+  console.log(`==================== SNOW REPORTS LINK — VALIDATION COMPLETE ==================\n`);
+}
+
+/**
+ * Validates that the Blog & Guides link redirects correctly.
+ */
+async validateBlogGuidesLink(): Promise<void> {
+  console.log(`\n==================== BLOG & GUIDES LINK — VALIDATION START ====================`);
+  await this.validateRedirectButton(this.blogGuidesLink, '/blog');
+  console.log(`✓ Blog & Guides link validated successfully`);
+  console.log(`==================== BLOG & GUIDES LINK — VALIDATION COMPLETE ==================\n`);
+}
+
+// ============================
+// CLICK MENU (WITH VALIDATION)
+// ============================
+async clickMenu(menuLabel: string, subLabel?: string): Promise<void> {
+  console.log(`\n==================== CLICK MENU — START ====================`);
+  console.log(`• Menu: ${menuLabel}`);
+  if (subLabel) console.log(`• Submenu: ${subLabel}`);
+  console.log(`---------------------------------------------------------------`);
+
+  // Localiza o menu principal
+  const menu = this.page.locator(
+    `li.menu-list__item a:has-text("${menuLabel}")`
+  ).first();
+
+  await menu.waitFor({ state: "visible", timeout: 7000 });
+  await menu.click();
+  console.log(`✓ Clicked main menu: ${menuLabel}`);
+
+  // Se NÃO houver submenu → valida título da página
+  if (!subLabel) {
+    await this.validateTitleContains(this.page, menuLabel);
+    console.log(`✓ Page title validated for menu: ${menuLabel}`);
+    console.log(`==================== CLICK MENU — COMPLETE ====================\n`);
+    return;
+  }
+
+  // Localiza submenu
+  const submenu = this.page.locator(
+    `.submenu-list__block-item a:has-text("${subLabel}")`
+  ).first();
+
+  await submenu.waitFor({ state: "visible", timeout: 7000 });
+  await submenu.click();
+  console.log(`✓ Clicked submenu: ${subLabel}`);
+
+  // Valida título da página
+  await this.validateTitleContains(this.page, subLabel);
+  console.log(`✓ Page title validated for submenu: ${subLabel}`);
+
+  console.log(`==================== CLICK MENU — COMPLETE ====================\n`);
+}
+
+// ============================
+// MULTIPLE TITLES VALIDATION
+// ============================
+async validateMultipleTitles(expectedTitles: string[]): Promise<void> {
+  console.log(`\n==================== MULTIPLE TITLES — VALIDATION START ====================`);
+
+  for (const expected of expectedTitles) {
+    const locator = this.page.locator(`text=${expected}`).first();
+
+    console.log(`• Validating title: "${expected}"`);
+
+    try {
+      await expect(locator).toBeVisible({ timeout: 7000 });
+      console.log(`  ✓ Title found: "${expected}"`);
+    } catch {
+      throw new Error(`❌ Title not found on page: "${expected}"`);
+    }
+  }
+
+  console.log(`==================== MULTIPLE TITLES — VALIDATION COMPLETE ==================\n`);
+}
+
+// ============================
+// CAROUSEL CTA VALIDATION
+// ============================
+async validateCarouselCTA(): Promise<void> {
+  console.log(`\n==================== CAROUSEL CTA — VALIDATION START ====================`);
+
+  const activeSlide = this.carouselActiveSlide; // 🔥 Correção
+
+  await expect(activeSlide).toBeVisible({ timeout: 7000 });
+
+  const cta = activeSlide.locator('a').first();
+  await expect(cta).toBeVisible({ timeout: 7000 });
+
+  const href = await cta.getAttribute('href');
+  if (!href) throw new Error("❌ CTA button has no href attribute");
+
+  console.log(`• CTA href: ${href}`);
+
+  await cta.click({ force: true });
+
+  await expect(this.page).toHaveURL(new RegExp(href, "i"));
+  console.log(`✓ CTA navigation OK → ${this.page.url()}`);
+
+  console.log(`==================== CAROUSEL CTA — VALIDATION COMPLETE ==================\n`);
+}
 }
