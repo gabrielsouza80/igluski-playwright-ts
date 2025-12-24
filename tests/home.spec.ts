@@ -4,7 +4,7 @@ import { test, expect } from '../support/baseTest';
 // Test Suite: Home Page
 // ================================================================
 
-test.describe.only('Home Page', () => {
+test.describe('Home Page', () => {
 
   // BEFORE EACH: Executed before each test — browse and accept cookies
   test.beforeEach(async ({ page, pm }) => {
@@ -91,13 +91,13 @@ test.describe.only('Home Page', () => {
     await pm.onHomePage().validateCarouselCTA();
   });
 
-test('TC23 - Validate Inline Links in Section', async ({ page, pm }) => {
-  // 1) First section — returns exactly 6 links
-  await pm.onHomePage().validateSpeakToExpertsLinks();
+  test('TC23 - Validate Inline Links in Section', async ({ page, pm }) => {
+    // 1) First section — returns exactly 6 links
+    await pm.onHomePage().validateSpeakToExpertsLinks();
 
-  // 2) Second section — returns exactly 10 links
-  await pm.onHomePage().validateFindYourSkiingHolidayLinks();
-});
+    // 2) Second section — returns exactly 10 links
+    await pm.onHomePage().validateFindYourSkiingHolidayLinks();
+  });
 
 
 });

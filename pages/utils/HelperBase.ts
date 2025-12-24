@@ -68,7 +68,7 @@ export class HelperBase {
           await this.page.waitForTimeout(500);
         }
       } catch (e2) {
-        console.log('Cookie banner não encontrado ou já foi fechado');
+        console.log('Cookie banner not found or already closed');
       }
     }
   }
@@ -139,7 +139,7 @@ export class HelperBase {
   }
 
   // ============================================================
-  // 🔵 NOVOS MÉTODOS GENÉRICOS (ADICIONADOS)
+  // 🔵 NEW GENERIC METHODS (ADDED)
   // ============================================================
 
   protected normalizeText(text: string): string {
@@ -211,35 +211,35 @@ export class HelperBase {
     return href.startsWith("http") ? href : new URL(href, this.page.url()).href;
   }
 
-async validatePageTitleContains(page: any, expected: string): Promise<void> {
-  const title = await page.title();
-  console.log(`  • Page title: "${title}"`);
+  async validatePageTitleContains(page: any, expected: string): Promise<void> {
+    const title = await page.title();
+    console.log(`  • Page title: "${title}"`);
 
-  if (title.toLowerCase().includes(expected.toLowerCase())) {
-    console.log(`  ✓ Title contains "${expected}"`);
-  } else {
-    console.error(`  ❌ Title does NOT contain "${expected}"`);
+    if (title.toLowerCase().includes(expected.toLowerCase())) {
+      console.log(`  ✓ Title contains "${expected}"`);
+    } else {
+      console.error(`  ❌ Title does NOT contain "${expected}"`);
+    }
   }
-}
-async validatePageTitleFuzzy(page: any, expected: string): Promise<void> {
-  const title = await page.title();
-  console.log(`  • Page title: "${title}"`);
+  async validatePageTitleFuzzy(page: any, expected: string): Promise<void> {
+    const title = await page.title();
+    console.log(`  • Page title: "${title}"`);
 
-  const t = title.toLowerCase();
-  const e = expected.toLowerCase();
+    const t = title.toLowerCase();
+    const e = expected.toLowerCase();
 
-  // regras de tolerância
-  const similar =
-    t.includes(e) ||                          // contém literal
-    t.includes(e.replace(/s$/, "")) ||        // singular/plural
-    t.includes(e.replace(/ing$/, "")) ||      // snowboard / snowboarding
-    t.includes(e.split(" ")[0]) ||            // primeira palavra
-    e.split(" ").some(word => t.includes(word)); // qualquer palavra relevante
+    // tolerance rules
+    const similar =
+      t.includes(e) ||                          // contém literal
+      t.includes(e.replace(/s$/, "")) ||        // singular/plural
+      t.includes(e.replace(/ing$/, "")) ||      // snowboard / snowboarding
+      t.includes(e.split(" ")[0]) ||            // primeira palavra
+      e.split(" ").some(word => t.includes(word)); // qualquer palavra relevante
 
-  if (similar) {
-    console.log(`  ✓ Title is similar to "${expected}"`);
-  } else {
-    console.error(`  ❌ Title is NOT similar to "${expected}"`);
+    if (similar) {
+      console.log(`  ✓ Title is similar to "${expected}"`);
+    } else {
+      console.error(`  ❌ Title is NOT similar to "${expected}"`);
+    }
   }
-}
 }

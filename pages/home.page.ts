@@ -39,13 +39,14 @@ export class HomePage extends HelperBase {
       `//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${text.toLowerCase()}")]`
     );
 
-  // Retorna o container pai da seção (o <div> que envolve o <h2>)
+  // Returns the parent container of the section (the <div> wrapping the <h2>)
   sectionContainer = (title: Locator) =>
     title.locator('xpath=..');
 
-  // Retorna todos os <a> dentro da seção
+  // Returns all <a> elements inside the section
   sectionLinks = (section: Locator) =>
     section.locator('a');
+
 
   // ============================
   // CAROUSEL
@@ -793,99 +794,99 @@ export class HomePage extends HelperBase {
   }
 
 
-async validateSpeakToExpertsLinks(): Promise<void> {
-  console.log(`\n==================== INLINE LINKS — SECTION: SPEAK TO THE SKI EXPERTS ====================`);
+  async validateSpeakToExpertsLinks(): Promise<void> {
+    console.log(`\n==================== INLINE LINKS — SECTION: SPEAK TO THE SKI EXPERTS ====================`);
 
-  // 1. Localiza o <h2> usando o locator profissional
-  const title = this.sectionTitle("Speak to the ski experts");
-  await title.waitFor({ state: "visible" });
-  console.log(`• Section title found: "Speak to the ski experts"`);
+    // 1. Localiza o <h2> usando o locator profissional
+    const title = this.sectionTitle("Speak to the ski experts");
+    await title.waitFor({ state: "visible" });
+    console.log(`• Section title found: "Speak to the ski experts"`);
 
-  // 2. Container da seção
-  const section = this.sectionContainer(title);
+    // 2. Container da seção
+    const section = this.sectionContainer(title);
 
-  // 3. Todos os <a> dentro da seção
-  const links = this.sectionLinks(section);
+    // 3. Todos os <a> dentro da seção
+    const links = this.sectionLinks(section);
 
-  const totalLinks = await links.count();
-  console.log(`• Total links detected: ${totalLinks}`);
-  console.log(`---------------------------------------------------------------`);
+    const totalLinks = await links.count();
+    console.log(`• Total links detected: ${totalLinks}`);
+    console.log(`---------------------------------------------------------------`);
 
-  // 4. Loop dos links
-  for (let i = 0; i < totalLinks; i++) {
-    console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
+    // 4. Loop dos links
+    for (let i = 0; i < totalLinks; i++) {
+      console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
 
-    const link = links.nth(i);
-    const linkText = (await link.innerText()).trim();
-    const href = await link.getAttribute("href");
-    const url = this.resolveUrl(href);
+      const link = links.nth(i);
+      const linkText = (await link.innerText()).trim();
+      const href = await link.getAttribute("href");
+      const url = this.resolveUrl(href);
 
-    console.log(`• Link text: "${linkText}"`);
-    console.log(`• URL: ${url}`);
+      console.log(`• Link text: "${linkText}"`);
+      console.log(`• URL: ${url}`);
 
-    // 5. Abre nova aba
-    const context = this.page.context();
-    const newPage = await context.newPage();
+      // 5. Abre nova aba
+      const context = this.page.context();
+      const newPage = await context.newPage();
 
-    await newPage.goto(url!, { waitUntil: "domcontentloaded" });
+      await newPage.goto(url!, { waitUntil: "domcontentloaded" });
 
-    // 6. Validação fuzzy do título
-    await this.validatePageTitleFuzzy(newPage, linkText);
+      // 6. Validação fuzzy do título
+      await this.validatePageTitleFuzzy(newPage, linkText);
 
-    await newPage.close();
+      await newPage.close();
+    }
+
+    console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
   }
 
-  console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
-}
+  async validateFindYourSkiingHolidayLinks(): Promise<void> {
+    console.log(`\n==================== INLINE LINKS — SECTION: FIND YOUR SKIING HOLIDAY ====================`);
 
-async validateFindYourSkiingHolidayLinks(): Promise<void> {
-  console.log(`\n==================== INLINE LINKS — SECTION: FIND YOUR SKIING HOLIDAY ====================`);
+    const titleText = "Find Your Skiing Holiday";
 
-  const titleText = "Find Your Skiing Holiday";
+    // 1. XPath real do título
+    const titleXPath = `//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${titleText.toLowerCase()}")]`;
 
-  // 1. XPath real do título
-  const titleXPath = `//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${titleText.toLowerCase()}")]`;
+    // 2. Locator do título
+    const title = this.page.locator(titleXPath);
+    await title.waitFor({ state: "visible" });
+    console.log(`• Section title found: "${titleText}"`);
 
-  // 2. Locator do título
-  const title = this.page.locator(titleXPath);
-  await title.waitFor({ state: "visible" });
-  console.log(`• Section title found: "${titleText}"`);
+    // 3. Container da seção
+    const section = this.sectionContainer(title);
 
-  // 3. Container da seção
-  const section = this.sectionContainer(title);
+    // 4. Links antes do primeiro <div>
+    const links = this.page.locator(
+      `${titleXPath}/following-sibling::a[following-sibling::div]`
+    );
 
-  // 4. Links antes do primeiro <div>
-  const links = this.page.locator(
-    `${titleXPath}/following-sibling::a[following-sibling::div]`
-  );
+    const totalLinks = await links.count();
+    console.log(`• Total links detected: ${totalLinks}`);
+    console.log(`---------------------------------------------------------------`);
 
-  const totalLinks = await links.count();
-  console.log(`• Total links detected: ${totalLinks}`);
-  console.log(`---------------------------------------------------------------`);
+    for (let i = 0; i < totalLinks; i++) {
+      console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
 
-  for (let i = 0; i < totalLinks; i++) {
-    console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
+      const link = links.nth(i);
+      const linkText = (await link.innerText()).trim();
+      const href = await link.getAttribute("href");
+      const url = this.resolveUrl(href);
 
-    const link = links.nth(i);
-    const linkText = (await link.innerText()).trim();
-    const href = await link.getAttribute("href");
-    const url = this.resolveUrl(href);
+      console.log(`• Link text: "${linkText}"`);
+      console.log(`• URL: ${url}`);
 
-    console.log(`• Link text: "${linkText}"`);
-    console.log(`• URL: ${url}`);
+      // Abre nova aba
+      const context = this.page.context();
+      const newPage = await context.newPage();
 
-    // Abre nova aba
-    const context = this.page.context();
-    const newPage = await context.newPage();
+      await newPage.goto(url!, { waitUntil: "domcontentloaded" });
 
-    await newPage.goto(url!, { waitUntil: "domcontentloaded" });
+      // Validação fuzzy
+      await this.validatePageTitleFuzzy(newPage, linkText);
 
-    // Validação fuzzy
-    await this.validatePageTitleFuzzy(newPage, linkText);
+      await newPage.close();
+    }
 
-    await newPage.close();
+    console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
   }
-
-  console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
-}
 }
