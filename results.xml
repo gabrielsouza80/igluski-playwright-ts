@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="14" failures="1" skipped="0" errors="0" time="233.0865490000006">
-<testsuite name="home.spec.ts" timestamp="2025-12-24T15:14:22.391Z" hostname="chromium" tests="14" failures="1" skipped="0" time="590.697" errors="0">
-<testcase name="Home Page › Validar Logo da Iglu Ski" classname="home.spec.ts" time="15.666">
+<testsuites id="" name="" tests="14" failures="1" skipped="0" errors="0" time="231.674317">
+<testsuite name="home.spec.ts" timestamp="2025-12-24T15:29:27.907Z" hostname="chromium" tests="14" failures="1" skipped="0" time="613.174" errors="0">
+<testcase name="Home Page › Validar Logo da Iglu Ski" classname="home.spec.ts" time="18.924">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -30,7 +30,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validar Menu de Navegação Principal" classname="home.spec.ts" time="227.879">
+<testcase name="Home Page › Validar Menu de Navegação Principal" classname="home.spec.ts" time="226.317">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -543,7 +543,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Click on the menu and optionally on the submenu." classname="home.spec.ts" time="15.006">
+<testcase name="Home Page › Click on the menu and optionally on the submenu." classname="home.spec.ts" time="18.788">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -578,7 +578,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Contact Information in the Header" classname="home.spec.ts" time="14.475">
+<testcase name="Home Page › Validate Contact Information in the Header" classname="home.spec.ts" time="19.029">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -610,7 +610,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate &quot;Recently Viewed&quot; button" classname="home.spec.ts" time="12.875">
+<testcase name="Home Page › Validate &quot;Recently Viewed&quot; button" classname="home.spec.ts" time="11.749">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -632,7 +632,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Access to the Customer Portal" classname="home.spec.ts" time="14.502">
+<testcase name="Home Page › Validate Access to the Customer Portal" classname="home.spec.ts" time="18.649">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -657,7 +657,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Ratings and Reviews in the Header" classname="home.spec.ts" time="14.871">
+<testcase name="Home Page › Validate Ratings and Reviews in the Header" classname="home.spec.ts" time="18.408">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -682,7 +682,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Main Titles on the Homepage" classname="home.spec.ts" time="9.203">
+<testcase name="Home Page › Validate Main Titles on the Homepage" classname="home.spec.ts" time="12.905">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -709,7 +709,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate carousel of promotions and country banners on the homepage" classname="home.spec.ts" time="15.224">
+<testcase name="Home Page › Validate carousel of promotions and country banners on the homepage" classname="home.spec.ts" time="15.333">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -748,7 +748,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="17.561">
+<testcase name="Home Page › Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="22.871">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -792,7 +792,7 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="90.19">
+<testcase name="Home Page › Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="90.208">
 <failure message="home.spec.ts:78:7 Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
 <![CDATA[  [chromium] › home.spec.ts:78:7 › Home Page › Validate Contact Section (Phone, Email, Newsletter) ─
 
@@ -803,16 +803,16 @@ IGLU SKI"
       - waiting for locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]')
 
 
-       at ..\pages\home.page.ts:444
+       at ..\pages\home.page.ts:445
 
-      442 |
-      443 |     console.log(`  • Clicking phone number to validate navigation...`);
-    > 444 |     await this.contactPhoneNumber.click();
+      443 |
+      444 |     console.log(`  • Clicking phone number to validate navigation...`);
+    > 445 |     await this.contactPhoneNumber.click();
           |                                   ^
-      445 |     await expect(this.page).toHaveURL(/contact-us/);
-      446 |     console.log(`  ✓ Phone link navigation OK`);
-      447 |
-        at HomePage.validateContactSection (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:444:35)
+      446 |     await expect(this.page).toHaveURL(/contact-us/);
+      447 |     console.log(`  ✓ Phone link navigation OK`);
+      448 |
+        at HomePage.validateContactSection (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:445:35)
         at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:79:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
@@ -847,7 +847,7 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Footer Links" classname="home.spec.ts" time="98.474">
+<testcase name="Home Page › Validate Footer Links" classname="home.spec.ts" time="94.081">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1076,7 +1076,7 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC22 - Validate Carousel CTA Button" classname="home.spec.ts" time="7.328">
+<testcase name="Home Page › TC22 - Validate Carousel CTA Button" classname="home.spec.ts" time="7.643">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1099,7 +1099,7 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC23 - Validate Inline Links in Section" classname="home.spec.ts" time="37.443">
+<testcase name="Home Page › TC23 - Validate Inline Links in Section" classname="home.spec.ts" time="38.269">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
