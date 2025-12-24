@@ -11,7 +11,7 @@ test.describe.only('Home Page', () => {
     await pm.onHomePage().navigateAndAcceptCookies();
   });
 
-    // TC 1 — Validate Iglu Ski Logo: checks for redirection when clicking on the logo
+  // TC 1 — Validate Iglu Ski Logo: checks for redirection when clicking on the logo
   test('Validar Logo da Iglu Ski', async ({ page, pm }) => {
     await pm.onHomePage().validateLogo();
   });
@@ -34,7 +34,7 @@ test.describe.only('Home Page', () => {
     await pm.onHomePage().clickMenu("Ski Holidays", "Family ski holidays");
   });
 
-    // TC 3 — Validate Contact Information in Header
+  // TC 3 — Validate Contact Information in Header
   test('Validate Contact Information in the Header', async ({ page, pm }) => {
     await pm.onHomePage().validateHeaderContactInfo();
   });
@@ -54,7 +54,7 @@ test.describe.only('Home Page', () => {
     await pm.onHomePage().validateRatingsAndReviews();
   });
 
-    // TC 15 — Validate Main Titles on the Homepage
+  // TC 15 — Validate Main Titles on the Homepage
   test('Validate Main Titles on the Homepage', async ({ page, pm }) => {
     await pm.onHomePage().validateMultipleTitles([
       "Welcome To The Home Of Ski",
@@ -74,7 +74,7 @@ test.describe.only('Home Page', () => {
     await pm.onHomePage().validateCtaBoxes(); // ← CORRIGIDO (sem argumentos)
   });
 
-    // TC 18 — Validate Contact Section (Phone, Email, Newsletter)
+  // TC 18 — Validate Contact Section (Phone, Email, Newsletter)
   test('Validate Contact Section (Phone, Email, Newsletter)', async ({ page, pm }) => {
     await pm.onHomePage().validateContactSection();
   });
@@ -90,5 +90,14 @@ test.describe.only('Home Page', () => {
   test('TC22 - Validate Carousel CTA Button', async ({ page, pm }) => {
     await pm.onHomePage().validateCarouselCTA();
   });
+
+test('TC23 - Validate Inline Links in Section', async ({ page, pm }) => {
+  // 1) First section — returns exactly 6 links
+  await pm.onHomePage().validateSpeakToExpertsLinks();
+
+  // 2) Second section — returns exactly 10 links
+  await pm.onHomePage().validateFindYourSkiingHolidayLinks();
+});
+
 
 });

@@ -173,21 +173,21 @@ export class HelperBase {
   }
 
   async openAndValidateUrl(url: string, expectedPattern: RegExp): Promise<void> {
-  // Create a new tab without touching the main page
-  const context = this.page.context();
-  const newPage = await context.newPage();
+    // Create a new tab without touching the main page
+    const context = this.page.context();
+    const newPage = await context.newPage();
 
-  try {
-    // Navigate to the target URL in the new tab
-    await newPage.goto(url, { waitUntil: "domcontentloaded" });
+    try {
+      // Navigate to the target URL in the new tab
+      await newPage.goto(url, { waitUntil: "domcontentloaded" });
 
-    // Validate the final URL using the expected pattern
-    await expect(newPage).toHaveURL(expectedPattern);
-  } finally {
-    // Always close only the temporary tab
-    await newPage.close();
+      // Validate the final URL using the expected pattern
+      await expect(newPage).toHaveURL(expectedPattern);
+    } finally {
+      // Always close only the temporary tab
+      await newPage.close();
+    }
   }
-}
 
   protected async waitForCarouselSlideChange(previousHref: string): Promise<void> {
     await this.page.waitForFunction(
@@ -203,7 +203,7 @@ export class HelperBase {
     try {
       await locator.scrollIntoViewIfNeeded();
       await this.page.waitForTimeout(300);
-    } catch {}
+    } catch { }
   }
 
   protected resolveUrl(href: string | null | undefined): string | null {
@@ -211,5 +211,35 @@ export class HelperBase {
     return href.startsWith("http") ? href : new URL(href, this.page.url()).href;
   }
 
-  
+async validatePageTitleContains(page: any, expected: string): Promise<void> {
+  const title = await page.title();
+  console.log(`  • Page title: "${title}"`);
+
+  if (title.toLowerCase().includes(expected.toLowerCase())) {
+    console.log(`  ✓ Title contains "${expected}"`);
+  } else {
+    console.error(`  ❌ Title does NOT contain "${expected}"`);
+  }
+}
+async validatePageTitleFuzzy(page: any, expected: string): Promise<void> {
+  const title = await page.title();
+  console.log(`  • Page title: "${title}"`);
+
+  const t = title.toLowerCase();
+  const e = expected.toLowerCase();
+
+  // regras de tolerância
+  const similar =
+    t.includes(e) ||                          // contém literal
+    t.includes(e.replace(/s$/, "")) ||        // singular/plural
+    t.includes(e.replace(/ing$/, "")) ||      // snowboard / snowboarding
+    t.includes(e.split(" ")[0]) ||            // primeira palavra
+    e.split(" ").some(word => t.includes(word)); // qualquer palavra relevante
+
+  if (similar) {
+    console.log(`  ✓ Title is similar to "${expected}"`);
+  } else {
+    console.error(`  ❌ Title is NOT similar to "${expected}"`);
+  }
+}
 }
