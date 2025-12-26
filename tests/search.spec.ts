@@ -67,7 +67,6 @@ test.describe('Home Page', () => {
 
 
     // 6. Accept terms and conditions
-    await pm.onBookingDetailsPage().acceptErratas();
     await pm.onBookingDetailsPage().acceptTermsAndConditions();
     console.log('✓ Accepted terms and conditions');
 

@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="7.332785000000149">
-<testsuite name="enquire.spec.ts" timestamp="2025-12-26T00:32:32.559Z" hostname="chromium" tests="1" failures="0" skipped="0" time="6.159" errors="0">
-<testcase name="Enquire Page › Validate invalid email format shows error" classname="enquire.spec.ts" time="6.159">
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="14.90210699999705">
+<testsuite name="search.spec.ts" timestamp="2025-12-26T07:39:34.114Z" hostname="chromium" tests="1" failures="0" skipped="0" time="13.578" errors="0">
+<testcase name="Home Page › should book first ski holiday package and reach payment page" classname="search.spec.ts" time="13.578">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -16,6 +16,28 @@
 • Cookie banner is now hidden.
 ==================== COOKIES — COMPLETED =======================
 
+✓ Found 10 ski holiday packages
+✓ Clicked Book Online on first result
+✓ Clicked Accomodation - Confirm Number of People
+✓ Clicked Accomodation - Add Room
+✓ Clicked Accomodation - Continue to Travel page
+✓ Clicked Travel - Continue to Extras page
+✓ Clicked Extras - Continue to Summary page
+✓ Clicked Summary - Continue to People page
+📝 Filling mandatory fields with passenger data:
+   Title: Ms
+   Name: Linda Anderson
+   DOB: 22/Feb/2002
+   Address: 530 Park Lane, Liverpool
+   Email: rosa.ag6eip@mail.co.uk
+✅ All mandatory fields filled successfully
+
+📝 Filling Adult 2 data:
+✓ Filled People - Mandatory fields
+✓ Clicked People - Continue to Book page
+✓ Accepted terms and conditions
+✓ Clicked proceed to payment
+✓ Successfully reached payment page
 ]]>
 </system-out>
 </testcase>
