@@ -13,8 +13,8 @@ export class AccommodationPage  extends HelperBase {
 
   readonly numberOfAdultsInput: Locator = this.page.locator('#number-of-adults-input');
   readonly numberOfChildrenInput: Locator = this.page.locator('#number-of-children-input');
-  readonly numberOfInfantsInput: Locator = this.page.locator('#number-of-infants-input');
-  readonly showRoomOptionsBtn: Locator = this.page.getByRole('button', { name: /Choose Your Room/i });
+  readonly numberOfInfantsInput: Locator = this.page.locator('#number-of-infants-input'); 
+  readonly showRoomOptionsBtn: Locator = this.page.locator('//button[contains(text(), "Choose Your Room")] | //button[contains(text(), "Show Room Options")]');
   readonly continueToTravelOptionsBtn: Locator = this.page.getByRole('button', { name: /Continue to Travel Options/i });
 
   async setNumberOfAdults(count: number): Promise<void> {

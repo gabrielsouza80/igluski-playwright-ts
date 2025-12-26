@@ -28,13 +28,13 @@ test.describe('Home Page', () => {
 
     await page.waitForURL(/book|booking|details/i, { timeout: 10000 });
 
-
-    await pm.onAccommodationPage().clickConfirmNumberOfPeople()
-    console.log('✓ Clicked Accomodation - Confirm Number of People');
+    await test.step('✓ Clicked Accomodation - Confirm Number of People', async () => {
+      await pm.onAccommodationPage().clickConfirmNumberOfPeople()
+    });
     
-    await pm.onAccommodationPage().clickAddRoom()
-    console.log('✓ Clicked Accomodation - Add Room');
-    
+    await test.step('✓ ✓ Clicked Accomodation - Add Room', async () => {
+      await pm.onAccommodationPage().clickAddRoom()
+    });
     await pm.onAccommodationPage().allocateRoomOccupancy()
 
     await pm.onAccommodationPage().continueToTravelOptions()
@@ -67,9 +67,10 @@ test.describe('Home Page', () => {
 
 
     // 6. Accept terms and conditions
-    await pm.onBookingDetailsPage().acceptTermsAndConditions();
-    console.log('✓ Accepted terms and conditions');
-
+    await test.step('6. Accept terms and conditions - Click People - Continue to Book page', async () => {
+      pm.onBookingDetailsPage().acceptTermsAndConditions();
+    // console.log('✓ Accepted terms and conditions');
+    });
     // 7. Proceed to payment
     await pm.onBookingDetailsPage().proceedToPayment();
 
