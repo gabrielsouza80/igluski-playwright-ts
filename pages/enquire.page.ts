@@ -163,10 +163,7 @@ export class EnquirePage extends HelperBase {
     await this.enquireButton.click();
   }
 
-  /**
-   * Valida mensagens obrigatórias para os campos usando um mapeamento de mensagens esperadas
-   * esperado: { Email: 'msg', PhoneNumber: 'msg', ... }
-   */
+
   async validateMandatoryFieldsErrorMessage(expectedMessages: Record<string, string>) {
     const fields = Object.keys(expectedMessages);
     await Promise.all(fields.map(async field => {
