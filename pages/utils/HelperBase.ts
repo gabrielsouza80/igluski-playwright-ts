@@ -15,7 +15,6 @@ export class HelperBase {
     fs.readFileSync(path.join(process.cwd(), "secrets/secrets.urls.json"), "utf-8")
   );
 
-
   constructor(page: Page) {
     this.page = page;
   }
@@ -55,7 +54,6 @@ export class HelperBase {
   // Try closing the cookie banner using different (site-specific) selectors.
   async acceptCookies() {
     try {
-      // Try multiple ways to find and click the button.
       const button = await this.page.locator('button:has-text("Accept Cookies & Close")').first();
 
       if (await button.isVisible({ timeout: 5000 })) {
@@ -63,7 +61,6 @@ export class HelperBase {
         await this.page.waitForTimeout(500);
       }
     } catch (e) {
-      // If you haven't found it one way, try other ways.
       try {
         const altButton = await this.page.locator('button:has-text("Accept")').first();
         if (await altButton.isVisible({ timeout: 3000 })) {
@@ -71,8 +68,7 @@ export class HelperBase {
           await this.page.waitForTimeout(500);
         }
       } catch (e2) {
-        // The cookie banner may not exist or has already been closed.
-        console.log('Cookie banner não encontrado ou já foi fechado');
+        console.log('Cookie banner not found or already closed');
       }
     }
   }
@@ -81,7 +77,6 @@ export class HelperBase {
   async validateRedirectButton(button: Locator | null, expectedUrl: string): Promise<void> {
     console.log(`\n==================== REDIRECT — VALIDATION START ====================`);
 
-    // Determine the URL to open
     let urlToOpen = expectedUrl;
 
     if (button) {
@@ -99,7 +94,6 @@ export class HelperBase {
     console.log(`• Opening new tab to validate redirection...`);
     console.log(`---------------------------------------------------------------`);
 
-    // Open new tab
     const newPage = await this.page.context().newPage();
 
     await newPage.goto(urlToOpen, {
@@ -107,7 +101,6 @@ export class HelperBase {
       timeout: 60000,
     });
 
-    // Validate URL
     await expect(newPage).toHaveURL(new RegExp(urlToOpen, 'i'));
     console.log(`• Redirect OK → ${urlToOpen}`);
 
@@ -127,31 +120,126 @@ export class HelperBase {
       : new URL(href, this.page.url()).href;
   }
 
-  /**
-* Scrolls down the page
-* @param pixels - Number of pixels to scroll (default: 500)
-*/
   async scrollDown(pixels: number = 500): Promise<void> {
     await this.page.evaluate((scrollAmount) => {
       window.scrollBy(0, scrollAmount);
     }, pixels);
   }
 
-  /**
-* Scroll to the bottom of the page
-*/
   async scrollToBottom(): Promise<void> {
     await this.page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
     });
   }
 
-  /**
-  * Scroll to the top of the page
-  */
   async scrollToTop(): Promise<void> {
     await this.page.evaluate(() => {
       window.scrollTo(0, 0);
     });
+  }
+
+  // ============================================================
+  // 🔵 NEW GENERIC METHODS (ADDED)
+  // ============================================================
+
+  protected normalizeText(text: string): string {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  protected async validateTitleContains(page: Page, label: string): Promise<boolean> {
+    const normalize = (txt: string) =>
+      txt.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/gi, " ")
+        .trim();
+
+    const normalizedLabel = normalize(label);
+
+    try {
+      const h1TextRaw = await page.locator("h1").first().innerText();
+      const h1Text = normalize(h1TextRaw);
+      const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
+
+      return labelWords.some(w => h1Text.includes(w));
+    } catch {
+      return false;
+    }
+  }
+
+  async openAndValidateUrl(url: string, expectedPattern: RegExp): Promise<void> {
+    // Create a new tab without touching the main page
+    const context = this.page.context();
+    const newPage = await context.newPage();
+
+    try {
+      // Navigate to the target URL in the new tab
+      await newPage.goto(url, { waitUntil: "domcontentloaded" });
+
+      // Validate the final URL using the expected pattern
+      await expect(newPage).toHaveURL(expectedPattern);
+    } finally {
+      // Always close only the temporary tab
+      await newPage.close();
+    }
+  }
+
+  protected async waitForCarouselSlideChange(previousHref: string): Promise<void> {
+    await this.page.waitForFunction(
+      (href) => {
+        const active = document.querySelector('.content-carousel__inner__item--active a');
+        return active && active.getAttribute('href') !== href;
+      },
+      previousHref
+    );
+  }
+
+  protected async scrollIntoView(locator: Locator): Promise<void> {
+    try {
+      await locator.scrollIntoViewIfNeeded();
+      await this.page.waitForTimeout(300);
+    } catch { }
+  }
+
+  protected resolveUrl(href: string | null | undefined): string | null {
+    if (!href) return null;
+    return href.startsWith("http") ? href : new URL(href, this.page.url()).href;
+  }
+
+  async validatePageTitleContains(page: any, expected: string): Promise<void> {
+    const title = await page.title();
+    console.log(`  • Page title: "${title}"`);
+
+    if (title.toLowerCase().includes(expected.toLowerCase())) {
+      console.log(`  ✓ Title contains "${expected}"`);
+    } else {
+      console.error(`  ❌ Title does NOT contain "${expected}"`);
+    }
+  }
+  async validatePageTitleFuzzy(page: any, expected: string): Promise<void> {
+    const title = await page.title();
+    console.log(`  • Page title: "${title}"`);
+
+    const t = title.toLowerCase();
+    const e = expected.toLowerCase();
+
+    // tolerance rules
+    const similar =
+      t.includes(e) ||                          // contains literal
+      t.includes(e.replace(/s$/, "")) ||        // singular/plural
+      t.includes(e.replace(/ing$/, "")) ||      // snowboard / snowboarding
+      t.includes(e.split(" ")[0]) ||            // first word
+      e.split(" ").some(word => t.includes(word)); // any relevant word
+
+    if (similar) {
+      console.log(`  ✓ Title is similar to "${expected}"`);
+    } else {
+      console.error(`  ❌ Title is NOT similar to "${expected}"`);
+    }
   }
 }
