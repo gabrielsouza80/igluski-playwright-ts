@@ -19,31 +19,46 @@ test.describe('Enquire Page', () => {
 
   test('Validate blank Mandatory fields error', async ({ page, pm }) => {
     await pm.onEnquirePage().submitEnquiry();
-    await pm.onEnquirePage().validateMandatoryFieldsErrorMessage();
+    await pm.onEnquirePage().validateMandatoryFieldsErrorMessage({
+      Email: enquireData.emptyEmailText,
+      PhoneNumber: enquireData.emptyPhoneText,
+      FirstName: enquireData.emptyFirstNameText,
+      LastName: enquireData.emptyLastNameText
+    });
   });
 
   test('Validate enquire intro text', async ({ page, pm }) => {
-    const expected = enquireData.introText;
 
-    // Use the page body to look for the text, allowing for spacing/formatting differences
-    await expect(page.locator('body')).toContainText(expected, { timeout: 5000 });
+    await expect(page.locator('body')).toContainText(enquireData.introText, { timeout: 5000 });
   });
 
   test('Validate invalid email format shows error', async ({ page, pm }) => {
-    // Fill everything with valid data, then replace email with an invalid value
     await pm.onEnquirePage().fillAllMandatoryFields();
-    await pm.onEnquirePage().fillField('email', 'invalid-email');
+    const invalidEmail = Math.random().toString(36).substring(2, 7) + '@invalid';
+    await pm.onEnquirePage().fillField('email', invalidEmail);
 
     await pm.onEnquirePage().submitEnquiry();
 
     const err = await pm.onEnquirePage().getErrorMessageForField('Email');
     expect(err).not.toBeNull();
-    // Ensure the error message contains some text
     expect((err || '').trim().length).toBeGreaterThan(0);
+    expect(err).toContain(enquireData.invalidEmailText);
+  });
+
+  test('Validate invalid email format - incomplete', async ({ page, pm }) => {
+    await pm.onEnquirePage().fillAllMandatoryFields();
+    await pm.onEnquirePage().fillField('email', 'incomplete@email');
+
+    await pm.onEnquirePage().submitEnquiry();
+
+    const err = await pm.onEnquirePage().getErrorMessageForField('Email');
+    expect(err).not.toBeNull();
+    expect((err || '').trim().length).toBeGreaterThan(0);
+    expect(err).toContain(enquireData.invalidEmailText);
+
   });
 
   test('Validate invalid phone format shows error', async ({ page, pm }) => {
-    // Fill everything with valid data, then replace phone with an invalid value
     await pm.onEnquirePage().fillAllMandatoryFields();
     await pm.onEnquirePage().fillField('phone', 'abc-not-a-phone');
 
@@ -51,12 +66,11 @@ test.describe('Enquire Page', () => {
 
     const err = await pm.onEnquirePage().getErrorMessageForField('PhoneNumber');
     expect(err).not.toBeNull();
-    // Ensure the error message contains some text
     expect((err || '').trim().length).toBeGreaterThan(0);
+    expect(err).toContain(enquireData.invalidPhoneText);
   });
 
   test('Validate invalid phone format - incomplete', async ({ page, pm }) => {
-    // Fill everything with valid data, then replace phone with an invalid value
     await pm.onEnquirePage().fillAllMandatoryFields();
     await pm.onEnquirePage().fillField('phone', '123');
 
@@ -64,12 +78,11 @@ test.describe('Enquire Page', () => {
 
     const err = await pm.onEnquirePage().getErrorMessageForField('PhoneNumber');
     expect(err).not.toBeNull();
-    // Ensure the error message contains some text
     expect((err || '').trim().length).toBeGreaterThan(0);
+    expect(err).toContain(enquireData.invalidPhoneText);
   });
 
     test('Validate invalid phone format - too many digits', async ({ page, pm }) => {
-    // Fill everything with valid data, then replace phone with an invalid value
     const length = 20 + Math.floor(Math.random() * 31);
     const longNumber = Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
     await pm.onEnquirePage().fillAllMandatoryFields();
@@ -79,51 +92,44 @@ test.describe('Enquire Page', () => {
 
     const err = await pm.onEnquirePage().getErrorMessageForField('PhoneNumber');
     expect(err).not.toBeNull();
-    // Ensure the error message contains some text
     expect((err || '').trim().length).toBeGreaterThan(0);
+    expect(err).toContain(enquireData.invalidPhoneText);
+
   });
   
   test('Validate first and last name only accept letters', async ({ page, pm }) => {
-    // Fill with valid data then inject invalid characters into names
     await pm.onEnquirePage().fillAllMandatoryFields();
     await pm.onEnquirePage().fillField('firstName', 'John123');
     await pm.onEnquirePage().fillField('lastName', 'Doe!@#');
 
     await pm.onEnquirePage().submitEnquiry();
 
-    const errFirst = await pm.onEnquirePage().getErrorMessageForField('FirstName');
-    const errLast = await pm.onEnquirePage().getErrorMessageForField('LastName');
+    const fields = ['FirstName', 'LastName'];
+    const errors = await Promise.all(fields.map(f => pm.onEnquirePage().getErrorMessageForField(f)));
+    errors.forEach(err => {
+      expect(err).not.toBeNull();
+      expect((err || '').trim().length).toBeGreaterThan(0);
+      expect(err).toContain(enquireData.invalidNameText);
 
-    expect(errFirst).not.toBeNull();
-    expect(errLast).not.toBeNull();
-    expect((errFirst || '').trim().length).toBeGreaterThan(0);
-    expect((errLast || '').trim().length).toBeGreaterThan(0);
+    });
   });
 
   test('Validate mandatory fields reject only spaces', async ({ page, pm }) => {
-    // Fill with valid data then replace mandatory fields with spaces
     await pm.onEnquirePage().fillAllMandatoryFields();
     const spaces = '   ';
-    await pm.onEnquirePage().fillField('firstName', spaces);
-    await pm.onEnquirePage().fillField('lastName', spaces);
-    await pm.onEnquirePage().fillField('email', spaces);
-    await pm.onEnquirePage().fillField('phone', spaces);
+    const fieldNamesToFill = ['firstName', 'lastName', 'email', 'phone'];
+    for (const name of fieldNamesToFill) {
+      await pm.onEnquirePage().fillField(name, spaces);
+    }
 
     await pm.onEnquirePage().submitEnquiry();
 
-    const errFirst = await pm.onEnquirePage().getErrorMessageForField('FirstName');
-    const errLast = await pm.onEnquirePage().getErrorMessageForField('LastName');
-    const errEmail = await pm.onEnquirePage().getErrorMessageForField('Email');
-    const errPhone = await pm.onEnquirePage().getErrorMessageForField('PhoneNumber');
+    const fieldNames = ['FirstName', 'LastName', 'Email', 'PhoneNumber'];
+    const errors = await Promise.all(
+      fieldNames.map(field => pm.onEnquirePage().getErrorMessageForField(field))
+    );
 
-    expect(errFirst).not.toBeNull();
-    expect(errLast).not.toBeNull();
-    expect(errEmail).not.toBeNull();
-    expect(errPhone).not.toBeNull();
+    expect(errors).not.toBeNull();
 
-    expect((errFirst || '').trim().length).toBeGreaterThan(0);
-    expect((errLast || '').trim().length).toBeGreaterThan(0);
-    expect((errEmail || '').trim().length).toBeGreaterThan(0);
-    expect((errPhone || '').trim().length).toBeGreaterThan(0);
   });
 });
