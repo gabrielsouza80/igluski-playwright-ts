@@ -6,13 +6,13 @@ import { test, expect } from '../support/baseTest';
 
 test.describe('Home Page', () => {
 
-  // BEFORE EACH: Executed before each test — browse and accept cookies
+  // BEFORE EACH: Executed before each test — navigate and accept cookies
   test.beforeEach(async ({ page, pm }) => {
     await pm.onHomePage().navigateAndAcceptCookies();
   });
 
   // TC 1 — Validate Iglu Ski Logo: checks for redirection when clicking on the logo
-  test('Validar Logo da Iglu Ski', async ({ page, pm }, testInfo) => {
+  test('Validate Iglu Ski Logo', async ({ page, pm }, testInfo) => {
     await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
       console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     });
@@ -34,15 +34,15 @@ test.describe('Home Page', () => {
   });
 
   // TC — Click on menu and submenu using clickMenu()
-  test('Click on the menu and optionally on the submenu.', async ({ page, pm }, testInfo) => {
+  test('Click on the menu and optionally on the submenu', async ({ page, pm }, testInfo) => {
     await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
       console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     });
 
-    // Just click on the main menu.
+    // Just click on the main menu
     await pm.onHomePage().clickMenu("Ski Holidays");
 
-    // Click on the menu and then on the submenu.
+    // Click on the menu and then on the submenu
     await pm.onHomePage().clickMenu("Ski Holidays", "Family ski holidays");
   });
 
@@ -56,7 +56,7 @@ test.describe('Home Page', () => {
   });
 
   // TC 4 — Validate "Recently Viewed" Button
-  test('Validate "Recently Viewed" button', async ({ page, pm }, testInfo) => {
+  test('Validate "Recently Viewed" Button', async ({ page, pm }, testInfo) => {
     await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
       console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     });
@@ -96,7 +96,7 @@ test.describe('Home Page', () => {
   });
 
   // TC 16 — Validate carousel of promotions and country banners on the homepage
-  test('Validate carousel of promotions and country banners on the homepage', async ({ page, pm }, testInfo) => {
+  test('Validate Carousel of Promotions and Country Banners', async ({ page, pm }, testInfo) => {
     await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
       console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     });
@@ -111,7 +111,7 @@ test.describe('Home Page', () => {
       console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     });
 
-    await pm.onHomePage().validateCtaBoxes(); // ← CORRIGIDO (sem argumentos)
+    await pm.onHomePage().validateCtaBoxes(); // ← FIXED (no arguments)
   });
 
   // TC 18 — Validate Contact Section (Phone, Email, Newsletter)
@@ -143,7 +143,8 @@ test.describe('Home Page', () => {
     await pm.onHomePage().validateCarouselCTA();
   });
 
-  test('Validate Inline Links in Section', async ({ page, pm }, testInfo) => {
+  // Validate Inline Links in Sections
+  test('Validate Inline Links in Sections', async ({ page, pm }, testInfo) => {
     await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
       console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     });
@@ -155,6 +156,7 @@ test.describe('Home Page', () => {
     await pm.onHomePage().validateFindYourSkiingHolidayLinks();
   });
 
+  // TC 26 — Validate Page Responsiveness
   test('Validate Page Responsiveness (Mobile/Tablet)', async ({ page, pm }, testInfo) => {
 
     await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
@@ -165,12 +167,14 @@ test.describe('Home Page', () => {
     await pm.onHomePage().validateTC26(768); // Tablet
   });
 
+  // TC 28 — Validate "Search by Holiday ID" Button in Footer
   test('Validate "Search by Holiday ID" Button in Footer', async ({ page, pm }, testInfo) => {
 
-  await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
-    pm.onHomePage().logTestStart(testInfo.title);
+    await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
+      pm.onHomePage().logTestStart(testInfo.title);
+    });
+
+    await pm.onHomePage().validateTC28();
   });
 
-  await pm.onHomePage().validateTC28();
-});
 });
