@@ -138,6 +138,10 @@ export class HelperBase {
     });
   }
 
+  protected generateInvalidEmail(){
+    return Math.random().toString(36).substring(2, 7) + '@invalid';
+
+  }
   // ============================================================
   // 🔵 NEW GENERIC METHODS (ADDED)
   // ============================================================

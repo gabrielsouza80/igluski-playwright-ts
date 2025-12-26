@@ -1,3 +1,11 @@
 {
-  "introText": "With the UK's largest selection of ski holidays and expert knowledge of the resorts, properties and conditions, we can help you find the perfect ski holiday at the best price. Whether you know exactly what you are looking for or are just looking for some advice our specialist ski consultants can help. Simply complete the form below and one of our advisers will be in touch promptly."
+  "introText": "With the UK's largest selection of ski holidays and expert knowledge of the resorts, properties and conditions, we can help you find the perfect ski holiday at the best price. Whether you know exactly what you are looking for or are just looking for some advice our specialist ski consultants can help. Simply complete the form below and one of our advisers will be in touch promptly.",
+  "invalidEmailText": "Please enter a valid email address",
+  "emptyEmailText": "The Email field is required.",
+  "invalidPhoneText": "Please enter a valid phone number",
+  "emptyPhoneText": "The phone number field is required",
+  "invalidNameText": "Invalid character(s) entered. Please try again.",
+  "emptyFirstNameText": "The First Name field is required.",
+  "emptyLastNameText": "The Last Name field is required."
+
 }

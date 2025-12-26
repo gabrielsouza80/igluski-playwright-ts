@@ -163,12 +163,15 @@ export class EnquirePage extends HelperBase {
     await this.enquireButton.click();
   }
 
-  async validateMandatoryFieldsErrorMessage() {
-    expect(await this.getErrorMessageForField('FirstName')).not.toBeNull();
-    expect(await this.getErrorMessageForField('LastName')).not.toBeNull();
-    expect(await this.getErrorMessageForField('PhoneNumber')).not.toBeNull();
-    expect(await this.getErrorMessageForField('Email')).not.toBeNull();
-    expect(await this.getErrorMessageForField('PhoneNumberCountryCode')).not.toBeNull();
+
+  async validateMandatoryFieldsErrorMessage(expectedMessages: Record<string, string>) {
+    const fields = Object.keys(expectedMessages);
+    await Promise.all(fields.map(async field => {
+      const err = await this.getErrorMessageForField(field);
+      expect(err).not.toBeNull();
+      expect((err || '').trim().length).toBeGreaterThan(0);
+      expect((err || '')).toContain(expectedMessages[field]);
+    }));
   }
 
   async getErrorMessageForField(fieldName: string): Promise<string | null> {
