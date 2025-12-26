@@ -30,10 +30,10 @@ export class HomePage extends HelperBase {
   readonly titleHomePage = this.page.locator('//h1[@class="h1-title"]');
 
   // ============================
-  // INLINE SECTION LOCATORS (NOVOS)
+  // INLINE SECTION LOCATORS (NEW)
   // ============================
 
-  // Localiza qualquer <h2> pelo texto, ignorando maiúsculas/minúsculas
+  // Finds any <h2> tag in the text, ignoring case.
   sectionTitle = (text: string) =>
     this.page.locator(
       `//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${text.toLowerCase()}")]`

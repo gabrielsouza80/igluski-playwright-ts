@@ -17,20 +17,20 @@ test.describe('Home Page', () => {
   });
 
   // TC 2 — Validate Menu + Submenus: validates menus, sublinks, and <h1>
-  test('Validar Menu de Navegação Principal', async ({ page, pm }) => {
-    // Aumenta timeout global para este teste (5 minutos)
+  test('Validate Main Navigation Menu', async ({ page, pm }) => {
+    // Increase the overall timeout for this test (5 minutes)
     test.setTimeout(300000);
 
-    // Valida todos os sublinks (ilimitado)
+    // Validate all sublinks (unlimited)
     await pm.onHomePage().validateMenuAndSubMenuNavigation();
   });
 
   // TC — Click on menu and submenu using clickMenu()
   test('Click on the menu and optionally on the submenu.', async ({ page, pm }) => {
-    // Apenas clica no menu principal
+    // Just click on the main menu.
     await pm.onHomePage().clickMenu("Ski Holidays");
 
-    // Clica no menu e depois no submenu
+    // Click on the menu and then on the submenu.
     await pm.onHomePage().clickMenu("Ski Holidays", "Family ski holidays");
   });
 

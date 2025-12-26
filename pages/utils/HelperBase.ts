@@ -230,11 +230,11 @@ export class HelperBase {
 
     // tolerance rules
     const similar =
-      t.includes(e) ||                          // contém literal
+      t.includes(e) ||                          // contains literal
       t.includes(e.replace(/s$/, "")) ||        // singular/plural
       t.includes(e.replace(/ing$/, "")) ||      // snowboard / snowboarding
-      t.includes(e.split(" ")[0]) ||            // primeira palavra
-      e.split(" ").some(word => t.includes(word)); // qualquer palavra relevante
+      t.includes(e.split(" ")[0]) ||            // first word
+      e.split(" ").some(word => t.includes(word)); // any relevant word
 
     if (similar) {
       console.log(`  ✓ Title is similar to "${expected}"`);
