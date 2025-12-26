@@ -109,6 +109,25 @@ export class HomePage extends HelperBase {
   // All images on the page
   readonly allImages = this.page.locator('img');
 
+  // ============================
+// FOOTER - TC28 LOCATORS
+// ============================
+
+// Container principal do componente
+readonly holidayIdContainer = this.page.locator('.search-by-holiday-id');
+
+// Botão "Search by Holiday ID"
+readonly btnSearchByHolidayId = this.page.locator('.search-by-holiday-id .holiday-id__trigger');
+
+// Formulário que abre após clicar
+readonly holidayIdForm = this.page.locator('.search-by-holiday-id form');
+
+// Campo de input do Holiday ID
+readonly holidayIdInput = this.page.locator('.search-by-holiday-id input#siteSearchInput');
+
+// Botão de busca dentro do formulário
+readonly holidayIdSearchButton = this.page.locator('.search-by-holiday-id button.holiday-id__btn');
+
   constructor(page: Page) {
     super(page);
     this.actions = new Actions(page);
@@ -999,4 +1018,76 @@ export class HomePage extends HelperBase {
 
     console.log(`✓ TC26 PASSED at ${viewportWidth}px`);
   }
+
+  // ============================
+// FOOTER - TC28 HELPERS
+// ============================
+
+/**
+ * Scroll até o footer
+ */
+async scrollToFooter(): Promise<void> {
+  await this.page.keyboard.press('End');
+  await this.page.waitForTimeout(800);
+}
+
+/**
+ * Verifica se o container do Holiday ID está visível
+ */
+async isHolidayIdContainerVisible(): Promise<boolean> {
+  try {
+    return await this.holidayIdContainer.isVisible();
+  } catch {
+    return false;
+  }
+}
+
+// ============================
+// TC28 - Validate Search by Holiday ID
+// ============================
+
+/**
+ * TC28 — Validar botão "Search by Holiday ID" no footer
+ */
+async validateTC28(): Promise<void> {
+  console.log(`\n===== TC28: Validating 'Search by Holiday ID' in Footer =====\n`);
+
+  // 1. Scroll até o footer
+  await this.scrollToFooter();
+
+  const containerVisible = await this.isHolidayIdContainerVisible();
+  if (!containerVisible) {
+    throw new Error("TC28 FAILED: Holiday ID container not visible in footer.");
+  }
+
+  // 2. Verificar se o botão existe
+  const buttonVisible = await this.btnSearchByHolidayId.isVisible();
+  if (!buttonVisible) {
+    throw new Error("TC28 FAILED: 'Search by Holiday ID' button not found.");
+  }
+
+  // 3. Clicar no botão
+  await this.btnSearchByHolidayId.click();
+  await this.page.waitForTimeout(600);
+
+  // 4. Validar se o formulário abriu
+  const formVisible = await this.holidayIdForm.isVisible();
+  if (!formVisible) {
+    throw new Error("TC28 FAILED: Holiday ID form did not open after clicking the button.");
+  }
+
+  // 5. Validar input
+  const inputVisible = await this.holidayIdInput.isVisible();
+  if (!inputVisible) {
+    throw new Error("TC28 FAILED: Holiday ID input field not visible.");
+  }
+
+  // 6. Validar botão de busca
+  const searchBtnVisible = await this.holidayIdSearchButton.isVisible();
+  if (!searchBtnVisible) {
+    throw new Error("TC28 FAILED: Search button inside Holiday ID form not visible.");
+  }
+
+  console.log("✓ TC28 PASSED: Holiday ID search button and form validated successfully.");
+}
 }

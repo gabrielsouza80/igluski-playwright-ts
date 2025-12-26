@@ -135,7 +135,7 @@ test.describe('Home Page', () => {
   });
 
   // TC 22 — Validate Carousel CTA Button
-  test('TC22 - Validate Carousel CTA Button', async ({ page, pm }, testInfo) => {
+  test('Validate Carousel CTA Button', async ({ page, pm }, testInfo) => {
     await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
       console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     });
@@ -143,7 +143,7 @@ test.describe('Home Page', () => {
     await pm.onHomePage().validateCarouselCTA();
   });
 
-  test('TC23 - Validate Inline Links in Section', async ({ page, pm }, testInfo) => {
+  test('Validate Inline Links in Section', async ({ page, pm }, testInfo) => {
     await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
       console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     });
@@ -155,7 +155,7 @@ test.describe('Home Page', () => {
     await pm.onHomePage().validateFindYourSkiingHolidayLinks();
   });
 
-  test('TC26 - Validate Page Responsiveness (Mobile/Tablet)', async ({ page, pm }, testInfo) => {
+  test('Validate Page Responsiveness (Mobile/Tablet)', async ({ page, pm }, testInfo) => {
 
     await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
       pm.onHomePage().logTestStart(testInfo.title);
@@ -165,4 +165,12 @@ test.describe('Home Page', () => {
     await pm.onHomePage().validateTC26(768); // Tablet
   });
 
+  test('Validate "Search by Holiday ID" Button in Footer', async ({ page, pm }, testInfo) => {
+
+  await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
+    pm.onHomePage().logTestStart(testInfo.title);
+  });
+
+  await pm.onHomePage().validateTC28();
+});
 });
