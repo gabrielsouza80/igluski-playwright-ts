@@ -1,6 +1,6 @@
 import { test, expect } from '../support/baseTest';
 
-test.describe('Home Page', () => {
+test.describe('Search Page', () => {
   test.beforeEach(async ({ page, pm }) => {
     await pm.onHomePage().navigateAndAcceptCookies(); 
   });

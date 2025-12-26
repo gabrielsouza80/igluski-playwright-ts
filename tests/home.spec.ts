@@ -155,4 +155,14 @@ test.describe('Home Page', () => {
     await pm.onHomePage().validateFindYourSkiingHolidayLinks();
   });
 
+  test('TC26 - Validate Page Responsiveness (Mobile/Tablet)', async ({ page, pm }, testInfo) => {
+
+    await test.step(`🧪 Starting test: ${testInfo.title}`, async () => {
+      pm.onHomePage().logTestStart(testInfo.title);
+    });
+
+    await pm.onHomePage().validateTC26(375); // Mobile
+    await pm.onHomePage().validateTC26(768); // Tablet
+  });
+
 });

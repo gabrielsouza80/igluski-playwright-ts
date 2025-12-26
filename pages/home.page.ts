@@ -97,6 +97,18 @@ export class HomePage extends HelperBase {
   readonly footerFranceLink = this.page.locator('footer a[href*="/france"]').first();
   readonly footerSkiChaletsLink = this.page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
 
+  // ============================
+  // RESPONSIVE / TC26 LOCATORS
+  // ============================
+
+  // Hamburger menu (mobile/tablet)
+  readonly hamburgerMenu = this.page
+    .locator('[aria-label*="menu" i], .hamburger, button[id*="menu"], [class*="hamburger"], [class*="menu"]')
+    .first();
+
+  // All images on the page
+  readonly allImages = this.page.locator('img');
+
   constructor(page: Page) {
     super(page);
     this.actions = new Actions(page);
@@ -888,5 +900,103 @@ export class HomePage extends HelperBase {
     }
 
     console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
+  }
+
+  /**
+ * Logs a standardized test start message
+ */
+  logTestStart(testName: string): void {
+    console.log(`\n===== TEST STARTED: ${testName} =====\n`);
+  }
+
+  /**
+   * Checks if the hamburger menu is visible (mobile/tablet)
+   */
+  async isHamburgerMenuVisible(): Promise<boolean> {
+    try {
+      return await this.hamburgerMenu.isVisible();
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Checks if the page has horizontal overflow (layout break)
+   */
+  async hasHorizontalOverflow(): Promise<boolean> {
+    return await this.page.evaluate(() => {
+      return document.body.scrollWidth > window.innerWidth;
+    });
+  }
+
+  /**
+   * Validates that visible images do not exceed the viewport width
+   */
+  async validateImagesResponsive(maxWidth: number): Promise<{
+    valid: boolean;
+    totalImages: number;
+    invalidImages: number;
+    issues: string[];
+  }> {
+    const allImages = await this.allImages.all();
+    let invalidCount = 0;
+    const issues: string[] = [];
+
+    for (const image of allImages) {
+      const isVisible = await image.isVisible().catch(() => false);
+
+      if (isVisible) {
+        const boundingBox = await image.boundingBox();
+
+        if (boundingBox && boundingBox.width > maxWidth) {
+          invalidCount++;
+          issues.push(
+            `Image width ${boundingBox.width}px exceeds max allowed ${maxWidth}px`
+          );
+        }
+      }
+    }
+
+    return {
+      valid: invalidCount === 0,
+      totalImages: allImages.length,
+      invalidImages: invalidCount,
+      issues,
+    };
+  }
+
+  /**
+   * TC26 — Validate Page Responsiveness (Mobile/Tablet)
+   * - viewport 375/768
+   * - hamburger visible
+   * - no horizontal overflow
+   * - images responsive
+   */
+  async validateTC26(viewportWidth: number): Promise<void> {
+    await this.page.setViewportSize({ width: viewportWidth, height: 900 });
+
+    console.log(`\n===== TC26: Validating responsiveness at ${viewportWidth}px =====\n`);
+
+    // 1) Hamburger menu must be visible
+    const hamburgerVisible = await this.isHamburgerMenuVisible();
+    if (!hamburgerVisible) {
+      throw new Error(`TC26 FAILED: Hamburger menu NOT visible at ${viewportWidth}px`);
+    }
+
+    // 2) No horizontal overflow allowed
+    const overflow = await this.hasHorizontalOverflow();
+    if (overflow) {
+      throw new Error(`TC26 FAILED: Horizontal overflow detected at ${viewportWidth}px`);
+    }
+
+    // 3) Images must be responsive
+    const imagesResult = await this.validateImagesResponsive(viewportWidth);
+    if (!imagesResult.valid) {
+      throw new Error(
+        `TC26 FAILED: Images not responsive at ${viewportWidth}px. Invalid images: ${imagesResult.invalidImages}`
+      );
+    }
+
+    console.log(`✓ TC26 PASSED at ${viewportWidth}px`);
   }
 }
