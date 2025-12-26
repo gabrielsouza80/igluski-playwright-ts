@@ -154,4 +154,8 @@ export class HelperBase {
       window.scrollTo(0, 0);
     });
   }
+
+  async generateInvalidEmail(){
+    return Math.random().toString(36).substring(2, 7) + '@invalid';
+  }
 }

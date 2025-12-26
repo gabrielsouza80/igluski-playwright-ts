@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="9" failures="0" skipped="0" errors="0" time="8.425756999999285">
-<testsuite name="enquire.spec.ts" timestamp="2025-12-21T23:13:46.286Z" hostname="chromium" tests="9" failures="0" skipped="0" time="57.669" errors="0">
-<testcase name="Enquire Page › Submit enquire" classname="enquire.spec.ts" time="5.668">
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="7.332785000000149">
+<testsuite name="enquire.spec.ts" timestamp="2025-12-26T00:32:32.559Z" hostname="chromium" tests="1" failures="0" skipped="0" time="6.159" errors="0">
+<testcase name="Enquire Page › Validate invalid email format shows error" classname="enquire.spec.ts" time="6.159">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -16,77 +16,6 @@
 • Cookie banner is now hidden.
 ==================== COOKIES — COMPLETED =======================
 
-
-==================== LOGO — VALIDATION START ====================
-• Checking logo redirection...
----------------------------------------------------------------
-
-==================== REDIRECT — VALIDATION START ====================
-• Extracted URL from element: https://www.igluski.com/
-• Opening new tab to validate redirection...
----------------------------------------------------------------
-• Redirect OK → https://www.igluski.com/
-==================== REDIRECT — VALIDATION COMPLETE ==================
-
-• Logo redirects correctly to home page ("/")
-==================== LOGO — VALIDATION COMPLETE =================
-
-]]>
-</system-out>
-</testcase>
-<testcase name="Enquire Page › Validate blank Mandatory fields error" classname="enquire.spec.ts" time="6.837">
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results\enquire-Enquire-Page-Validate-blank-Mandatory-fields-error-chromium\test-finished-1.png]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Enquire Page › Validate enquire intro text" classname="enquire.spec.ts" time="6.432">
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results\enquire-Enquire-Page-Validate-enquire-intro-text-chromium\test-finished-1.png]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Enquire Page › Validate invalid email format shows error" classname="enquire.spec.ts" time="5.599">
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results\enquire-Enquire-Page-Valid-71d42-id-email-format-shows-error-chromium\test-finished-1.png]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Enquire Page › Validate invalid phone format shows error" classname="enquire.spec.ts" time="6.838">
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results\enquire-Enquire-Page-Valid-b7048-id-phone-format-shows-error-chromium\test-finished-1.png]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Enquire Page › Validate invalid phone format - incomplete" classname="enquire.spec.ts" time="6.828">
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results\enquire-Enquire-Page-Valid-83030-d-phone-format---incomplete-chromium\test-finished-1.png]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Enquire Page › Validate invalid phone format - too many digits" classname="enquire.spec.ts" time="5.741">
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results\enquire-Enquire-Page-Valid-71bb2-ne-format---too-many-digits-chromium\test-finished-1.png]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Enquire Page › Validate first and last name only accept letters" classname="enquire.spec.ts" time="6.945">
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results\enquire-Enquire-Page-Valid-67abb-st-name-only-accept-letters-chromium\test-finished-1.png]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Enquire Page › Validate mandatory fields reject only spaces" classname="enquire.spec.ts" time="6.781">
-<system-out>
-<![CDATA[
-[[ATTACHMENT|test-results\enquire-Enquire-Page-Valid-c37ab-y-fields-reject-only-spaces-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>

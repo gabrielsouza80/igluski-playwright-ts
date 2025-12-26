@@ -13,12 +13,12 @@ export default defineConfig({
   // Default Settings
   fullyParallel: true,
   use: {
-    headless: false,
+    headless: true,
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
 
     // Screenshot e vídeo
-    screenshot: 'on',
+    screenshot: 'only-on-failure',
     video: 'off',
 
     // Trace for debugging
@@ -38,10 +38,10 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chromium'] },
     },
-    // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
     // {name: 'Mobile Chrome', use: { ...devices['Pixel 5'] }},
-    // {name: 'Mobile Safari', use: { ...devices['iPhone 12'] }},
+    {name: 'Mobile Safari', use: { ...devices['iPhone 12'] }},
   ],
 
   // Reports
