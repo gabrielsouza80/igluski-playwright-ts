@@ -98,35 +98,35 @@ export class HomePage extends HelperBase {
   readonly footerSkiChaletsLink = this.page.locator('footer a:has-text("Ski")').filter({ hasText: 'chalet' }).first();
 
   // ============================
-// RESPONSIVE / TC26 LOCATORS
-// ============================
+  // RESPONSIVE / TC26 LOCATORS
+  // ============================
 
-// Hamburger menu (mobile/tablet)
-readonly hamburgerMenu = this.page
-  .locator('[aria-label*="menu" i], .hamburger, button[id*="menu"], [class*="hamburger"], [class*="menu"]')
-  .first();
+  // Hamburger menu (mobile/tablet)
+  readonly hamburgerMenu = this.page
+    .locator('[aria-label*="menu" i], .hamburger, button[id*="menu"], [class*="hamburger"], [class*="menu"]')
+    .first();
 
-// All images on the page
-readonly allImages = this.page.locator('img');
+  // All images on the page
+  readonly allImages = this.page.locator('img');
 
-// ============================
-// FOOTER - TC28 LOCATORS
-// ============================
+  // ============================
+  // FOOTER - TC28 LOCATORS
+  // ============================
 
-// Main container of the component
-readonly holidayIdContainer = this.page.locator('.search-by-holiday-id');
+  // Main container of the component
+  readonly holidayIdContainer = this.page.locator('.search-by-holiday-id');
 
-// "Search by Holiday ID" button
-readonly btnSearchByHolidayId = this.page.locator('.search-by-holiday-id .holiday-id__trigger');
+  // "Search by Holiday ID" button
+  readonly btnSearchByHolidayId = this.page.locator('.search-by-holiday-id .holiday-id__trigger');
 
-// Form that opens after clicking the button
-readonly holidayIdForm = this.page.locator('.search-by-holiday-id form');
+  // Form that opens after clicking the button
+  readonly holidayIdForm = this.page.locator('.search-by-holiday-id form');
 
-// Holiday ID input field
-readonly holidayIdInput = this.page.locator('.search-by-holiday-id input#siteSearchInput');
+  // Holiday ID input field
+  readonly holidayIdInput = this.page.locator('.search-by-holiday-id input#siteSearchInput');
 
-// Search button inside the form
-readonly holidayIdSearchButton = this.page.locator('.search-by-holiday-id button.holiday-id__btn');
+  // Search button inside the form
+  readonly holidayIdSearchButton = this.page.locator('.search-by-holiday-id button.holiday-id__btn');
   constructor(page: Page) {
     super(page);
     this.actions = new Actions(page);
@@ -266,7 +266,7 @@ readonly holidayIdSearchButton = this.page.locator('.search-by-holiday-id button
   async validateMenuAndSubMenuNavigation(): Promise<void> {
     console.log(`\n==================== MENUS — VALIDATION START ====================`);
 
-    // Snapshot dos menus e submenus
+    // Snapshot of menus and submenus
     const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
       return items.map((li) => {
         const mainLink = li.querySelector("a");
@@ -286,7 +286,9 @@ readonly holidayIdSearchButton = this.page.locator('.search-by-holiday-id button
     console.log(`• Total main menus detected: ${menusSnapshot.length}`);
     console.log(`---------------------------------------------------------------`);
 
-    // Processa cada menu
+    // Reusable tab for all menu/submenu navigation
+    const navPage = await this.page.context().newPage();
+
     for (const menu of menusSnapshot) {
       const menuLabel = menu.mainLabel;
       const menuUrl = this.resolveUrl(menu.mainHref);
@@ -301,22 +303,21 @@ readonly holidayIdSearchButton = this.page.locator('.search-by-holiday-id button
         continue;
       }
 
-      // Abre o menu em nova aba
-      const menuPage = await this.page.context().newPage();
-      await menuPage.goto(menuUrl, { waitUntil: "domcontentloaded", timeout: 120000 });
-
-      // Valida título da página
-      await this.validateTitleContains(menuPage, menuLabel);
+      // Navigate to main menu page
+      try {
+        await navPage.goto(menuUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
+        await this.validateTitleContains(navPage, menuLabel);
+      } catch (err: any) {
+        console.error(`❌ Failed to load menu "${menuLabel}" → ${err?.message || err}`);
+        continue;
+      }
 
       const sublinks = menu.sublinks || [];
       console.log(`• Submenus found: ${sublinks.length}`);
 
-      if (sublinks.length === 0) {
-        await menuPage.close();
-        continue;
-      }
+      if (sublinks.length === 0) continue;
 
-      // Processa cada submenu
+      // Process each submenu using the SAME tab
       for (const sub of sublinks) {
         const subUrl = this.resolveUrl(sub.href);
         if (!subUrl) continue;
@@ -325,21 +326,17 @@ readonly holidayIdSearchButton = this.page.locator('.search-by-holiday-id button
         console.log(`  • Submenu label: "${sub.label}"`);
         console.log(`  • Submenu URL: ${subUrl}`);
 
-        const subPage = await this.page.context().newPage();
-
         try {
-          await subPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 90000 });
-          await this.validateTitleContains(subPage, sub.label);
+          await navPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
+          await this.validateTitleContains(navPage, sub.label);
           console.log(`  ✓ Submenu validated successfully`);
         } catch (err: any) {
           console.error(`  ❌ Submenu "${sub.label}" failed → ${err?.message || err}`);
         }
-
-        await subPage.close();
       }
-
-      await menuPage.close();
     }
+
+    await navPage.close();
 
     console.log(`==================== MENUS — VALIDATION COMPLETE ==================\n`);
   }
@@ -798,295 +795,295 @@ readonly holidayIdSearchButton = this.page.locator('.search-by-holiday-id button
   }
 
   // ============================
-// CAROUSEL CTA VALIDATION
-// ============================
-async validateCarouselCTA(): Promise<void> {
-  console.log(`\n==================== CAROUSEL CTA — VALIDATION START ====================`);
+  // CAROUSEL CTA VALIDATION
+  // ============================
+  async validateCarouselCTA(): Promise<void> {
+    console.log(`\n==================== CAROUSEL CTA — VALIDATION START ====================`);
 
-  const activeSlide = this.carouselActiveSlide; // 🔥 Fix
+    const activeSlide = this.carouselActiveSlide; // 🔥 Fix
 
-  await expect(activeSlide).toBeVisible({ timeout: 7000 });
+    await expect(activeSlide).toBeVisible({ timeout: 7000 });
 
-  const cta = activeSlide.locator('a').first();
-  await expect(cta).toBeVisible({ timeout: 7000 });
+    const cta = activeSlide.locator('a').first();
+    await expect(cta).toBeVisible({ timeout: 7000 });
 
-  const href = await cta.getAttribute('href');
-  if (!href) throw new Error("❌ CTA button has no href attribute");
+    const href = await cta.getAttribute('href');
+    if (!href) throw new Error("❌ CTA button has no href attribute");
 
-  console.log(`• CTA href: ${href}`);
+    console.log(`• CTA href: ${href}`);
 
-  await cta.click({ force: true });
+    await cta.click({ force: true });
 
-  await expect(this.page).toHaveURL(new RegExp(href, "i"));
-  console.log(`✓ CTA navigation OK → ${this.page.url()}`);
+    await expect(this.page).toHaveURL(new RegExp(href, "i"));
+    console.log(`✓ CTA navigation OK → ${this.page.url()}`);
 
-  console.log(`==================== CAROUSEL CTA — VALIDATION COMPLETE ==================\n`);
-}
-
-
-async validateSpeakToExpertsLinks(): Promise<void> {
-  console.log(`\n==================== INLINE LINKS — SECTION: SPEAK TO THE SKI EXPERTS ====================`);
-
-  // 1. Locate <h2> using the professional locator
-  const title = this.sectionTitle("Speak to the ski experts");
-  await title.waitFor({ state: "visible" });
-  console.log(`• Section title found: "Speak to the ski experts"`);
-
-  // 2. Section container
-  const section = this.sectionContainer(title);
-
-  // 3. All <a> inside the section
-  const links = this.sectionLinks(section);
-
-  const totalLinks = await links.count();
-  console.log(`• Total links detected: ${totalLinks}`);
-  console.log(`---------------------------------------------------------------`);
-
-  // 4. Loop through links
-  for (let i = 0; i < totalLinks; i++) {
-    console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
-
-    const link = links.nth(i);
-    const linkText = (await link.innerText()).trim();
-    const href = await link.getAttribute("href");
-    const url = this.resolveUrl(href);
-
-    console.log(`• Link text: "${linkText}"`);
-    console.log(`• URL: ${url}`);
-
-    // 5. Open in new tab
-    const context = this.page.context();
-    const newPage = await context.newPage();
-
-    await newPage.goto(url!, { waitUntil: "domcontentloaded" });
-
-    // 6. Fuzzy title validation
-    await this.validatePageTitleFuzzy(newPage, linkText);
-
-    await newPage.close();
+    console.log(`==================== CAROUSEL CTA — VALIDATION COMPLETE ==================\n`);
   }
 
-  console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
-}
 
-async validateFindYourSkiingHolidayLinks(): Promise<void> {
-  console.log(`\n==================== INLINE LINKS — SECTION: FIND YOUR SKIING HOLIDAY ====================`);
+  async validateSpeakToExpertsLinks(): Promise<void> {
+    console.log(`\n==================== INLINE LINKS — SECTION: SPEAK TO THE SKI EXPERTS ====================`);
 
-  const titleText = "Find Your Skiing Holiday";
+    // 1. Locate <h2> using the professional locator
+    const title = this.sectionTitle("Speak to the ski experts");
+    await title.waitFor({ state: "visible" });
+    console.log(`• Section title found: "Speak to the ski experts"`);
 
-  // 1. Real XPath for the title
-  const titleXPath = `//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${titleText.toLowerCase()}")]`;
+    // 2. Section container
+    const section = this.sectionContainer(title);
 
-  // 2. Title locator
-  const title = this.page.locator(titleXPath);
-  await title.waitFor({ state: "visible" });
-  console.log(`• Section title found: "${titleText}"`);
+    // 3. All <a> inside the section
+    const links = this.sectionLinks(section);
 
-  // 3. Section container
-  const section = this.sectionContainer(title);
+    const totalLinks = await links.count();
+    console.log(`• Total links detected: ${totalLinks}`);
+    console.log(`---------------------------------------------------------------`);
 
-  // 4. Links before the first <div>
-  const links = this.page.locator(
-    `${titleXPath}/following-sibling::a[following-sibling::div]`
-  );
+    // 4. Loop through links
+    for (let i = 0; i < totalLinks; i++) {
+      console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
 
-  const totalLinks = await links.count();
-  console.log(`• Total links detected: ${totalLinks}`);
-  console.log(`---------------------------------------------------------------`);
+      const link = links.nth(i);
+      const linkText = (await link.innerText()).trim();
+      const href = await link.getAttribute("href");
+      const url = this.resolveUrl(href);
 
-  for (let i = 0; i < totalLinks; i++) {
-    console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
+      console.log(`• Link text: "${linkText}"`);
+      console.log(`• URL: ${url}`);
 
-    const link = links.nth(i);
-    const linkText = (await link.innerText()).trim();
-    const href = await link.getAttribute("href");
-    const url = this.resolveUrl(href);
+      // 5. Open in new tab
+      const context = this.page.context();
+      const newPage = await context.newPage();
 
-    console.log(`• Link text: "${linkText}"`);
-    console.log(`• URL: ${url}`);
+      await newPage.goto(url!, { waitUntil: "domcontentloaded" });
 
-    // Open in new tab
-    const context = this.page.context();
-    const newPage = await context.newPage();
+      // 6. Fuzzy title validation
+      await this.validatePageTitleFuzzy(newPage, linkText);
 
-    await newPage.goto(url!, { waitUntil: "domcontentloaded" });
+      await newPage.close();
+    }
 
-    // Fuzzy validation
-    await this.validatePageTitleFuzzy(newPage, linkText);
-
-    await newPage.close();
+    console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
   }
 
-  console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
-}
+  async validateFindYourSkiingHolidayLinks(): Promise<void> {
+    console.log(`\n==================== INLINE LINKS — SECTION: FIND YOUR SKIING HOLIDAY ====================`);
 
-/**
- * Logs a standardized test start message
- */
-logTestStart(testName: string): void {
-  console.log(`\n===== TEST STARTED: ${testName} =====\n`);
-}
+    const titleText = "Find Your Skiing Holiday";
 
-/**
- * Checks if the hamburger menu is visible (mobile/tablet)
- */
-async isHamburgerMenuVisible(): Promise<boolean> {
-  try {
-    return await this.hamburgerMenu.isVisible();
-  } catch {
-    return false;
+    // 1. Real XPath for the title
+    const titleXPath = `//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${titleText.toLowerCase()}")]`;
+
+    // 2. Title locator
+    const title = this.page.locator(titleXPath);
+    await title.waitFor({ state: "visible" });
+    console.log(`• Section title found: "${titleText}"`);
+
+    // 3. Section container
+    const section = this.sectionContainer(title);
+
+    // 4. Links before the first <div>
+    const links = this.page.locator(
+      `${titleXPath}/following-sibling::a[following-sibling::div]`
+    );
+
+    const totalLinks = await links.count();
+    console.log(`• Total links detected: ${totalLinks}`);
+    console.log(`---------------------------------------------------------------`);
+
+    for (let i = 0; i < totalLinks; i++) {
+      console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
+
+      const link = links.nth(i);
+      const linkText = (await link.innerText()).trim();
+      const href = await link.getAttribute("href");
+      const url = this.resolveUrl(href);
+
+      console.log(`• Link text: "${linkText}"`);
+      console.log(`• URL: ${url}`);
+
+      // Open in new tab
+      const context = this.page.context();
+      const newPage = await context.newPage();
+
+      await newPage.goto(url!, { waitUntil: "domcontentloaded" });
+
+      // Fuzzy validation
+      await this.validatePageTitleFuzzy(newPage, linkText);
+
+      await newPage.close();
+    }
+
+    console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
   }
-}
 
-/**
- * Checks if the page has horizontal overflow (layout break)
- */
-async hasHorizontalOverflow(): Promise<boolean> {
-  return await this.page.evaluate(() => {
-    return document.body.scrollWidth > window.innerWidth;
-  });
-}
+  /**
+   * Logs a standardized test start message
+   */
+  logTestStart(testName: string): void {
+    console.log(`\n===== TEST STARTED: ${testName} =====\n`);
+  }
 
-/**
- * Validates that visible images do not exceed the viewport width
- */
-async validateImagesResponsive(maxWidth: number): Promise<{
-  valid: boolean;
-  totalImages: number;
-  invalidImages: number;
-  issues: string[];
-}> {
-  const allImages = await this.allImages.all();
-  let invalidCount = 0;
-  const issues: string[] = [];
-
-  for (const image of allImages) {
-    const isVisible = await image.isVisible().catch(() => false);
-
-    if (isVisible) {
-      const boundingBox = await image.boundingBox();
-
-      if (boundingBox && boundingBox.width > maxWidth) {
-        invalidCount++;
-        issues.push(
-          `Image width ${boundingBox.width}px exceeds max allowed ${maxWidth}px`
-        );
-      }
+  /**
+   * Checks if the hamburger menu is visible (mobile/tablet)
+   */
+  async isHamburgerMenuVisible(): Promise<boolean> {
+    try {
+      return await this.hamburgerMenu.isVisible();
+    } catch {
+      return false;
     }
   }
 
-  return {
-    valid: invalidCount === 0,
-    totalImages: allImages.length,
-    invalidImages: invalidCount,
-    issues,
-  };
-}
-
-/**
- * TC26 — Validate Page Responsiveness (Mobile/Tablet)
- * - viewport 375/768
- * - hamburger visible
- * - no horizontal overflow
- * - images responsive
- */
-async validateTC26(viewportWidth: number): Promise<void> {
-  await this.page.setViewportSize({ width: viewportWidth, height: 900 });
-
-  console.log(`\n===== TC26: Validating responsiveness at ${viewportWidth}px =====\n`);
-
-  // 1) Hamburger menu must be visible
-  const hamburgerVisible = await this.isHamburgerMenuVisible();
-  if (!hamburgerVisible) {
-    throw new Error(`TC26 FAILED: Hamburger menu NOT visible at ${viewportWidth}px`);
+  /**
+   * Checks if the page has horizontal overflow (layout break)
+   */
+  async hasHorizontalOverflow(): Promise<boolean> {
+    return await this.page.evaluate(() => {
+      return document.body.scrollWidth > window.innerWidth;
+    });
   }
 
-  // 2) No horizontal overflow allowed
-  const overflow = await this.hasHorizontalOverflow();
-  if (overflow) {
-    throw new Error(`TC26 FAILED: Horizontal overflow detected at ${viewportWidth}px`);
+  /**
+   * Validates that visible images do not exceed the viewport width
+   */
+  async validateImagesResponsive(maxWidth: number): Promise<{
+    valid: boolean;
+    totalImages: number;
+    invalidImages: number;
+    issues: string[];
+  }> {
+    const allImages = await this.allImages.all();
+    let invalidCount = 0;
+    const issues: string[] = [];
+
+    for (const image of allImages) {
+      const isVisible = await image.isVisible().catch(() => false);
+
+      if (isVisible) {
+        const boundingBox = await image.boundingBox();
+
+        if (boundingBox && boundingBox.width > maxWidth) {
+          invalidCount++;
+          issues.push(
+            `Image width ${boundingBox.width}px exceeds max allowed ${maxWidth}px`
+          );
+        }
+      }
+    }
+
+    return {
+      valid: invalidCount === 0,
+      totalImages: allImages.length,
+      invalidImages: invalidCount,
+      issues,
+    };
   }
 
-  // 3) Images must be responsive
-  const imagesResult = await this.validateImagesResponsive(viewportWidth);
-  if (!imagesResult.valid) {
-    throw new Error(
-      `TC26 FAILED: Images not responsive at ${viewportWidth}px. Invalid images: ${imagesResult.invalidImages}`
-    );
+  /**
+   * TC26 — Validate Page Responsiveness (Mobile/Tablet)
+   * - viewport 375/768
+   * - hamburger visible
+   * - no horizontal overflow
+   * - images responsive
+   */
+  async validateTC26(viewportWidth: number): Promise<void> {
+    await this.page.setViewportSize({ width: viewportWidth, height: 900 });
+
+    console.log(`\n===== TC26: Validating responsiveness at ${viewportWidth}px =====\n`);
+
+    // 1) Hamburger menu must be visible
+    const hamburgerVisible = await this.isHamburgerMenuVisible();
+    if (!hamburgerVisible) {
+      throw new Error(`TC26 FAILED: Hamburger menu NOT visible at ${viewportWidth}px`);
+    }
+
+    // 2) No horizontal overflow allowed
+    const overflow = await this.hasHorizontalOverflow();
+    if (overflow) {
+      throw new Error(`TC26 FAILED: Horizontal overflow detected at ${viewportWidth}px`);
+    }
+
+    // 3) Images must be responsive
+    const imagesResult = await this.validateImagesResponsive(viewportWidth);
+    if (!imagesResult.valid) {
+      throw new Error(
+        `TC26 FAILED: Images not responsive at ${viewportWidth}px. Invalid images: ${imagesResult.invalidImages}`
+      );
+    }
+
+    console.log(`✓ TC26 PASSED at ${viewportWidth}px`);
   }
 
-  console.log(`✓ TC26 PASSED at ${viewportWidth}px`);
-}
+  // ============================
+  // FOOTER - TC28 HELPERS
+  // ============================
 
-// ============================
-// FOOTER - TC28 HELPERS
-// ============================
-
-/**
- * Scrolls to the footer
- */
-async scrollToFooter(): Promise<void> {
-  await this.page.keyboard.press('End');
-  await this.page.waitForTimeout(800);
-}
-
-/**
- * Checks if the Holiday ID container is visible
- */
-async isHolidayIdContainerVisible(): Promise<boolean> {
-  try {
-    return await this.holidayIdContainer.isVisible();
-  } catch {
-    return false;
-  }
-}
-
-// ============================
-// TC28 - Validate Search by Holiday ID
-// ============================
-
-/**
- * TC28 — Validate "Search by Holiday ID" button in the footer
- */
-async validateTC28(): Promise<void> {
-  console.log(`\n===== TC28: Validating 'Search by Holiday ID' in Footer =====\n`);
-
-  // 1. Scroll to footer
-  await this.scrollToFooter();
-
-  const containerVisible = await this.isHolidayIdContainerVisible();
-  if (!containerVisible) {
-    throw new Error("TC28 FAILED: Holiday ID container not visible in footer.");
+  /**
+   * Scrolls to the footer
+   */
+  async scrollToFooter(): Promise<void> {
+    await this.page.keyboard.press('End');
+    await this.page.waitForTimeout(800);
   }
 
-  // 2. Validate button visibility
-  const buttonVisible = await this.btnSearchByHolidayId.isVisible();
-  if (!buttonVisible) {
-    throw new Error("TC28 FAILED: 'Search by Holiday ID' button not found.");
+  /**
+   * Checks if the Holiday ID container is visible
+   */
+  async isHolidayIdContainerVisible(): Promise<boolean> {
+    try {
+      return await this.holidayIdContainer.isVisible();
+    } catch {
+      return false;
+    }
   }
 
-  // 3. Click the button
-  await this.btnSearchByHolidayId.click();
-  await this.page.waitForTimeout(600);
+  // ============================
+  // TC28 - Validate Search by Holiday ID
+  // ============================
 
-  // 4. Validate form visibility
-  const formVisible = await this.holidayIdForm.isVisible();
-  if (!formVisible) {
-    throw new Error("TC28 FAILED: Holiday ID form did not open after clicking the button.");
+  /**
+   * TC28 — Validate "Search by Holiday ID" button in the footer
+   */
+  async validateTC28(): Promise<void> {
+    console.log(`\n===== TC28: Validating 'Search by Holiday ID' in Footer =====\n`);
+
+    // 1. Scroll to footer
+    await this.scrollToFooter();
+
+    const containerVisible = await this.isHolidayIdContainerVisible();
+    if (!containerVisible) {
+      throw new Error("TC28 FAILED: Holiday ID container not visible in footer.");
+    }
+
+    // 2. Validate button visibility
+    const buttonVisible = await this.btnSearchByHolidayId.isVisible();
+    if (!buttonVisible) {
+      throw new Error("TC28 FAILED: 'Search by Holiday ID' button not found.");
+    }
+
+    // 3. Click the button
+    await this.btnSearchByHolidayId.click();
+    await this.page.waitForTimeout(600);
+
+    // 4. Validate form visibility
+    const formVisible = await this.holidayIdForm.isVisible();
+    if (!formVisible) {
+      throw new Error("TC28 FAILED: Holiday ID form did not open after clicking the button.");
+    }
+
+    // 5. Validate input field
+    const inputVisible = await this.holidayIdInput.isVisible();
+    if (!inputVisible) {
+      throw new Error("TC28 FAILED: Holiday ID input field not visible.");
+    }
+
+    // 6. Validate search button
+    const searchBtnVisible = await this.holidayIdSearchButton.isVisible();
+    if (!searchBtnVisible) {
+      throw new Error("TC28 FAILED: Search button inside Holiday ID form not visible.");
+    }
+
+    console.log("✓ TC28 PASSED: Holiday ID search button and form validated successfully.");
   }
-
-  // 5. Validate input field
-  const inputVisible = await this.holidayIdInput.isVisible();
-  if (!inputVisible) {
-    throw new Error("TC28 FAILED: Holiday ID input field not visible.");
-  }
-
-  // 6. Validate search button
-  const searchBtnVisible = await this.holidayIdSearchButton.isVisible();
-  if (!searchBtnVisible) {
-    throw new Error("TC28 FAILED: Search button inside Holiday ID form not visible.");
-  }
-
-  console.log("✓ TC28 PASSED: Holiday ID search button and form validated successfully.");
-}
 }

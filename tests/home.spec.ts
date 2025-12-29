@@ -29,7 +29,7 @@ test.describe('Home Page', () => {
     // Increase the overall timeout for this test (5 minutes)
     test.setTimeout(300000);
 
-    // Validate all sublinks (unlimited)
+    // Validate all menus and submenus
     await pm.onHomePage().validateMenuAndSubMenuNavigation();
   });
 
