@@ -1128,7 +1128,7 @@ export class HomePage extends HelperBase {
   /**
    * TC26 — Validate Page Responsiveness (Mobile/Tablet)
    */
-  async validateTC26(viewportWidth: number): Promise<void> {
+  async validateResponsiveness(viewportWidth: number): Promise<void> {
 
     await test.step(`✓ Start TC26 responsiveness validation at ${viewportWidth}px`, async () => {
       await this.page.setViewportSize({ width: viewportWidth, height: 900 });
@@ -1190,7 +1190,7 @@ export class HomePage extends HelperBase {
   // TC28 - Validate Search by Holiday ID
   // ============================
 
-  async validateTC28(): Promise<void> {
+  async validateHolidayIdSearch(): Promise<void> {
 
     await test.step(`✓ Start TC28: Validate 'Search by Holiday ID'`, async () => {
       console.log(`\n===== TC28: Validating 'Search by Holiday ID' in Footer =====\n`);
