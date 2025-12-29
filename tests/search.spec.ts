@@ -13,74 +13,85 @@ test.describe('Home Page', () => {
   });
 
   test('should book first ski holiday package and reach payment page', async ({ page, pm }) => {
-    await pm.onHomePage().searchForCountry('France');
-    await pm.onHomePage().clickOnSearchButton()
-    const resultsText = await pm.onSearchPage().hasSearchResults();
-    expect(resultsText).toBeTruthy();
-
-    const resultsCount = await pm.onSearchPage().getResultsCount();
-    console.log(`✓ Found ${resultsCount} ski holiday packages`);
-
-    await pm.onSearchPage().clickFirstBookOnline();
-    await page.waitForLoadState('networkidle');
+    await test.step('Home Page - Searching for Country', async () => {
+      await pm.onHomePage().searchForCountry('France');
+      await pm.onHomePage().clickOnSearchButton()
+    });
     
-    console.log('✓ Clicked Book Online on first result');
+    await test.step('Search Page - Search Results Validated', async () => {
+      const resultsText = await pm.onSearchPage().hasSearchResults();
+      expect(resultsText).toBeTruthy();
+      
+    });
 
-    await page.waitForURL(/book|booking|details/i, { timeout: 10000 });
+    await test.step('Search Page - Checking the amount of results', async () => {
+      const resultsCount = await pm.onSearchPage().getResultsCount();
+      console.log(`Found ${resultsCount} ski holiday packages`);
+      
+    });
 
-    await test.step('✓ Clicked Accomodation - Confirm Number of People', async () => {
+    await test.step('Search Page - Clicked Book Online on first result', async () => {
+      await pm.onSearchPage().clickFirstBookOnline();
+      await page.waitForLoadState('networkidle');
+      console.log('Clicked Book Online on first result');
+      
+    });
+
+    await test.step('Accomodation page loaded', async () => {
+      await page.waitForURL(/book|booking|details/i, { timeout: 10000 });
+    });
+
+    await test.step('Accomodation Page - Confirm Number of People', async () => {
       await pm.onAccommodationPage().clickConfirmNumberOfPeople()
     });
     
-    await test.step('✓ ✓ Clicked Accomodation - Add Room', async () => {
+    await test.step('Accomodation Page - Add Room', async () => {
       await pm.onAccommodationPage().clickAddRoom()
     });
-    await pm.onAccommodationPage().allocateRoomOccupancy()
 
-    await pm.onAccommodationPage().continueToTravelOptions()
-
-    console.log('✓ Clicked Accomodation - Continue to Travel page');
-
-    await pm.onTravelOptionsPage().isTravelPageLoaded();
-
-    await pm.onTravelOptionsPage().continueToExtras();
-
-    console.log('✓ Clicked Travel - Continue to Extras page');
-
-    await pm.onExtrasPage().isExtrasPageLoaded()
-    await pm.onExtrasPage().continueToSummary();
-
-    console.log('✓ Clicked Extras - Continue to Summary page');
-
-
-    await pm.onSummaryPage().isSummaryPageLoaded()
-    await pm.onSummaryPage().clickBookOnline()
-
-    console.log('✓ Clicked Summary - Continue to People page');
-
-
-    await pm.onPeopleAndContactDetailsPage().fillMultiplePassengers();
-    console.log('✓ Filled People - Mandatory fields');
-
-    await pm.onPeopleAndContactDetailsPage().clickContinueToBooking()
-    console.log('✓ Clicked People - Continue to Book page');
-
-
-    // 6. Accept terms and conditions
-    await test.step('6. Accept terms and conditions - Click People - Continue to Book page', async () => {
-      pm.onBookingDetailsPage().acceptTermsAndConditions();
-    // console.log('✓ Accepted terms and conditions');
+    await test.step('Accomodation Page - Set Room Occupancy', async () => {
+      await pm.onAccommodationPage().allocateRoomOccupancy()
     });
-    // 7. Proceed to payment
-    await pm.onBookingDetailsPage().proceedToPayment();
 
-    console.log('✓ Clicked proceed to payment');
+    await test.step('Accomodation Page - Continue to Travel Options', async () => {
+      await pm.onAccommodationPage().continueToTravelOptions()
+    });
 
-    // 8. Validate that we reached the payment page
-    const isOnPaymentPage = await pm.onPaymentPage().isPaymentPageDisplayed();
-    expect(isOnPaymentPage).toBe(true);
+    await test.step('Travel Page - Continue to Extras page', async () => {
+      await pm.onTravelOptionsPage().isTravelPageLoaded();
+      await pm.onTravelOptionsPage().continueToExtras();
+    });
 
-    console.log('✓ Successfully reached payment page');
+    await test.step('Extra Page - Continue to Summary page', async () => {
+      await pm.onExtrasPage().isExtrasPageLoaded()
+      await pm.onExtrasPage().continueToSummary();
+    });
+
+    await test.step('Summary Page - Continue to People page', async () => {
+      await pm.onSummaryPage().isSummaryPageLoaded()
+      await pm.onSummaryPage().clickBookOnline()
+    });
+
+    await test.step('Filled People Page - Mandatory fields', async () => {
+      await pm.onPeopleAndContactDetailsPage().fillMultiplePassengers();
+    });
+
+    await test.step('People Page - Continue to Book page', async () => {
+      await pm.onPeopleAndContactDetailsPage().clickContinueToBooking()
+    });
+
+    
+    // 6. Accept terms and conditions
+    await test.step('Booking Page - Accept terms and conditions - Continue to Payment page', async () => {
+      pm.onBookingDetailsPage().acceptTermsAndConditions();
+      await pm.onBookingDetailsPage().proceedToPayment();
+    });
+
+    await test.step('Payment Page - Successfully reached payment page', async () => {
+      const isOnPaymentPage = await pm.onPaymentPage().isPaymentPageDisplayed();
+      expect(isOnPaymentPage).toBe(true);
+    });
+
 
   });
 });
