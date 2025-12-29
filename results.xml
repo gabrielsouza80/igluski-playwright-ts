@@ -1,6 +1,37 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="213.10210899999737">
-<testsuite name="home.spec.ts" timestamp="2025-12-29T10:02:20.088Z" hostname="chromium" tests="1" failures="0" skipped="0" time="203.665" errors="0">
-<testcase name="Home Page › Validate Main Navigation Menu" classname="home.spec.ts" time="203.665">
+<testsuites id="" name="" tests="16" failures="1" skipped="0" errors="0" time="265.63618999999994">
+<testsuite name="home.spec.ts" timestamp="2025-12-29T18:07:19.976Z" hostname="chromium" tests="16" failures="1" skipped="0" time="742.337" errors="0">
+<testcase name="Home Page › Validate Iglu Ski Logo" classname="home.spec.ts" time="20.682">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Iglu Ski Logo =====
+
+
+==================== LOGO — VALIDATION START ====================
+
+==================== REDIRECT — VALIDATION START ====================
+• Extracted URL from element: https://www.igluski.com/
+• Opening new tab to validate redirection...
+---------------------------------------------------------------
+• Redirect OK → https://www.igluski.com/
+==================== REDIRECT — VALIDATION COMPLETE ==================
+
+• Logo redirects correctly to home page
+==================== LOGO — VALIDATION COMPLETE =================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Main Navigation Menu" classname="home.spec.ts" time="255.125">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -511,6 +542,759 @@
 • Submenus found: 0
 ==================== MENUS — VALIDATION COMPLETE ==================
 
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Click on the menu and optionally on the submenu" classname="home.spec.ts" time="21.479">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Click on the menu and optionally on the submenu =====
+
+
+==================== CLICK MENU — START ====================
+• Menu: Ski Holidays
+---------------------------------------------------------------
+✓ Clicked main menu: Ski Holidays
+✓ Page title validated for menu: Ski Holidays
+==================== CLICK MENU — COMPLETE ====================
+
+
+==================== CLICK MENU — START ====================
+• Menu: Ski Holidays
+• Submenu: Family ski holidays
+---------------------------------------------------------------
+✓ Clicked main menu: Ski Holidays
+✓ Clicked submenu: Family ski holidays
+✓ Page title validated for submenu: Family ski holidays
+==================== CLICK MENU — COMPLETE ====================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Contact Information in the Header" classname="home.spec.ts" time="18.88">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Contact Information in the Header =====
+
+
+==================== HEADER — CONTACT INFO CHECK ====================
+• Header phone text: 020 3848 3700
+• Contact Us link text: Phone 9:00 AM - 8:00 PM or book online
+• Validating Contact Us redirection...
+
+==================== REDIRECT — VALIDATION START ====================
+• Extracted URL from element: https://www.igluski.com/contact-us
+• Opening new tab to validate redirection...
+---------------------------------------------------------------
+• Redirect OK → https://www.igluski.com/contact-us
+==================== REDIRECT — VALIDATION COMPLETE ==================
+
+==================== HEADER — CONTACT INFO COMPLETE ==================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate &quot;Recently Viewed&quot; Button" classname="home.spec.ts" time="13.264">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate "Recently Viewed" Button =====
+
+
+==================== RECENTLY VIEWED — VALIDATION START ====================
+• Recently Viewed result text: No recently viewed properties
+==================== RECENTLY VIEWED — VALIDATION COMPLETE ==================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Access to the Customer Portal" classname="home.spec.ts" time="16.786">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Access to the Customer Portal =====
+
+
+==================== REDIRECT — VALIDATION START ====================
+• Extracted URL from element: https://customerportal.igluski.com/
+• Opening new tab to validate redirection...
+---------------------------------------------------------------
+• Redirect OK → https://customerportal.igluski.com/
+==================== REDIRECT — VALIDATION COMPLETE ==================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Ratings and Reviews in the Header" classname="home.spec.ts" time="17.793">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Ratings and Reviews in the Header =====
+
+
+==================== REDIRECT — VALIDATION START ====================
+• Extracted URL from element: https://www.igluski.com/customer-reviews
+• Opening new tab to validate redirection...
+---------------------------------------------------------------
+• Redirect OK → https://www.igluski.com/customer-reviews
+==================== REDIRECT — VALIDATION COMPLETE ==================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Main Titles on the Homepage" classname="home.spec.ts" time="11.39">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Main Titles on the Homepage =====
+
+
+==================== MULTIPLE TITLES — VALIDATION START ====================
+• Validating title: "Welcome To The Home Of Ski"
+  ✓ Title found: "Welcome To The Home Of Ski"
+• Validating title: "Speak to the ski experts"
+  ✓ Title found: "Speak to the ski experts"
+• Validating title: "Find Your Skiing Holiday"
+  ✓ Title found: "Find Your Skiing Holiday"
+==================== MULTIPLE TITLES — VALIDATION COMPLETE ==================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Carousel of Promotions and Country Banners" classname="home.spec.ts" time="20.161">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Carousel of Promotions and Country Banners =====
+
+
+==================== CAROUSEL HOME — VALIDATION START ====================
+• Total slides detected: 3
+
+==================== SLIDE 1 / 3 ====================
+• Banner CTA detected: https://www.igluski.com/ski-holidays/boxing-day-sale
+  ✓ Banner CTA navigation OK → https://www.igluski.com/ski-holidays/boxing-day-sale
+• Moving to next slide...
+
+==================== SLIDE 2 / 3 ====================
+• Banner CTA detected: https://www.igluski.com/ski-holidays
+  ✓ Banner CTA navigation OK → https://www.igluski.com/ski-holidays
+• Moving to next slide...
+
+==================== SLIDE 3 / 3 ====================
+• Banner CTA detected: https://www.igluski.com/ski-holidays/boxing-day-sale
+  ✓ Banner CTA navigation OK → https://www.igluski.com/ski-holidays/boxing-day-sale
+
+==================== CAROUSEL HOME — VALIDATION COMPLETE ==================
+
+
+==================== COUNTRY BANNERS — VALIDATION START ====================
+• Total country banners detected: 0
+---------------------------------------------------------------
+
+==================== COUNTRY BANNERS — VALIDATION COMPLETE ==================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="24.795">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate CTA Boxes (Call To Action) =====
+
+
+==================== CTA BOXES — VALIDATION START ====================
+• Total CTA boxes detected: 3
+---------------------------------------------------------------
+
+==================== CTA 1 / 3 ====================
+• CTA title: "TALK TO
+A SKI EXPERT"
+• Normalized: "talk to a ski expert"
+• CTA URL: https://www.igluski.com/enquire
+  ✓ CTA navigation OK
+
+==================== CTA 2 / 3 ====================
+• CTA title: "ABOUT
+IGLU SKI"
+• Normalized: "about iglu ski"
+• CTA URL: https://www.igluski.com/about
+  ✓ CTA navigation OK
+
+==================== CTA 3 / 3 ====================
+• CTA title: "SIGN UP TO OUR NEWSLETTER"
+• Normalized: "sign up to our newsletter"
+• CTA URL: https://www.igluski.com/signup
+  ✓ CTA navigation OK
+
+==================== CTA BOXES — VALIDATION COMPLETE ==================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="90.249">
+<failure message="home.spec.ts:88:7 Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
+<![CDATA[  [chromium] › home.spec.ts:88:7 › Home Page › Validate Contact Section (Phone, Email, Newsletter) › ✓ Validate phone block 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]')
+
+
+       at ..\pages\home.page.ts:548
+
+      546 |
+      547 |     console.log(`  • Clicking phone number to validate navigation...`);
+    > 548 |     await this.contactPhoneNumber.click();
+          |                                   ^
+      549 |     await expect(this.page).toHaveURL(/contact-us/);
+      550 |     console.log(`  ✓ Phone link navigation OK`);
+      551 |
+        at C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:548:35
+        at HomePage.validateContactSection (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:538:3)
+        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:90:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\home-Home-Page-Validate-Co-c4438-ion-Phone-Email-Newsletter--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\home-Home-Page-Validate-Co-c4438-ion-Phone-Email-Newsletter--chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Contact Section (Phone, Email, Newsletter) =====
+
+
+==================== CONTACT SECTION — VALIDATION START ====================
+• Contact section is visible
+---------------------------------------------------------------
+• Validating phone block...
+  ✓ Phone title OK
+  • Clicking phone number to validate navigation...
+
+[[ATTACHMENT|test-results\home-Home-Page-Validate-Co-c4438-ion-Phone-Email-Newsletter--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\home-Home-Page-Validate-Co-c4438-ion-Phone-Email-Newsletter--chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Footer Links" classname="home.spec.ts" time="134.19">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Footer Links =====
+
+
+==================== FOOTER — VALIDATION START ====================
+• Total footer items detected: 41
+---------------------------------------------------------------
+
+• Footer item: "France"
+  URL: https://www.igluski.com/ski-resorts/france
+
+  ✓ Footer link OK
+
+• Footer item: "Austria"
+  URL: https://www.igluski.com/ski-resorts/austria
+
+  ✓ Footer link OK
+
+• Footer item: "Italy"
+  URL: https://www.igluski.com/ski-resorts/italy
+
+  ✓ Footer link OK
+
+• Footer item: "Andorra"
+  URL: https://www.igluski.com/ski-resorts/andorra
+
+  ✓ Footer link OK
+
+• Footer item: "Switzerland"
+  URL: https://www.igluski.com/ski-resorts/switzerland
+
+  ✓ Footer link OK
+
+• Footer item: "Bulgaria"
+  URL: https://www.igluski.com/ski-resorts/bulgaria
+
+  ✓ Footer link OK
+
+• Footer item: "Val d'Isère"
+  URL: https://www.igluski.com/ski-resorts/france/val-d-isere
+
+  ✓ Footer link OK
+
+• Footer item: "St Anton"
+  URL: https://www.igluski.com/ski-resorts/austria/st-anton
+
+  ✓ Footer link OK
+
+• Footer item: "Cervinia"
+  URL: https://www.igluski.com/ski-resorts/italy/cervinia
+
+  ✓ Footer link OK
+
+• Footer item: "Val Thorens"
+  URL: https://www.igluski.com/ski-resorts/france/val-thorens
+
+  ✓ Footer link OK
+
+• Footer item: "Tignes"
+  URL: https://www.igluski.com/ski-resorts/france/tignes
+
+  ✓ Footer link OK
+
+• Footer item: "Méribel"
+  URL: https://www.igluski.com/ski-resorts/france/meribel
+
+  ✓ Footer link OK
+
+• Footer item: "Mayrhofen"
+  URL: https://www.igluski.com/ski-resorts/austria/mayrhofen
+
+  ✓ Footer link OK
+
+• Footer item: "Sauze d'Oulx"
+  URL: https://www.igluski.com/ski-resorts/italy/sauze-d-oulx
+
+  ✓ Footer link OK
+
+• Footer item: "Les Deux Alpes"
+  URL: https://www.igluski.com/ski-resorts/france/les-deux-alpes
+
+  ✓ Footer link OK
+
+• Footer item: "Ischgl"
+  URL: https://www.igluski.com/ski-resorts/austria/ischgl
+
+  ✓ Footer link OK
+
+• Footer item: "Courchevel"
+  URL: https://www.igluski.com/ski-resorts/france/courchevel-1850
+
+  ✓ Footer link OK
+
+• Footer item: "Sestriere"
+  URL: https://www.igluski.com/ski-resorts/italy/sestriere
+
+  ✓ Footer link OK
+
+• Footer item: "Ski Chalets"
+  URL: https://www.igluski.com/ski-holidays/ski-chalet-holidays
+
+  ✓ Footer link OK
+
+• Footer item: "Ski Hotels"
+  URL: https://www.igluski.com/ski-holidays/ski-hotels
+
+  ✓ Footer link OK
+
+• Footer item: "Self-catered"
+  URL: https://www.igluski.com/ski-holidays/self-catered-ski-deals
+
+  ✓ Footer link OK
+
+• Footer item: "All-inclusive"
+  URL: https://www.igluski.com/ski-holidays/all-inclusive-ski-deals
+
+  ✓ Footer link OK
+
+• Footer item: "Cheap Ski Deals"
+  URL: https://www.igluski.com/ski-deals
+
+  ✓ Footer link OK
+
+• Footer item: "Last Minute"
+  URL: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+
+  ✓ Footer link OK
+
+• Footer item: "Accommodation Only"
+  URL: https://www.igluski.com/ski-holidays/ski-accommodation-only
+
+  ✓ Footer link OK
+
+• Footer item: "Group Ski Holidays"
+  URL: https://www.igluski.com/ski-holidays/group-ski-holidays
+
+  ✓ Footer link OK
+
+• Footer item: "Family Ski Holidays"
+  URL: https://www.igluski.com/ski-holidays/family-ski-holidays
+
+  ✓ Footer link OK
+
+• Footer item: "Ski Holidays with Lift Passes"
+  URL: https://www.igluski.com/ski-holidays/lift-pass-included
+
+  ✓ Footer link OK
+
+• Footer item: "Short Ski Breaks"
+  URL: https://www.igluski.com/ski-holidays/ski-short-breaks
+
+  ✓ Footer link OK
+
+• Footer item: "Lapland Holidays"
+  URL: https://www.igluski.com/lapland-holidays
+
+  ✓ Footer link OK
+
+• Footer item: "Cookie & Privacy Policy"
+  URL: https://www.igluski.com/privacy-policy
+
+  ✓ Footer link OK
+
+• Footer item: "Terms & Conditions"
+  URL: https://www.igluski.com/terms-and-conditions
+
+  ✓ Footer link OK
+
+• Footer item: "Contact Us"
+  URL: https://www.igluski.com/contact-us
+
+  ✓ Footer link OK
+
+• Footer item: "Frequently Asked Questions"
+  URL: https://www.igluski.com/guides/faqs/frequently-asked-questions
+
+  ✓ Footer link OK
+
+• Footer item: "Travel Advice from the Foreign Office"
+  URL: https://www.gov.uk/foreign-travel-advice
+
+  ✓ Footer link OK
+
+• Footer item: "Iglu.com"
+  URL: https://www.iglu.com
+
+  ✓ Footer link OK
+
+• Footer item: "About us"
+  URL: https://www.igluski.com/about
+
+  ✓ Footer link OK
+
+• Footer item: "Working at Iglu Ski"
+  URL: https://careers.iglu.com/departments/ski
+
+  ✓ Footer link OK
+
+• Footer item: "Meet the Team"
+  URL: https://www.igluski.com/meet-the-team
+
+  ✓ Footer link OK
+
+• Footer item: "Lapland Holidays"
+  URL: https://www.igluski.com/lapland-holidays
+
+  ✓ Footer link OK
+
+• Footer item: "Site Map"
+  URL: https://www.igluski.com/sitemap
+
+  ✓ Footer link OK
+
+==================== FOOTER — VALIDATION COMPLETE ==================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Carousel CTA Button" classname="home.spec.ts" time="8.762">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Carousel CTA Button =====
+
+
+==================== CAROUSEL CTA — VALIDATION START ====================
+• CTA href: https://www.igluski.com/ski-holidays/boxing-day-sale
+✓ CTA navigation OK → https://www.igluski.com/ski-holidays/boxing-day-sale
+==================== CAROUSEL CTA — VALIDATION COMPLETE ==================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Inline Links in Sections" classname="home.spec.ts" time="66.043">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Inline Links in Sections =====
+
+
+==================== INLINE LINKS — SECTION: SPEAK TO THE SKI EXPERTS ====================
+• Section title found: "Speak to the ski experts"
+• Total links detected: 6
+---------------------------------------------------------------
+
+==================== LINK 1 / 6 ====================
+• Link text: "ski holidays"
+• URL: https://www.igluski.com/ski-holidays
+  • Page title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
+  ✓ Title is similar to "ski holidays"
+
+==================== LINK 2 / 6 ====================
+• Link text: "ski deals"
+• URL: https://www.igluski.com/ski-deals
+  • Page title: "Ski Deals And Cheap Ski Holidays for 2025 & 2026 | Iglu Ski"
+  ✓ Title is similar to "ski deals"
+
+==================== LINK 3 / 6 ====================
+• Link text: "ski chalets"
+• URL: https://www.igluski.com/ski-holidays/ski-chalet-holidays
+  • Page title: "Ski Chalet Holidays and Deals 2026/2027 | Iglu Ski"
+  ✓ Title is similar to "ski chalets"
+
+==================== LINK 4 / 6 ====================
+• Link text: "hotels"
+• URL: https://www.igluski.com/ski-holidays/ski-hotels
+  • Page title: "Ski Hotels and Ski Hotel Deals | Iglu Ski"
+  ✓ Title is similar to "hotels"
+
+==================== LINK 5 / 6 ====================
+• Link text: "apartments"
+• URL: https://www.igluski.com/ski-holidays/ski-apartments
+  • Page title: "Ski Apartments | Apartment Ski Holidays | Iglu Ski"
+  ✓ Title is similar to "apartments"
+
+==================== LINK 6 / 6 ====================
+• Link text: "price match guarantee"
+• URL: https://www.igluski.com/price-match
+  • Page title: "Ski Holidays Price Match | Iglu Ski"
+  ✓ Title is similar to "price match guarantee"
+
+==================== INLINE LINKS — VALIDATION COMPLETE ==================
+
+
+==================== INLINE LINKS — SECTION: FIND YOUR SKIING HOLIDAY ====================
+• Section title found: "Find Your Skiing Holiday"
+• Total links detected: 10
+---------------------------------------------------------------
+
+==================== LINK 1 / 10 ====================
+• Link text: "ski deals"
+• URL: https://www.igluski.com/ski-deals
+  • Page title: "Ski Deals And Cheap Ski Holidays for 2025 & 2026 | Iglu Ski"
+  ✓ Title is similar to "ski deals"
+
+==================== LINK 2 / 10 ====================
+• Link text: "280 ski resorts"
+• URL: https://www.igluski.com/ski-resorts
+  • Page title: "Ski Resorts | Find The Perfect Skiing Resort | Iglu Ski"
+  ✓ Title is similar to "280 ski resorts"
+
+==================== LINK 3 / 10 ====================
+• Link text: "Europe"
+• URL: https://www.igluski.com/ski-resorts/ski-areas
+  • Page title: "Ski areas in Europe | Iglu Ski"
+  ✓ Title is similar to "Europe"
+
+==================== LINK 4 / 10 ====================
+• Link text: "North America"
+• URL: https://www.igluski.com/ski-resorts/ski-areas/ski-holidays-north-america
+  • Page title: "Ski holidays North America | Iglu Ski"
+  ✓ Title is similar to "North America"
+
+==================== LINK 5 / 10 ====================
+• Link text: "Japan"
+• URL: https://www.igluski.com/ski-resorts/japan
+  • Page title: "Skiing in Japan | Japan Ski holidays | Iglu Ski"
+  ✓ Title is similar to "Japan"
+
+==================== LINK 6 / 10 ====================
+• Link text: "France"
+• URL: https://www.igluski.com/ski-resorts/france
+  • Page title: "France Ski Holidays 2026/2027 | Best Deals and Resort Advice"
+  ✓ Title is similar to "France"
+
+==================== LINK 7 / 10 ====================
+• Link text: "Austria"
+• URL: https://www.igluski.com/ski-resorts/austria
+  • Page title: "Austria Ski Holidays 2026/2027 | Best Deals and Resort Advice"
+  ✓ Title is similar to "Austria"
+
+==================== LINK 8 / 10 ====================
+• Link text: "Canada"
+• URL: https://www.igluski.com/ski-resorts/canada
+  • Page title: "Skiing in Canada | Canadaian ski holidays & resorts | Iglu Ski"
+  ✓ Title is similar to "Canada"
+
+==================== LINK 9 / 10 ====================
+• Link text: "snowboarding holidays"
+• URL: https://www.igluski.com/ski-holidays/snowboard-holidays
+  • Page title: "Snowboard holidays & snowboarding deals | Iglu Ski"
+  ✓ Title is similar to "snowboarding holidays"
+
+==================== LINK 10 / 10 ====================
+• Link text: "Package ski holidays"
+• URL: https://www.igluski.com/ski-holidays
+  • Page title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
+  ✓ Title is similar to "Package ski holidays"
+
+==================== INLINE LINKS — VALIDATION COMPLETE ==================
+
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="14.977">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Page Responsiveness (Mobile/Tablet) =====
+
+
+===== TC26: Validating responsiveness at 375px =====
+
+✓ TC26 PASSED at 375px
+
+===== TC26: Validating responsiveness at 768px =====
+
+✓ TC26 PASSED at 768px
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="home.spec.ts" time="7.761">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate "Search by Holiday ID" Button in Footer =====
+
+
+===== TC28: Validating 'Search by Holiday ID' in Footer =====
+
+✓ TC28 PASSED: Holiday ID search button and form validated successfully.
 ]]>
 </system-out>
 </testcase>

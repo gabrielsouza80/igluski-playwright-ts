@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect, test } from '@playwright/test';
 import { HelperBase } from './utils/HelperBase';
 import { Actions } from './utils/Actions';
 
@@ -136,13 +136,16 @@ export class HomePage extends HelperBase {
   // ============================
   // NAVIGATION & COOKIES
   // ============================
-  async navigateAndAcceptCookies(): Promise<void> {
+ async navigateAndAcceptCookies(): Promise<void> {
+
+  await test.step('✓ Navigate to home page', async () => {
     console.log(`\n==================== COOKIES — INITIAL STATE ====================`);
     console.log(`• Navigating to home page...`);
     console.log(`---------------------------------------------------------------`);
-
     await this.page.goto('/', { waitUntil: 'domcontentloaded' });
+  });
 
+  await test.step('✓ Detect cookie banner', async () => {
     try {
       await this.cookiesBanner.waitFor({ state: 'visible', timeout: 60000 });
       console.log(`• Cookie banner detected.`);
@@ -151,7 +154,9 @@ export class HomePage extends HelperBase {
       console.log(`==================== COOKIES — NO BANNER =======================\n`);
       return;
     }
+  });
 
+  await test.step('✓ Handle cookie accept buttons', async () => {
     console.log(`• Checking available accept buttons...`);
 
     if (await this.acceptCookiesBtn.isVisible()) {
@@ -163,63 +168,92 @@ export class HomePage extends HelperBase {
     } else {
       console.log(`• No visible accept button found.`);
     }
+  });
 
+  await test.step('✓ Confirm cookie banner hidden', async () => {
     await this.cookiesBanner.waitFor({ state: 'hidden', timeout: 5000 });
     console.log(`• Cookie banner hidden.`);
     console.log(`==================== COOKIES — COMPLETED =======================\n`);
-  }
+  });
+}
 
-  // ============================
-  // SEARCH FUNCTIONS
-  // ============================
-  async searchForCountry(text: string) {
+
+// ============================
+// SEARCH FUNCTIONS
+// ============================
+
+async searchForCountry(text: string) {
+
+  await test.step(`✓ Fill country search input: ${text}`, async () => {
     try {
       await this.countriesSearchInput.fill(text, { timeout: 5000 });
       await this.page.waitForTimeout(500);
     } catch {
       console.warn('searchForCountry: fill failed, clicking search anyway');
     }
+  });
 
+  await test.step('✓ Click country search button', async () => {
     try {
       await this.searchButton.click();
     } catch {
       console.error('searchForCountry: search button click failed');
     }
-  }
+  });
+}
 
-  async searchForProperty(text: string) {
+
+async searchForProperty(text: string) {
+
+  await test.step(`✓ Fill property search input: ${text}`, async () => {
     await this.propertiesSearchInput.fill(text, { timeout: 5000 });
     await this.page.waitForTimeout(500);
+  });
+
+  await test.step('✓ Submit property search (Enter)', async () => {
     await this.propertiesSearchInput.press('Enter');
-  }
+  });
+}
 
-  async clickOnSearchButton() {
+
+async clickOnSearchButton() {
+  await test.step('✓ Click search button', async () => {
     await this.searchButton.click();
-  }
+  });
+}
 
-  // ============================
-  // GENERIC ASSERTIONS
-  // ============================
-  async verifyElementVisible(locator: Locator): Promise<boolean> {
-    return await this.actions.verifyElementVisible(locator);
-  }
 
-  async verifyPageLoaded(expectedUrl: string): Promise<boolean> {
-    return await this.actions.verifyPageLoaded(expectedUrl);
-  }
+// ============================
+// GENERIC ASSERTIONS
+// ============================
 
-  // ============================
-  // HEADER VALIDATIONS
-  // ============================
+async verifyElementVisible(locator: Locator): Promise<boolean> {
+  return await this.actions.verifyElementVisible(locator);
+}
 
-  async validateLogo() {
+async verifyPageLoaded(expectedUrl: string): Promise<boolean> {
+  return await this.actions.verifyPageLoaded(expectedUrl);
+}
+
+
+// ============================
+// HEADER VALIDATIONS
+// ============================
+
+async validateLogo() {
+
+  await test.step('✓ Validate logo redirection', async () => {
     console.log(`\n==================== LOGO — VALIDATION START ====================`);
     await this.validateRedirectButton(this.logoLink, '/');
     console.log(`• Logo redirects correctly to home page`);
     console.log(`==================== LOGO — VALIDATION COMPLETE =================\n`);
-  }
+  });
+}
 
-  async validateHeaderContactInfo() {
+
+async validateHeaderContactInfo() {
+
+  await test.step('✓ Validate header contact information', async () => {
     console.log(`\n==================== HEADER — CONTACT INFO CHECK ====================`);
 
     const phoneText = await this.phoneLocatorHeader.innerText();
@@ -232,9 +266,13 @@ export class HomePage extends HelperBase {
     await this.validateRedirectButton(this.contactUsLink, '/contact-us');
 
     console.log(`==================== HEADER — CONTACT INFO COMPLETE ==================\n`);
-  }
+  });
+}
 
-  async validateRecentlyViewedButton() {
+
+async validateRecentlyViewedButton() {
+
+  await test.step('✓ Validate Recently Viewed button', async () => {
     console.log(`\n==================== RECENTLY VIEWED — VALIDATION START ====================`);
 
     await this.btnRecentlyViewedHeader.click();
@@ -244,30 +282,40 @@ export class HomePage extends HelperBase {
     console.log(`• Recently Viewed result text: ${txt}`);
 
     console.log(`==================== RECENTLY VIEWED — VALIDATION COMPLETE ==================\n`);
-  }
+  });
+}
 
-  async validateAccessCustomerPortal() {
+
+async validateAccessCustomerPortal() {
+  await test.step('✓ Validate Customer Portal redirection', async () => {
     await this.validateRedirectButton(
       this.btnAccessCustomerPortal,
       this.urls.URLCustomerPortalPage
     );
-  }
+  });
+}
 
-  async validateRatingsAndReviews() {
+
+async validateRatingsAndReviews() {
+  await test.step('✓ Validate Ratings & Reviews redirection', async () => {
     await this.validateRedirectButton(
       this.btnReviewLinkHeader,
       this.urls.URLReviewsPage
     );
-  }
+  });
+}
 
   // ============================
   // MENU & SUBMENU VALIDATION
   // ============================
   async validateMenuAndSubMenuNavigation(): Promise<void> {
-    console.log(`\n==================== MENUS — VALIDATION START ====================`);
 
-    // Snapshot of menus and submenus
-    const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
+  await test.step('✓ Start menu and submenu validation', async () => {
+    console.log(`\n==================== MENUS — VALIDATION START ====================`);
+  });
+
+  const menusSnapshot = await test.step('✓ Snapshot menu and submenu structure', async () => {
+    const snapshot = await this.page.$$eval("li.menu-list__item", (items) => {
       return items.map((li) => {
         const mainLink = li.querySelector("a");
         const mainHref = mainLink?.getAttribute("href") || null;
@@ -283,13 +331,16 @@ export class HomePage extends HelperBase {
       });
     });
 
-    console.log(`• Total main menus detected: ${menusSnapshot.length}`);
+    console.log(`• Total main menus detected: ${snapshot.length}`);
     console.log(`---------------------------------------------------------------`);
+    return snapshot;
+  });
 
-    // Reusable tab for all menu/submenu navigation
-    const navPage = await this.page.context().newPage();
+  const navPage = await this.page.context().newPage();
 
-    for (const menu of menusSnapshot) {
+  for (const menu of menusSnapshot) {
+
+    await test.step(`✓ Validate main menu: ${menu.mainLabel}`, async () => {
       const menuLabel = menu.mainLabel;
       const menuUrl = this.resolveUrl(menu.mainHref);
 
@@ -300,55 +351,64 @@ export class HomePage extends HelperBase {
 
       if (!menuUrl) {
         console.warn(`• Skipping menu "${menuLabel}" — no valid URL.`);
-        continue;
+        return;
       }
 
-      // Navigate to main menu page
       try {
         await navPage.goto(menuUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
         await this.validateTitleContains(navPage, menuLabel);
       } catch (err: any) {
         console.error(`❌ Failed to load menu "${menuLabel}" → ${err?.message || err}`);
-        continue;
+        return;
       }
 
       const sublinks = menu.sublinks || [];
       console.log(`• Submenus found: ${sublinks.length}`);
 
-      if (sublinks.length === 0) continue;
+      if (sublinks.length === 0) return;
 
-      // Process each submenu using the SAME tab
       for (const sub of sublinks) {
-        const subUrl = this.resolveUrl(sub.href);
-        if (!subUrl) continue;
 
-        console.log(`  -----------------------------------------------------------`);
-        console.log(`  • Submenu label: "${sub.label}"`);
-        console.log(`  • Submenu URL: ${subUrl}`);
+        await test.step(`✓ Validate submenu: ${sub.label}`, async () => {
+          const subUrl = this.resolveUrl(sub.href);
+          if (!subUrl) return;
 
-        try {
-          await navPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
-          await this.validateTitleContains(navPage, sub.label);
-          console.log(`  ✓ Submenu validated successfully`);
-        } catch (err: any) {
-          console.error(`  ❌ Submenu "${sub.label}" failed → ${err?.message || err}`);
-        }
+          console.log(`  -----------------------------------------------------------`);
+          console.log(`  • Submenu label: "${sub.label}"`);
+          console.log(`  • Submenu URL: ${subUrl}`);
+
+          try {
+            await navPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
+            await this.validateTitleContains(navPage, sub.label);
+            console.log(`  ✓ Submenu validated successfully`);
+          } catch (err: any) {
+            console.error(`  ❌ Submenu "${sub.label}" failed → ${err?.message || err}`);
+          }
+        });
       }
-    }
-
-    await navPage.close();
-
-    console.log(`==================== MENUS — VALIDATION COMPLETE ==================\n`);
+    });
   }
 
-  // ============================
-  // FOOTER VALIDATION
-  // ============================
-  async validateFooterItems(): Promise<void> {
-    console.log(`\n==================== FOOTER — VALIDATION START ====================`);
+  await test.step('✓ Close navigation tab', async () => {
+    await navPage.close();
+    console.log(`==================== MENUS — VALIDATION COMPLETE ==================\n`);
+  });
+}
 
-    // Captura todos os itens do footer
-    const footerItems = await this.page.$$eval(
+
+
+// ============================
+// FOOTER VALIDATION
+// ============================
+
+async validateFooterItems(): Promise<void> {
+
+  await test.step('✓ Start footer validation', async () => {
+    console.log(`\n==================== FOOTER — VALIDATION START ====================`);
+  });
+
+  const footerItems = await test.step('✓ Snapshot footer items', async () => {
+    const items = await this.page.$$eval(
       '//li[@class="footer-list__item"]',
       (items) =>
         items.map((li) => {
@@ -360,10 +420,14 @@ export class HomePage extends HelperBase {
         })
     );
 
-    console.log(`• Total footer items detected: ${footerItems.length}`);
+    console.log(`• Total footer items detected: ${items.length}`);
     console.log(`---------------------------------------------------------------`);
+    return items;
+  });
 
-    for (const item of footerItems) {
+  for (const item of footerItems) {
+
+    await test.step(`✓ Validate footer item: ${item.label}`, async () => {
       const label = item.label;
       const url = this.resolveUrl(item.href ?? null);
 
@@ -372,57 +436,58 @@ export class HomePage extends HelperBase {
 
       if (!url) {
         console.warn(`  ⚠ Skipping — no valid URL`);
-        continue;
+        return;
       }
 
-      // Localiza o item no footer
       const locator = this.page.locator(
         `//li[@class="footer-list__item"] >> text=${label}`
       );
 
-      // Scroll seguro até o item
       await this.scrollIntoView(locator);
 
-      // Valida redirecionamento abrindo em nova aba
       try {
         await this.openAndValidateUrl(url, new RegExp(url, "i"));
         console.log(`  ✓ Footer link OK`);
       } catch (err: any) {
         console.error(`  ❌ Footer link failed: ${err?.message || err}`);
       }
-    }
-
-    console.log(`\n==================== FOOTER — VALIDATION COMPLETE ==================\n`);
+    });
   }
 
+  await test.step('✓ Footer validation complete', async () => {
+    console.log(`\n==================== FOOTER — VALIDATION COMPLETE ==================\n`);
+  });
+}
+
   // ============================
-  // CAROUSEL HOME VALIDATION
-  // ============================
-  async validateCarouselHome(): Promise<void> {
+// CAROUSEL HOME VALIDATION
+// ============================
+async validateCarouselHome(): Promise<void> {
+
+  await test.step('✓ Start carousel home validation', async () => {
     console.log(`\n==================== CAROUSEL HOME — VALIDATION START ====================`);
+  });
 
-    const totalSlides = await this.carouselSlides.count();
-    console.log(`• Total slides detected: ${totalSlides}`);
+  const totalSlides = await test.step('✓ Count carousel slides', async () => {
+    const count = await this.carouselSlides.count();
+    console.log(`• Total slides detected: ${count}`);
+    if (count === 0) throw new Error("❌ No slides found in carousel");
+    return count;
+  });
 
-    if (totalSlides === 0) {
-      throw new Error("❌ No slides found in carousel");
-    }
+  for (let i = 0; i < totalSlides; i++) {
 
-    // Loop por todos os slides
-    for (let i = 0; i < totalSlides; i++) {
+    await test.step(`✓ Validate slide ${i + 1} of ${totalSlides}`, async () => {
       console.log(`\n==================== SLIDE ${i + 1} / ${totalSlides} ====================`);
 
-      // Garante que o slide ativo está visível
       await expect(this.carouselActiveSlide).toBeVisible();
 
-      // CTA do slide ativo
       const bannerCTA = this.carouselActiveSlide.locator("a");
       await bannerCTA.waitFor({ state: "visible", timeout: 7000 });
 
       const href = await bannerCTA.getAttribute("href");
       console.log(`• Banner CTA detected: ${href}`);
 
-      // Valida navegação
       try {
         await bannerCTA.click({ force: true });
         await expect(this.page).toHaveURL(/ski-holidays/);
@@ -431,35 +496,46 @@ export class HomePage extends HelperBase {
         console.error(`  ❌ Banner CTA failed on slide ${i + 1}`);
       }
 
-      // Volta para a home
       await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
 
-      // Avança para o próximo slide
       if (i < totalSlides - 1) {
         console.log(`• Moving to next slide...`);
         await this.carouselNextButton.click({ force: true });
         await this.waitForCarouselSlideChange(href!);
       }
-    }
-
-    console.log(`\n==================== CAROUSEL HOME — VALIDATION COMPLETE ==================\n`);
+    });
   }
 
-  // ============================
-  // CONTACT SECTION VALIDATION
-  // ============================
-  async validateContactSection() {
-    console.log(`\n==================== CONTACT SECTION — VALIDATION START ====================`);
+  await test.step('✓ Carousel home validation complete', async () => {
+    console.log(`\n==================== CAROUSEL HOME — VALIDATION COMPLETE ==================\n`);
+  });
+}
 
+
+
+// ============================
+// CONTACT SECTION VALIDATION
+// ============================
+async validateContactSection() {
+
+  await test.step('✓ Start contact section validation', async () => {
+    console.log(`\n==================== CONTACT SECTION — VALIDATION START ====================`);
+  });
+
+  await test.step('✓ Validate contact section visibility', async () => {
     await expect(this.contactSection).toBeVisible();
     console.log(`• Contact section is visible`);
     console.log(`---------------------------------------------------------------`);
+  });
 
-    const normalize = (t: string) => this.normalizeText(t);
+  const normalize = (t: string) => this.normalizeText(t);
 
-    // ============================
-    // PHONE BLOCK
-    // ============================
+
+
+  // ============================
+  // PHONE BLOCK
+  // ============================
+  await test.step('✓ Validate phone block', async () => {
     console.log(`• Validating phone block...`);
 
     const phoneTitle = normalize(await this.contactPhoneTitle.innerText());
@@ -475,10 +551,14 @@ export class HomePage extends HelperBase {
 
     await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
     console.log(`---------------------------------------------------------------`);
+  });
 
-    // ============================
-    // EMAIL BLOCK
-    // ============================
+
+
+  // ============================
+  // EMAIL BLOCK
+  // ============================
+  await test.step('✓ Validate email block', async () => {
     console.log(`• Validating email block...`);
 
     const emailTitle = normalize(await this.contactEmailTitle.innerText());
@@ -500,10 +580,14 @@ export class HomePage extends HelperBase {
 
     await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
     console.log(`---------------------------------------------------------------`);
+  });
 
-    // ============================
-    // NEWSLETTER BLOCK
-    // ============================
+
+
+  // ============================
+  // NEWSLETTER BLOCK
+  // ============================
+  await test.step('✓ Validate newsletter block', async () => {
     console.log(`• Validating newsletter block...`);
 
     const newsletterTitle = normalize(await this.contactNewsletterTitle.innerText());
@@ -522,36 +606,42 @@ export class HomePage extends HelperBase {
     await this.contactNewsletterButton.click();
     await expect(this.page).toHaveURL(/signup/);
     console.log(`  ✓ SIGN UP button navigation OK`);
+  });
 
+
+
+  await test.step('✓ Contact section validation complete', async () => {
     console.log(`\n==================== CONTACT SECTION — VALIDATION COMPLETE ==================\n`);
-  }
+  });
+}
+  // ============================
+// CTA BOXES VALIDATION
+// ============================
+async validateCtaBoxes(): Promise<void> {
 
-  // ============================
-  // CTA BOXES VALIDATION
-  // ============================
-  async validateCtaBoxes(): Promise<void> {
+  await test.step('✓ Start CTA boxes validation', async () => {
     console.log(`\n==================== CTA BOXES — VALIDATION START ====================`);
+  });
 
-    // Find the row that contains the first CTA title
-    const ctaRow = this.page.locator(
-      '//h2[contains(text(), "TALK TO")]/ancestor::div[@class="row"]'
-    );
+  const ctaRow = this.page.locator(
+    '//h2[contains(text(), "TALK TO")]/ancestor::div[@class="row"]'
+  );
 
-    // Select the 3 CTA <a> elements inside that row (XPath only)
-    const ctaBoxes = ctaRow.locator('//a');
-    const ctaTitles = ctaRow.locator('//h2[@class="box-panel__title"]');
+  const ctaBoxes = ctaRow.locator('//a');
+  const ctaTitles = ctaRow.locator('//h2[@class="box-panel__title"]');
 
-    const totalCtas = await ctaBoxes.count();
-    console.log(`• Total CTA boxes detected: ${totalCtas}`);
+  const totalCtas = await test.step('✓ Count CTA boxes', async () => {
+    const count = await ctaBoxes.count();
+    console.log(`• Total CTA boxes detected: ${count}`);
     console.log(`---------------------------------------------------------------`);
+    return count;
+  });
 
-    const expectedPatterns = [
-      /enquire/i,
-      /about/i,
-      /signup/i
-    ];
+  const expectedPatterns = [/enquire/i, /about/i, /signup/i];
 
-    for (let i = 0; i < totalCtas; i++) {
+  for (let i = 0; i < totalCtas; i++) {
+
+    await test.step(`✓ Validate CTA box ${i + 1} of ${totalCtas}`, async () => {
       console.log(`\n==================== CTA ${i + 1} / ${totalCtas} ====================`);
 
       const cta = ctaBoxes.nth(i);
@@ -572,7 +662,7 @@ export class HomePage extends HelperBase {
 
       if (!url) {
         console.warn(`  ⚠ Skipping CTA — invalid URL`);
-        continue;
+        return;
       }
 
       const expectedPattern = expectedPatterns[i];
@@ -586,19 +676,27 @@ export class HomePage extends HelperBase {
 
       await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
       await this.page.waitForLoadState("domcontentloaded");
-    }
-
-    console.log(`\n==================== CTA BOXES — VALIDATION COMPLETE ==================\n`);
+    });
   }
 
-  // ============================
-  // COUNTRY BANNERS VALIDATION
-  // ============================
-  async validateCountryBanners(): Promise<void> {
-    console.log(`\n==================== COUNTRY BANNERS — VALIDATION START ====================`);
+  await test.step('✓ CTA boxes validation complete', async () => {
+    console.log(`\n==================== CTA BOXES — VALIDATION COMPLETE ==================\n`);
+  });
+}
 
-    // Captura todos os banners de países
-    const banners = await this.page.$$eval(
+
+
+// ============================
+// COUNTRY BANNERS VALIDATION
+// ============================
+async validateCountryBanners(): Promise<void> {
+
+  await test.step('✓ Start country banners validation', async () => {
+    console.log(`\n==================== COUNTRY BANNERS — VALIDATION START ====================`);
+  });
+
+  const banners = await test.step('✓ Snapshot country banners', async () => {
+    const result = await this.page.$$eval(
       '//div[contains(@class, "country-banner")]//a',
       (anchors) =>
         anchors.map((a) => ({
@@ -607,10 +705,14 @@ export class HomePage extends HelperBase {
         }))
     );
 
-    console.log(`• Total country banners detected: ${banners.length}`);
+    console.log(`• Total country banners detected: ${result.length}`);
     console.log(`---------------------------------------------------------------`);
+    return result;
+  });
 
-    for (const banner of banners) {
+  for (const banner of banners) {
+
+    await test.step(`✓ Validate country banner: ${banner.label}`, async () => {
       const label = banner.label;
       const url = this.resolveUrl(banner.href ?? null);
 
@@ -619,37 +721,38 @@ export class HomePage extends HelperBase {
 
       if (!url) {
         console.warn(`  ⚠ Skipping — invalid URL`);
-        continue;
+        return;
       }
 
-      // Localiza o banner real no DOM
       const locator = this.page.locator(
         `//div[contains(@class, "country-banner")]//a[contains(text(), "${label}")]`
       );
 
-      // Scroll seguro até o banner
       await this.scrollIntoView(locator);
 
-      // Valida redirecionamento abrindo em nova aba
       try {
         await this.openAndValidateUrl(url, new RegExp(url, "i"));
         console.log(`  ✓ Country banner navigation OK`);
       } catch (err: any) {
         console.error(`  ❌ Country banner navigation failed: ${err?.message || err}`);
       }
-    }
-
-    console.log(`\n==================== COUNTRY BANNERS — VALIDATION COMPLETE ==================\n`);
+    });
   }
 
-  // ============================
-  // GENERIC HOMEPAGE HELPERS
-  // ============================
+  await test.step('✓ Country banners validation complete', async () => {
+    console.log(`\n==================== COUNTRY BANNERS — VALIDATION COMPLETE ==================\n`);
+  });
+}
 
-  /**
-   * Validates that the homepage main title is visible and contains expected text.
-   */
-  async validateHomePageTitle(expected: string): Promise<void> {
+
+
+// ============================
+// GENERIC HOMEPAGE HELPERS
+// ============================
+
+async validateHomePageTitle(expected: string): Promise<void> {
+
+  await test.step('✓ Validate homepage main title', async () => {
     console.log(`\n==================== HOMEPAGE TITLE — VALIDATION START ====================`);
 
     await expect(this.titleHomePage).toBeVisible();
@@ -666,12 +769,14 @@ export class HomePage extends HelperBase {
 
     console.log(`✓ Homepage title validated successfully`);
     console.log(`==================== HOMEPAGE TITLE — VALIDATION COMPLETE ==================\n`);
-  }
+  });
+}
 
-  /**
-   * Validates that the banner title is visible and contains expected text.
-   */
-  async validateBannerTitle(expected: string): Promise<void> {
+
+
+async validateBannerTitle(expected: string): Promise<void> {
+
+  await test.step('✓ Validate homepage banner title', async () => {
     console.log(`\n==================== BANNER TITLE — VALIDATION START ====================`);
 
     await expect(this.titleBannerHome).toBeVisible();
@@ -688,58 +793,70 @@ export class HomePage extends HelperBase {
 
     console.log(`✓ Banner title validated successfully`);
     console.log(`==================== BANNER TITLE — VALIDATION COMPLETE ==================\n`);
-  }
+  });
+}
 
-  /**
-   * Validates that the Ski Holidays link redirects correctly.
-   */
-  async validateSkiHolidaysLink(): Promise<void> {
+
+
+async validateSkiHolidaysLink(): Promise<void> {
+
+  await test.step('✓ Validate Ski Holidays link', async () => {
     console.log(`\n==================== SKI HOLIDAYS LINK — VALIDATION START ====================`);
     await this.validateRedirectButton(this.skiHolidaysLink, '/ski-holidays');
     console.log(`✓ Ski Holidays link validated successfully`);
     console.log(`==================== SKI HOLIDAYS LINK — VALIDATION COMPLETE ==================\n`);
-  }
+  });
+}
 
   /**
-   * Validates that the Ski Deals link redirects correctly.
-   */
-  async validateSkiDealsLink(): Promise<void> {
+ * Validates that the Ski Deals link redirects correctly.
+ */
+async validateSkiDealsLink(): Promise<void> {
+  await test.step('✓ Validate Ski Deals link', async () => {
     console.log(`\n==================== SKI DEALS LINK — VALIDATION START ====================`);
     await this.validateRedirectButton(this.skiDealsLink, '/ski-deals');
     console.log(`✓ Ski Deals link validated successfully`);
     console.log(`==================== SKI DEALS LINK — VALIDATION COMPLETE ==================\n`);
-  }
+  });
+}
 
-  /**
-   * Validates that the Snow Reports link redirects correctly.
-   */
-  async validateSnowReportsLink(): Promise<void> {
+/**
+ * Validates that the Snow Reports link redirects correctly.
+ */
+async validateSnowReportsLink(): Promise<void> {
+  await test.step('✓ Validate Snow Reports link', async () => {
     console.log(`\n==================== SNOW REPORTS LINK — VALIDATION START ====================`);
     await this.validateRedirectButton(this.snowReportsLink, '/snow-reports');
     console.log(`✓ Snow Reports link validated successfully`);
     console.log(`==================== SNOW REPORTS LINK — VALIDATION COMPLETE ==================\n`);
-  }
+  });
+}
 
-  /**
-   * Validates that the Blog & Guides link redirects correctly.
-   */
-  async validateBlogGuidesLink(): Promise<void> {
+/**
+ * Validates that the Blog & Guides link redirects correctly.
+ */
+async validateBlogGuidesLink(): Promise<void> {
+  await test.step('✓ Validate Blog & Guides link', async () => {
     console.log(`\n==================== BLOG & GUIDES LINK — VALIDATION START ====================`);
     await this.validateRedirectButton(this.blogGuidesLink, '/blog');
     console.log(`✓ Blog & Guides link validated successfully`);
     console.log(`==================== BLOG & GUIDES LINK — VALIDATION COMPLETE ==================\n`);
-  }
+  });
+}
 
-  // ============================
-  // CLICK MENU (WITH VALIDATION)
-  // ============================
-  async clickMenu(menuLabel: string, subLabel?: string): Promise<void> {
+
+
+// ============================
+// CLICK MENU (WITH VALIDATION)
+// ============================
+async clickMenu(menuLabel: string, subLabel?: string): Promise<void> {
+
+  await test.step(`✓ Click menu: ${menuLabel}${subLabel ? ' → ' + subLabel : ''}`, async () => {
     console.log(`\n==================== CLICK MENU — START ====================`);
     console.log(`• Menu: ${menuLabel}`);
     if (subLabel) console.log(`• Submenu: ${subLabel}`);
     console.log(`---------------------------------------------------------------`);
 
-    // Localiza o menu principal
     const menu = this.page.locator(
       `li.menu-list__item a:has-text("${menuLabel}")`
     ).first();
@@ -748,7 +865,6 @@ export class HomePage extends HelperBase {
     await menu.click();
     console.log(`✓ Clicked main menu: ${menuLabel}`);
 
-    // Se NÃO houver submenu → valida título da página
     if (!subLabel) {
       await this.validateTitleContains(this.page, menuLabel);
       console.log(`✓ Page title validated for menu: ${menuLabel}`);
@@ -756,7 +872,6 @@ export class HomePage extends HelperBase {
       return;
     }
 
-    // Localiza submenu
     const submenu = this.page.locator(
       `.submenu-list__block-item a:has-text("${subLabel}")`
     ).first();
@@ -765,17 +880,21 @@ export class HomePage extends HelperBase {
     await submenu.click();
     console.log(`✓ Clicked submenu: ${subLabel}`);
 
-    // Valida título da página
     await this.validateTitleContains(this.page, subLabel);
     console.log(`✓ Page title validated for submenu: ${subLabel}`);
 
     console.log(`==================== CLICK MENU — COMPLETE ====================\n`);
-  }
+  });
+}
 
-  // ============================
-  // MULTIPLE TITLES VALIDATION
-  // ============================
-  async validateMultipleTitles(expectedTitles: string[]): Promise<void> {
+
+
+// ============================
+// MULTIPLE TITLES VALIDATION
+// ============================
+async validateMultipleTitles(expectedTitles: string[]): Promise<void> {
+
+  await test.step('✓ Validate multiple homepage titles', async () => {
     console.log(`\n==================== MULTIPLE TITLES — VALIDATION START ====================`);
 
     for (const expected of expectedTitles) {
@@ -792,15 +911,20 @@ export class HomePage extends HelperBase {
     }
 
     console.log(`==================== MULTIPLE TITLES — VALIDATION COMPLETE ==================\n`);
-  }
+  });
+}
 
-  // ============================
-  // CAROUSEL CTA VALIDATION
-  // ============================
-  async validateCarouselCTA(): Promise<void> {
+
+
+// ============================
+// CAROUSEL CTA VALIDATION
+// ============================
+async validateCarouselCTA(): Promise<void> {
+
+  await test.step('✓ Validate carousel CTA button', async () => {
     console.log(`\n==================== CAROUSEL CTA — VALIDATION START ====================`);
 
-    const activeSlide = this.carouselActiveSlide; // 🔥 Fix
+    const activeSlide = this.carouselActiveSlide;
 
     await expect(activeSlide).toBeVisible({ timeout: 7000 });
 
@@ -818,28 +942,30 @@ export class HomePage extends HelperBase {
     console.log(`✓ CTA navigation OK → ${this.page.url()}`);
 
     console.log(`==================== CAROUSEL CTA — VALIDATION COMPLETE ==================\n`);
-  }
+  });
+}
 
 
-  async validateSpeakToExpertsLinks(): Promise<void> {
+
+// ============================
+// INLINE LINKS — SPEAK TO EXPERTS
+// ============================
+async validateSpeakToExpertsLinks(): Promise<void> {
+
+  await test.step('✓ Validate Speak to the Ski Experts inline links', async () => {
     console.log(`\n==================== INLINE LINKS — SECTION: SPEAK TO THE SKI EXPERTS ====================`);
 
-    // 1. Locate <h2> using the professional locator
     const title = this.sectionTitle("Speak to the ski experts");
     await title.waitFor({ state: "visible" });
     console.log(`• Section title found: "Speak to the ski experts"`);
 
-    // 2. Section container
     const section = this.sectionContainer(title);
-
-    // 3. All <a> inside the section
     const links = this.sectionLinks(section);
 
     const totalLinks = await links.count();
     console.log(`• Total links detected: ${totalLinks}`);
     console.log(`---------------------------------------------------------------`);
 
-    // 4. Loop through links
     for (let i = 0; i < totalLinks; i++) {
       console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
 
@@ -851,47 +977,52 @@ export class HomePage extends HelperBase {
       console.log(`• Link text: "${linkText}"`);
       console.log(`• URL: ${url}`);
 
-      // 5. Open in new tab
       const context = this.page.context();
       const newPage = await context.newPage();
 
       await newPage.goto(url!, { waitUntil: "domcontentloaded" });
 
-      // 6. Fuzzy title validation
       await this.validatePageTitleFuzzy(newPage, linkText);
 
       await newPage.close();
     }
 
     console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
-  }
-
+  });
+}
   async validateFindYourSkiingHolidayLinks(): Promise<void> {
+
+  await test.step('✓ Start validation: Find Your Skiing Holiday inline links', async () => {
     console.log(`\n==================== INLINE LINKS — SECTION: FIND YOUR SKIING HOLIDAY ====================`);
+  });
 
-    const titleText = "Find Your Skiing Holiday";
+  const titleText = "Find Your Skiing Holiday";
 
-    // 1. Real XPath for the title
-    const titleXPath = `//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${titleText.toLowerCase()}")]`;
+  const titleXPath = `//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${titleText.toLowerCase()}")]`;
 
-    // 2. Title locator
-    const title = this.page.locator(titleXPath);
+  const title = this.page.locator(titleXPath);
+
+  await test.step('✓ Locate section title', async () => {
     await title.waitFor({ state: "visible" });
     console.log(`• Section title found: "${titleText}"`);
+  });
 
-    // 3. Section container
-    const section = this.sectionContainer(title);
+  const section = this.sectionContainer(title);
 
-    // 4. Links before the first <div>
-    const links = this.page.locator(
-      `${titleXPath}/following-sibling::a[following-sibling::div]`
-    );
+  const links = this.page.locator(
+    `${titleXPath}/following-sibling::a[following-sibling::div]`
+  );
 
-    const totalLinks = await links.count();
-    console.log(`• Total links detected: ${totalLinks}`);
+  const totalLinks = await test.step('✓ Count inline links', async () => {
+    const count = await links.count();
+    console.log(`• Total links detected: ${count}`);
     console.log(`---------------------------------------------------------------`);
+    return count;
+  });
 
-    for (let i = 0; i < totalLinks; i++) {
+  for (let i = 0; i < totalLinks; i++) {
+
+    await test.step(`✓ Validate inline link ${i + 1} of ${totalLinks}`, async () => {
       console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
 
       const link = links.nth(i);
@@ -902,57 +1033,68 @@ export class HomePage extends HelperBase {
       console.log(`• Link text: "${linkText}"`);
       console.log(`• URL: ${url}`);
 
-      // Open in new tab
       const context = this.page.context();
       const newPage = await context.newPage();
 
       await newPage.goto(url!, { waitUntil: "domcontentloaded" });
 
-      // Fuzzy validation
       await this.validatePageTitleFuzzy(newPage, linkText);
 
       await newPage.close();
-    }
-
-    console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
-  }
-
-  /**
-   * Logs a standardized test start message
-   */
-  logTestStart(testName: string): void {
-    console.log(`\n===== TEST STARTED: ${testName} =====\n`);
-  }
-
-  /**
-   * Checks if the hamburger menu is visible (mobile/tablet)
-   */
-  async isHamburgerMenuVisible(): Promise<boolean> {
-    try {
-      return await this.hamburgerMenu.isVisible();
-    } catch {
-      return false;
-    }
-  }
-
-  /**
-   * Checks if the page has horizontal overflow (layout break)
-   */
-  async hasHorizontalOverflow(): Promise<boolean> {
-    return await this.page.evaluate(() => {
-      return document.body.scrollWidth > window.innerWidth;
     });
   }
 
-  /**
-   * Validates that visible images do not exceed the viewport width
-   */
-  async validateImagesResponsive(maxWidth: number): Promise<{
-    valid: boolean;
-    totalImages: number;
-    invalidImages: number;
-    issues: string[];
-  }> {
+  await test.step('✓ Inline links validation complete', async () => {
+    console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
+  });
+}
+
+
+
+/**
+ * Logs a standardized test start message
+ */
+logTestStart(testName: string): void {
+  console.log(`\n===== TEST STARTED: ${testName} =====\n`);
+}
+
+
+
+/**
+ * Checks if the hamburger menu is visible (mobile/tablet)
+ */
+async isHamburgerMenuVisible(): Promise<boolean> {
+  try {
+    return await this.hamburgerMenu.isVisible();
+  } catch {
+    return false;
+  }
+}
+
+
+
+/**
+ * Checks if the page has horizontal overflow (layout break)
+ */
+async hasHorizontalOverflow(): Promise<boolean> {
+  return await this.page.evaluate(() => {
+    return document.body.scrollWidth > window.innerWidth;
+  });
+}
+
+
+
+/**
+ * Validates that visible images do not exceed the viewport width
+ */
+async validateImagesResponsive(maxWidth: number): Promise<{
+  valid: boolean;
+  totalImages: number;
+  invalidImages: number;
+  issues: string[];
+}> {
+
+  return await test.step(`✓ Validate responsive images at max width ${maxWidth}px`, async () => {
     const allImages = await this.allImages.all();
     let invalidCount = 0;
     const issues: string[] = [];
@@ -978,112 +1120,126 @@ export class HomePage extends HelperBase {
       invalidImages: invalidCount,
       issues,
     };
-  }
+  });
+}
 
-  /**
-   * TC26 — Validate Page Responsiveness (Mobile/Tablet)
-   * - viewport 375/768
-   * - hamburger visible
-   * - no horizontal overflow
-   * - images responsive
-   */
-  async validateTC26(viewportWidth: number): Promise<void> {
+
+
+/**
+ * TC26 — Validate Page Responsiveness (Mobile/Tablet)
+ */
+async validateTC26(viewportWidth: number): Promise<void> {
+
+  await test.step(`✓ Start TC26 responsiveness validation at ${viewportWidth}px`, async () => {
     await this.page.setViewportSize({ width: viewportWidth, height: 900 });
-
     console.log(`\n===== TC26: Validating responsiveness at ${viewportWidth}px =====\n`);
+  });
 
-    // 1) Hamburger menu must be visible
+  await test.step('✓ Validate hamburger menu visibility', async () => {
     const hamburgerVisible = await this.isHamburgerMenuVisible();
     if (!hamburgerVisible) {
       throw new Error(`TC26 FAILED: Hamburger menu NOT visible at ${viewportWidth}px`);
     }
+  });
 
-    // 2) No horizontal overflow allowed
+  await test.step('✓ Validate no horizontal overflow', async () => {
     const overflow = await this.hasHorizontalOverflow();
     if (overflow) {
       throw new Error(`TC26 FAILED: Horizontal overflow detected at ${viewportWidth}px`);
     }
+  });
 
-    // 3) Images must be responsive
+  await test.step('✓ Validate responsive images', async () => {
     const imagesResult = await this.validateImagesResponsive(viewportWidth);
     if (!imagesResult.valid) {
       throw new Error(
         `TC26 FAILED: Images not responsive at ${viewportWidth}px. Invalid images: ${imagesResult.invalidImages}`
       );
     }
+  });
 
+  await test.step(`✓ TC26 PASSED at ${viewportWidth}px`, async () => {
     console.log(`✓ TC26 PASSED at ${viewportWidth}px`);
-  }
+  });
+}
 
-  // ============================
-  // FOOTER - TC28 HELPERS
-  // ============================
 
-  /**
-   * Scrolls to the footer
-   */
-  async scrollToFooter(): Promise<void> {
+
+// ============================
+// FOOTER - TC28 HELPERS
+// ============================
+
+async scrollToFooter(): Promise<void> {
+  await test.step('✓ Scroll to footer', async () => {
     await this.page.keyboard.press('End');
     await this.page.waitForTimeout(800);
+  });
+}
+
+async isHolidayIdContainerVisible(): Promise<boolean> {
+  try {
+    return await this.holidayIdContainer.isVisible();
+  } catch {
+    return false;
   }
+}
 
-  /**
-   * Checks if the Holiday ID container is visible
-   */
-  async isHolidayIdContainerVisible(): Promise<boolean> {
-    try {
-      return await this.holidayIdContainer.isVisible();
-    } catch {
-      return false;
-    }
-  }
 
-  // ============================
-  // TC28 - Validate Search by Holiday ID
-  // ============================
 
-  /**
-   * TC28 — Validate "Search by Holiday ID" button in the footer
-   */
-  async validateTC28(): Promise<void> {
+// ============================
+// TC28 - Validate Search by Holiday ID
+// ============================
+
+async validateTC28(): Promise<void> {
+
+  await test.step(`✓ Start TC28: Validate 'Search by Holiday ID'`, async () => {
     console.log(`\n===== TC28: Validating 'Search by Holiday ID' in Footer =====\n`);
+  });
 
-    // 1. Scroll to footer
-    await this.scrollToFooter();
+  await this.scrollToFooter();
 
+  await test.step('✓ Validate Holiday ID container visibility', async () => {
     const containerVisible = await this.isHolidayIdContainerVisible();
     if (!containerVisible) {
       throw new Error("TC28 FAILED: Holiday ID container not visible in footer.");
     }
+  });
 
-    // 2. Validate button visibility
+  await test.step('✓ Validate button visibility', async () => {
     const buttonVisible = await this.btnSearchByHolidayId.isVisible();
     if (!buttonVisible) {
       throw new Error("TC28 FAILED: 'Search by Holiday ID' button not found.");
     }
+  });
 
-    // 3. Click the button
+  await test.step('✓ Click Holiday ID button', async () => {
     await this.btnSearchByHolidayId.click();
     await this.page.waitForTimeout(600);
+  });
 
-    // 4. Validate form visibility
+  await test.step('✓ Validate Holiday ID form visibility', async () => {
     const formVisible = await this.holidayIdForm.isVisible();
     if (!formVisible) {
       throw new Error("TC28 FAILED: Holiday ID form did not open after clicking the button.");
     }
+  });
 
-    // 5. Validate input field
+  await test.step('✓ Validate input field visibility', async () => {
     const inputVisible = await this.holidayIdInput.isVisible();
     if (!inputVisible) {
       throw new Error("TC28 FAILED: Holiday ID input field not visible.");
     }
+  });
 
-    // 6. Validate search button
+  await test.step('✓ Validate search button visibility', async () => {
     const searchBtnVisible = await this.holidayIdSearchButton.isVisible();
     if (!searchBtnVisible) {
       throw new Error("TC28 FAILED: Search button inside Holiday ID form not visible.");
     }
+  });
 
+  await test.step('✓ TC28 PASSED: Holiday ID search validated', async () => {
     console.log("✓ TC28 PASSED: Holiday ID search button and form validated successfully.");
-  }
+  });
+}
 }
