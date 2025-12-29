@@ -4,17 +4,17 @@ import { test } from '../support/baseTest';
 // Test Suite: Home Page
 // ================================================================
 
-test.describe.only('Home Page', () => {
+test.describe('Home Page', () => {
 
   // BEFORE EACH
-  test.beforeEach(async ({ page, pm }) => {
+  test.beforeEach(async ({ pm }) => {
     await test.step('✓ Navigate and accept cookies', async () => {
       await pm.onHomePage().navigateAndAcceptCookies();
     });
   });
 
   // TC 1 — Validate Iglu Ski Logo
-  test('Validate Iglu Ski Logo', async ({ page, pm }, testInfo) => {
+  test('Validate Iglu Ski Logo', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Validate Iglu Ski Logo', async () => {
@@ -23,7 +23,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 2 — Validate Menu + Submenus
-  test('Validate Main Navigation Menu', async ({ page, pm }, testInfo) => {
+  test('Validate Main Navigation Menu', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     test.setTimeout(300000);
 
@@ -33,7 +33,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC — Click on menu and submenu
-  test('Click on the menu and optionally on the submenu', async ({ page, pm }, testInfo) => {
+  test('Click on the menu and optionally on the submenu', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Click main menu: Ski Holidays', async () => {
@@ -46,7 +46,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 3 — Validate Contact Information in Header
-  test('Validate Contact Information in the Header', async ({ page, pm }, testInfo) => {
+  test('Validate Contact Information in the Header', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Validate Contact Information in Header', async () => {
@@ -55,7 +55,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 4 — Validate "Recently Viewed" Button
-  test('Validate "Recently Viewed" Button', async ({ page, pm }, testInfo) => {
+  test('Validate "Recently Viewed" Button', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Validate Recently Viewed Button', async () => {
@@ -64,7 +64,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 5 — Validate Access to the Customer Portal
-  test('Validate Access to the Customer Portal', async ({ page, pm }, testInfo) => {
+  test('Validate Access to the Customer Portal', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Validate Access to Customer Portal', async () => {
@@ -73,7 +73,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 6 — Validate Ratings and Reviews in the Header
-  test('Validate Ratings and Reviews in the Header', async ({ page, pm }, testInfo) => {
+  test('Validate Ratings and Reviews in the Header', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Validate Ratings and Reviews', async () => {
@@ -82,7 +82,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 15 — Validate Main Titles on the Homepage
-  test('Validate Main Titles on the Homepage', async ({ page, pm }, testInfo) => {
+  test('Validate Main Titles on the Homepage', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Validate Main Titles', async () => {
@@ -95,7 +95,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 16 — Validate carousel + country banners
-  test('Validate Carousel of Promotions and Country Banners', async ({ page, pm }, testInfo) => {
+  test('Validate Carousel of Promotions and Country Banners', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Validate Carousel Home', async () => {
@@ -117,7 +117,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 18 — Validate Contact Section
-  test('Validate Contact Section (Phone, Email, Newsletter)', async ({ page, pm }, testInfo) => {
+  test('Validate Contact Section (Phone, Email, Newsletter)', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Validate Contact Section', async () => {
@@ -126,7 +126,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 20 — Validate Footer Links
-  test('Validate Footer Links', async ({ page, pm }, testInfo) => {
+  test('Validate Footer Links', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     test.setTimeout(300000);
 
@@ -136,7 +136,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 22 — Validate Carousel CTA Button
-  test('Validate Carousel CTA Button', async ({ page, pm }, testInfo) => {
+  test('Validate Carousel CTA Button', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Validate Carousel CTA Button', async () => {
@@ -145,7 +145,7 @@ test.describe.only('Home Page', () => {
   });
 
   // Validate Inline Links
-  test('Validate Inline Links in Sections', async ({ page, pm }, testInfo) => {
+  test('Validate Inline Links in Sections', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
     await test.step('✓ Validate Speak to Experts Links', async () => {
@@ -158,7 +158,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 26 — Validate Page Responsiveness
-  test('Validate Page Responsiveness (Mobile/Tablet)', async ({ page, pm }, testInfo) => {
+  test('Validate Page Responsiveness (Mobile/Tablet)', async ({ pm }, testInfo) => {
     pm.onHomePage().logTestStart(testInfo.title);
 
     await test.step('✓ Validate Responsiveness at 375px', async () => {
@@ -171,7 +171,7 @@ test.describe.only('Home Page', () => {
   });
 
   // TC 28 — Validate Holiday ID Search
-  test('Validate "Search by Holiday ID" Button in Footer', async ({ page, pm }, testInfo) => {
+  test('Validate "Search by Holiday ID" Button in Footer', async ({ pm }, testInfo) => {
     pm.onHomePage().logTestStart(testInfo.title);
 
     await test.step('✓ Validate Holiday ID Search', async () => {
