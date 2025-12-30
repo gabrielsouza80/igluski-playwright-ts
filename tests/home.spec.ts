@@ -8,7 +8,7 @@ test.describe('Home Page', () => {
 
   // BEFORE EACH
   test.beforeEach(async ({ pm }) => {
-    await test.step('✓ Navigate and accept cookies', async () => {
+    await test.step('✓ Navigate to the homepage and handle cookie banner', async () => {
       await pm.onHomePage().navigateAndAcceptCookies();
     });
   });
@@ -17,7 +17,7 @@ test.describe('Home Page', () => {
   test('Validate Iglu Ski Logo', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate Iglu Ski Logo', async () => {
+    await test.step('✓ Validate that clicking the Iglu Ski logo redirects to the homepage', async () => {
       await pm.onHomePage().validateLogo();
     });
   });
@@ -27,7 +27,7 @@ test.describe('Home Page', () => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     test.setTimeout(300000);
 
-    await test.step('✓ Validate Main Navigation Menu + Submenus', async () => {
+    await test.step('✓ Validate all main navigation menu items and their respective submenus', async () => {
       await pm.onHomePage().validateMenuAndSubMenuNavigation();
     });
   });
@@ -36,11 +36,11 @@ test.describe('Home Page', () => {
   test('Click on the menu and optionally on the submenu', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Click main menu: Ski Holidays', async () => {
+    await test.step('✓ Click the main menu item "Ski Holidays"', async () => {
       await pm.onHomePage().clickMenu("Ski Holidays");
     });
 
-    await test.step('✓ Click submenu: Family ski holidays', async () => {
+    await test.step('✓ Click the submenu item "Family ski holidays" under "Ski Holidays"', async () => {
       await pm.onHomePage().clickMenu("Ski Holidays", "Family ski holidays");
     });
   });
@@ -49,7 +49,7 @@ test.describe('Home Page', () => {
   test('Validate Contact Information in the Header', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate Contact Information in Header', async () => {
+    await test.step('✓ Validate phone number, contact link, and redirection in the header', async () => {
       await pm.onHomePage().validateHeaderContactInfo();
     });
   });
@@ -58,7 +58,7 @@ test.describe('Home Page', () => {
   test('Validate "Recently Viewed" Button', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate Recently Viewed Button', async () => {
+    await test.step('✓ Validate that the Recently Viewed button opens the correct panel', async () => {
       await pm.onHomePage().validateRecentlyViewedButton();
     });
   });
@@ -67,7 +67,7 @@ test.describe('Home Page', () => {
   test('Validate Access to the Customer Portal', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate Access to Customer Portal', async () => {
+    await test.step('✓ Validate that the Customer Portal button redirects to the correct page', async () => {
       await pm.onHomePage().validateAccessCustomerPortal();
     });
   });
@@ -76,7 +76,7 @@ test.describe('Home Page', () => {
   test('Validate Ratings and Reviews in the Header', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate Ratings and Reviews', async () => {
+    await test.step('✓ Validate that the Ratings & Reviews link redirects correctly', async () => {
       await pm.onHomePage().validateRatingsAndReviews();
     });
   });
@@ -85,7 +85,7 @@ test.describe('Home Page', () => {
   test('Validate Main Titles on the Homepage', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate Main Titles', async () => {
+    await test.step('✓ Validate the presence and correctness of the main homepage titles', async () => {
       await pm.onHomePage().validateMultipleTitles([
         "Welcome To The Home Of Ski",
         "Speak to the ski experts",
@@ -98,11 +98,11 @@ test.describe('Home Page', () => {
   test('Validate Carousel of Promotions and Country Banners', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate Carousel Home', async () => {
+    await test.step('✓ Validate the promotional carousel functionality and CTA behavior', async () => {
       await pm.onHomePage().validateCarouselHome();
     });
 
-    await test.step('✓ Validate Country Banners', async () => {
+    await test.step('✓ Validate all country banners and their respective redirections', async () => {
       await pm.onHomePage().validateCountryBanners();
     });
   });
@@ -111,7 +111,7 @@ test.describe('Home Page', () => {
   test('Validate CTA Boxes (Call To Action)', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate CTA Boxes', async () => {
+    await test.step('✓ Validate all CTA boxes, titles, and redirections', async () => {
       await pm.onHomePage().validateCtaBoxes();
     });
   });
@@ -120,7 +120,7 @@ test.describe('Home Page', () => {
   test('Validate Contact Section (Phone, Email, Newsletter)', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate Contact Section', async () => {
+    await test.step('✓ Validate the full contact section including phone, email, and newsletter blocks', async () => {
       await pm.onHomePage().validateContactSection();
     });
   });
@@ -130,7 +130,7 @@ test.describe('Home Page', () => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     test.setTimeout(300000);
 
-    await test.step('✓ Validate Footer Links', async () => {
+    await test.step('✓ Validate all footer links and ensure correct redirections', async () => {
       await pm.onHomePage().validateFooterItems();
     });
   });
@@ -139,7 +139,7 @@ test.describe('Home Page', () => {
   test('Validate Carousel CTA Button', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate Carousel CTA Button', async () => {
+    await test.step('✓ Validate the CTA button inside the promotional carousel', async () => {
       await pm.onHomePage().validateCarouselCTA();
     });
   });
@@ -148,11 +148,11 @@ test.describe('Home Page', () => {
   test('Validate Inline Links in Sections', async ({ pm }, testInfo) => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
 
-    await test.step('✓ Validate Speak to Experts Links', async () => {
+    await test.step('✓ Validate inline links inside the "Speak to Experts" section', async () => {
       await pm.onHomePage().validateSpeakToExpertsLinks();
     });
 
-    await test.step('✓ Validate Find Your Skiing Holiday Links', async () => {
+    await test.step('✓ Validate inline links inside the "Find Your Skiing Holiday" section', async () => {
       await pm.onHomePage().validateFindYourSkiingHolidayLinks();
     });
   });
@@ -161,11 +161,11 @@ test.describe('Home Page', () => {
   test('Validate Page Responsiveness (Mobile/Tablet)', async ({ pm }, testInfo) => {
     pm.onHomePage().logTestStart(testInfo.title);
 
-    await test.step('✓ Validate Responsiveness at 375px', async () => {
+    await test.step('✓ Validate layout and responsiveness at 375px (mobile)', async () => {
       await pm.onHomePage().validateResponsiveness(375);
     });
 
-    await test.step('✓ Validate Responsiveness at 768px', async () => {
+    await test.step('✓ Validate layout and responsiveness at 768px (tablet)', async () => {
       await pm.onHomePage().validateResponsiveness(768);
     });
   });
@@ -174,7 +174,7 @@ test.describe('Home Page', () => {
   test('Validate "Search by Holiday ID" Button in Footer', async ({ pm }, testInfo) => {
     pm.onHomePage().logTestStart(testInfo.title);
 
-    await test.step('✓ Validate Holiday ID Search', async () => {
+    await test.step('✓ Validate the Holiday ID search functionality in the footer', async () => {
       await pm.onHomePage().validateHolidayIdSearch();
     });
   });

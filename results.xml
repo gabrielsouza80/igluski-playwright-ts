@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="16" failures="1" skipped="0" errors="0" time="174.68388299999992">
-<testsuite name="home.spec.ts" timestamp="2025-12-29T18:42:52.301Z" hostname="chromium" tests="16" failures="1" skipped="0" time="631.094" errors="0">
-<testcase name="Home Page › Validate Iglu Ski Logo" classname="home.spec.ts" time="19.61">
+<testsuites id="" name="" tests="16" failures="1" skipped="0" errors="0" time="183.76279499999998">
+<testsuite name="home.spec.ts" timestamp="2025-12-30T07:57:59.318Z" hostname="chromium" tests="16" failures="1" skipped="0" time="616.852" errors="0">
+<testcase name="Home Page › Validate Iglu Ski Logo" classname="home.spec.ts" time="16.782">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -31,7 +31,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Main Navigation Menu" classname="home.spec.ts" time="163.787">
+<testcase name="Home Page › Validate Main Navigation Menu" classname="home.spec.ts" time="168.736">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -545,7 +545,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Click on the menu and optionally on the submenu" classname="home.spec.ts" time="18.054">
+<testcase name="Home Page › Click on the menu and optionally on the submenu" classname="home.spec.ts" time="19.571">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -581,7 +581,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Contact Information in the Header" classname="home.spec.ts" time="19.924">
+<testcase name="Home Page › Validate Contact Information in the Header" classname="home.spec.ts" time="15.651">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -614,7 +614,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate &quot;Recently Viewed&quot; Button" classname="home.spec.ts" time="14.446">
+<testcase name="Home Page › Validate &quot;Recently Viewed&quot; Button" classname="home.spec.ts" time="12.419">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -637,7 +637,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Access to the Customer Portal" classname="home.spec.ts" time="20.168">
+<testcase name="Home Page › Validate Access to the Customer Portal" classname="home.spec.ts" time="17.014">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -663,7 +663,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Ratings and Reviews in the Header" classname="home.spec.ts" time="20.094">
+<testcase name="Home Page › Validate Ratings and Reviews in the Header" classname="home.spec.ts" time="18.644">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -689,7 +689,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Main Titles on the Homepage" classname="home.spec.ts" time="17.571">
+<testcase name="Home Page › Validate Main Titles on the Homepage" classname="home.spec.ts" time="17.241">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -717,7 +717,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Carousel of Promotions and Country Banners" classname="home.spec.ts" time="24.1">
+<testcase name="Home Page › Validate Carousel of Promotions and Country Banners" classname="home.spec.ts" time="15.26">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -762,7 +762,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="25.671">
+<testcase name="Home Page › Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="31.738">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -807,9 +807,9 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="90.219">
+<testcase name="Home Page › Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="90.218">
 <failure message="home.spec.ts:120:7 Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
-<![CDATA[  [chromium] › home.spec.ts:120:7 › Home Page › Validate Contact Section (Phone, Email, Newsletter) › ✓ Validate Contact Section › ✓ Validate phone block 
+<![CDATA[  [chromium] › home.spec.ts:120:7 › Home Page › Validate Contact Section (Phone, Email, Newsletter) › ✓ Validate the full contact section including phone, email, and newsletter blocks 
 
     Test timeout of 90000ms exceeded.
 
@@ -818,17 +818,16 @@ IGLU SKI"
       - waiting for locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]')
 
 
-       at ..\pages\home.page.ts:548
+       at ..\pages\home.page.ts:472
 
-      546 |
-      547 |       console.log(`  • Clicking phone number to validate navigation...`);
-    > 548 |       await this.contactPhoneNumber.click();
-          |                                     ^
-      549 |       await expect(this.page).toHaveURL(/contact-us/);
-      550 |       console.log(`  ✓ Phone link navigation OK`);
-      551 |
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:548:37
-        at HomePage.validateContactSection (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:538:5)
+      470 |
+      471 |     console.log(`  • Clicking phone number to validate navigation...`);
+    > 472 |     await this.contactPhoneNumber.click();
+          |                                   ^
+      473 |     await expect(this.page).toHaveURL(/contact-us/);
+      474 |     console.log(`  ✓ Phone link navigation OK`);
+      475 |
+        at HomePage.validateContactSection (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:472:35)
         at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:124:7
         at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:123:5
 
@@ -867,7 +866,7 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Footer Links" classname="home.spec.ts" time="110.153">
+<testcase name="Home Page › Validate Footer Links" classname="home.spec.ts" time="117.084">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1097,7 +1096,7 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Carousel CTA Button" classname="home.spec.ts" time="10.253">
+<testcase name="Home Page › Validate Carousel CTA Button" classname="home.spec.ts" time="8.701">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1121,7 +1120,7 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Inline Links in Sections" classname="home.spec.ts" time="50.449">
+<testcase name="Home Page › Validate Inline Links in Sections" classname="home.spec.ts" time="48.008">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1251,7 +1250,7 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="18.392">
+<testcase name="Home Page › Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="12.98">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1277,7 +1276,7 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="home.spec.ts" time="8.203">
+<testcase name="Home Page › Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="home.spec.ts" time="6.805">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
