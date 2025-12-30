@@ -6,12 +6,6 @@ test.describe('Search Page', () => {
   });
 
 
-  test('End-2-end test: Search and book holiday', async ({ page, pm }) => {
-    await pm.onSearchPage().searchForCountry('France');
-    const resultsText = await pm.onSearchPage().hasSearchResults();
-    expect(resultsText).toBeTruthy();
-  });
-
   test('should book first ski holiday package and reach payment page', async ({ page, pm }) => {
     await test.step('Home Page - Searching for Country', async () => {
       await pm.onSearchPage().searchForCountry('France');
@@ -80,8 +74,6 @@ test.describe('Search Page', () => {
       await pm.onPeopleAndContactDetailsPage().clickContinueToBooking()
     });
 
-    
-    // 6. Accept terms and conditions
     await test.step('Booking Page - Accept terms and conditions - Continue to Payment page', async () => {
       pm.onBookingDetailsPage().acceptTermsAndConditions();
       await pm.onBookingDetailsPage().proceedToPayment();
