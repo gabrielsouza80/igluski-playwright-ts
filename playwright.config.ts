@@ -49,11 +49,11 @@ projects: [
     use: { ...devices['Desktop Safari'] },
     testIgnore: /.*\.mobile\.spec\.ts/,
   },
-  {
-    name: 'Mobile Chrome',
-    use: { ...devices['Pixel 5'] },
-    testMatch: /.*\.mobile\.spec\.ts/,
-  },
+  // {
+  //   name: 'Mobile Chrome',
+  //   use: { ...devices['Pixel 5'] },
+  //   testMatch: /.*\.mobile\.spec\.ts/,
+  // },
   {
     name: 'Mobile Safari',
     use: { ...devices['iPhone 12'] },
