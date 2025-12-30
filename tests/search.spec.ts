@@ -7,15 +7,15 @@ test.describe('Search Page', () => {
 
 
   test('End-2-end test: Search and book holiday', async ({ page, pm }) => {
-    await pm.onHomePage().searchForCountry('France');
+    await pm.onSearchPage().searchForCountry('France');
     const resultsText = await pm.onSearchPage().hasSearchResults();
     expect(resultsText).toBeTruthy();
   });
 
   test('should book first ski holiday package and reach payment page', async ({ page, pm }) => {
     await test.step('Home Page - Searching for Country', async () => {
-      await pm.onHomePage().searchForCountry('France');
-      await pm.onHomePage().clickOnSearchButton()
+      await pm.onSearchPage().searchForCountry('France');
+      await pm.onSearchPage().clickOnSearchButton()
     });
     
     await test.step('Search Page - Search Results Validated', async () => {

@@ -83,13 +83,6 @@ export class HomePage extends HelperBase {
   readonly acceptCookiesBtn = this.page.locator('#onetrust-accept-btn-handler').first();
   readonly acceptCookiesBtnRecommended = this.page.locator('#accept-recommended-btn-handler');
 
-  // ============================
-  // SEARCH
-  // ============================
-  readonly propertiesSearchInput = this.page.locator('input[aria-label*="Search properties"]');
-  readonly countriesSearchInput = this.page.locator('input[aria-label*="Search countries"], #where');
-  readonly resortsSearchInput = this.page.locator('input[aria-label*="Search resorts"]');
-  readonly searchButton = this.page.locator('button.search-item__cta , .search-bar__form-submit');
 
   // ============================
   // FOOTER
@@ -169,33 +162,7 @@ export class HomePage extends HelperBase {
     console.log(`==================== COOKIES — COMPLETED =======================\n`);
   }
 
-  // ============================
-  // SEARCH FUNCTIONS
-  // ============================
-  async searchForCountry(text: string) {
-    try {
-      await this.countriesSearchInput.fill(text, { timeout: 5000 });
-      await this.page.waitForTimeout(500);
-    } catch {
-      console.warn('searchForCountry: fill failed, clicking search anyway');
-    }
 
-    try {
-      await this.searchButton.click();
-    } catch {
-      console.error('searchForCountry: search button click failed');
-    }
-  }
-
-  async searchForProperty(text: string) {
-    await this.propertiesSearchInput.fill(text, { timeout: 5000 });
-    await this.page.waitForTimeout(500);
-    await this.propertiesSearchInput.press('Enter');
-  }
-
-  async clickOnSearchButton() {
-    await this.searchButton.click();
-  }
 
   // ============================
   // GENERIC ASSERTIONS
@@ -498,7 +465,7 @@ export class HomePage extends HelperBase {
     await expect(this.page).toHaveURL(/enquire/);
     console.log(`  ✓ ENQUIRE button navigation OK`);
 
-    await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+    await this.page.goBack()
     console.log(`---------------------------------------------------------------`);
 
     // ============================

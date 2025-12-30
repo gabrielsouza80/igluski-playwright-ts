@@ -13,6 +13,11 @@ export class SearchPage extends HelperBase {
   readonly sortSelect: Locator = this.main.getByText('Sort by:', { exact: false }).locator('select');
   readonly resultsPerPageSelect: Locator = this.main.getByText('Results per page', { exact: false }).locator('select');
   readonly firstBookOnlineBtn: Locator = this.searchResults.locator('(//button[contains(@class,"book-online-btn")])[1]');
+  readonly propertiesSearchInput = this.page.locator('input[aria-label*="Search properties"]');
+  readonly countriesSearchInput = this.page.locator('input[aria-label*="Search countries"], #where');
+  readonly resortsSearchInput = this.page.locator('input[aria-label*="Search resorts"]');
+  readonly searchButton = this.page.locator('button.search-item__cta , .search-bar__form-submit');
+
 
   // --------------------------
   // Page Actions
@@ -38,6 +43,34 @@ export class SearchPage extends HelperBase {
 
   async clickFirstBookOnline(): Promise<void> {
     await this.firstBookOnlineBtn.click();
+  }
+
+    // ============================
+  // SEARCH FUNCTIONS
+  // ============================
+  async searchForCountry(text: string) {
+    try {
+      await this.countriesSearchInput.fill(text, { timeout: 5000 });
+      await this.page.waitForTimeout(500);
+    } catch {
+      console.warn('searchForCountry: fill failed, clicking search anyway');
+    }
+
+    try {
+      await this.searchButton.click();
+    } catch {
+      console.error('searchForCountry: search button click failed');
+    }
+  }
+
+  async searchForProperty(text: string) {
+    await this.propertiesSearchInput.fill(text, { timeout: 5000 });
+    await this.page.waitForTimeout(500);
+    await this.propertiesSearchInput.press('Enter');
+  }
+
+  async clickOnSearchButton() {
+    await this.searchButton.click();
   }
 
 }
