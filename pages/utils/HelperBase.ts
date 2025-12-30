@@ -12,7 +12,7 @@ export class HelperBase {
 
   // Load JSON once and keep it as a protected property
   protected readonly urls: Record<string, string> = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), "secrets/secrets.urls.json"), "utf-8")
+    fs.readFileSync(path.join(process.cwd(), "tests/fixtures/secrets.urls.json"), "utf-8")
   );
 
   constructor(page: Page) {
@@ -138,7 +138,7 @@ export class HelperBase {
     });
   }
 
-  protected generateInvalidEmail(){
+  protected generateInvalidEmail() {
     return Math.random().toString(36).substring(2, 7) + '@invalid';
 
   }

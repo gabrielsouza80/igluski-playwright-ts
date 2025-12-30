@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="14" failures="1" skipped="0" errors="0" time="231.674317">
-<testsuite name="home.spec.ts" timestamp="2025-12-24T15:29:27.907Z" hostname="chromium" tests="14" failures="1" skipped="0" time="613.174" errors="0">
-<testcase name="Home Page › Validar Logo da Iglu Ski" classname="home.spec.ts" time="18.924">
+<testsuites id="" name="" tests="16" failures="1" skipped="0" errors="0" time="183.76279499999998">
+<testsuite name="home.spec.ts" timestamp="2025-12-30T07:57:59.318Z" hostname="chromium" tests="16" failures="1" skipped="0" time="616.852" errors="0">
+<testcase name="Home Page › Validate Iglu Ski Logo" classname="home.spec.ts" time="16.782">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -12,19 +12,9 @@
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
 
-✓ Found 10 ski holiday packages
-✓ Clicked Book Online on first result
-✓ Clicked Accomodation - Continue to Travel page
-✓ Clicked Travel - Continue to Extras page
-✓ Clicked Extras - Continue to Summary page
-✓ Clicked Summary - Continue to People page
-📝 Filling mandatory fields with passenger data:
-   Title: Dr
-   Name: Emma Santos
-   DOB: 8/Sept/1982
-   Address: 451 Bond Street, Oxford
-   Email: lisa.kbvynp@mail.co.uk
-✅ All mandatory fields filled successfully
+
+===== TEST STARTED: Validate Iglu Ski Logo =====
+
 
 ==================== LOGO — VALIDATION START ====================
 
@@ -38,12 +28,10 @@
 • Logo redirects correctly to home page
 ==================== LOGO — VALIDATION COMPLETE =================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Validar-Logo-da-Iglu-Ski-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validar Menu de Navegação Principal" classname="home.spec.ts" time="226.317">
+<testcase name="Home Page › Validate Main Navigation Menu" classname="home.spec.ts" time="168.736">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -54,6 +42,9 @@
 • Clicked default accept button.
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Main Navigation Menu =====
 
 
 ==================== MENUS — VALIDATION START ====================
@@ -140,7 +131,7 @@
   • Submenu URL: https://www.igluski.com/ski-holidays/all-inclusive-ski-deals
   ✓ Submenu validated successfully
   -----------------------------------------------------------
-  • Submenu label: "Ski chalets"
+  • Submenu label: "Ski chalet holidays"
   • Submenu URL: https://www.igluski.com/ski-holidays/ski-chalet-holidays
   ✓ Submenu validated successfully
   -----------------------------------------------------------
@@ -551,12 +542,10 @@
 • Submenus found: 0
 ==================== MENUS — VALIDATION COMPLETE ==================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Validar-Menu-de-Navegação-Principal-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Click on the menu and optionally on the submenu." classname="home.spec.ts" time="18.788">
+<testcase name="Home Page › Click on the menu and optionally on the submenu" classname="home.spec.ts" time="19.571">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -567,6 +556,9 @@
 • Clicked default accept button.
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Click on the menu and optionally on the submenu =====
 
 
 ==================== CLICK MENU — START ====================
@@ -586,12 +578,10 @@
 ✓ Page title validated for submenu: Family ski holidays
 ==================== CLICK MENU — COMPLETE ====================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Click-on-th-c4b85--optionally-on-the-submenu--chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Contact Information in the Header" classname="home.spec.ts" time="19.029">
+<testcase name="Home Page › Validate Contact Information in the Header" classname="home.spec.ts" time="15.651">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -604,9 +594,12 @@
 ==================== COOKIES — COMPLETED =======================
 
 
+===== TEST STARTED: Validate Contact Information in the Header =====
+
+
 ==================== HEADER — CONTACT INFO CHECK ====================
 • Header phone text: 020 3848 3700
-• Contact Us link text: Phone 9:00 AM - 4:00 PM or book online
+• Contact Us link text: Phone 9:00 AM - 8:00 PM or book online
 • Validating Contact Us redirection...
 
 ==================== REDIRECT — VALIDATION START ====================
@@ -618,12 +611,10 @@
 
 ==================== HEADER — CONTACT INFO COMPLETE ==================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Validate-Contact-Information-in-the-Header-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate &quot;Recently Viewed&quot; button" classname="home.spec.ts" time="11.749">
+<testcase name="Home Page › Validate &quot;Recently Viewed&quot; Button" classname="home.spec.ts" time="12.419">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -634,18 +625,19 @@
 • Clicked default accept button.
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate "Recently Viewed" Button =====
 
 
 ==================== RECENTLY VIEWED — VALIDATION START ====================
 • Recently Viewed result text: No recently viewed properties
 ==================== RECENTLY VIEWED — VALIDATION COMPLETE ==================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Validate-Recently-Viewed-button-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Access to the Customer Portal" classname="home.spec.ts" time="18.649">
+<testcase name="Home Page › Validate Access to the Customer Portal" classname="home.spec.ts" time="17.014">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -656,6 +648,9 @@
 • Clicked default accept button.
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Access to the Customer Portal =====
 
 
 ==================== REDIRECT — VALIDATION START ====================
@@ -665,12 +660,10 @@
 • Redirect OK → https://customerportal.igluski.com/
 ==================== REDIRECT — VALIDATION COMPLETE ==================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Validate-Access-to-the-Customer-Portal-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Ratings and Reviews in the Header" classname="home.spec.ts" time="18.408">
+<testcase name="Home Page › Validate Ratings and Reviews in the Header" classname="home.spec.ts" time="18.644">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -681,6 +674,9 @@
 • Clicked default accept button.
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Ratings and Reviews in the Header =====
 
 
 ==================== REDIRECT — VALIDATION START ====================
@@ -690,12 +686,10 @@
 • Redirect OK → https://www.igluski.com/customer-reviews
 ==================== REDIRECT — VALIDATION COMPLETE ==================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Validate-Ratings-and-Reviews-in-the-Header-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Main Titles on the Homepage" classname="home.spec.ts" time="12.905">
+<testcase name="Home Page › Validate Main Titles on the Homepage" classname="home.spec.ts" time="17.241">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -706,6 +700,9 @@
 • Clicked default accept button.
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Main Titles on the Homepage =====
 
 
 ==================== MULTIPLE TITLES — VALIDATION START ====================
@@ -717,12 +714,10 @@
   ✓ Title found: "Find Your Skiing Holiday"
 ==================== MULTIPLE TITLES — VALIDATION COMPLETE ==================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Validate-Main-Titles-on-the-Homepage-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate carousel of promotions and country banners on the homepage" classname="home.spec.ts" time="15.333">
+<testcase name="Home Page › Validate Carousel of Promotions and Country Banners" classname="home.spec.ts" time="15.26">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -735,17 +730,25 @@
 ==================== COOKIES — COMPLETED =======================
 
 
-==================== CAROUSEL HOME — VALIDATION START ====================
-• Total slides detected: 2
+===== TEST STARTED: Validate Carousel of Promotions and Country Banners =====
 
-==================== SLIDE 1 / 2 ====================
+
+==================== CAROUSEL HOME — VALIDATION START ====================
+• Total slides detected: 3
+
+==================== SLIDE 1 / 3 ====================
+• Banner CTA detected: https://www.igluski.com/ski-holidays/boxing-day-sale
+  ✓ Banner CTA navigation OK → https://www.igluski.com/ski-holidays/boxing-day-sale
+• Moving to next slide...
+
+==================== SLIDE 2 / 3 ====================
 • Banner CTA detected: https://www.igluski.com/ski-holidays
   ✓ Banner CTA navigation OK → https://www.igluski.com/ski-holidays
 • Moving to next slide...
 
-==================== SLIDE 2 / 2 ====================
-• Banner CTA detected: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
-  ✓ Banner CTA navigation OK → https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+==================== SLIDE 3 / 3 ====================
+• Banner CTA detected: https://www.igluski.com/ski-holidays/boxing-day-sale
+  ✓ Banner CTA navigation OK → https://www.igluski.com/ski-holidays/boxing-day-sale
 
 ==================== CAROUSEL HOME — VALIDATION COMPLETE ==================
 
@@ -756,12 +759,10 @@
 
 ==================== COUNTRY BANNERS — VALIDATION COMPLETE ==================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Validate-ca-e8791-try-banners-on-the-homepage-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="22.871">
+<testcase name="Home Page › Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="31.738">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -772,6 +773,9 @@
 • Clicked default accept button.
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate CTA Boxes (Call To Action) =====
 
 
 ==================== CTA BOXES — VALIDATION START ====================
@@ -800,14 +804,12 @@ IGLU SKI"
 
 ==================== CTA BOXES — VALIDATION COMPLETE ==================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Validate-CTA-Boxes-Call-To-Action--chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="90.208">
-<failure message="home.spec.ts:78:7 Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
-<![CDATA[  [chromium] › home.spec.ts:78:7 › Home Page › Validate Contact Section (Phone, Email, Newsletter) ─
+<testcase name="Home Page › Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="90.218">
+<failure message="home.spec.ts:120:7 Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
+<![CDATA[  [chromium] › home.spec.ts:120:7 › Home Page › Validate Contact Section (Phone, Email, Newsletter) › ✓ Validate the full contact section including phone, email, and newsletter blocks 
 
     Test timeout of 90000ms exceeded.
 
@@ -816,17 +818,18 @@ IGLU SKI"
       - waiting for locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]')
 
 
-       at ..\pages\home.page.ts:445
+       at ..\pages\home.page.ts:472
 
-      443 |
-      444 |     console.log(`  • Clicking phone number to validate navigation...`);
-    > 445 |     await this.contactPhoneNumber.click();
+      470 |
+      471 |     console.log(`  • Clicking phone number to validate navigation...`);
+    > 472 |     await this.contactPhoneNumber.click();
           |                                   ^
-      446 |     await expect(this.page).toHaveURL(/contact-us/);
-      447 |     console.log(`  ✓ Phone link navigation OK`);
-      448 |
-        at HomePage.validateContactSection (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:445:35)
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:79:5
+      473 |     await expect(this.page).toHaveURL(/contact-us/);
+      474 |     console.log(`  ✓ Phone link navigation OK`);
+      475 |
+        at HomePage.validateContactSection (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:472:35)
+        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:124:7
+        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:123:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\home-Home-Page-Validate-Co-c4438-ion-Phone-Email-Newsletter--chromium\test-failed-1.png
@@ -847,6 +850,9 @@ IGLU SKI"
 ==================== COOKIES — COMPLETED =======================
 
 
+===== TEST STARTED: Validate Contact Section (Phone, Email, Newsletter) =====
+
+
 ==================== CONTACT SECTION — VALIDATION START ====================
 • Contact section is visible
 ---------------------------------------------------------------
@@ -860,7 +866,7 @@ IGLU SKI"
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Footer Links" classname="home.spec.ts" time="94.081">
+<testcase name="Home Page › Validate Footer Links" classname="home.spec.ts" time="117.084">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -871,6 +877,9 @@ IGLU SKI"
 • Clicked default accept button.
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Footer Links =====
 
 
 ==================== FOOTER — VALIDATION START ====================
@@ -1084,12 +1093,10 @@ IGLU SKI"
 
 ==================== FOOTER — VALIDATION COMPLETE ==================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-Validate-Footer-Links-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC22 - Validate Carousel CTA Button" classname="home.spec.ts" time="7.643">
+<testcase name="Home Page › Validate Carousel CTA Button" classname="home.spec.ts" time="8.701">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1100,19 +1107,20 @@ IGLU SKI"
 • Clicked default accept button.
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Carousel CTA Button =====
 
 
 ==================== CAROUSEL CTA — VALIDATION START ====================
-• CTA href: https://www.igluski.com/ski-holidays
-✓ CTA navigation OK → https://www.igluski.com/ski-holidays
+• CTA href: https://www.igluski.com/ski-holidays/boxing-day-sale
+✓ CTA navigation OK → https://www.igluski.com/ski-holidays/boxing-day-sale
 ==================== CAROUSEL CTA — VALIDATION COMPLETE ==================
 
-
-[[ATTACHMENT|test-results\home-Home-Page-TC22---Validate-Carousel-CTA-Button-chromium\test-finished-1.png]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC23 - Validate Inline Links in Section" classname="home.spec.ts" time="38.269">
+<testcase name="Home Page › Validate Inline Links in Sections" classname="home.spec.ts" time="48.008">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1123,6 +1131,9 @@ IGLU SKI"
 • Clicked default accept button.
 • Cookie banner hidden.
 ==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate Inline Links in Sections =====
 
 
 ==================== INLINE LINKS — SECTION: SPEAK TO THE SKI EXPERTS ====================
@@ -1133,7 +1144,7 @@ IGLU SKI"
 ==================== LINK 1 / 6 ====================
 • Link text: "ski holidays"
 • URL: https://www.igluski.com/ski-holidays
-  • Page title: "Ski Holidays 2026/2027 | Unbeatable Prices Guaranteed!"
+  • Page title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
   ✓ Title is similar to "ski holidays"
 
 ==================== LINK 2 / 6 ====================
@@ -1231,13 +1242,59 @@ IGLU SKI"
 ==================== LINK 10 / 10 ====================
 • Link text: "Package ski holidays"
 • URL: https://www.igluski.com/ski-holidays
-  • Page title: "Ski Holidays 2026/2027 | Unbeatable Prices Guaranteed!"
+  • Page title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
   ✓ Title is similar to "Package ski holidays"
 
 ==================== INLINE LINKS — VALIDATION COMPLETE ==================
 
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="12.98">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
 
-[[ATTACHMENT|test-results\home-Home-Page-TC23---Validate-Inline-Links-in-Section-chromium\test-finished-1.png]]
+
+===== TEST STARTED: Validate Page Responsiveness (Mobile/Tablet) =====
+
+
+===== TC26: Validating responsiveness at 375px =====
+
+✓ TC26 PASSED at 375px
+
+===== TC26: Validating responsiveness at 768px =====
+
+✓ TC26 PASSED at 768px
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="home.spec.ts" time="6.805">
+<system-out>
+<![CDATA[
+==================== COOKIES — INITIAL STATE ====================
+• Navigating to home page...
+---------------------------------------------------------------
+• Cookie banner detected.
+• Checking available accept buttons...
+• Clicked default accept button.
+• Cookie banner hidden.
+==================== COOKIES — COMPLETED =======================
+
+
+===== TEST STARTED: Validate "Search by Holiday ID" Button in Footer =====
+
+
+===== TC28: Validating 'Search by Holiday ID' in Footer =====
+
+✓ TC28 PASSED: Holiday ID search button and form validated successfully.
 ]]>
 </system-out>
 </testcase>
