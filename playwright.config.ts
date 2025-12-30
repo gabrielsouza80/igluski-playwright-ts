@@ -32,17 +32,34 @@ export default defineConfig({
     navigationTimeout: 90_000,
   },
 
-  // Browsers
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chromium'] },
-    },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-    // {name: 'Mobile Chrome', use: { ...devices['Pixel 5'] }},
-    // {name: 'Mobile Safari', use: { ...devices['iPhone 12'] }},
-  ],
+ // Browsers
+projects: [
+  {
+    name: 'chromium',
+    use: { ...devices['Desktop Chromium'] },
+    testIgnore: /.*\.mobile\.spec\.ts/,
+  },
+  {
+    name: 'firefox',
+    use: { ...devices['Desktop Firefox'] },
+    testIgnore: /.*\.mobile\.spec\.ts/,
+  },
+  {
+    name: 'webkit',
+    use: { ...devices['Desktop Safari'] },
+    testIgnore: /.*\.mobile\.spec\.ts/,
+  },
+  // {
+  //   name: 'Mobile Chrome',
+  //   use: { ...devices['Pixel 5'] },
+  //   testMatch: /.*\.mobile\.spec\.ts/,
+  // },
+  {
+    name: 'Mobile Safari',
+    use: { ...devices['iPhone 12'] },
+    testMatch: /.*\.mobile\.spec\.ts/,
+  },
+],
 
   // Reports
   reporter: [
