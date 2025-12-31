@@ -1,7 +1,16 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { HelperBase } from './utils/HelperBase';
 import { Actions } from './utils/Actions';
+export type SubLinkSnapshot = {
+  label: string;
+  href: string | null;
+};
 
+export type MenuSnapshot = {
+  mainLabel: string;
+  mainHref: string | null;
+  sublinks: SubLinkSnapshot[];
+};
 export class HomePage extends HelperBase {
 
   private actions: Actions;
@@ -260,86 +269,89 @@ export class HomePage extends HelperBase {
     );
   }
 
-  // ============================
-  // MENU & SUBMENU VALIDATION
-  // ============================
-  async validateMenuAndSubMenuNavigation(): Promise<void> {
-    console.log(`\n==================== MENUS — VALIDATION START ====================`);
+  // ============================================================
+// 🔵 MENU VALIDATION — SMALL, MODULAR FUNCTIONS
+// ============================================================
 
-    // Snapshot of menus and submenus
-    const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
-      return items.map((li) => {
-        const mainLink = li.querySelector("a");
-        const mainHref = mainLink?.getAttribute("href") || null;
-        const mainLabel = mainLink?.textContent?.trim() || "";
+async getMenusSnapshot(): Promise<MenuSnapshot[]> {
+  this.logSection("Menus — Snapshot");
 
-        const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
-        const sublinks = subAnchors.map((a) => ({
-          label: a.textContent?.trim() || "",
-          href: a.getAttribute("href")
-        }));
+  const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
+    return items.map((li) => {
+      const mainLink = li.querySelector("a");
+      const mainHref = mainLink?.getAttribute("href") || null;
+      const mainLabel = mainLink?.textContent?.trim() || "";
 
-        return { mainLabel, mainHref, sublinks };
-      });
+      const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
+      const sublinks = subAnchors.map((a) => ({
+        label: a.textContent?.trim() || "",
+        href: a.getAttribute("href"),
+      }));
+
+      return { mainLabel, mainHref, sublinks };
     });
+  });
 
-    console.log(`• Total main menus detected: ${menusSnapshot.length}`);
-    console.log(`---------------------------------------------------------------`);
+  this.logInfo(`Total main menus detected: ${menusSnapshot.length}`);
+  this.logDivider();
 
-    // Reusable tab for all menu/submenu navigation
-    const navPage = await this.page.context().newPage();
+  return menusSnapshot;
+}
 
-    for (const menu of menusSnapshot) {
-      const menuLabel = menu.mainLabel;
-      const menuUrl = this.resolveUrl(menu.mainHref);
+async openNavigationTab(): Promise<Page> {
+  this.logInfo("Opening reusable navigation tab...");
+  return await this.page.context().newPage();
+}
 
-      console.log(`\n==================== MENU ====================`);
-      console.log(`• Menu label: "${menuLabel}"`);
-      console.log(`• Menu URL: ${menuUrl || "(no valid URL)"}`);
-      console.log(`---------------------------------------------------------------`);
+async validateMainMenu(navPage: Page, menu: MenuSnapshot): Promise<void> {
+  const menuLabel = menu.mainLabel;
+  const menuUrl = this.resolveUrl(menu.mainHref);
 
-      if (!menuUrl) {
-        console.warn(`• Skipping menu "${menuLabel}" — no valid URL.`);
-        continue;
-      }
+  this.logSection("Menu");
+  this.logInfo(`Menu label: "${menuLabel}"`);
+  this.logInfo(`Menu URL: ${menuUrl || "(no valid URL)"}`);
+  this.logDivider();
 
-      // Navigate to main menu page
-      try {
-        await navPage.goto(menuUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
-        await this.validateTitleContains(navPage, menuLabel);
-      } catch (err: any) {
-        console.error(`❌ Failed to load menu "${menuLabel}" → ${err?.message || err}`);
-        continue;
-      }
+  if (!menuUrl) {
+    this.logInfo(`Skipping menu "${menuLabel}" — no valid URL.`);
+    return;
+  }
 
-      const sublinks = menu.sublinks || [];
-      console.log(`• Submenus found: ${sublinks.length}`);
+  try {
+    await navPage.goto(menuUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
+    await this.validateTitleContains(navPage, menuLabel);
+  } catch (err: any) {
+    console.error(`❌ Failed to load menu "${menuLabel}" → ${err?.message || err}`);
+    throw err;
+  }
+}
 
-      if (sublinks.length === 0) continue;
+async validateSubmenus(navPage: Page, menu: MenuSnapshot): Promise<void> {
+  const sublinks = menu.sublinks || [];
+  this.logInfo(`Submenus found: ${sublinks.length}`);
 
-      // Process each submenu using the SAME tab
-      for (const sub of sublinks) {
-        const subUrl = this.resolveUrl(sub.href);
-        if (!subUrl) continue;
+  if (sublinks.length === 0) return;
 
-        console.log(`  -----------------------------------------------------------`);
-        console.log(`  • Submenu label: "${sub.label}"`);
-        console.log(`  • Submenu URL: ${subUrl}`);
-
-        try {
-          await navPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
-          await this.validateTitleContains(navPage, sub.label);
-          console.log(`  ✓ Submenu validated successfully`);
-        } catch (err: any) {
-          console.error(`  ❌ Submenu "${sub.label}" failed → ${err?.message || err}`);
-        }
-      }
+  for (const sub of sublinks) {
+    const subUrl = this.resolveUrl(sub.href);
+    if (!subUrl) {
+      this.logSubInfo(`Skipping submenu "${sub.label}" — invalid URL.`);
+      continue;
     }
 
-    await navPage.close();
+    this.logDivider();
+    this.logSubInfo(`Submenu label: "${sub.label}"`);
+    this.logSubInfo(`Submenu URL: ${subUrl}`);
 
-    console.log(`==================== MENUS — VALIDATION COMPLETE ==================\n`);
+    try {
+      await navPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
+      await this.validateTitleContains(navPage, sub.label);
+      this.logSubInfo(`✓ Submenu validated successfully`);
+    } catch (err: any) {
+      console.error(`❌ Submenu "${sub.label}" failed → ${err?.message || err}`);
+    }
   }
+}
 
   // ============================
   // FOOTER VALIDATION

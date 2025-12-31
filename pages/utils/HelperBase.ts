@@ -246,4 +246,23 @@ export class HelperBase {
       console.error(`  ❌ Title is NOT similar to "${expected}"`);
     }
   }
+
+  // ============================
+  // STRUCTURED LOGGING HELPERS
+  // ============================
+  protected logSection(title: string): void {
+    console.log(`\n==================== ${title.toUpperCase()} ====================`);
+  }
+
+  protected logInfo(message: string): void {
+    console.log(`• ${message}`);
+  }
+
+  protected logSubInfo(message: string): void {
+    console.log(`  • ${message}`);
+  }
+
+  protected logDivider(): void {
+    console.log(`---------------------------------------------------------------`);
+  }
 }

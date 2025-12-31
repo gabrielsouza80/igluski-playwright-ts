@@ -27,8 +27,42 @@ test.describe('Home Page', () => {
     console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
     test.setTimeout(300000);
 
-    await test.step('✓ Validate all main navigation menu items and their respective submenus', async () => {
-      await pm.onHomePage().validateMenuAndSubMenuNavigation();
+    const home = pm.onHomePage();
+
+    // STEP 1 — Snapshot
+    const menusSnapshot = await test.step(
+      'Capture snapshot of all main menus and submenus',
+      async () => {
+        return await home.getMenusSnapshot();
+      }
+    );
+
+    // STEP 2 — Open navigation tab
+    const navPage = await test.step(
+      'Open reusable navigation tab',
+      async () => {
+        return await home.openNavigationTab();
+      }
+    );
+
+    // STEP 3 — Validate each menu
+    for (const menu of menusSnapshot) {
+      await test.step(`Validate main menu: "${menu.mainLabel}"`, async () => {
+        await home.validateMainMenu(navPage, menu);
+      });
+
+      // STEP 4 — Validate submenus for this menu
+      await test.step(
+        `Validate submenus for menu: "${menu.mainLabel}"`,
+        async () => {
+          await home.validateSubmenus(navPage, menu);
+        }
+      );
+    }
+
+    // STEP 5 — Close navigation tab
+    await test.step('Close navigation tab', async () => {
+      await navPage.close();
     });
   });
 
