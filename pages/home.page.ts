@@ -1,6 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { HelperBase } from './utils/HelperBase';
 import { Actions } from './utils/Actions';
+
 export type SubLinkSnapshot = {
   label: string;
   href: string | null;
@@ -11,9 +12,12 @@ export type MenuSnapshot = {
   mainHref: string | null;
   sublinks: SubLinkSnapshot[];
 };
+
 export class HomePage extends HelperBase {
 
   private actions: Actions;
+  private menusSnapshot: MenuSnapshot[] = [];
+  private navPage: Page | null = null;
 
   // ============================
   // HEADER & NAVIGATION LOCATORS
@@ -27,10 +31,13 @@ export class HomePage extends HelperBase {
   readonly enquireLink = this.page.locator('(//a[contains(@href, "/enquire")])[1]');
   readonly contactUsLink = this.page.locator('(//a[@href="/contact-us"])[1]');
   readonly phoneLocatorHeader = this.page.locator('(//span[@title="Call Our Team"])[1]');
-  readonly btnAccessCustomerPortal = this.page.locator('//img[contains(@alt, "Customer portal icon")]//..');
+  readonly btnAccessCustomerPortal = this.page.locator('a[href*="customerportal.igluski.com"]');
   readonly btnRecentlyViewedHeader = this.page.locator('//a[contains(@class, "top-bar__info-link")]');
   readonly resultRecentlyViewedHeader = this.page.locator('//div[contains(@class, "top-bar__rv-no-result")]');
   readonly btnReviewLinkHeader = this.page.locator('//a[@class="header-headline__review-link"]');
+  readonly headerLogo = this.page.locator('a.header-logo');
+  readonly headerNavItems = this.page.locator('.menu-list__item > .menu-list__item-link');
+  readonly headerSubmenus = this.page.locator('.menu-list__item > .submenu');
 
   // ============================
   // HOMEPAGE CONTENT LOCATORS
@@ -221,149 +228,361 @@ export class HomePage extends HelperBase {
   // HEADER VALIDATIONS
   // ============================
 
-  async validateLogo() {
-    console.log(`\n==================== LOGO — VALIDATION START ====================`);
-    await this.validateRedirectButton(this.logoLink, '/');
-    console.log(`• Logo redirects correctly to home page`);
-    console.log(`==================== LOGO — VALIDATION COMPLETE =================\n`);
+  // ============================================================
+  // 🔵 TC1 — HEADER LOGO
+  // ============================================================
+
+  // Locates the header logo element on the page.
+  async locateHeaderLogo(): Promise<void> {
+    this.logSection("Header Logo — Locate");
+    await this.headerLogo.waitFor({ state: "visible" });
+    this.logInfo("Header logo located");
+    this.logDivider();
   }
 
-  async validateHeaderContactInfo() {
-    console.log(`\n==================== HEADER — CONTACT INFO CHECK ====================`);
+  // Ensures the header logo is visible.
+  async validateHeaderLogoVisibility(): Promise<void> {
+    this.logSection("Header Logo — Visibility");
+    await expect(this.headerLogo).toBeVisible();
+    this.logInfo("✓ Header logo is visible");
+    this.logDivider();
+  }
 
+  // Clicks the header logo.
+  async clickHeaderLogo(): Promise<void> {
+    this.logSection("Header Logo — Click");
+    await this.headerLogo.click();
+    this.logInfo("✓ Header logo clicked");
+    this.logDivider();
+  }
+
+  // Validates that clicking the logo redirects to the homepage.
+  async validateHeaderLogoRedirect(): Promise<void> {
+    this.logSection("Header Logo — Redirect");
+    await expect(this.page).toHaveURL(/igluski\.com/);
+    this.logInfo(`✓ Redirected to homepage → ${this.page.url()}`);
+    this.logDivider();
+  }
+
+  // ============================================================
+  // 🧪 TC2 — HEADER NAVIGATION & SUBMENU VALIDATION
+  // ============================================================
+
+  // ------------------------------------------------------------
+  // TC2 — DOM Interactions
+  // ------------------------------------------------------------
+
+  // Waits for header navigation items to appear.
+  async locateHeaderNavItems() {
+    await this.headerNavItems.first().waitFor({ state: "visible" });
+  }
+
+  // Ensures all header navigation items are visible.
+  async validateHeaderNavVisibility() {
+    const count = await this.headerNavItems.count();
+    for (let i = 0; i < count; i++) {
+      await expect(this.headerNavItems.nth(i)).toBeVisible();
+    }
+  }
+
+  // ------------------------------------------------------------
+  // TC2 — High-Level Flow
+  // ------------------------------------------------------------
+
+  // Captures a snapshot of all menus and submenus.
+  async captureMenuSnapshot() {
+    this.menusSnapshot = await this.getMenuSnapshot();
+  }
+
+  // Validates navigation for all main menu items.
+  async validateMainMenus() {
+    await this.initNavigationPage();
+
+    for (const menu of this.menusSnapshot) {
+      await this.validateSingleMenu(this.navPage!, menu);
+    }
+  }
+
+  // Validates navigation for all submenus.
+  async validateSubMenus() {
+    await this.initNavigationPage();
+
+    for (const menu of this.menusSnapshot) {
+      for (const sub of menu.sublinks) {
+        await this.validateSingleSubmenu(this.navPage!, sub);
+      }
+    }
+  }
+
+  // Creates a reusable navigation tab for menu validation.
+  async initNavigationPage() {
+    if (!this.navPage) {
+      this.navPage = await this.page.context().newPage();
+    }
+  }
+
+  // Closes the reusable navigation tab.
+  async closeNavigationPage() {
+    if (this.navPage) {
+      await this.navPage.close();
+      this.navPage = null;
+    }
+  }
+
+  // ============================================================
+  // 🔵 HEADER CONTACT INFO — SMALL, MODULAR FUNCTIONS
+  // ============================================================
+
+  // Validates the phone number displayed in the header.
+  async validateHeaderPhone(): Promise<void> {
+    this.logSection("Header — Phone Validation");
     const phoneText = await this.phoneLocatorHeader.innerText();
-    console.log(`• Header phone text: ${phoneText}`);
+    this.logInfo(`Phone text: ${phoneText}`);
+    this.logDivider();
+  }
 
+  // Validates the "Contact Us" text in the header.
+  async validateHeaderContactText(): Promise<void> {
+    this.logSection("Header — Contact Us Text Validation");
     const contactText = await this.contactUsLink.innerText();
-    console.log(`• Contact Us link text: ${contactText}`);
-
-    console.log(`• Validating Contact Us redirection...`);
-    await this.validateRedirectButton(this.contactUsLink, '/contact-us');
-
-    console.log(`==================== HEADER — CONTACT INFO COMPLETE ==================\n`);
+    this.logInfo(`Contact Us text: ${contactText}`);
+    this.logDivider();
   }
 
-  async validateRecentlyViewedButton() {
-    console.log(`\n==================== RECENTLY VIEWED — VALIDATION START ====================`);
+  // Validates that the Contact Us link redirects correctly.
+  async validateHeaderContactRedirect(): Promise<void> {
+    this.logSection("Header — Contact Us Redirect Validation");
+    await this.validateRedirectButton(this.contactUsLink, "/contact-us");
+    this.logInfo("✓ Contact Us redirects correctly");
+    this.logDivider();
+  }
 
+  // Wrapper for validating all header contact info.
+  async validateHeaderContactInfo(): Promise<void> {
+    await this.validateHeaderPhone();
+    await this.validateHeaderContactText();
+    await this.validateHeaderContactRedirect();
+  }
+
+  // ============================================================
+  // 🔵 RECENTLY VIEWED — SMALL, MODULAR FUNCTIONS
+  // ============================================================
+
+  // Clicks the Recently Viewed button.
+  async clickRecentlyViewedButton(): Promise<void> {
+    this.logSection("Recently Viewed — Click");
     await this.btnRecentlyViewedHeader.click();
+    this.logInfo("✓ Recently Viewed button clicked");
+    this.logDivider();
+  }
+
+  // Validates that the Recently Viewed panel appears.
+  async validateRecentlyViewedPanel(): Promise<void> {
+    this.logSection("Recently Viewed — Panel Validation");
     await expect(this.resultRecentlyViewedHeader).toBeVisible();
-
     const txt = await this.resultRecentlyViewedHeader.innerText();
-    console.log(`• Recently Viewed result text: ${txt}`);
-
-    console.log(`==================== RECENTLY VIEWED — VALIDATION COMPLETE ==================\n`);
+    this.logInfo(`Panel text: ${txt}`);
+    this.logInfo("✓ Recently Viewed panel is visible");
+    this.logDivider();
   }
 
-  async validateAccessCustomerPortal() {
-    await this.validateRedirectButton(
-      this.btnAccessCustomerPortal,
-      this.urls.URLCustomerPortalPage
-    );
+  // Wrapper for validating Recently Viewed.
+  async validateRecentlyViewedButton(): Promise<void> {
+    await this.clickRecentlyViewedButton();
+    await this.validateRecentlyViewedPanel();
   }
 
-  async validateRatingsAndReviews() {
+  // ============================================================
+  // 🔵 CUSTOMER PORTAL — SMALL, MODULAR FUNCTIONS
+  // ============================================================
+
+  // Clicks the Customer Portal button.
+  async clickCustomerPortalButton(): Promise<void> {
+  this.logSection("Customer Portal — Click");
+
+  await this.btnAccessCustomerPortal.waitFor({ state: "visible" });
+  await this.btnAccessCustomerPortal.scrollIntoViewIfNeeded();
+  await this.btnAccessCustomerPortal.click({ force: true });
+
+  this.logInfo("✓ Customer Portal button clicked");
+  this.logDivider();
+}
+
+async validateCustomerPortalContent(): Promise<void> {
+  this.logSection("Customer Portal — Redirect Validation");
+
+  const welcomeText = this.page.locator('text=Welcome to My Booking!');
+  await welcomeText.waitFor({ state: "visible" });
+
+  await expect(this.page.locator('#LeadBookerSurname')).toBeVisible();
+  await expect(this.page.locator('#BookingId')).toBeVisible();
+
+  this.logInfo("✓ Customer Portal content loaded successfully (AJAX)");
+  this.logDivider();
+}
+
+  // Validates Customer Portal redirection.
+async validateCustomerPortalRedirect(): Promise<void> {
+  this.logSection("Customer Portal — Redirect Validation");
+
+  const button = this.btnAccessCustomerPortal;
+
+  await button.waitFor({ state: "visible" });
+  await button.scrollIntoViewIfNeeded();
+  await button.click({ force: true });
+
+  // Validate AJAX-loaded content
+  const welcomeText = this.page.locator('text=Welcome to My Booking!');
+  await welcomeText.waitFor({ state: "visible" });
+
+  const surnameField = this.page.locator('#LeadBookerSurname');
+  const bookingIdField = this.page.locator('#BookingId');
+
+  await expect(surnameField).toBeVisible();
+  await expect(bookingIdField).toBeVisible();
+
+  this.logInfo("✓ Customer Portal content loaded successfully (AJAX)");
+  this.logDivider();
+}
+
+  // Wrapper for validating Customer Portal access.
+  async validateAccessCustomerPortal(): Promise<void> {
+    await this.clickCustomerPortalButton();
+    await this.validateCustomerPortalRedirect();
+  }
+
+  // ============================================================
+  // 🔵 RATINGS & REVIEWS — SMALL, MODULAR FUNCTIONS
+  // ============================================================
+
+  // Clicks the Ratings & Reviews link.
+  async clickRatingsAndReviews(): Promise<void> {
+    this.logSection("Ratings & Reviews — Click");
+    await this.btnReviewLinkHeader.click();
+    this.logInfo("✓ Ratings & Reviews link clicked");
+    this.logDivider();
+  }
+
+  // Validates Ratings & Reviews redirection.
+  async validateRatingsAndReviewsRedirect(): Promise<void> {
+    this.logSection("Ratings & Reviews — Redirect Validation");
     await this.validateRedirectButton(
       this.btnReviewLinkHeader,
       this.urls.URLReviewsPage
     );
+    this.logInfo("✓ Ratings & Reviews redirects correctly");
+    this.logDivider();
+  }
+
+  // Wrapper for validating Ratings & Reviews.
+  async validateRatingsAndReviews(): Promise<void> {
+    await this.clickRatingsAndReviews();
+    await this.validateRatingsAndReviewsRedirect();
   }
 
   // ============================================================
-// 🔵 MENU VALIDATION — SMALL, MODULAR FUNCTIONS
-// ============================================================
+  // 🔵 MENU VALIDATION — SNAPSHOT + MAIN MENUS + SUBMENUS
+  // ============================================================
 
-async getMenusSnapshot(): Promise<MenuSnapshot[]> {
-  this.logSection("Menus — Snapshot");
+  // Extracts all main menus and submenus from the DOM.
+  async getMenusSnapshot(): Promise<MenuSnapshot[]> {
+    this.logSection("Menus — Snapshot");
 
-  const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
-    return items.map((li) => {
-      const mainLink = li.querySelector("a");
-      const mainHref = mainLink?.getAttribute("href") || null;
-      const mainLabel = mainLink?.textContent?.trim() || "";
+    const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
+      return items.map((li) => {
+        const mainLink = li.querySelector("a");
+        const mainHref = mainLink?.getAttribute("href") || null;
+        const mainLabel = mainLink?.textContent?.trim() || "";
 
-      const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
-      const sublinks = subAnchors.map((a) => ({
-        label: a.textContent?.trim() || "",
-        href: a.getAttribute("href"),
-      }));
+        const subAnchors = Array.from(
+          li.querySelectorAll(".submenu-list__block-item a")
+        );
+        const sublinks = subAnchors.map((a) => ({
+          label: a.textContent?.trim() || "",
+          href: a.getAttribute("href"),
+        }));
 
-      return { mainLabel, mainHref, sublinks };
+        return { mainLabel, mainHref, sublinks };
+      });
     });
-  });
 
-  this.logInfo(`Total main menus detected: ${menusSnapshot.length}`);
-  this.logDivider();
-
-  return menusSnapshot;
-}
-
-async openNavigationTab(): Promise<Page> {
-  this.logInfo("Opening reusable navigation tab...");
-  return await this.page.context().newPage();
-}
-
-async validateMainMenu(navPage: Page, menu: MenuSnapshot): Promise<void> {
-  const menuLabel = menu.mainLabel;
-  const menuUrl = this.resolveUrl(menu.mainHref);
-
-  this.logSection("Menu");
-  this.logInfo(`Menu label: "${menuLabel}"`);
-  this.logInfo(`Menu URL: ${menuUrl || "(no valid URL)"}`);
-  this.logDivider();
-
-  if (!menuUrl) {
-    this.logInfo(`Skipping menu "${menuLabel}" — no valid URL.`);
-    return;
-  }
-
-  try {
-    await navPage.goto(menuUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
-    await this.validateTitleContains(navPage, menuLabel);
-  } catch (err: any) {
-    console.error(`❌ Failed to load menu "${menuLabel}" → ${err?.message || err}`);
-    throw err;
-  }
-}
-
-async validateSubmenus(navPage: Page, menu: MenuSnapshot): Promise<void> {
-  const sublinks = menu.sublinks || [];
-  this.logInfo(`Submenus found: ${sublinks.length}`);
-
-  if (sublinks.length === 0) return;
-
-  for (const sub of sublinks) {
-    const subUrl = this.resolveUrl(sub.href);
-    if (!subUrl) {
-      this.logSubInfo(`Skipping submenu "${sub.label}" — invalid URL.`);
-      continue;
-    }
-
+    this.logInfo(`Total main menus detected: ${menusSnapshot.length}`);
     this.logDivider();
-    this.logSubInfo(`Submenu label: "${sub.label}"`);
-    this.logSubInfo(`Submenu URL: ${subUrl}`);
+
+    return menusSnapshot;
+  }
+
+  // Opens a reusable navigation tab for menu validation.
+  async openNavigationTab(): Promise<Page> {
+    this.logInfo("Opening reusable navigation tab...");
+    return await this.page.context().newPage();
+  }
+
+  // Validates navigation for a single main menu.
+  async validateMainMenu(navPage: Page, menu: MenuSnapshot): Promise<void> {
+    const menuLabel = menu.mainLabel;
+    const menuUrl = this.resolveUrl(menu.mainHref);
+
+    this.logSection("Menu");
+    this.logInfo(`Menu label: "${menuLabel}"`);
+    this.logInfo(`Menu URL: ${menuUrl || "(no valid URL)"}`);
+    this.logDivider();
+
+    if (!menuUrl) {
+      this.logInfo(`Skipping menu "${menuLabel}" — no valid URL.`);
+      return;
+    }
 
     try {
-      await navPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
-      await this.validateTitleContains(navPage, sub.label);
-      this.logSubInfo(`✓ Submenu validated successfully`);
+      await navPage.goto(menuUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
+      await this.validateTitleContains(navPage, menuLabel);
     } catch (err: any) {
-      console.error(`❌ Submenu "${sub.label}" failed → ${err?.message || err}`);
+      console.error(`❌ Failed to load menu "${menuLabel}" → ${err?.message || err}`);
+      throw err;
     }
   }
-}
 
+  // Validates navigation for all submenus under a main menu.
+  async validateSubmenus(navPage: Page, menu: MenuSnapshot): Promise<void> {
+    const sublinks = menu.sublinks || [];
+    this.logInfo(`Submenus found: ${sublinks.length}`);
+
+    if (sublinks.length === 0) return;
+
+    for (const sub of sublinks) {
+      const subUrl = this.resolveUrl(sub.href);
+      if (!subUrl) {
+        this.logSubInfo(`Skipping submenu "${sub.label}" — invalid URL.`);
+        continue;
+      }
+
+      this.logDivider();
+      this.logSubInfo(`Submenu label: "${sub.label}"`);
+      this.logSubInfo(`Submenu URL: ${subUrl}`);
+
+      try {
+        await navPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
+        await this.validateTitleContains(navPage, sub.label);
+        this.logSubInfo(`✓ Submenu validated successfully`);
+      } catch (err: any) {
+        console.error(`❌ Submenu "${sub.label}" failed → ${err?.message || err}`);
+      }
+    }
+  }
   // ============================
   // FOOTER VALIDATION
   // ============================
-  async validateFooterItems(): Promise<void> {
-    console.log(`\n==================== FOOTER — VALIDATION START ====================`);
+  // ============================================================
+  // 🔵 FOOTER — SMALL, MODULAR FUNCTIONS
+  // ============================================================
 
-    // Captura todos os itens do footer
-    const footerItems = await this.page.$$eval(
+  async getFooterItemsList(): Promise<{ label: string; url: string | null }[]> {
+    this.logSection("Footer — Fetch Items");
+
+    const items = await this.page.$$eval(
       '//li[@class="footer-list__item"]',
-      (items) =>
-        items.map((li) => {
+      (elements) =>
+        elements.map((li) => {
           const a = li.querySelector("a");
           return {
             label: a?.textContent?.trim() || "",
@@ -372,286 +591,364 @@ async validateSubmenus(navPage: Page, menu: MenuSnapshot): Promise<void> {
         })
     );
 
-    console.log(`• Total footer items detected: ${footerItems.length}`);
-    console.log(`---------------------------------------------------------------`);
+    const mapped = items.map((i) => ({
+      label: i.label,
+      url: this.resolveUrl(i.href),
+    }));
 
-    for (const item of footerItems) {
-      const label = item.label;
-      const url = this.resolveUrl(item.href ?? null);
+    this.logInfo(`Total footer items detected: ${mapped.length}`);
+    this.logDivider();
 
-      console.log(`\n• Footer item: "${label}"`);
-      console.log(`  URL: ${url || "(invalid)"}\n`);
+    return mapped;
+  }
 
-      if (!url) {
-        console.warn(`  ⚠ Skipping — no valid URL`);
+  async validateSingleFooterItem(label: string, url: string): Promise<void> {
+    this.logSection(`Footer Item — ${label}`);
+    this.logInfo(`URL: ${url}`);
+    this.logDivider();
+
+    const locator = this.page.locator(
+      `//li[@class="footer-list__item"] >> text=${label}`
+    );
+
+    await this.scrollIntoView(locator);
+
+    try {
+      await this.openAndValidateUrl(url, new RegExp(url, "i"));
+      this.logInfo("✓ Footer link OK");
+    } catch (err: any) {
+      this.logInfo(`❌ Footer link failed: ${err?.message || err}`);
+    }
+
+    this.logDivider();
+  }
+
+  async validateFooterItemsList(): Promise<void> {
+    const list = await this.getFooterItemsList();
+
+    for (const item of list) {
+      if (!item.url) {
+        this.logInfo(`⚠ Skipping invalid footer item: ${item.label}`);
         continue;
       }
 
-      // Localiza o item no footer
-      const locator = this.page.locator(
-        `//li[@class="footer-list__item"] >> text=${label}`
-      );
-
-      // Scroll seguro até o item
-      await this.scrollIntoView(locator);
-
-      // Valida redirecionamento abrindo em nova aba
-      try {
-        await this.openAndValidateUrl(url, new RegExp(url, "i"));
-        console.log(`  ✓ Footer link OK`);
-      } catch (err: any) {
-        console.error(`  ❌ Footer link failed: ${err?.message || err}`);
-      }
+      await this.validateSingleFooterItem(item.label, item.url);
     }
-
-    console.log(`\n==================== FOOTER — VALIDATION COMPLETE ==================\n`);
   }
 
-  // ============================
-  // CAROUSEL HOME VALIDATION
-  // ============================
-  async validateCarouselHome(): Promise<void> {
-    console.log(`\n==================== CAROUSEL HOME — VALIDATION START ====================`);
+  // Wrapper (compatibilidade com o nome antigo)
+  async validateFooterItems(): Promise<void> {
+    await this.validateFooterItemsList();
+  }
 
+  // ============================================================
+  // 🔵 CAROUSEL — SMALL, MODULAR FUNCTIONS
+  // ============================================================
+
+  async getCarouselSlideCount(): Promise<number> {
+    this.logSection("Carousel — Slide Count");
     const totalSlides = await this.carouselSlides.count();
-    console.log(`• Total slides detected: ${totalSlides}`);
+    this.logInfo(`Total slides detected: ${totalSlides}`);
+    this.logDivider();
+    return totalSlides;
+  }
+
+  async validateSingleCarouselSlide(index: number, total: number): Promise<void> {
+    this.logSection(`Carousel — Slide ${index + 1} of ${total}`);
+
+    await expect(this.carouselActiveSlide).toBeVisible();
+
+    const bannerCTA = this.carouselActiveSlide.locator("a");
+    await bannerCTA.waitFor({ state: "visible", timeout: 7000 });
+
+    const href = await bannerCTA.getAttribute("href");
+    this.logInfo(`CTA detected: ${href}`);
+
+    try {
+      await bannerCTA.click({ force: true });
+      await expect(this.page).toHaveURL(/ski-holidays/);
+      this.logInfo(`✓ CTA navigation OK → ${this.page.url()}`);
+    } catch {
+      this.logInfo(`❌ CTA navigation failed on slide ${index + 1}`);
+    }
+
+    await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+
+    if (index < total - 1) {
+      this.logInfo("Moving to next slide...");
+      await this.carouselNextButton.click({ force: true });
+      await this.waitForCarouselSlideChange(href!);
+    }
+
+    this.logDivider();
+  }
+
+  async validateCarousel(): Promise<void> {
+    const totalSlides = await this.getCarouselSlideCount();
 
     if (totalSlides === 0) {
       throw new Error("❌ No slides found in carousel");
     }
 
-    // Loop por todos os slides
     for (let i = 0; i < totalSlides; i++) {
-      console.log(`\n==================== SLIDE ${i + 1} / ${totalSlides} ====================`);
-
-      // Garante que o slide ativo está visível
-      await expect(this.carouselActiveSlide).toBeVisible();
-
-      // CTA do slide ativo
-      const bannerCTA = this.carouselActiveSlide.locator("a");
-      await bannerCTA.waitFor({ state: "visible", timeout: 7000 });
-
-      const href = await bannerCTA.getAttribute("href");
-      console.log(`• Banner CTA detected: ${href}`);
-
-      // Valida navegação
-      try {
-        await bannerCTA.click({ force: true });
-        await expect(this.page).toHaveURL(/ski-holidays/);
-        console.log(`  ✓ Banner CTA navigation OK → ${this.page.url()}`);
-      } catch {
-        console.error(`  ❌ Banner CTA failed on slide ${i + 1}`);
-      }
-
-      // Volta para a home
-      await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
-
-      // Avança para o próximo slide
-      if (i < totalSlides - 1) {
-        console.log(`• Moving to next slide...`);
-        await this.carouselNextButton.click({ force: true });
-        await this.waitForCarouselSlideChange(href!);
-      }
+      await this.validateSingleCarouselSlide(i, totalSlides);
     }
-
-    console.log(`\n==================== CAROUSEL HOME — VALIDATION COMPLETE ==================\n`);
   }
 
   // ============================
   // CONTACT SECTION VALIDATION
   // ============================
-  async validateContactSection() {
-    console.log(`\n==================== CONTACT SECTION — VALIDATION START ====================`);
+  // ============================================================
+  // 🔵 CONTACT SECTION — SMALL, MODULAR FUNCTIONS
+  // ============================================================
 
-    await expect(this.contactSection).toBeVisible();
-    console.log(`• Contact section is visible`);
-    console.log(`---------------------------------------------------------------`);
+  async validateContactPhoneBlock(): Promise<void> {
+    this.logSection("Contact Section — Phone Block");
 
-    const normalize = (t: string) => this.normalizeText(t);
+    const title = this.normalizeText(await this.contactPhoneTitle.innerText());
+    this.logInfo(`Phone title: ${title}`);
 
-    // ============================
-    // PHONE BLOCK
-    // ============================
-    console.log(`• Validating phone block...`);
-
-    const phoneTitle = normalize(await this.contactPhoneTitle.innerText());
-    if (!phoneTitle.includes("speak to a ski expert")) {
-      throw new Error(`❌ Phone title mismatch. Found: "${phoneTitle}"`);
+    if (!title.includes("speak to a ski expert")) {
+      throw new Error(`❌ Phone title mismatch. Found: "${title}"`);
     }
-    console.log(`  ✓ Phone title OK`);
 
-    console.log(`  • Clicking phone number to validate navigation...`);
+    this.logInfo("✓ Phone title OK");
+    this.logInfo("Clicking phone number to validate navigation...");
+
     await this.contactPhoneNumber.click();
     await expect(this.page).toHaveURL(/contact-us/);
-    console.log(`  ✓ Phone link navigation OK`);
+
+    this.logInfo("✓ Phone link navigation OK");
+    this.logDivider();
 
     await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
-    console.log(`---------------------------------------------------------------`);
-
-    // ============================
-    // EMAIL BLOCK
-    // ============================
-    console.log(`• Validating email block...`);
-
-    const emailTitle = normalize(await this.contactEmailTitle.innerText());
-    if (!emailTitle.includes("email about a ski holiday")) {
-      throw new Error(`❌ Email title mismatch. Found: "${emailTitle}"`);
-    }
-    console.log(`  ✓ Email title OK`);
-
-    const emailButtonText = normalize(await this.contactEmailButton.innerText());
-    if (!emailButtonText.includes("enquire")) {
-      throw new Error(`❌ Email button text mismatch. Found: "${emailButtonText}"`);
-    }
-    console.log(`  ✓ Email button text OK`);
-
-    console.log(`  • Clicking ENQUIRE button to validate navigation...`);
-    await this.contactEmailButton.click();
-    await expect(this.page).toHaveURL(/enquire/);
-    console.log(`  ✓ ENQUIRE button navigation OK`);
-
-    await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
-    console.log(`---------------------------------------------------------------`);
-
-    // ============================
-    // NEWSLETTER BLOCK
-    // ============================
-    console.log(`• Validating newsletter block...`);
-
-    const newsletterTitle = normalize(await this.contactNewsletterTitle.innerText());
-    if (!newsletterTitle.includes("subscribe to our newsletter")) {
-      throw new Error(`❌ Newsletter title mismatch. Found: "${newsletterTitle}"`);
-    }
-    console.log(`  ✓ Newsletter title OK`);
-
-    const newsletterButtonText = normalize(await this.contactNewsletterButton.innerText());
-    if (!newsletterButtonText.includes("sign up")) {
-      throw new Error(`❌ Newsletter button text mismatch. Found: "${newsletterButtonText}"`);
-    }
-    console.log(`  ✓ Newsletter button text OK`);
-
-    console.log(`  • Clicking SIGN UP button to validate navigation...`);
-    await this.contactNewsletterButton.click();
-    await expect(this.page).toHaveURL(/signup/);
-    console.log(`  ✓ SIGN UP button navigation OK`);
-
-    console.log(`\n==================== CONTACT SECTION — VALIDATION COMPLETE ==================\n`);
   }
 
-  // ============================
-  // CTA BOXES VALIDATION
-  // ============================
-  async validateCtaBoxes(): Promise<void> {
-    console.log(`\n==================== CTA BOXES — VALIDATION START ====================`);
+  async validateContactEmailBlock(): Promise<void> {
+    this.logSection("Contact Section — Email Block");
 
-    // Find the row that contains the first CTA title
+    const title = this.normalizeText(await this.contactEmailTitle.innerText());
+    this.logInfo(`Email title: ${title}`);
+
+    if (!title.includes("email about a ski holiday")) {
+      throw new Error(`❌ Email title mismatch. Found: "${title}"`);
+    }
+
+    this.logInfo("✓ Email title OK");
+
+    const buttonText = this.normalizeText(await this.contactEmailButton.innerText());
+    this.logInfo(`Email button text: ${buttonText}`);
+
+    if (!buttonText.includes("enquire")) {
+      throw new Error(`❌ Email button text mismatch. Found: "${buttonText}"`);
+    }
+
+    this.logInfo("✓ Email button text OK");
+    this.logInfo("Clicking ENQUIRE button to validate navigation...");
+
+    await this.contactEmailButton.click();
+    await expect(this.page).toHaveURL(/enquire/);
+
+    this.logInfo("✓ ENQUIRE button navigation OK");
+    this.logDivider();
+
+    await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+  }
+
+  async validateContactNewsletterBlock(): Promise<void> {
+    this.logSection("Contact Section — Newsletter Block");
+
+    const title = this.normalizeText(await this.contactNewsletterTitle.innerText());
+    this.logInfo(`Newsletter title: ${title}`);
+
+    if (!title.includes("subscribe to our newsletter")) {
+      throw new Error(`❌ Newsletter title mismatch. Found: "${title}"`);
+    }
+
+    this.logInfo("✓ Newsletter title OK");
+
+    const buttonText = this.normalizeText(await this.contactNewsletterButton.innerText());
+    this.logInfo(`Newsletter button text: ${buttonText}`);
+
+    if (!buttonText.includes("sign up")) {
+      throw new Error(`❌ Newsletter button text mismatch. Found: "${buttonText}"`);
+    }
+
+    this.logInfo("✓ Newsletter button text OK");
+    this.logInfo("Clicking SIGN UP button to validate navigation...");
+
+    await this.contactNewsletterButton.click();
+    await expect(this.page).toHaveURL(/signup/);
+
+    this.logInfo("✓ SIGN UP button navigation OK");
+    this.logDivider();
+  }
+
+  // Wrapper (compatibilidade com o nome antigo)
+  async validateContactSection(): Promise<void> {
+    await this.validateContactPhoneBlock();
+    await this.validateContactEmailBlock();
+    await this.validateContactNewsletterBlock();
+  }
+
+
+  // ============================================================
+  // 🔵 CTA BOXES — SMALL, MODULAR FUNCTIONS
+  // ============================================================
+
+  async getCtaBoxesList(): Promise<
+    { title: string; normalized: string; url: string | null }[]
+  > {
+    this.logSection("CTA Boxes — Fetch List");
+
     const ctaRow = this.page.locator(
       '//h2[contains(text(), "TALK TO")]/ancestor::div[@class="row"]'
     );
 
-    // Select the 3 CTA <a> elements inside that row (XPath only)
     const ctaBoxes = ctaRow.locator('//a');
     const ctaTitles = ctaRow.locator('//h2[@class="box-panel__title"]');
 
-    const totalCtas = await ctaBoxes.count();
-    console.log(`• Total CTA boxes detected: ${totalCtas}`);
-    console.log(`---------------------------------------------------------------`);
+    const total = await ctaBoxes.count();
+    this.logInfo(`Total CTA boxes detected: ${total}`);
+    this.logDivider();
 
-    const expectedPatterns = [
-      /enquire/i,
-      /about/i,
-      /signup/i
-    ];
+    const list: { title: string; normalized: string; url: string | null }[] = [];
 
-    for (let i = 0; i < totalCtas; i++) {
-      console.log(`\n==================== CTA ${i + 1} / ${totalCtas} ====================`);
-
-      const cta = ctaBoxes.nth(i);
+    for (let i = 0; i < total; i++) {
       const titleLocator = ctaTitles.nth(i);
-
-      await this.scrollIntoView(titleLocator);
-
       const rawTitle = await titleLocator.innerText();
-      const normalizedTitle = this.normalizeText(rawTitle);
+      const normalized = this.normalizeText(rawTitle);
 
-      console.log(`• CTA title: "${rawTitle}"`);
-      console.log(`• Normalized: "${normalizedTitle}"`);
-
-      const href = await cta.getAttribute("href");
+      const href = await ctaBoxes.nth(i).getAttribute("href");
       const url = this.resolveUrl(href);
 
-      console.log(`• CTA URL: ${url || "(invalid)"}`);
+      list.push({ title: rawTitle, normalized, url });
+    }
 
-      if (!url) {
-        console.warn(`  ⚠ Skipping CTA — invalid URL`);
+    return list;
+  }
+
+  async validateSingleCtaBox(
+    index: number,
+    total: number,
+    title: string,
+    normalized: string,
+    url: string,
+    expectedPattern: RegExp
+  ): Promise<void> {
+    this.logSection(`CTA Box — ${index + 1} of ${total}`);
+    this.logInfo(`Title: ${title}`);
+    this.logInfo(`Normalized: ${normalized}`);
+    this.logInfo(`URL: ${url}`);
+    this.logDivider();
+
+    try {
+      await this.openAndValidateUrl(url, expectedPattern);
+      this.logInfo("✓ CTA navigation OK");
+    } catch (err: any) {
+      this.logInfo(`❌ CTA navigation failed: ${err?.message || err}`);
+    }
+
+    await this.page.goto("https://www.igluski.com/", {
+      waitUntil: "domcontentloaded"
+    });
+
+    this.logDivider();
+  }
+
+  async validateCtaBoxesList(): Promise<void> {
+    const list = await this.getCtaBoxesList();
+
+    const expectedPatterns = [/enquire/i, /about/i, /signup/i];
+
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+
+      if (!item.url) {
+        this.logInfo(`⚠ Skipping CTA — invalid URL`);
         continue;
       }
 
-      const expectedPattern = expectedPatterns[i];
-
-      try {
-        await this.openAndValidateUrl(url, expectedPattern);
-        console.log(`  ✓ CTA navigation OK`);
-      } catch (err: any) {
-        console.error(`  ❌ CTA navigation failed: ${err?.message || err}`);
-      }
-
-      await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
-      await this.page.waitForLoadState("domcontentloaded");
+      await this.validateSingleCtaBox(
+        i,
+        list.length,
+        item.title,
+        item.normalized,
+        item.url,
+        expectedPatterns[i]
+      );
     }
-
-    console.log(`\n==================== CTA BOXES — VALIDATION COMPLETE ==================\n`);
   }
 
-  // ============================
-  // COUNTRY BANNERS VALIDATION
-  // ============================
-  async validateCountryBanners(): Promise<void> {
-    console.log(`\n==================== COUNTRY BANNERS — VALIDATION START ====================`);
+  // Wrapper (compatibilidade com o nome antigo)
+  async validateCtaBoxes(): Promise<void> {
+    await this.validateCtaBoxesList();
+  }
 
-    // Captura todos os banners de países
+  // ============================================================
+  // 🔵 COUNTRY BANNERS — SMALL, MODULAR FUNCTIONS
+  // ============================================================
+
+  async getCountryBannerList(): Promise<{ label: string; url: string | null }[]> {
+    this.logSection("Country Banners — Fetch List");
+
     const banners = await this.page.$$eval(
       '//div[contains(@class, "country-banner")]//a',
-      (anchors) =>
-        anchors.map((a) => ({
+      anchors =>
+        anchors.map(a => ({
           label: a.textContent?.trim() || "",
-          href: a.getAttribute("href") || null,
+          href: a.getAttribute("href") || null
         }))
     );
 
-    console.log(`• Total country banners detected: ${banners.length}`);
-    console.log(`---------------------------------------------------------------`);
+    const mapped = banners.map(b => ({
+      label: b.label,
+      url: this.resolveUrl(b.href)
+    }));
+
+    this.logInfo(`Total banners detected: ${mapped.length}`);
+    this.logDivider();
+
+    return mapped;
+  }
+
+  async validateSingleCountryBanner(label: string, url: string): Promise<void> {
+    this.logSection(`Country Banner — ${label}`);
+    this.logInfo(`URL: ${url}`);
+    this.logDivider();
+
+    const locator = this.page.locator(
+      `//div[contains(@class, "country-banner")]//a[contains(text(), "${label}")]`
+    );
+
+    await this.scrollIntoView(locator);
+
+    try {
+      await this.openAndValidateUrl(url, new RegExp(url, "i"));
+      this.logInfo("✓ Country banner navigation OK");
+    } catch (err: any) {
+      this.logInfo(`❌ Navigation failed: ${err?.message || err}`);
+    }
+
+    this.logDivider();
+  }
+
+  async validateCountryBannersList(): Promise<void> {
+    const banners = await this.getCountryBannerList();
 
     for (const banner of banners) {
-      const label = banner.label;
-      const url = this.resolveUrl(banner.href ?? null);
-
-      console.log(`\n• Country banner: "${label}"`);
-      console.log(`  URL: ${url || "(invalid)"}\n`);
-
-      if (!url) {
-        console.warn(`  ⚠ Skipping — invalid URL`);
+      if (!banner.url) {
+        this.logInfo(`⚠ Skipping invalid banner: ${banner.label}`);
         continue;
       }
 
-      // Localiza o banner real no DOM
-      const locator = this.page.locator(
-        `//div[contains(@class, "country-banner")]//a[contains(text(), "${label}")]`
-      );
-
-      // Scroll seguro até o banner
-      await this.scrollIntoView(locator);
-
-      // Valida redirecionamento abrindo em nova aba
-      try {
-        await this.openAndValidateUrl(url, new RegExp(url, "i"));
-        console.log(`  ✓ Country banner navigation OK`);
-      } catch (err: any) {
-        console.error(`  ❌ Country banner navigation failed: ${err?.message || err}`);
-      }
+      await this.validateSingleCountryBanner(banner.label, banner.url);
     }
+  }
 
-    console.log(`\n==================== COUNTRY BANNERS — VALIDATION COMPLETE ==================\n`);
+  // Wrapper (compatibilidade)
+  async validateCountryBanners(): Promise<void> {
+    await this.validateCountryBannersList();
   }
 
   // ============================
@@ -745,188 +1042,262 @@ async validateSubmenus(navPage: Page, menu: MenuSnapshot): Promise<void> {
   // ============================
   // CLICK MENU (WITH VALIDATION)
   // ============================
-  async clickMenu(menuLabel: string, subLabel?: string): Promise<void> {
-    console.log(`\n==================== CLICK MENU — START ====================`);
-    console.log(`• Menu: ${menuLabel}`);
-    if (subLabel) console.log(`• Submenu: ${subLabel}`);
-    console.log(`---------------------------------------------------------------`);
+  // ============================================================
+  // 🔵 CLICK MENU — SMALL, MODULAR FUNCTIONS
+  // ============================================================
 
-    // Localiza o menu principal
+  async clickMainMenu(menuLabel: string): Promise<void> {
+    this.logSection("Click Menu — Main");
+    this.logInfo(`Menu: ${menuLabel}`);
+    this.logDivider();
+
     const menu = this.page.locator(
       `li.menu-list__item a:has-text("${menuLabel}")`
     ).first();
 
     await menu.waitFor({ state: "visible", timeout: 7000 });
     await menu.click();
-    console.log(`✓ Clicked main menu: ${menuLabel}`);
 
-    // Se NÃO houver submenu → valida título da página
-    if (!subLabel) {
-      await this.validateTitleContains(this.page, menuLabel);
-      console.log(`✓ Page title validated for menu: ${menuLabel}`);
-      console.log(`==================== CLICK MENU — COMPLETE ====================\n`);
-      return;
-    }
+    this.logInfo(`✓ Clicked main menu: ${menuLabel}`);
 
-    // Localiza submenu
+    await this.validateTitleContains(this.page, menuLabel);
+    this.logInfo(`✓ Page title validated for menu: ${menuLabel}`);
+
+    this.logDivider();
+  }
+
+  async clickSubmenu(menuLabel: string, subLabel: string): Promise<void> {
+    this.logSection("Click Menu — Submenu");
+    this.logInfo(`Menu: ${menuLabel}`);
+    this.logInfo(`Submenu: ${subLabel}`);
+    this.logDivider();
+
+    // Hover main menu
+    const menu = this.page.locator(
+      `li.menu-list__item a:has-text("${menuLabel}")`
+    ).first();
+
+    await menu.waitFor({ state: "visible", timeout: 7000 });
+    await menu.hover();
+
+    // Click submenu
     const submenu = this.page.locator(
       `.submenu-list__block-item a:has-text("${subLabel}")`
     ).first();
 
     await submenu.waitFor({ state: "visible", timeout: 7000 });
     await submenu.click();
-    console.log(`✓ Clicked submenu: ${subLabel}`);
 
-    // Valida título da página
+    this.logInfo(`✓ Clicked submenu: ${subLabel}`);
+
     await this.validateTitleContains(this.page, subLabel);
-    console.log(`✓ Page title validated for submenu: ${subLabel}`);
+    this.logInfo(`✓ Page title validated for submenu: ${subLabel}`);
 
-    console.log(`==================== CLICK MENU — COMPLETE ====================\n`);
+    this.logDivider();
   }
 
-  // ============================
-  // MULTIPLE TITLES VALIDATION
-  // ============================
-  async validateMultipleTitles(expectedTitles: string[]): Promise<void> {
-    console.log(`\n==================== MULTIPLE TITLES — VALIDATION START ====================`);
-
-    for (const expected of expectedTitles) {
-      const locator = this.page.locator(`text=${expected}`).first();
-
-      console.log(`• Validating title: "${expected}"`);
-
-      try {
-        await expect(locator).toBeVisible({ timeout: 7000 });
-        console.log(`  ✓ Title found: "${expected}"`);
-      } catch {
-        throw new Error(`❌ Title not found on page: "${expected}"`);
-      }
+  // Wrapper (igual ao clickMenu do TC2)
+  async clickMenu(menuLabel: string, subLabel?: string): Promise<void> {
+    if (!subLabel) {
+      await this.clickMainMenu(menuLabel);
+      return;
     }
 
-    console.log(`==================== MULTIPLE TITLES — VALIDATION COMPLETE ==================\n`);
+    await this.clickSubmenu(menuLabel, subLabel);
+  }
+
+  // ============================================================
+  // 🔵 HOMEPAGE TITLES — SMALL, MODULAR FUNCTIONS
+  // ============================================================
+
+  async validateSingleTitle(expected: string): Promise<void> {
+    this.logSection("Homepage Title — Validation");
+    this.logInfo(`Validating title: "${expected}"`);
+    this.logDivider();
+
+    const locator = this.page.locator(`text=${expected}`).first();
+
+    await expect(locator).toBeVisible({ timeout: 7000 });
+
+    this.logInfo(`✓ Title found: "${expected}"`);
+    this.logDivider();
+  }
+
+  async validateHomepageTitles(expectedTitles: string[]): Promise<void> {
+    for (const title of expectedTitles) {
+      await this.validateSingleTitle(title);
+    }
+  }
+
+  // Wrapper (compatibilidade com o nome antigo)
+  async validateMultipleTitles(expectedTitles: string[]): Promise<void> {
+    await this.validateHomepageTitles(expectedTitles);
   }
 
   // ============================
   // CAROUSEL CTA VALIDATION
   // ============================
-  async validateCarouselCTA(): Promise<void> {
-    console.log(`\n==================== CAROUSEL CTA — VALIDATION START ====================`);
+  // ============================================================
+  // 🔵 CAROUSEL CTA — SMALL, MODULAR FUNCTIONS
+  // ============================================================
 
-    const activeSlide = this.carouselActiveSlide; // 🔥 Fix
+  async validateCarouselCtaVisibility(): Promise<void> {
+    this.logSection("Carousel CTA — Visibility");
+
+    const activeSlide = this.carouselActiveSlide;
 
     await expect(activeSlide).toBeVisible({ timeout: 7000 });
 
-    const cta = activeSlide.locator('a').first();
+    const cta = activeSlide.locator("a").first();
     await expect(cta).toBeVisible({ timeout: 7000 });
 
-    const href = await cta.getAttribute('href');
-    if (!href) throw new Error("❌ CTA button has no href attribute");
+    const href = await cta.getAttribute("href");
+    this.logInfo(`CTA href: ${href}`);
 
-    console.log(`• CTA href: ${href}`);
+    if (!href) {
+      throw new Error("❌ CTA button has no href attribute");
+    }
+
+    this.logDivider();
+  }
+
+  async validateCarouselCtaNavigation(): Promise<void> {
+    this.logSection("Carousel CTA — Navigation");
+
+    const activeSlide = this.carouselActiveSlide;
+    const cta = activeSlide.locator("a").first();
+
+    const href = await cta.getAttribute("href");
+    if (!href) throw new Error("❌ CTA button has no href attribute");
 
     await cta.click({ force: true });
 
     await expect(this.page).toHaveURL(new RegExp(href, "i"));
-    console.log(`✓ CTA navigation OK → ${this.page.url()}`);
+    this.logInfo(`✓ CTA navigation OK → ${this.page.url()}`);
 
-    console.log(`==================== CAROUSEL CTA — VALIDATION COMPLETE ==================\n`);
+    this.logDivider();
+  }
+
+  // Wrapper (compatibilidade com o nome antigo)
+  async validateCarouselCTA(): Promise<void> {
+    await this.validateCarouselCtaVisibility();
+    await this.validateCarouselCtaNavigation();
   }
 
 
-  async validateSpeakToExpertsLinks(): Promise<void> {
-    console.log(`\n==================== INLINE LINKS — SECTION: SPEAK TO THE SKI EXPERTS ====================`);
+  // ============================================================
+  // 🔵 INLINE LINKS — SPEAK TO EXPERTS
+  // ============================================================
 
-    // 1. Locate <h2> using the professional locator
+  async getSpeakToExpertsLinks(): Promise<{ text: string; url: string }[]> {
+    this.logSection("Inline Links — Speak to Experts");
+
     const title = this.sectionTitle("Speak to the ski experts");
     await title.waitFor({ state: "visible" });
-    console.log(`• Section title found: "Speak to the ski experts"`);
 
-    // 2. Section container
+    this.logInfo(`Section title found: "Speak to the ski experts"`);
+
     const section = this.sectionContainer(title);
-
-    // 3. All <a> inside the section
     const links = this.sectionLinks(section);
 
-    const totalLinks = await links.count();
-    console.log(`• Total links detected: ${totalLinks}`);
-    console.log(`---------------------------------------------------------------`);
+    const total = await links.count();
+    this.logInfo(`Total links detected: ${total}`);
+    this.logDivider();
 
-    // 4. Loop through links
-    for (let i = 0; i < totalLinks; i++) {
-      console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
+    const list: { text: string; url: string }[] = [];
 
+    for (let i = 0; i < total; i++) {
       const link = links.nth(i);
-      const linkText = (await link.innerText()).trim();
+      const text = (await link.innerText()).trim();
       const href = await link.getAttribute("href");
       const url = this.resolveUrl(href);
 
-      console.log(`• Link text: "${linkText}"`);
-      console.log(`• URL: ${url}`);
+      if (!url) continue;
 
-      // 5. Open in new tab
-      const context = this.page.context();
-      const newPage = await context.newPage();
-
-      await newPage.goto(url!, { waitUntil: "domcontentloaded" });
-
-      // 6. Fuzzy title validation
-      await this.validatePageTitleFuzzy(newPage, linkText);
-
-      await newPage.close();
+      list.push({ text, url });
     }
 
-    console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
+    return list;
   }
 
-  async validateFindYourSkiingHolidayLinks(): Promise<void> {
-    console.log(`\n==================== INLINE LINKS — SECTION: FIND YOUR SKIING HOLIDAY ====================`);
+  async validateSingleInlineLink(text: string, url: string): Promise<void> {
+    this.logSection(`Inline Link — ${text}`);
+    this.logInfo(`URL: ${url}`);
+    this.logDivider();
+
+    const newPage = await this.page.context().newPage();
+    await newPage.goto(url, { waitUntil: "domcontentloaded" });
+
+    await this.validatePageTitleFuzzy(newPage, text);
+
+    await newPage.close();
+    this.logDivider();
+  }
+
+  async validateSpeakToExpertsLinksList(): Promise<void> {
+    const list = await this.getSpeakToExpertsLinks();
+
+    for (const item of list) {
+      await this.validateSingleInlineLink(item.text, item.url);
+    }
+  }
+
+  // Wrapper (compatibilidade)
+  async validateSpeakToExpertsLinks(): Promise<void> {
+    await this.validateSpeakToExpertsLinksList();
+  }
+
+  // ============================================================
+  // 🔵 INLINE LINKS — FIND YOUR SKIING HOLIDAY
+  // ============================================================
+
+  async getFindYourSkiingHolidayLinks(): Promise<{ text: string; url: string }[]> {
+    this.logSection("Inline Links — Find Your Skiing Holiday");
 
     const titleText = "Find Your Skiing Holiday";
 
-    // 1. Real XPath for the title
     const titleXPath = `//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${titleText.toLowerCase()}")]`;
 
-    // 2. Title locator
     const title = this.page.locator(titleXPath);
     await title.waitFor({ state: "visible" });
-    console.log(`• Section title found: "${titleText}"`);
 
-    // 3. Section container
-    const section = this.sectionContainer(title);
+    this.logInfo(`Section title found: "${titleText}"`);
 
-    // 4. Links before the first <div>
     const links = this.page.locator(
       `${titleXPath}/following-sibling::a[following-sibling::div]`
     );
 
-    const totalLinks = await links.count();
-    console.log(`• Total links detected: ${totalLinks}`);
-    console.log(`---------------------------------------------------------------`);
+    const total = await links.count();
+    this.logInfo(`Total links detected: ${total}`);
+    this.logDivider();
 
-    for (let i = 0; i < totalLinks; i++) {
-      console.log(`\n==================== LINK ${i + 1} / ${totalLinks} ====================`);
+    const list: { text: string; url: string }[] = [];
 
+    for (let i = 0; i < total; i++) {
       const link = links.nth(i);
-      const linkText = (await link.innerText()).trim();
+      const text = (await link.innerText()).trim();
       const href = await link.getAttribute("href");
       const url = this.resolveUrl(href);
 
-      console.log(`• Link text: "${linkText}"`);
-      console.log(`• URL: ${url}`);
+      if (!url) continue;
 
-      // Open in new tab
-      const context = this.page.context();
-      const newPage = await context.newPage();
-
-      await newPage.goto(url!, { waitUntil: "domcontentloaded" });
-
-      // Fuzzy validation
-      await this.validatePageTitleFuzzy(newPage, linkText);
-
-      await newPage.close();
+      list.push({ text, url });
     }
 
-    console.log(`\n==================== INLINE LINKS — VALIDATION COMPLETE ==================\n`);
+    return list;
+  }
+
+  async validateFindYourSkiingHolidayLinksList(): Promise<void> {
+    const list = await this.getFindYourSkiingHolidayLinks();
+
+    for (const item of list) {
+      await this.validateSingleInlineLink(item.text, item.url);
+    }
+  }
+
+  // Wrapper (compatibilidade)
+  async validateFindYourSkiingHolidayLinks(): Promise<void> {
+    await this.validateFindYourSkiingHolidayLinksList();
   }
 
   /**
@@ -999,32 +1370,68 @@ async validateSubmenus(navPage: Page, menu: MenuSnapshot): Promise<void> {
    * - no horizontal overflow
    * - images responsive
    */
-  async validateResponsiveness(viewportWidth: number): Promise<void> {
-    await this.page.setViewportSize({ width: viewportWidth, height: 900 });
+  // ============================================================
+  // 🔵 RESPONSIVENESS — SMALL, MODULAR FUNCTIONS
+  // ============================================================
 
-    console.log(`\n===== TC26: Validating responsiveness at ${viewportWidth}px =====\n`);
+  async setViewport(width: number): Promise<void> {
+    this.logSection(`Responsiveness — Set Viewport`);
+    this.logInfo(`Setting viewport to ${width}px`);
+    await this.page.setViewportSize({ width, height: 900 });
+    this.logDivider();
+  }
 
-    // 1) Hamburger menu must be visible
-    const hamburgerVisible = await this.isHamburgerMenuVisible();
-    if (!hamburgerVisible) {
-      throw new Error(`TC26 FAILED: Hamburger menu NOT visible at ${viewportWidth}px`);
+  async validateHamburgerMenu(width: number): Promise<void> {
+    this.logSection(`Responsiveness — Hamburger Menu`);
+    const visible = await this.isHamburgerMenuVisible();
+
+    if (!visible) {
+      throw new Error(`TC26 FAILED: Hamburger menu NOT visible at ${width}px`);
     }
 
-    // 2) No horizontal overflow allowed
+    this.logInfo(`✓ Hamburger menu visible at ${width}px`);
+    this.logDivider();
+  }
+
+  async validateNoHorizontalOverflow(width: number): Promise<void> {
+    this.logSection(`Responsiveness — Horizontal Overflow`);
     const overflow = await this.hasHorizontalOverflow();
+
     if (overflow) {
-      throw new Error(`TC26 FAILED: Horizontal overflow detected at ${viewportWidth}px`);
+      throw new Error(`TC26 FAILED: Horizontal overflow detected at ${width}px`);
     }
 
-    // 3) Images must be responsive
-    const imagesResult = await this.validateImagesResponsive(viewportWidth);
-    if (!imagesResult.valid) {
+    this.logInfo(`✓ No horizontal overflow at ${width}px`);
+    this.logDivider();
+  }
+
+  async validateResponsiveImages(width: number): Promise<void> {
+    this.logSection(`Responsiveness — Images`);
+    const result = await this.validateImagesResponsive(width);
+
+    if (!result.valid) {
       throw new Error(
-        `TC26 FAILED: Images not responsive at ${viewportWidth}px. Invalid images: ${imagesResult.invalidImages}`
+        `TC26 FAILED: Images not responsive at ${width}px. Invalid images: ${result.invalidImages}`
       );
     }
 
-    console.log(`✓ TC26 PASSED at ${viewportWidth}px`);
+    this.logInfo(`✓ All images responsive at ${width}px`);
+    this.logDivider();
+  }
+
+  async validateResponsivenessAtWidth(width: number): Promise<void> {
+    await this.setViewport(width);
+    await this.validateHamburgerMenu(width);
+    await this.validateNoHorizontalOverflow(width);
+    await this.validateResponsiveImages(width);
+
+    this.logInfo(`✓ TC26 PASSED at ${width}px`);
+    this.logDivider();
+  }
+
+  // Wrapper (compatibilidade com o nome antigo)
+  async validateResponsiveness(width: number): Promise<void> {
+    await this.validateResponsivenessAtWidth(width);
   }
 
   // ============================
