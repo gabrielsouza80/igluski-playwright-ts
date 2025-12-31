@@ -27,9 +27,8 @@ export class SearchPage extends HelperBase {
     const locator = this.page.locator('.search-results');
     // Wait until at least 1 result can appear
     try {
-      await locator.first().waitFor({ timeout: 5000 });
+      await locator.first().waitFor();
     } catch {
-      // If no results appear in 5s, consider that there are no results
       return false;
     }
 
@@ -50,8 +49,8 @@ export class SearchPage extends HelperBase {
   // ============================
   async searchForCountry(text: string) {
     try {
-      await this.countriesSearchInput.fill(text, { timeout: 5000 });
-      await this.page.waitForTimeout(500);
+      await this.countriesSearchInput.fill(text);
+      // await this.page.waitForTimeout(500);
     } catch {
       console.warn('searchForCountry: fill failed, clicking search anyway');
     }
@@ -64,8 +63,8 @@ export class SearchPage extends HelperBase {
   }
 
   async searchForProperty(text: string) {
-    await this.propertiesSearchInput.fill(text, { timeout: 5000 });
-    await this.page.waitForTimeout(500);
+    await this.propertiesSearchInput.fill(text);
+    // await this.page.waitForTimeout(500);
     await this.propertiesSearchInput.press('Enter');
   }
 

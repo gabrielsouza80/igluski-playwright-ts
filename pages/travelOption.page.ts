@@ -12,7 +12,6 @@ export class TravelOptionsPage   extends HelperBase {
   readonly continueToExtrasBtn: Locator = this.page.locator('.chalet-details .sob-step-navigation.hidden-sm button[data-button-type="goToExtrasBtn"]');
 
   async selectDefaultFlight(): Promise<void> {
-    // Flight Option (Default) já vem selecionada
     const selectBtn = this.defaultFlightOption.locator('..').locator('button:has-text("Select")').first();
     await selectBtn.click({ force: true });
   }
@@ -23,7 +22,6 @@ export class TravelOptionsPage   extends HelperBase {
   }
 
   async continueToExtras(){
-  // await this.page.waitForTimeout(8000);
     await this.continueToExtrasBtn.click();
   }
   
