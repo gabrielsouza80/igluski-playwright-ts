@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="16" failures="1" skipped="0" errors="0" time="156.4917790000001">
-<testsuite name="home.spec.ts" timestamp="2025-12-31T13:42:47.727Z" hostname="chromium" tests="16" failures="1" skipped="0" time="547.917" errors="0">
-<testcase name="Home Page › TC1 — Validate Logo Navigation" classname="home.spec.ts" time="12.859">
+<testsuites id="" name="" tests="16" failures="1" skipped="0" errors="0" time="194.720419">
+<testsuite name="home.spec.ts" timestamp="2026-01-02T14:41:11.167Z" hostname="chromium" tests="16" failures="1" skipped="0" time="579.405" errors="0">
+<testcase name="Home Page › TC1 — Validate Logo Navigation" classname="home.spec.ts" time="13.78">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -35,7 +35,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC2 — Header Navigation + Submenu Validation" classname="home.spec.ts" time="147.876">
+<testcase name="Home Page › TC2 — Header Navigation + Submenu Validation" classname="home.spec.ts" time="178.694">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -50,6 +50,13 @@
 
 ===== TEST STARTED: TC2 — Header Navigation + Submenu Validation =====
 
+
+==================== HEADER NAVIGATION — SNAPSHOT ====================
+• Captured snapshot for 7 menus
+---------------------------------------------------------------
+
+==================== HEADER NAVIGATION — VALIDATE MAIN MENUS ====================
+• ✓ Navigation page created
 
 === MAIN MENU: Search ===
 URL: /ski-holidays
@@ -78,6 +85,9 @@ PAGE TITLE:
 === MAIN MENU: Enquire ===
 URL: /enquire
 PAGE TITLE: Enquire
+---------------------------------------------------------------
+
+==================== HEADER NAVIGATION — VALIDATE SUBMENUS ====================
 
 --- SUBMENU: Last minute ski holidays ---
 URL: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
@@ -526,11 +536,13 @@ PAGE TITLE: New lifts, UK dry slope revival and climate change pact | Iglu Ski
 --- SUBMENU: See more ski news ---
 URL: /news
 PAGE TITLE: Ski News | Iglu Ski
+---------------------------------------------------------------
+• ✓ Navigation page closed
 ✓ TC2 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Click on the menu and optionally on the submenu" classname="home.spec.ts" time="15.432">
+<testcase name="Home Page › Click on the menu and optionally on the submenu" classname="home.spec.ts" time="17.4">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -563,7 +575,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC3 — Validate Contact Information in the Header" classname="home.spec.ts" time="13.851">
+<testcase name="Home Page › TC3 — Validate Contact Information in the Header" classname="home.spec.ts" time="18.569">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -584,7 +596,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ---------------------------------------------------------------
 
 ==================== HEADER — CONTACT US TEXT VALIDATION ====================
-• Contact Us text: Phone 9:00 AM - 5:30 PM or book online
+• Contact Us text: Phone 9:00 AM - 8:00 PM or book online
 ---------------------------------------------------------------
 
 ==================== HEADER — CONTACT US REDIRECT VALIDATION ====================
@@ -602,7 +614,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC4 — Validate &quot;Recently Viewed&quot; Button" classname="home.spec.ts" time="13.574">
+<testcase name="Home Page › TC4 — Validate &quot;Recently Viewed&quot; Button" classname="home.spec.ts" time="13.426">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -618,6 +630,10 @@ PAGE TITLE: Ski News | Iglu Ski
 ===== TEST STARTED: TC4 — Validate "Recently Viewed" Button =====
 
 
+==================== RECENTLY VIEWED — BUTTON TEXT VALIDATION ====================
+• ✓ Recently Viewed button text is correct
+---------------------------------------------------------------
+
 ==================== RECENTLY VIEWED — CLICK ====================
 • ✓ Recently Viewed button clicked
 ---------------------------------------------------------------
@@ -630,7 +646,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC5 — Validate Access to the Customer Portal" classname="home.spec.ts" time="11.05">
+<testcase name="Home Page › TC5 — Validate Access to the Customer Portal" classname="home.spec.ts" time="18.028">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -646,18 +662,27 @@ PAGE TITLE: Ski News | Iglu Ski
 ===== TEST STARTED: TC5 — Validate Access to the Customer Portal =====
 
 
+==================== CUSTOMER PORTAL — BUTTON TEXT VALIDATION ====================
+• ✓ Customer Portal button text is correct
+---------------------------------------------------------------
+
 ==================== CUSTOMER PORTAL — CLICK ====================
 • ✓ Customer Portal button clicked
 ---------------------------------------------------------------
 
-==================== CUSTOMER PORTAL — REDIRECT VALIDATION ====================
-• ✓ Customer Portal content loaded successfully (AJAX)
+==================== CUSTOMER PORTAL — AJAX WAIT ====================
+• ✓ AJAX content loaded successfully
+---------------------------------------------------------------
+
+==================== CUSTOMER PORTAL — FIELD VALIDATION ====================
+• ✓ Surname field is visible
+• ✓ Booking ID field is visible
 ---------------------------------------------------------------
 ✓ TC5 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Ratings and Reviews in the Header" classname="home.spec.ts" time="22.728">
+<testcase name="Home Page › TC6 — Validate Ratings &amp; Reviews in the Header" classname="home.spec.ts" time="19.927">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -670,8 +695,12 @@ PAGE TITLE: Ski News | Iglu Ski
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: Validate Ratings and Reviews in the Header =====
+===== TEST STARTED: TC6 — Validate Ratings & Reviews in the Header =====
 
+
+==================== RATINGS & REVIEWS — TEXT VALIDATION ====================
+• ✓ Ratings & Reviews link text is correct
+---------------------------------------------------------------
 
 ==================== RATINGS & REVIEWS — CLICK ====================
 • ✓ Ratings & Reviews link clicked
@@ -688,10 +717,15 @@ PAGE TITLE: Ski News | Iglu Ski
 
 • ✓ Ratings & Reviews redirects correctly
 ---------------------------------------------------------------
+
+==================== RATINGS & REVIEWS — PAGE TITLE VALIDATION ====================
+• ✓ Reviews page title is correct
+---------------------------------------------------------------
+✓ TC6 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Main Titles on the Homepage" classname="home.spec.ts" time="11.933">
+<testcase name="Home Page › TC15 — Validate Main Titles on the Homepage" classname="home.spec.ts" time="12.484">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -704,7 +738,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: Validate Main Titles on the Homepage =====
+===== TEST STARTED: TC15 — Validate Main Titles on the Homepage =====
 
 
 ==================== HOMEPAGE TITLE — VALIDATION ====================
@@ -724,10 +758,11 @@ PAGE TITLE: Ski News | Iglu Ski
 ---------------------------------------------------------------
 • ✓ Title found: "Find Your Skiing Holiday"
 ---------------------------------------------------------------
+✓ TC15 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Carousel of Promotions and Country Banners" classname="home.spec.ts" time="16.351">
+<testcase name="Home Page › TC16 — Validate Carousel of Promotions and Country Banners" classname="home.spec.ts" time="19.457">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -740,31 +775,38 @@ PAGE TITLE: Ski News | Iglu Ski
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: Validate Carousel of Promotions and Country Banners =====
+===== TEST STARTED: TC16 — Validate Carousel of Promotions and Country Banners =====
 
 
 ==================== CAROUSEL — SLIDE COUNT ====================
-• Total slides detected: 2
+• Total slides detected: 3
 ---------------------------------------------------------------
 
-==================== CAROUSEL — SLIDE 1 OF 2 ====================
+==================== CAROUSEL — SLIDE 1 OF 3 ====================
+• CTA detected: https://www.igluski.com/ski-holidays/new-year-sale
+• ✓ CTA navigation OK → https://www.igluski.com/ski-holidays/new-year-sale
+• Moving to next slide...
+---------------------------------------------------------------
+
+==================== CAROUSEL — SLIDE 2 OF 3 ====================
 • CTA detected: https://www.igluski.com/ski-holidays
 • ✓ CTA navigation OK → https://www.igluski.com/ski-holidays
 • Moving to next slide...
 ---------------------------------------------------------------
 
-==================== CAROUSEL — SLIDE 2 OF 2 ====================
-• CTA detected: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
-• ✓ CTA navigation OK → https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+==================== CAROUSEL — SLIDE 3 OF 3 ====================
+• CTA detected: https://www.igluski.com/ski-holidays/new-year-sale
+• ✓ CTA navigation OK → https://www.igluski.com/ski-holidays/new-year-sale
 ---------------------------------------------------------------
 
 ==================== COUNTRY BANNERS — FETCH LIST ====================
 • Total banners detected: 0
 ---------------------------------------------------------------
+✓ TC16 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="19.898">
+<testcase name="Home Page › TC17 — Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="22.638">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -777,7 +819,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: Validate CTA Boxes (Call To Action) =====
+===== TEST STARTED: TC17 — Validate CTA Boxes (Call To Action) =====
 
 
 ==================== CTA BOXES — FETCH LIST ====================
@@ -813,12 +855,13 @@ IGLU SKI
 ---------------------------------------------------------------
 • ✓ CTA navigation OK
 ---------------------------------------------------------------
+✓ TC17 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="90.388">
-<failure message="home.spec.ts:275:7 Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
-<![CDATA[  [chromium] › home.spec.ts:275:7 › Home Page › Validate Contact Section (Phone, Email, Newsletter) › Validate phone block 
+<testcase name="Home Page › TC18 — Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="90.288">
+<failure message="home.spec.ts:403:7 TC18 — Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
+<![CDATA[  [chromium] › home.spec.ts:403:7 › Home Page › TC18 — Validate Contact Section (Phone, Email, Newsletter) › Validate phone block 
 
     Test timeout of 90000ms exceeded.
 
@@ -827,24 +870,24 @@ IGLU SKI
       - waiting for locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]')
 
 
-       at ..\pages\home.page.ts:718
+       at ..\pages\home.page.ts:862
 
-      716 |     this.logInfo("Clicking phone number to validate navigation...");
-      717 |
-    > 718 |     await this.contactPhoneNumber.click();
+      860 |     this.logInfo("Clicking phone number to validate navigation...");
+      861 |
+    > 862 |     await this.contactPhoneNumber.click();
           |                                   ^
-      719 |     await expect(this.page).toHaveURL(/contact-us/);
-      720 |
-      721 |     this.logInfo("✓ Phone link navigation OK");
-        at HomePage.validateContactPhoneBlock (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:718:35)
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:282:7
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:281:5
+      863 |     await expect(this.page).toHaveURL(/contact-us/);
+      864 |
+      865 |     this.logInfo("✓ Phone link navigation OK");
+        at HomePage.validateContactPhoneBlock (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:862:35)
+        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:413:7
+        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:412:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\home-Home-Page-Validate-Co-c4438-ion-Phone-Email-Newsletter--chromium\test-failed-1.png
+    ..\test-results\home-Home-Page-TC18-—-Vali-267d1-ion-Phone-Email-Newsletter--chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\home-Home-Page-Validate-Co-c4438-ion-Phone-Email-Newsletter--chromium\error-context.md
+    Error Context: ..\test-results\home-Home-Page-TC18-—-Vali-267d1-ion-Phone-Email-Newsletter--chromium\error-context.md
 ]]>
 </failure>
 <system-out>
@@ -859,7 +902,7 @@ IGLU SKI
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: Validate Contact Section (Phone, Email, Newsletter) =====
+===== TEST STARTED: TC18 — Validate Contact Section (Phone, Email, Newsletter) =====
 
 
 ==================== CONTACT SECTION — PHONE BLOCK ====================
@@ -867,13 +910,13 @@ IGLU SKI
 • ✓ Phone title OK
 • Clicking phone number to validate navigation...
 
-[[ATTACHMENT|test-results\home-Home-Page-Validate-Co-c4438-ion-Phone-Email-Newsletter--chromium\test-failed-1.png]]
+[[ATTACHMENT|test-results\home-Home-Page-TC18-—-Vali-267d1-ion-Phone-Email-Newsletter--chromium\test-failed-1.png]]
 
-[[ATTACHMENT|test-results\home-Home-Page-Validate-Co-c4438-ion-Phone-Email-Newsletter--chromium\error-context.md]]
+[[ATTACHMENT|test-results\home-Home-Page-TC18-—-Vali-267d1-ion-Phone-Email-Newsletter--chromium\error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Footer Links" classname="home.spec.ts" time="80.552">
+<testcase name="Home Page › TC20 — Validate Footer Links" classname="home.spec.ts" time="76.038">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -886,266 +929,310 @@ IGLU SKI
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: Validate Footer Links =====
+===== TEST STARTED: TC20 — Validate Footer Links =====
 
 
 ==================== FOOTER — FETCH ITEMS ====================
 • Total footer items detected: 41
 ---------------------------------------------------------------
+✓ Found 41 footer items
 
-==================== FOOTER — FETCH ITEMS ====================
-• Total footer items detected: 41
----------------------------------------------------------------
+==================== FOOTER NAVIGATION — VALIDATE ALL LINKS ====================
+• ✓ Footer navigation page created
 
-==================== FOOTER ITEM — FRANCE ====================
+==================== FOOTER NAVIGATION — FRANCE ====================
 • URL: https://www.igluski.com/ski-resorts/france
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: France Ski Holidays 2026/2027 | Best Deals and Resort Advice
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — AUSTRIA ====================
+==================== FOOTER NAVIGATION — AUSTRIA ====================
 • URL: https://www.igluski.com/ski-resorts/austria
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Austria Ski Holidays 2026/2027 | Best Deals and Resort Advice
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — ITALY ====================
+==================== FOOTER NAVIGATION — ITALY ====================
 • URL: https://www.igluski.com/ski-resorts/italy
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Italy Ski Holidays | Best Deals and Ski Resort Advice
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — ANDORRA ====================
+==================== FOOTER NAVIGATION — ANDORRA ====================
 • URL: https://www.igluski.com/ski-resorts/andorra
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Andorra Ski Holidays and Resort Advice | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — SWITZERLAND ====================
+==================== FOOTER NAVIGATION — SWITZERLAND ====================
 • URL: https://www.igluski.com/ski-resorts/switzerland
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Skiing in Switzerland | Swiss ski resorts | Ski Switzerland | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — BULGARIA ====================
+==================== FOOTER NAVIGATION — BULGARIA ====================
 • URL: https://www.igluski.com/ski-resorts/bulgaria
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Bulgaria Ski Holidays 2026/2027 | Best Deals and Resort Advice
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — VAL D'ISÈRE ====================
+==================== FOOTER NAVIGATION — VAL D'ISÈRE ====================
 • URL: https://www.igluski.com/ski-resorts/france/val-d-isere
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Val d'Isère Ski Holidays | Best Val d'Isère ski deals
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — ST ANTON ====================
+==================== FOOTER NAVIGATION — ST ANTON ====================
 • URL: https://www.igluski.com/ski-resorts/austria/st-anton
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: St Anton Ski Holidays | Best St Anton Ski Deals
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — CERVINIA ====================
+==================== FOOTER NAVIGATION — CERVINIA ====================
 • URL: https://www.igluski.com/ski-resorts/italy/cervinia
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Cervinia Ski Holidays | Discover skiing in Cervinia
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — VAL THORENS ====================
+==================== FOOTER NAVIGATION — VAL THORENS ====================
 • URL: https://www.igluski.com/ski-resorts/france/val-thorens
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Val Thorens ski holidays | The best deals in one place
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — TIGNES ====================
+==================== FOOTER NAVIGATION — TIGNES ====================
 • URL: https://www.igluski.com/ski-resorts/france/tignes
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Tignes Ski Holidays | Best Tignes Deals
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — MÉRIBEL ====================
+==================== FOOTER NAVIGATION — MÉRIBEL ====================
 • URL: https://www.igluski.com/ski-resorts/france/meribel
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Méribel Ski Holidays | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — MAYRHOFEN ====================
+==================== FOOTER NAVIGATION — MAYRHOFEN ====================
 • URL: https://www.igluski.com/ski-resorts/austria/mayrhofen
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Mayrhofen Ski | Skiing in Mayrhofen | Austria | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — SAUZE D'OULX ====================
+==================== FOOTER NAVIGATION — SAUZE D'OULX ====================
 • URL: https://www.igluski.com/ski-resorts/italy/sauze-d-oulx
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Sauze d'Oulx Skiing | Ski holiday Sauze d'Oulx | Italy | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — LES DEUX ALPES ====================
+==================== FOOTER NAVIGATION — LES DEUX ALPES ====================
 • URL: https://www.igluski.com/ski-resorts/france/les-deux-alpes
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Les Deux Alpes Skiing holidays | Ski holiday Les Deux Alpes | France | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — ISCHGL ====================
+==================== FOOTER NAVIGATION — ISCHGL ====================
 • URL: https://www.igluski.com/ski-resorts/austria/ischgl
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Ischgl Ski | Skiing holiday Ischgl | Austria | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — COURCHEVEL ====================
+==================== FOOTER NAVIGATION — COURCHEVEL ====================
 • URL: https://www.igluski.com/ski-resorts/france/courchevel-1850
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Courchevel 1850 Skiing holidays | Ski holiday Courchevel 1850 | France | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — SESTRIERE ====================
+==================== FOOTER NAVIGATION — SESTRIERE ====================
 • URL: https://www.igluski.com/ski-resorts/italy/sestriere
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Sestriere Ski| Skiing holiday Sestriere | Italy | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — SKI CHALETS ====================
+==================== FOOTER NAVIGATION — SKI CHALETS ====================
 • URL: https://www.igluski.com/ski-holidays/ski-chalet-holidays
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Ski Chalet Holidays and Deals 2026/2027 | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — SKI HOTELS ====================
+==================== FOOTER NAVIGATION — SKI HOTELS ====================
 • URL: https://www.igluski.com/ski-holidays/ski-hotels
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Ski Hotels and Ski Hotel Deals | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — SELF-CATERED ====================
+==================== FOOTER NAVIGATION — SELF-CATERED ====================
 • URL: https://www.igluski.com/ski-holidays/self-catered-ski-deals
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Self Catered Ski Holidays | Packages and Accommodation-only
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — ALL-INCLUSIVE ====================
+==================== FOOTER NAVIGATION — ALL-INCLUSIVE ====================
 • URL: https://www.igluski.com/ski-holidays/all-inclusive-ski-deals
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: All Inclusive Ski Holidays 2026 & 2027 | The Best All Inclusive Ski Deals
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — CHEAP SKI DEALS ====================
+==================== FOOTER NAVIGATION — CHEAP SKI DEALS ====================
 • URL: https://www.igluski.com/ski-deals
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Ski Deals And Cheap Ski Holidays for 2026 & 2027 | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — LAST MINUTE ====================
+==================== FOOTER NAVIGATION — LAST MINUTE ====================
 • URL: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Last Minute Ski Holidays 2026/2027 - Cheap Last Minute Deals | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — ACCOMMODATION ONLY ====================
+==================== FOOTER NAVIGATION — ACCOMMODATION ONLY ====================
 • URL: https://www.igluski.com/ski-holidays/ski-accommodation-only
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Accommodation only deals | Accommodation for ski holidays | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — GROUP SKI HOLIDAYS ====================
+==================== FOOTER NAVIGATION — GROUP SKI HOLIDAYS ====================
 • URL: https://www.igluski.com/ski-holidays/group-ski-holidays
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Group Ski Holidays | Amazing Group Ski Deals From The Experts | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — FAMILY SKI HOLIDAYS ====================
+==================== FOOTER NAVIGATION — FAMILY SKI HOLIDAYS ====================
 • URL: https://www.igluski.com/ski-holidays/family-ski-holidays
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Family Ski Holidays for 2026/2027 | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — SKI HOLIDAYS WITH LIFT PASSES ====================
+==================== FOOTER NAVIGATION — SKI HOLIDAYS WITH LIFT PASSES ====================
 • URL: https://www.igluski.com/ski-holidays/lift-pass-included
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Ski Holidays Including a Lift Pass | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — SHORT SKI BREAKS ====================
+==================== FOOTER NAVIGATION — SHORT SKI BREAKS ====================
 • URL: https://www.igluski.com/ski-holidays/ski-short-breaks
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Cheap Ski Short Breaks 2026/2027 | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — LAPLAND HOLIDAYS ====================
+==================== FOOTER NAVIGATION — LAPLAND HOLIDAYS ====================
 • URL: https://www.igluski.com/lapland-holidays
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Lapland Holidays - Book Your Next Winter Adventure
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — COOKIE & PRIVACY POLICY ====================
+==================== FOOTER NAVIGATION — COOKIE & PRIVACY POLICY ====================
 • URL: https://www.igluski.com/privacy-policy
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Privacy Policy | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — TERMS & CONDITIONS ====================
+==================== FOOTER NAVIGATION — TERMS & CONDITIONS ====================
 • URL: https://www.igluski.com/terms-and-conditions
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Terms and Conditions | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — CONTACT US ====================
+==================== FOOTER NAVIGATION — CONTACT US ====================
 • URL: https://www.igluski.com/contact-us
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Contact Us | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — FREQUENTLY ASKED QUESTIONS ====================
+==================== FOOTER NAVIGATION — FREQUENTLY ASKED QUESTIONS ====================
 • URL: https://www.igluski.com/guides/faqs/frequently-asked-questions
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Frequently Asked Ski Questions | Ski Holiday Help | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — TRAVEL ADVICE FROM THE FOREIGN OFFICE ====================
+==================== FOOTER NAVIGATION — TRAVEL ADVICE FROM THE FOREIGN OFFICE ====================
 • URL: https://www.gov.uk/foreign-travel-advice
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Foreign travel advice - GOV.UK
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — IGLU.COM ====================
-• URL: https://www.iglu.com
+==================== FOOTER NAVIGATION — IGLU.COM ====================
+• URL: https://www.iglu.com/
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Online Travel Agency | The Travel Experts | IGLU
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — ABOUT US ====================
+==================== FOOTER NAVIGATION — ABOUT US ====================
 • URL: https://www.igluski.com/about
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: About Iglu | Iglu Ski
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — WORKING AT IGLU SKI ====================
+==================== FOOTER NAVIGATION — WORKING AT IGLU SKI ====================
 • URL: https://careers.iglu.com/departments/ski
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Ski - Iglu.com
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — MEET THE TEAM ====================
+==================== FOOTER NAVIGATION — MEET THE TEAM ====================
 • URL: https://www.igluski.com/meet-the-team
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Meet the Iglu Ski team | Our Ski Experts | IgluSki
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — LAPLAND HOLIDAYS ====================
+==================== FOOTER NAVIGATION — LAPLAND HOLIDAYS ====================
 • URL: https://www.igluski.com/lapland-holidays
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Lapland Holidays - Book Your Next Winter Adventure
 ---------------------------------------------------------------
 
-==================== FOOTER ITEM — SITE MAP ====================
+==================== FOOTER NAVIGATION — SITE MAP ====================
 • URL: https://www.igluski.com/sitemap
 ---------------------------------------------------------------
-• ✓ Footer link OK
+• ✓ URL validated
+• ✓ Page title: Sitemap | Iglu Ski
 ---------------------------------------------------------------
+---------------------------------------------------------------
+• ✓ Footer navigation page closed
+✓ TC20 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Carousel CTA Button" classname="home.spec.ts" time="16.721">
+<testcase name="Home Page › TC22 — Validate Carousel CTA Button" classname="home.spec.ts" time="8.893">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1158,20 +1245,21 @@ IGLU SKI
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: Validate Carousel CTA Button =====
+===== TEST STARTED: TC22 — Validate Carousel CTA Button =====
 
 
 ==================== CAROUSEL CTA — VISIBILITY ====================
-• CTA href: https://www.igluski.com/ski-holidays
+• CTA href: https://www.igluski.com/ski-holidays/new-year-sale
 ---------------------------------------------------------------
 
 ==================== CAROUSEL CTA — NAVIGATION ====================
-• ✓ CTA navigation OK → https://www.igluski.com/ski-holidays
+• ✓ CTA navigation OK → https://www.igluski.com/ski-holidays/new-year-sale
 ---------------------------------------------------------------
+✓ TC22 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Inline Links in Sections" classname="home.spec.ts" time="44.309">
+<testcase name="Home Page › Validate Inline Links in Sections" classname="home.spec.ts" time="51.094">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1308,10 +1396,11 @@ IGLU SKI
   • Page title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
   ✓ Title is similar to "Package ski holidays"
 ---------------------------------------------------------------
+✓ Inline links validation completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="19.309">
+<testcase name="Home Page › TC26 — Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="11.614">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1324,48 +1413,61 @@ IGLU SKI
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: Validate Page Responsiveness (Mobile/Tablet) =====
+===== TEST STARTED: TC26 — Validate Page Responsiveness (Mobile/Tablet) =====
 
+
+==================== RESPONSIVENESS — 375PX ====================
 
 ==================== RESPONSIVENESS — SET VIEWPORT ====================
 • Setting viewport to 375px
 ---------------------------------------------------------------
+• Viewport set to 375px
 
 ==================== RESPONSIVENESS — HAMBURGER MENU ====================
 • ✓ Hamburger menu visible at 375px
 ---------------------------------------------------------------
+• ✓ Hamburger menu validated
 
 ==================== RESPONSIVENESS — HORIZONTAL OVERFLOW ====================
 • ✓ No horizontal overflow at 375px
 ---------------------------------------------------------------
+• ✓ No horizontal overflow detected
 
 ==================== RESPONSIVENESS — IMAGES ====================
 • ✓ All images responsive at 375px
 ---------------------------------------------------------------
+• ✓ Responsive images validated
 • ✓ TC26 PASSED at 375px
 ---------------------------------------------------------------
+
+==================== RESPONSIVENESS — 768PX ====================
 
 ==================== RESPONSIVENESS — SET VIEWPORT ====================
 • Setting viewport to 768px
 ---------------------------------------------------------------
+• Viewport set to 768px
 
 ==================== RESPONSIVENESS — HAMBURGER MENU ====================
 • ✓ Hamburger menu visible at 768px
 ---------------------------------------------------------------
+• ✓ Hamburger menu validated
 
 ==================== RESPONSIVENESS — HORIZONTAL OVERFLOW ====================
 • ✓ No horizontal overflow at 768px
 ---------------------------------------------------------------
+• ✓ No horizontal overflow detected
 
 ==================== RESPONSIVENESS — IMAGES ====================
 • ✓ All images responsive at 768px
 ---------------------------------------------------------------
+• ✓ Responsive images validated
 • ✓ TC26 PASSED at 768px
 ---------------------------------------------------------------
+✓ TC26 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="home.spec.ts" time="11.086">
+<testcase name="Home Page › TC28 — Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="home.spec.ts" time="7.075">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1378,12 +1480,20 @@ IGLU SKI
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: Validate "Search by Holiday ID" Button in Footer =====
+===== TEST STARTED: TC28 — Validate "Search by Holiday ID" Button in Footer =====
 
 
-===== TC28: Validating 'Search by Holiday ID' in Footer =====
-
-✓ TC28 PASSED: Holiday ID search button and form validated successfully.
+==================== TC28 — VALIDATE 'SEARCH BY HOLIDAY ID' ====================
+• ✓ Scrolled to footer
+• ✓ Holiday ID container visible
+• ✓ 'Search by Holiday ID' button visible
+• ✓ Clicked 'Search by Holiday ID' button
+• ✓ Holiday ID form visible
+• ✓ Holiday ID input field visible
+• ✓ Search button inside Holiday ID form visible
+• ✓ TC28 PASSED: Holiday ID search validated successfully
+---------------------------------------------------------------
+✓ TC28 completed successfully
 ]]>
 </system-out>
 </testcase>

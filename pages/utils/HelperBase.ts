@@ -266,79 +266,84 @@ export class HelperBase {
   protected logDivider(): void {
     console.log(`---------------------------------------------------------------`);
   }
-  
+
   // ============================================================
-// 🧪 TC2 — GENERIC MENU UTILITIES (HELPER FUNCTIONS)
-// ============================================================
+  // 🧪 TC2 — GENERIC MENU UTILITIES (HELPER FUNCTIONS)
+  // ============================================================
 
-// ------------------------------------------------------------
-// TC2 — Snapshot
-// ------------------------------------------------------------
-async getMenuSnapshot(): Promise<MenuSnapshot[]> {
-  return await this.page.$$eval("li.menu-list__item", (items) => {
-    return items.map((li) => {
-      const mainLink = li.querySelector("a");
-      const mainHref = mainLink?.getAttribute("href") || null;
-      const mainLabel = mainLink?.textContent?.trim() || "";
+  // ------------------------------------------------------------
+  // TC2 — Snapshot
+  // ------------------------------------------------------------
+  async getMenuSnapshot(): Promise<MenuSnapshot[]> {
+    return await this.page.$$eval("li.menu-list__item", (items) => {
+      return items.map((li) => {
+        const mainLink = li.querySelector("a");
+        const mainHref = mainLink?.getAttribute("href") || null;
+        const mainLabel = mainLink?.textContent?.trim() || "";
 
-      const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
-      const sublinks = subAnchors.map((a) => ({
-        label: a.textContent?.trim() || "",
-        href: a.getAttribute("href")
-      }));
+        const subAnchors = Array.from(li.querySelectorAll(".submenu-list__block-item a"));
+        const sublinks = subAnchors.map((a) => ({
+          label: a.textContent?.trim() || "",
+          href: a.getAttribute("href")
+        }));
 
-      return { mainLabel, mainHref, sublinks };
+        return { mainLabel, mainHref, sublinks };
+      });
     });
-  });
-}
+  }
 
-async safeGoto(page: Page, url: string) {
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 });
-      return;
-    } catch (err) {
-      console.warn(`⚠️ Navigation failed (attempt ${attempt}) → ${url}`);
-      if (attempt === 2) throw err;
-      await page.waitForTimeout(1500); // small delay before retry
+  async safeGoto(page: Page, url: string) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 });
+        return;
+      } catch (err) {
+        console.warn(`⚠️ Navigation failed (attempt ${attempt}) → ${url}`);
+        if (attempt === 2) throw err;
+        await page.waitForTimeout(1500); // small delay before retry
+      }
     }
   }
-}
 
-async validateSingleMenu(navPage: Page, menu: MenuSnapshot) {
-  console.log(`\n=== MAIN MENU: ${menu.mainLabel} ===`);
-  console.log(`URL: ${menu.mainHref}`);
+  async validateSingleMenu(navPage: Page, menu: MenuSnapshot) {
+    console.log(`\n=== MAIN MENU: ${menu.mainLabel} ===`);
+    console.log(`URL: ${menu.mainHref}`);
 
-  const menuUrl = this.resolveUrl(menu.mainHref);
-  if (!menuUrl) {
-    console.log(`Skipping menu (no URL): ${menu.mainLabel}`);
-    return;
+    const menuUrl = this.resolveUrl(menu.mainHref);
+    if (!menuUrl) {
+      console.log(`Skipping menu (no URL): ${menu.mainLabel}`);
+      return;
+    }
+
+    await this.safeGoto(navPage, menuUrl);
+
+    const pageTitle = await navPage.title();
+    console.log(`PAGE TITLE: ${pageTitle}`);
+
+    await this.validateTitleContains(navPage, menu.mainLabel);
   }
 
-  await this.safeGoto(navPage, menuUrl);
+  async validateSingleSubmenu(navPage: Page, sub: SubLinkSnapshot) {
+    console.log(`\n--- SUBMENU: ${sub.label} ---`);
+    console.log(`URL: ${sub.href}`);
 
-  const pageTitle = await navPage.title();
-  console.log(`PAGE TITLE: ${pageTitle}`);
+    const subUrl = this.resolveUrl(sub.href);
+    if (!subUrl) {
+      console.log(`Skipping submenu (no URL): ${sub.label}`);
+      return;
+    }
 
-  await this.validateTitleContains(navPage, menu.mainLabel);
-}
+    await this.safeGoto(navPage, subUrl);
+    await navPage.waitForTimeout(300);
 
-async validateSingleSubmenu(navPage: Page, sub: SubLinkSnapshot) {
-  console.log(`\n--- SUBMENU: ${sub.label} ---`);
-  console.log(`URL: ${sub.href}`);
+    const pageTitle = await navPage.title();
+    console.log(`PAGE TITLE: ${pageTitle}`);
 
-  const subUrl = this.resolveUrl(sub.href);
-  if (!subUrl) {
-    console.log(`Skipping submenu (no URL): ${sub.label}`);
-    return;
+    await this.validateTitleContains(navPage, sub.label);
   }
 
-  await this.safeGoto(navPage, subUrl);
-  await navPage.waitForTimeout(300);
+  protected logTestStart(testName: string): void {
+    console.log(`\n===== TEST STARTED: ${testName} =====\n`);
+  }
 
-  const pageTitle = await navPage.title();
-  console.log(`PAGE TITLE: ${pageTitle}`);
-
-  await this.validateTitleContains(navPage, sub.label);
-}
 }
