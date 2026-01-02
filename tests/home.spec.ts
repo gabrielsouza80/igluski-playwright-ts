@@ -207,36 +207,36 @@ test.describe('Home Page', () => {
   // This test validates the Customer Portal button, AJAX-loaded content,
   // and the presence of required fields on the Customer Portal page.
   test('TC5 — Validate Access to the Customer Portal', async ({ pm }, testInfo) => {
-    const home = pm.onHomePage();
+    const home = pm;
 
     // STEP 0 — Start test
     await test.step('Start test', async () => {
-      home.logTestStart(testInfo.title);
+      pm.onHomePage().logTestStart(testInfo.title);
     });
 
     // STEP 1 — Check if Customer Portal button exists
     const buttonExists = await test.step('Check if Customer Portal button exists', async () => {
-      return await home.btnAccessCustomerPortal.isVisible();
+      return await pm.onHomePage().btnAccessCustomerPortal.isVisible();
     });
 
     // STEP 2 — Validate Customer Portal button text
     await test.step('Validate Customer Portal button text', async () => {
-      await home.validateCustomerPortalButtonText();
+      await pm.onHomePage().validateCustomerPortalButtonText();
     });
 
     // STEP 3 — Click Customer Portal button
     await test.step('Click Customer Portal button', async () => {
-      await home.clickCustomerPortalButton();
+      await pm.onHomePage().clickCustomerPortalButton();
     });
 
     // STEP 4 — Wait for AJAX content to load
     await test.step('Wait for AJAX content to load', async () => {
-      await home.waitForCustomerPortalAjax();
+      await pm.onHomePage().waitForCustomerPortalAjax();
     });
 
     // STEP 5 — Validate Customer Portal required fields
     await test.step('Validate Customer Portal required fields', async () => {
-      await home.validateCustomerPortalFields();
+      await pm.onHomePage().validateCustomerPortalFields();
     });
 
     // STEP 6 — Finish test
