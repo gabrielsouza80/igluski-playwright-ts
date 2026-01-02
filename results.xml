@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="16" failures="1" skipped="0" errors="0" time="194.720419">
-<testsuite name="home.spec.ts" timestamp="2026-01-02T14:41:11.167Z" hostname="chromium" tests="16" failures="1" skipped="0" time="579.405" errors="0">
-<testcase name="Home Page › TC1 — Validate Logo Navigation" classname="home.spec.ts" time="13.78">
+<testsuites id="" name="" tests="15" failures="1" skipped="0" errors="0" time="198.3281799999997">
+<testsuite name="home.spec.ts" timestamp="2026-01-02T18:39:06.726Z" hostname="chromium" tests="15" failures="1" skipped="0" time="573.596" errors="0">
+<testcase name="Home Page › TC1 — Validate Logo Navigation" classname="home.spec.ts" time="21.655">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -16,12 +16,8 @@
 ===== TEST STARTED: TC1 — Validate Logo Navigation =====
 
 
-==================== HEADER LOGO — LOCATE ====================
-• Header logo located
----------------------------------------------------------------
-
-==================== HEADER LOGO — VISIBILITY ====================
-• ✓ Header logo is visible
+==================== HEADER LOGO — VALIDATION ====================
+• ✓ Header logo located and visible
 ---------------------------------------------------------------
 
 ==================== HEADER LOGO — CLICK ====================
@@ -35,7 +31,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC2 — Header Navigation + Submenu Validation" classname="home.spec.ts" time="178.694">
+<testcase name="Home Page › TC2 — Header Navigation + Submenu Validation" classname="home.spec.ts" time="188.997">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -51,531 +47,1000 @@
 ===== TEST STARTED: TC2 — Header Navigation + Submenu Validation =====
 
 
+==================== HEADER NAVIGATION — LOCATE ITEMS ====================
+• Detected 7 header navigation items
+---------------------------------------------------------------
+
+==================== HEADER NAVIGATION — VALIDATE VISIBILITY ====================
+• Validating visibility for 7 items
+• Checking visibility: Search
+• Checking visibility: Ski Holidays
+• Checking visibility: Ski Destinations
+• Checking visibility: Ski Deals
+• Checking visibility: Snow reports
+• Checking visibility: Ski blog & guides
+• Checking visibility: Enquire
+---------------------------------------------------------------
+
 ==================== HEADER NAVIGATION — SNAPSHOT ====================
+
+==================== HEADER NAVIGATION — BUILD SNAPSHOT ====================
+• Snapshot captured: 7 main menus
+---------------------------------------------------------------
 • Captured snapshot for 7 menus
 ---------------------------------------------------------------
 
 ==================== HEADER NAVIGATION — VALIDATE MAIN MENUS ====================
 • ✓ Navigation page created
+• Validating main menu: Search
 
-=== MAIN MENU: Search ===
-URL: /ski-holidays
-PAGE TITLE: Ski Holidays 2026/2027 | Price Match Guarantee!
+==================== MAIN MENU — SEARCH ====================
+• URL: /ski-holidays
+---------------------------------------------------------------
+• Page title: Ski Holidays 2026/2027 | Price Match Guarantee!
+• ✓ Main menu validated successfully
+---------------------------------------------------------------
+• Validating main menu: Ski Holidays
 
-=== MAIN MENU: Ski Holidays ===
-URL: /ski-holidays
-PAGE TITLE: Ski Holidays 2026/2027 | Price Match Guarantee!
+==================== MAIN MENU — SKI HOLIDAYS ====================
+• URL: /ski-holidays
+---------------------------------------------------------------
+• Page title: Ski Holidays 2026/2027 | Price Match Guarantee!
+• ✓ Main menu validated successfully
+---------------------------------------------------------------
+• Validating main menu: Ski Destinations
 
-=== MAIN MENU: Ski Destinations ===
-URL: /ski-resorts
-PAGE TITLE: Ski Resorts | Find The Perfect Skiing Resort | Iglu Ski
+==================== MAIN MENU — SKI DESTINATIONS ====================
+• URL: /ski-resorts
+---------------------------------------------------------------
+• Page title: Ski Resorts | Find The Perfect Skiing Resort | Iglu Ski
+• ✓ Main menu validated successfully
+---------------------------------------------------------------
+• Validating main menu: Ski Deals
 
-=== MAIN MENU: Ski Deals ===
-URL: /ski-deals
-PAGE TITLE: Ski Deals And Cheap Ski Holidays for 2026 & 2027 | Iglu Ski
+==================== MAIN MENU — SKI DEALS ====================
+• URL: /ski-deals
+---------------------------------------------------------------
+• Page title: Ski Deals And Cheap Ski Holidays for 2026 & 2027 | Iglu Ski
+• ✓ Main menu validated successfully
+---------------------------------------------------------------
+• Validating main menu: Snow reports
 
-=== MAIN MENU: Snow reports ===
-URL: /snow-reports
-PAGE TITLE: Ski Snow Reports, Snow Forecasts and Ski Webcams | Iglu ski
+==================== MAIN MENU — SNOW REPORTS ====================
+• URL: /snow-reports
+---------------------------------------------------------------
+• Page title: Ski Snow Reports, Snow Forecasts and Ski Webcams | Iglu ski
+• ✓ Main menu validated successfully
+---------------------------------------------------------------
+• Validating main menu: Ski blog & guides
 
-=== MAIN MENU: Ski blog & guides ===
-URL: /blog
-PAGE TITLE: 
+==================== MAIN MENU — SKI BLOG & GUIDES ====================
+• URL: /blog
+---------------------------------------------------------------
+• Page title: 
+• ✓ Main menu validated successfully
+---------------------------------------------------------------
+• Validating main menu: Enquire
 
-=== MAIN MENU: Enquire ===
-URL: /enquire
-PAGE TITLE: Enquire
+==================== MAIN MENU — ENQUIRE ====================
+• URL: /enquire
+---------------------------------------------------------------
+• Page title: Enquire
+• ✓ Main menu validated successfully
+---------------------------------------------------------------
 ---------------------------------------------------------------
 
 ==================== HEADER NAVIGATION — VALIDATE SUBMENUS ====================
-
---- SUBMENU: Last minute ski holidays ---
-URL: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
-PAGE TITLE: Last Minute Ski Holidays 2026/2027 - Cheap Last Minute Deals | Iglu Ski
-
---- SUBMENU: Top 10 ski deals ---
-URL: /ski-holidays/top-10-ski-deals-of-the-week
-PAGE TITLE: Top 10 ski deals of the week | Iglu Ski
-
---- SUBMENU: Group ski holidays ---
-URL: /ski-holidays/group-ski-holidays
-PAGE TITLE: Group Ski Holidays | Amazing Group Ski Deals From The Experts | Iglu Ski
-
---- SUBMENU: Family ski holidays ---
-URL: /ski-holidays/family-ski-holidays
-PAGE TITLE: Family Ski Holidays for 2026/2027 | Iglu Ski
-
---- SUBMENU: Short breaks ---
-URL: /ski-holidays/ski-short-breaks
-PAGE TITLE: Cheap Ski Short Breaks 2026/2027 | Iglu Ski
-
---- SUBMENU: High altitude ski holidays ---
-URL: /ski-holidays/high-altitude-ski-holidays
-PAGE TITLE: High Altitude Ski Holidays
-
---- SUBMENU: Cheap ski holidays ---
-URL: /ski-deals/o2251
-PAGE TITLE: Ski package holidays for under £750 per person!
-
---- SUBMENU: Tailor-made ski holidays ---
-URL: /ski-holidays/tailor-made-ski-holidays
-PAGE TITLE: Tailor Made Ski Holidays
-
---- SUBMENU: Accommodation-only ---
-URL: /ski-holidays/ski-accommodation-only
-PAGE TITLE: Accommodation only deals | Accommodation for ski holidays | Iglu Ski
-
---- SUBMENU: Club Med ski holidays ---
-URL: /club-med-ski-holidays
-PAGE TITLE: Club Med Ski Holidays | Premium All Inclusive Packages
-
---- SUBMENU: Lapland ---
-URL: /lapland-holidays
-PAGE TITLE: Lapland Holidays - Book Your Next Winter Adventure
-
---- SUBMENU: Solo ski holidays ---
-URL: /ski-holidays/ski-holiday-for-singles
-PAGE TITLE: Ski holiday for singles | Solo traveller ski deals | IgluSki
-
---- SUBMENU: Catered ski holidays ---
-URL: /ski-holidays/ski-chalet-holidays
-PAGE TITLE: Ski Chalet Holidays and Deals 2026/2027 | Iglu Ski
-
---- SUBMENU: Self-catered ski holidays ---
-URL: /ski-holidays/self-catered-ski-deals
-PAGE TITLE: Self Catered Ski Holidays | Packages and Accommodation-only
-
---- SUBMENU: B&B hotels ---
-URL: /ski-holidays/bed-breakfast-ski-holidays
-PAGE TITLE: Bed and Breakfast Ski Holiday Deals | Igluski.com
-
---- SUBMENU: Half board hotels ---
-URL: /ski-holidays/half-board-ski-deals
-PAGE TITLE: Half Board Ski Deals | Iglu Ski
-
---- SUBMENU: All inclusive hotels ---
-URL: /ski-holidays/all-inclusive-ski-deals
-PAGE TITLE: All Inclusive Ski Holidays 2026 & 2027 | The Best All Inclusive Ski Deals
-
---- SUBMENU: Ski chalet holidays ---
-URL: /ski-holidays/ski-chalet-holidays
-PAGE TITLE: Ski Chalet Holidays and Deals 2026/2027 | Iglu Ski
-
---- SUBMENU: Hotels ---
-URL: /ski-holidays/ski-hotels
-PAGE TITLE: Ski Hotels and Ski Hotel Deals | Iglu Ski
-
---- SUBMENU: Apartments ---
-URL: /ski-holidays/ski-apartments
-PAGE TITLE: Ski Apartments Deals 2026/2027 | Iglu Ski
-
---- SUBMENU: Chalet hotels ---
-URL: /ski-holidays/chalet-hotels
-PAGE TITLE: Ski Chalet Hotels | Holidays and Top Deals
-
---- SUBMENU: December ---
-URL: /ski-holidays/december-skiing
-PAGE TITLE: December Ski Holidays | 2026 Deals
-
---- SUBMENU: Christmas ---
-URL: /ski-holidays/christmas-skiing
-PAGE TITLE: Christmas 2026 Ski Holidays and Deals | Iglu Ski
-
---- SUBMENU: New Year ---
-URL: /ski-holidays/new-year-skiing
-PAGE TITLE: New Year 2026 Ski Holidays and Deals | Iglu Ski
-
---- SUBMENU: January ---
-URL: /ski-holidays/january-skiing
-PAGE TITLE: January 2026 Ski Holidays and Deals | Iglu Ski
-
---- SUBMENU: February ---
-URL: /ski-holidays/february-skiing
-PAGE TITLE: February 2026 Ski Holidays and Deals | Iglu Ski
-
---- SUBMENU: Feb Half Term ---
-URL: /ski-holidays/half-term-skiing
-PAGE TITLE: February 2026 Half Term Ski Holidays and Deals
-
---- SUBMENU: March ---
-URL: /ski-holidays/march-skiing
-PAGE TITLE: March 2026 Ski Holidays and Deals | Iglu Ski
-
---- SUBMENU: April ---
-URL: /ski-holidays/april-skiing
-PAGE TITLE: April Ski Holidays & April 2026 Ski Deals | Iglu Ski
-
---- SUBMENU: Easter ---
-URL: /ski-holidays/easter-skiing
-PAGE TITLE: Easter Ski Holidays & Easter 2026 Ski Deals | Iglu Ski
-
---- SUBMENU: France ---
-URL: /ski-resorts/france
-PAGE TITLE: France Ski Holidays 2026/2027 | Best Deals and Resort Advice
-
---- SUBMENU: Austria ---
-URL: /ski-resorts/austria
-PAGE TITLE: Austria Ski Holidays 2026/2027 | Best Deals and Resort Advice
-
---- SUBMENU: Italy ---
-URL: /ski-resorts/italy
-PAGE TITLE: Italy Ski Holidays | Best Deals and Ski Resort Advice
-
---- SUBMENU: Andorra ---
-URL: /ski-resorts/andorra
-PAGE TITLE: Andorra Ski Holidays and Resort Advice | Iglu Ski
-
---- SUBMENU: Switzerland ---
-URL: /ski-resorts/switzerland
-PAGE TITLE: Skiing in Switzerland | Swiss ski resorts | Ski Switzerland | Iglu Ski
-
---- SUBMENU: Norway ---
-URL: /ski-resorts/norway
-PAGE TITLE: Ski Norway | Norwegian ski resorts | Skiing in Norway | Iglu Ski
-
---- SUBMENU: Finland ---
-URL: /ski-resorts/finland
-PAGE TITLE: Skiing in Finland | Ski holiday Finland | Finnish ski resorts | Igluski.com
-
---- SUBMENU: Canada ---
-URL: /ski-resorts/canada
-PAGE TITLE: Skiing in Canada | Canadaian ski holidays & resorts | Iglu Ski
-
---- SUBMENU: USA ---
-URL: /ski-resorts/usa
-PAGE TITLE: Skiing in USA | Ski holiday USA | American ski resorts | Igluski.com
-
---- SUBMENU: Bulgaria ---
-URL: /ski-resorts/bulgaria
-PAGE TITLE: Bulgaria Ski Holidays 2026/2027 | Best Deals and Resort Advice
-
---- SUBMENU: All other countries ---
-URL: /ski-resorts
-PAGE TITLE: Ski Resorts | Find The Perfect Skiing Resort | Iglu Ski
-
---- SUBMENU: Tignes ---
-URL: /ski-resorts/france/tignes
-PAGE TITLE: Tignes Ski Holidays | Best Tignes Deals
-
---- SUBMENU: Val d'Isère ---
-URL: /ski-resorts/france/val-d-isere
-PAGE TITLE: Val d'Isère Ski Holidays | Best Val d'Isère ski deals
-
---- SUBMENU: Val Thorens ---
-URL: /ski-resorts/france/val-thorens
-PAGE TITLE: Val Thorens ski holidays | The best deals in one place
-
---- SUBMENU: Méribel ---
-URL: /ski-resorts/france/meribel
-PAGE TITLE: Méribel Ski Holidays | Iglu Ski
-
---- SUBMENU: Les Arcs ---
-URL: /ski-resorts/france/les-arcs
-PAGE TITLE: Les Arcs Ski Holidays
-
---- SUBMENU: La Plagne ---
-URL: /ski-resorts/france/la-plagne
-PAGE TITLE: La Plagne Ski Holidays | The best deals in one place
-
---- SUBMENU: Avoriaz ---
-URL: /ski-resorts/france/avoriaz
-PAGE TITLE: Avoriaz Ski Holidays | Iglu Ski
-
---- SUBMENU: St Anton ---
-URL: /ski-resorts/austria/st-anton
-PAGE TITLE: St Anton Ski Holidays | Best St Anton Ski Deals
-
---- SUBMENU: Mayrhofen ---
-URL: /ski-resorts/austria/mayrhofen
-PAGE TITLE: Mayrhofen Ski | Skiing in Mayrhofen | Austria | Iglu Ski
-
---- SUBMENU: Cervinia ---
-URL: /ski-resorts/italy/cervinia
-PAGE TITLE: Cervinia Ski Holidays | Discover skiing in Cervinia
-
---- SUBMENU: All ski resorts ---
-URL: /ski-resorts/resort-index
-PAGE TITLE: Ski Resorts Index | Iglu Ski
-
---- SUBMENU: Tignes-Val d’Isère ---
-URL: /ski-resorts/ski-areas/espace-killy
-PAGE TITLE: Tignes-Val d'Isere | Espace Killy | Everything You Need to Know
-
---- SUBMENU: Three Valleys ---
-URL: /ski-resorts/ski-areas/three-valleys
-PAGE TITLE: The Three Valleys Ski Area - Everything You Need to Know
-
---- SUBMENU: Paradiski ---
-URL: /ski-resorts/ski-areas/paradiski
-PAGE TITLE: The Paradiski Area - Everything You Need to Know
-
---- SUBMENU: Portes du Soleil ---
-URL: /ski-resorts/ski-areas/portes-du-soleil
-PAGE TITLE: Portes du Soleil ski area | Igluski.com
-
---- SUBMENU: Grand Massif ---
-URL: /ski-resorts/ski-areas/grand-massif
-PAGE TITLE: Grand Massif Ski Area | Iglu Ski
-
---- SUBMENU: Alberg ---
-URL: /ski-resorts/ski-areas/arlberg
-PAGE TITLE: Arlberg Ski Circus skiing | St Anton Lech Zurs Austria | Iglu Ski
-
---- SUBMENU: SkiWelt ---
-URL: /ski-resorts/ski-areas/skiwelt-austria
-PAGE TITLE: SkiWelt Ski Area | Austria skiing | Igluski.com
-
---- SUBMENU: Zillertal ---
-URL: /ski-resorts/ski-areas/zillertal-arena
-PAGE TITLE: Zillertal Arena ski area | Austria | Iglu Ski
-
---- SUBMENU: Milky Way ---
-URL: /ski-resorts/ski-areas/milky-way
-PAGE TITLE: Complete Guide to the Milky Way Ski Area | Iglu Ski
-
---- SUBMENU: All ski areas ---
-URL: /ski-resorts/ski-areas
-PAGE TITLE: Ski areas in Europe | Iglu Ski
-
---- SUBMENU: Best aprés ski resorts ---
-URL: /guides/resort-recommendations/best-apres-ski
-PAGE TITLE: Après Ski - What is it and best après ski resorts
-
---- SUBMENU: Best group ski resorts ---
-URL: /guides/group-skiing/best-ski-resorts-for-groups
-PAGE TITLE: Best Ski Resorts For Groups | Iglu Ski
-
---- SUBMENU: Best family ski resorts ---
-URL: /guides/family-skiing/best-family-ski-resorts
-PAGE TITLE: Best Ski Resorts For Families | Iglu Ski
-
---- SUBMENU: Top snow sure ski resorts ---
-URL: /guides/resort-recommendations/snowsure-resorts
-PAGE TITLE: The World's Best Snow-Sure Ski Resorts | Iglu Ski
-
---- SUBMENU: Top short transfer resorts ---
-URL: /guides/resort-recommendations/best-resorts-with-short-transfer-time
-PAGE TITLE: Best Ski Resorts For A Short Transfer | Iglu Ski
-
---- SUBMENU: Best beginner ski resorts ---
-URL: /guides/beginners-skiing/ski-resorts-beginners
-PAGE TITLE: Best ski resorts for beginners | Iglu Ski
-
---- SUBMENU: Best short break ski resorts ---
-URL: /guides/resort-recommendations/best-resorts-for-a-ski-weekend
-PAGE TITLE: Top 10 Resorts For A Ski Weekend | Iglu Ski
-
---- SUBMENU: All resort guides ---
-URL: /guides/resort-recommendations
-PAGE TITLE: Resort Recommendations
-
---- SUBMENU: Val Thorens snow report ---
-URL: /ski-resorts/france/val-thorens/snow-reports
-PAGE TITLE: Val Thorens Snow Report | Val Thorens Snow Conditions | Iglu Ski
-
---- SUBMENU: Val d'Isère snow reports ---
-URL: /ski-resorts/france/val-d-isere/snow-reports
-PAGE TITLE: Val d'Isère Snow Report | Val d'Isère Snow Conditions | Iglu Ski
-
---- SUBMENU: St Anton snow reports ---
-URL: /ski-resorts/austria/st-anton/snow-reports
-PAGE TITLE: St Anton Snow Report | St Anton Snow Conditions | Iglu Ski
-
---- SUBMENU: Tignes snow reports ---
-URL: /ski-resorts/france/tignes/snow-reports
-PAGE TITLE: Tignes Snow Report | Tignes Snow Conditions | Iglu Ski
-
---- SUBMENU: La Plagne snow reports ---
-URL: /ski-resorts/france/la-plagne/snow-reports
-PAGE TITLE: La Plagne Snow Report | La Plagne Snow Conditions | Iglu Ski
-
---- SUBMENU: See all snow reports ---
-URL: /snow-reports
-PAGE TITLE: Ski Snow Reports, Snow Forecasts and Ski Webcams | Iglu ski
-
---- SUBMENU: Val Thorens snow forecast ---
-URL: /ski-resorts/france/val-thorens/snow-forecast
-PAGE TITLE: Val Thorens Snow Forecast | Weather forecast for Val Thorens | Iglu Ski
-
---- SUBMENU: Val d'Isère snow forecast ---
-URL: /ski-resorts/france/val-d-isere/snow-forecast
-PAGE TITLE: Val d'Isère Snow Forecast | Weather forecast for Val d'Isère | Iglu Ski
-
---- SUBMENU: St Anton snow forecast ---
-URL: /ski-resorts/austria/st-anton/snow-forecast
-PAGE TITLE: St Anton Snow Forecast | Weather forecast for St Anton | Iglu Ski
-
---- SUBMENU: Tignes snow forecast ---
-URL: /ski-resorts/france/tignes/snow-forecast
-PAGE TITLE: Tignes Snow Forecast | Weather forecast for Tignes | Iglu Ski
-
---- SUBMENU: Les Deux Alpes snow forecast ---
-URL: /ski-resorts/france/les-deux-alpes/snow-forecast
-PAGE TITLE: Les Deux Alpes Snow Forecast | Weather forecast for Les Deux Alpes | Iglu Ski
-
---- SUBMENU: See all snow forecasts ---
-URL: /snow-forecast
-PAGE TITLE: Snow Forecast Search | Snow Reports | Iglu Ski
-
---- SUBMENU: Val Thorens snow history ---
-URL: /ski-resorts/france/val-thorens/snow-history
-PAGE TITLE: Val Thorens Snow History | Val Thorens Snow Conditions | Iglu Ski
-
---- SUBMENU: Morzine snow history ---
-URL: /ski-resorts/france/morzine/snow-history
-PAGE TITLE: Morzine Snow History | Morzine Snow Conditions | Iglu Ski
-
---- SUBMENU: St Anton snow history ---
-URL: /ski-resorts/austria/st-anton/snow-history
-PAGE TITLE: St Anton Snow History | St Anton Snow Conditions | Iglu Ski
-
---- SUBMENU: Bansko snow history ---
-URL: /ski-resorts/bulgaria/bansko/snow-history
-PAGE TITLE: Bansko Snow History | IgluSki
-
---- SUBMENU: Tignes snow history ---
-URL: /ski-resorts/france/tignes/snow-history
-PAGE TITLE: Tignes Snow History | Tignes Snow Conditions | Iglu Ski
-
---- SUBMENU: See all resort snow history ---
-URL: /snow-history
-PAGE TITLE: Snow History Search | Snow Reports | Iglu Ski
-
---- SUBMENU: La Plagne webcams ---
-URL: /ski-resorts/france/la-plagne/ski-webcams
-PAGE TITLE: La Plagne Webcams | Live view of La Plagne, France | Iglu Ski
-
---- SUBMENU: Méribel webcams ---
-URL: /ski-resorts/france/meribel/ski-webcams
-PAGE TITLE: Méribel Webcams | Live view of Méribel, France | Iglu Ski
-
---- SUBMENU: Tignes webcams ---
-URL: /ski-resorts/france/tignes/ski-webcams
-PAGE TITLE: Tignes Webcams | Live view of Tignes, France | Iglu Ski
-
---- SUBMENU: Chamonix webcams ---
-URL: /ski-resorts/france/chamonix/ski-webcams
-PAGE TITLE: Chamonix Webcams | Live view of Chamonix, France | Iglu Ski
-
---- SUBMENU: Cervinia webcams ---
-URL: /ski-resorts/italy/cervinia/ski-webcams
-PAGE TITLE: Cervinia Webcams | Live view of Cervinia, Italy | Iglu Ski
-
---- SUBMENU: See all webcams ---
-URL: /ski-webcams
-PAGE TITLE: Ski Resort Webcams | Iglu Ski
-
---- SUBMENU: Family ski guides ---
-URL: /guides/family-skiing
-PAGE TITLE: Family ski holidays | Advice & Deals | Iglu Ski
-
---- SUBMENU: Group ski guides ---
-URL: /guides/group-skiing
-PAGE TITLE: Group Ski Holidays | Group Ski Chalets | Group Ski Holiday Resorts | Igluski.com
-
---- SUBMENU: Beginners ski guide ---
-URL: /guides/beginners-skiing
-PAGE TITLE: Beginner Skiing Information Hub | Iglu Ski
-
---- SUBMENU: Resort recommendations guide ---
-URL: /guides/resort-recommendations
-PAGE TITLE: Resort Recommendations
-
---- SUBMENU: Luxury ski guide ---
-URL: /guides/luxury-guides
-PAGE TITLE: Luxury skiing and luxury chalets and hotels
-
---- SUBMENU: See more ski guides ---
-URL: /guides
-PAGE TITLE: Ski Guides - From Beginners to Advanced - Iglu Ski
-
---- SUBMENU: How to book a ski holiday ---
-URL: https://www.igluski.com/blog/post/booking-your-ski-holiday-everything-you-need-to-know
-PAGE TITLE: 7 Steps To Booking Your Ski Holiday: Everything You Need to Know
-
---- SUBMENU: Top ski resorts in Austria ---
-URL: https://www.igluski.com/blog/post/best-ski-resorts-austria
-PAGE TITLE: Best Ski Resorts in Austria
-
---- SUBMENU: Top ski resorts in France ---
-URL: https://www.igluski.com/blog/post/best-ski-resorts-france
-PAGE TITLE: Top 10 Best Ski Resorts in France
-
---- SUBMENU: Best après-ski resorts ---
-URL: https://www.igluski.com/guides/resort-recommendations/best-apres-ski
-PAGE TITLE: Après Ski - What is it and best après ski resorts
-
---- SUBMENU: Top half term ski resorts ---
-URL: https://www.igluski.com/blog/post/best-ski-resorts-half-term
-PAGE TITLE: Best ski resorts for half term
-
---- SUBMENU: See more ski blogs ---
-URL: /blog
-PAGE TITLE: 
-
---- SUBMENU: Iglu Ski's Paralympic legend, lift upgrades and new flights ---
-URL: https://www.igluski.com/news/iglu-ski-s-paralympic-legend-lift-upgrades-and-new-flights_a19736661
-PAGE TITLE: Iglu Ski's Paralympic legend, lift upgrades and new flights | Iglu Ski
-
---- SUBMENU: Backstreet Boys, new reservoir and fresh gondola ---
-URL: https://www.igluski.com/news/backstreet-boys-new-reservoir-and-fresh-gondola_a19736660
-PAGE TITLE: Backstreet Boys, new reservoir and fresh gondola | Iglu Ski
-
---- SUBMENU: Eurostar expansion, classic gondolas and world-class tech ---
-URL: https://www.igluski.com/news/eurostar-expansion-classic-gondolas-and-world-class-tech_a19736659
-PAGE TITLE: Eurostar expansion, classic gondolas and world-class tech | Iglu Ski
-
---- SUBMENU: Gondolas galore and Epic Pass expansion ---
-URL: https://www.igluski.com/news/gondolas-galore-and-epic-pass-expansion_a19736658
-PAGE TITLE: Gondolas galore and Epic Pass expansion | Iglu Ski
-
---- SUBMENU: New lifts, UK dry slope revival and climate change pact ---
-URL: https://www.igluski.com/news/new-lifts-uk-dry-slope-revival-and-climate-change-pact_a19736657
-PAGE TITLE: New lifts, UK dry slope revival and climate change pact | Iglu Ski
-
---- SUBMENU: See more ski news ---
-URL: /news
-PAGE TITLE: Ski News | Iglu Ski
+• Validating submenu: Last minute ski holidays
+
+==================== SUBMENU — LAST MINUTE SKI HOLIDAYS ====================
+• URL: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+---------------------------------------------------------------
+• Page title: Last Minute Ski Holidays 2026/2027 - Cheap Last Minute Deals | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Top 10 ski deals
+
+==================== SUBMENU — TOP 10 SKI DEALS ====================
+• URL: /ski-holidays/top-10-ski-deals-of-the-week
+---------------------------------------------------------------
+• Page title: Top 10 ski deals of the week | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Group ski holidays
+
+==================== SUBMENU — GROUP SKI HOLIDAYS ====================
+• URL: /ski-holidays/group-ski-holidays
+---------------------------------------------------------------
+• Page title: Group Ski Holidays | Amazing Group Ski Deals From The Experts | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Family ski holidays
+
+==================== SUBMENU — FAMILY SKI HOLIDAYS ====================
+• URL: /ski-holidays/family-ski-holidays
+---------------------------------------------------------------
+• Page title: Family Ski Holidays for 2026/2027 | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Short breaks
+
+==================== SUBMENU — SHORT BREAKS ====================
+• URL: /ski-holidays/ski-short-breaks
+---------------------------------------------------------------
+• Page title: Cheap Ski Short Breaks 2026/2027 | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: High altitude ski holidays
+
+==================== SUBMENU — HIGH ALTITUDE SKI HOLIDAYS ====================
+• URL: /ski-holidays/high-altitude-ski-holidays
+---------------------------------------------------------------
+• Page title: High Altitude Ski Holidays
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Cheap ski holidays
+
+==================== SUBMENU — CHEAP SKI HOLIDAYS ====================
+• URL: /ski-deals/o2251
+---------------------------------------------------------------
+• Page title: Ski package holidays for under £750 per person!
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Tailor-made ski holidays
+
+==================== SUBMENU — TAILOR-MADE SKI HOLIDAYS ====================
+• URL: /ski-holidays/tailor-made-ski-holidays
+---------------------------------------------------------------
+• Page title: Tailor Made Ski Holidays
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Accommodation-only
+
+==================== SUBMENU — ACCOMMODATION-ONLY ====================
+• URL: /ski-holidays/ski-accommodation-only
+---------------------------------------------------------------
+• Page title: Accommodation only deals | Accommodation for ski holidays | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Club Med ski holidays
+
+==================== SUBMENU — CLUB MED SKI HOLIDAYS ====================
+• URL: /club-med-ski-holidays
+---------------------------------------------------------------
+• Page title: Club Med Ski Holidays | Premium All Inclusive Packages
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Lapland
+
+==================== SUBMENU — LAPLAND ====================
+• URL: /lapland-holidays
+---------------------------------------------------------------
+• Page title: Lapland Holidays - Book Your Next Winter Adventure
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Solo ski holidays
+
+==================== SUBMENU — SOLO SKI HOLIDAYS ====================
+• URL: /ski-holidays/ski-holiday-for-singles
+---------------------------------------------------------------
+• Page title: Ski holiday for singles | Solo traveller ski deals | IgluSki
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Catered ski holidays
+
+==================== SUBMENU — CATERED SKI HOLIDAYS ====================
+• URL: /ski-holidays/ski-chalet-holidays
+---------------------------------------------------------------
+• Page title: Ski Chalet Holidays and Deals 2026/2027 | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Self-catered ski holidays
+
+==================== SUBMENU — SELF-CATERED SKI HOLIDAYS ====================
+• URL: /ski-holidays/self-catered-ski-deals
+---------------------------------------------------------------
+• Page title: Self Catered Ski Holidays | Packages and Accommodation-only
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: B&B hotels
+
+==================== SUBMENU — B&B HOTELS ====================
+• URL: /ski-holidays/bed-breakfast-ski-holidays
+---------------------------------------------------------------
+• Page title: Bed and Breakfast Ski Holiday Deals | Igluski.com
+• ❌ Title does NOT contain expected label: "B&B hotels"
+---------------------------------------------------------------
+• Validating submenu: Half board hotels
+
+==================== SUBMENU — HALF BOARD HOTELS ====================
+• URL: /ski-holidays/half-board-ski-deals
+---------------------------------------------------------------
+• Page title: Half Board Ski Deals | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: All inclusive hotels
+
+==================== SUBMENU — ALL INCLUSIVE HOTELS ====================
+• URL: /ski-holidays/all-inclusive-ski-deals
+---------------------------------------------------------------
+• Page title: All Inclusive Ski Holidays 2026 & 2027 | The Best All Inclusive Ski Deals
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Ski chalet holidays
+
+==================== SUBMENU — SKI CHALET HOLIDAYS ====================
+• URL: /ski-holidays/ski-chalet-holidays
+---------------------------------------------------------------
+• Page title: Ski Chalet Holidays and Deals 2026/2027 | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Hotels
+
+==================== SUBMENU — HOTELS ====================
+• URL: /ski-holidays/ski-hotels
+---------------------------------------------------------------
+• Page title: Ski Hotels and Ski Hotel Deals | Iglu Ski
+• ❌ Title does NOT contain expected label: "Hotels"
+---------------------------------------------------------------
+• Validating submenu: Apartments
+
+==================== SUBMENU — APARTMENTS ====================
+• URL: /ski-holidays/ski-apartments
+---------------------------------------------------------------
+• Page title: Ski Apartments Deals 2026/2027 | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Chalet hotels
+
+==================== SUBMENU — CHALET HOTELS ====================
+• URL: /ski-holidays/chalet-hotels
+---------------------------------------------------------------
+• Page title: Ski Chalet Hotels | Holidays and Top Deals
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: December
+
+==================== SUBMENU — DECEMBER ====================
+• URL: /ski-holidays/december-skiing
+---------------------------------------------------------------
+• Page title: December Ski Holidays | 2026 Deals
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Christmas
+
+==================== SUBMENU — CHRISTMAS ====================
+• URL: /ski-holidays/christmas-skiing
+---------------------------------------------------------------
+• Page title: Christmas 2026 Ski Holidays and Deals | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: New Year
+
+==================== SUBMENU — NEW YEAR ====================
+• URL: /ski-holidays/new-year-skiing
+---------------------------------------------------------------
+• Page title: New Year 2026 Ski Holidays and Deals | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: January
+
+==================== SUBMENU — JANUARY ====================
+• URL: /ski-holidays/january-skiing
+---------------------------------------------------------------
+• Page title: January 2026 Ski Holidays and Deals | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: February
+
+==================== SUBMENU — FEBRUARY ====================
+• URL: /ski-holidays/february-skiing
+---------------------------------------------------------------
+• Page title: February 2026 Ski Holidays and Deals | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Feb Half Term
+
+==================== SUBMENU — FEB HALF TERM ====================
+• URL: /ski-holidays/half-term-skiing
+---------------------------------------------------------------
+• Page title: February 2026 Half Term Ski Holidays and Deals
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: March
+
+==================== SUBMENU — MARCH ====================
+• URL: /ski-holidays/march-skiing
+---------------------------------------------------------------
+• Page title: March 2026 Ski Holidays and Deals | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: April
+
+==================== SUBMENU — APRIL ====================
+• URL: /ski-holidays/april-skiing
+---------------------------------------------------------------
+• Page title: April Ski Holidays & April 2026 Ski Deals | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Easter
+
+==================== SUBMENU — EASTER ====================
+• URL: /ski-holidays/easter-skiing
+---------------------------------------------------------------
+• Page title: Easter Ski Holidays & Easter 2026 Ski Deals | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: France
+
+==================== SUBMENU — FRANCE ====================
+• URL: /ski-resorts/france
+---------------------------------------------------------------
+• Page title: France Ski Holidays 2026/2027 | Best Deals and Resort Advice
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Austria
+
+==================== SUBMENU — AUSTRIA ====================
+• URL: /ski-resorts/austria
+---------------------------------------------------------------
+• Page title: Austria Ski Holidays 2026/2027 | Best Deals and Resort Advice
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Italy
+
+==================== SUBMENU — ITALY ====================
+• URL: /ski-resorts/italy
+---------------------------------------------------------------
+• Page title: Italy Ski Holidays | Best Deals and Ski Resort Advice
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Andorra
+
+==================== SUBMENU — ANDORRA ====================
+• URL: /ski-resorts/andorra
+---------------------------------------------------------------
+• Page title: Andorra Ski Holidays and Resort Advice | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Switzerland
+
+==================== SUBMENU — SWITZERLAND ====================
+• URL: /ski-resorts/switzerland
+---------------------------------------------------------------
+• Page title: Skiing in Switzerland | Swiss ski resorts | Ski Switzerland | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Norway
+
+==================== SUBMENU — NORWAY ====================
+• URL: /ski-resorts/norway
+---------------------------------------------------------------
+• Page title: Ski Norway | Norwegian ski resorts | Skiing in Norway | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Finland
+
+==================== SUBMENU — FINLAND ====================
+• URL: /ski-resorts/finland
+---------------------------------------------------------------
+• Page title: Skiing in Finland | Ski holiday Finland | Finnish ski resorts | Igluski.com
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Canada
+
+==================== SUBMENU — CANADA ====================
+• URL: /ski-resorts/canada
+---------------------------------------------------------------
+• Page title: Skiing in Canada | Canadaian ski holidays & resorts | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: USA
+
+==================== SUBMENU — USA ====================
+• URL: /ski-resorts/usa
+---------------------------------------------------------------
+• Page title: Skiing in USA | Ski holiday USA | American ski resorts | Igluski.com
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Bulgaria
+
+==================== SUBMENU — BULGARIA ====================
+• URL: /ski-resorts/bulgaria
+---------------------------------------------------------------
+• Page title: Bulgaria Ski Holidays 2026/2027 | Best Deals and Resort Advice
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: All other countries
+
+==================== SUBMENU — ALL OTHER COUNTRIES ====================
+• URL: /ski-resorts
+---------------------------------------------------------------
+• Page title: Ski Resorts | Find The Perfect Skiing Resort | Iglu Ski
+• ❌ Title does NOT contain expected label: "All other countries"
+---------------------------------------------------------------
+• Validating submenu: Tignes
+
+==================== SUBMENU — TIGNES ====================
+• URL: /ski-resorts/france/tignes
+---------------------------------------------------------------
+• Page title: Tignes Ski Holidays | Best Tignes Deals
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Val d'Isère
+
+==================== SUBMENU — VAL D'ISÈRE ====================
+• URL: /ski-resorts/france/val-d-isere
+---------------------------------------------------------------
+• Page title: Val d'Isère Ski Holidays | Best Val d'Isère ski deals
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Val Thorens
+
+==================== SUBMENU — VAL THORENS ====================
+• URL: /ski-resorts/france/val-thorens
+---------------------------------------------------------------
+• Page title: Val Thorens ski holidays | The best deals in one place
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Méribel
+
+==================== SUBMENU — MÉRIBEL ====================
+• URL: /ski-resorts/france/meribel
+---------------------------------------------------------------
+• Page title: Méribel Ski Holidays | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Les Arcs
+
+==================== SUBMENU — LES ARCS ====================
+• URL: /ski-resorts/france/les-arcs
+---------------------------------------------------------------
+• Page title: Les Arcs Ski Holidays
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: La Plagne
+
+==================== SUBMENU — LA PLAGNE ====================
+• URL: /ski-resorts/france/la-plagne
+---------------------------------------------------------------
+• Page title: La Plagne Ski Holidays | The best deals in one place
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Avoriaz
+
+==================== SUBMENU — AVORIAZ ====================
+• URL: /ski-resorts/france/avoriaz
+---------------------------------------------------------------
+• Page title: Avoriaz Ski Holidays | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: St Anton
+
+==================== SUBMENU — ST ANTON ====================
+• URL: /ski-resorts/austria/st-anton
+---------------------------------------------------------------
+• Page title: St Anton Ski Holidays | Best St Anton Ski Deals
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Mayrhofen
+
+==================== SUBMENU — MAYRHOFEN ====================
+• URL: /ski-resorts/austria/mayrhofen
+---------------------------------------------------------------
+• Page title: Mayrhofen Ski | Skiing in Mayrhofen | Austria | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Cervinia
+
+==================== SUBMENU — CERVINIA ====================
+• URL: /ski-resorts/italy/cervinia
+---------------------------------------------------------------
+• Page title: Cervinia Ski Holidays | Discover skiing in Cervinia
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: All ski resorts
+
+==================== SUBMENU — ALL SKI RESORTS ====================
+• URL: /ski-resorts/resort-index
+---------------------------------------------------------------
+• Page title: Ski Resorts Index | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Tignes-Val d’Isère
+
+==================== SUBMENU — TIGNES-VAL D’ISÈRE ====================
+• URL: /ski-resorts/ski-areas/espace-killy
+---------------------------------------------------------------
+• Page title: Tignes-Val d'Isere | Espace Killy | Everything You Need to Know
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Three Valleys
+
+==================== SUBMENU — THREE VALLEYS ====================
+• URL: /ski-resorts/ski-areas/three-valleys
+---------------------------------------------------------------
+• Page title: The Three Valleys Ski Area - Everything You Need to Know
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Paradiski
+
+==================== SUBMENU — PARADISKI ====================
+• URL: /ski-resorts/ski-areas/paradiski
+---------------------------------------------------------------
+• Page title: The Paradiski Area - Everything You Need to Know
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Portes du Soleil
+
+==================== SUBMENU — PORTES DU SOLEIL ====================
+• URL: /ski-resorts/ski-areas/portes-du-soleil
+---------------------------------------------------------------
+• Page title: Portes du Soleil ski area | Igluski.com
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Grand Massif
+
+==================== SUBMENU — GRAND MASSIF ====================
+• URL: /ski-resorts/ski-areas/grand-massif
+---------------------------------------------------------------
+• Page title: Grand Massif Ski Area | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Alberg
+
+==================== SUBMENU — ALBERG ====================
+• URL: /ski-resorts/ski-areas/arlberg
+---------------------------------------------------------------
+• Page title: Arlberg Ski Circus skiing | St Anton Lech Zurs Austria | Iglu Ski
+• ❌ Title does NOT contain expected label: "Alberg"
+---------------------------------------------------------------
+• Validating submenu: SkiWelt
+
+==================== SUBMENU — SKIWELT ====================
+• URL: /ski-resorts/ski-areas/skiwelt-austria
+---------------------------------------------------------------
+• Page title: SkiWelt Ski Area | Austria skiing | Igluski.com
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Zillertal
+
+==================== SUBMENU — ZILLERTAL ====================
+• URL: /ski-resorts/ski-areas/zillertal-arena
+---------------------------------------------------------------
+• Page title: Zillertal Arena ski area | Austria | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Milky Way
+
+==================== SUBMENU — MILKY WAY ====================
+• URL: /ski-resorts/ski-areas/milky-way
+---------------------------------------------------------------
+• Page title: Complete Guide to the Milky Way Ski Area | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: All ski areas
+
+==================== SUBMENU — ALL SKI AREAS ====================
+• URL: /ski-resorts/ski-areas
+---------------------------------------------------------------
+• Page title: Ski areas in Europe | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Best aprés ski resorts
+
+==================== SUBMENU — BEST APRÉS SKI RESORTS ====================
+• URL: /guides/resort-recommendations/best-apres-ski
+---------------------------------------------------------------
+• Page title: Après Ski - What is it and best après ski resorts
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Best group ski resorts
+
+==================== SUBMENU — BEST GROUP SKI RESORTS ====================
+• URL: /guides/group-skiing/best-ski-resorts-for-groups
+---------------------------------------------------------------
+• Page title: Best Ski Resorts For Groups | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Best family ski resorts
+
+==================== SUBMENU — BEST FAMILY SKI RESORTS ====================
+• URL: /guides/family-skiing/best-family-ski-resorts
+---------------------------------------------------------------
+• Page title: Best Ski Resorts For Families | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Top snow sure ski resorts
+
+==================== SUBMENU — TOP SNOW SURE SKI RESORTS ====================
+• URL: /guides/resort-recommendations/snowsure-resorts
+---------------------------------------------------------------
+• Page title: The World's Best Snow-Sure Ski Resorts | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Top short transfer resorts
+
+==================== SUBMENU — TOP SHORT TRANSFER RESORTS ====================
+• URL: /guides/resort-recommendations/best-resorts-with-short-transfer-time
+---------------------------------------------------------------
+• Page title: Best Ski Resorts For A Short Transfer | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Best beginner ski resorts
+
+==================== SUBMENU — BEST BEGINNER SKI RESORTS ====================
+• URL: /guides/beginners-skiing/ski-resorts-beginners
+---------------------------------------------------------------
+• Page title: Best ski resorts for beginners | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Best short break ski resorts
+
+==================== SUBMENU — BEST SHORT BREAK SKI RESORTS ====================
+• URL: /guides/resort-recommendations/best-resorts-for-a-ski-weekend
+---------------------------------------------------------------
+• Page title: Top 10 Resorts For A Ski Weekend | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: All resort guides
+
+==================== SUBMENU — ALL RESORT GUIDES ====================
+• URL: /guides/resort-recommendations
+---------------------------------------------------------------
+• Page title: Resort Recommendations
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Val Thorens snow report
+
+==================== SUBMENU — VAL THORENS SNOW REPORT ====================
+• URL: /ski-resorts/france/val-thorens/snow-reports
+---------------------------------------------------------------
+• Page title: Val Thorens Snow Report | Val Thorens Snow Conditions | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Val d'Isère snow reports
+
+==================== SUBMENU — VAL D'ISÈRE SNOW REPORTS ====================
+• URL: /ski-resorts/france/val-d-isere/snow-reports
+---------------------------------------------------------------
+• Page title: Val d'Isère Snow Report | Val d'Isère Snow Conditions | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: St Anton snow reports
+
+==================== SUBMENU — ST ANTON SNOW REPORTS ====================
+• URL: /ski-resorts/austria/st-anton/snow-reports
+---------------------------------------------------------------
+• Page title: St Anton Snow Report | St Anton Snow Conditions | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Tignes snow reports
+
+==================== SUBMENU — TIGNES SNOW REPORTS ====================
+• URL: /ski-resorts/france/tignes/snow-reports
+---------------------------------------------------------------
+• Page title: Tignes Snow Report | Tignes Snow Conditions | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: La Plagne snow reports
+
+==================== SUBMENU — LA PLAGNE SNOW REPORTS ====================
+• URL: /ski-resorts/france/la-plagne/snow-reports
+---------------------------------------------------------------
+• Page title: La Plagne Snow Report | La Plagne Snow Conditions | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: See all snow reports
+
+==================== SUBMENU — SEE ALL SNOW REPORTS ====================
+• URL: /snow-reports
+---------------------------------------------------------------
+• Page title: Ski Snow Reports, Snow Forecasts and Ski Webcams | Iglu ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Val Thorens snow forecast
+
+==================== SUBMENU — VAL THORENS SNOW FORECAST ====================
+• URL: /ski-resorts/france/val-thorens/snow-forecast
+---------------------------------------------------------------
+• Page title: Val Thorens Snow Forecast | Weather forecast for Val Thorens | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Val d'Isère snow forecast
+
+==================== SUBMENU — VAL D'ISÈRE SNOW FORECAST ====================
+• URL: /ski-resorts/france/val-d-isere/snow-forecast
+---------------------------------------------------------------
+• Page title: Val d'Isère Snow Forecast | Weather forecast for Val d'Isère | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: St Anton snow forecast
+
+==================== SUBMENU — ST ANTON SNOW FORECAST ====================
+• URL: /ski-resorts/austria/st-anton/snow-forecast
+---------------------------------------------------------------
+• Page title: St Anton Snow Forecast | Weather forecast for St Anton | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Tignes snow forecast
+
+==================== SUBMENU — TIGNES SNOW FORECAST ====================
+• URL: /ski-resorts/france/tignes/snow-forecast
+---------------------------------------------------------------
+• Page title: Tignes Snow Forecast | Weather forecast for Tignes | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Les Deux Alpes snow forecast
+
+==================== SUBMENU — LES DEUX ALPES SNOW FORECAST ====================
+• URL: /ski-resorts/france/les-deux-alpes/snow-forecast
+---------------------------------------------------------------
+• Page title: Les Deux Alpes Snow Forecast | Weather forecast for Les Deux Alpes | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: See all snow forecasts
+
+==================== SUBMENU — SEE ALL SNOW FORECASTS ====================
+• URL: /snow-forecast
+---------------------------------------------------------------
+• Page title: Snow Forecast Search | Snow Reports | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Val Thorens snow history
+
+==================== SUBMENU — VAL THORENS SNOW HISTORY ====================
+• URL: /ski-resorts/france/val-thorens/snow-history
+---------------------------------------------------------------
+• Page title: Val Thorens Snow History | Val Thorens Snow Conditions | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Morzine snow history
+
+==================== SUBMENU — MORZINE SNOW HISTORY ====================
+• URL: /ski-resorts/france/morzine/snow-history
+---------------------------------------------------------------
+• Page title: Morzine Snow History | Morzine Snow Conditions | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: St Anton snow history
+
+==================== SUBMENU — ST ANTON SNOW HISTORY ====================
+• URL: /ski-resorts/austria/st-anton/snow-history
+---------------------------------------------------------------
+• Page title: St Anton Snow History | St Anton Snow Conditions | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Bansko snow history
+
+==================== SUBMENU — BANSKO SNOW HISTORY ====================
+• URL: /ski-resorts/bulgaria/bansko/snow-history
+---------------------------------------------------------------
+• Page title: Bansko Snow History | IgluSki
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Tignes snow history
+
+==================== SUBMENU — TIGNES SNOW HISTORY ====================
+• URL: /ski-resorts/france/tignes/snow-history
+---------------------------------------------------------------
+• Page title: Tignes Snow History | Tignes Snow Conditions | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: See all resort snow history
+
+==================== SUBMENU — SEE ALL RESORT SNOW HISTORY ====================
+• URL: /snow-history
+---------------------------------------------------------------
+• Page title: Snow History Search | Snow Reports | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: La Plagne webcams
+
+==================== SUBMENU — LA PLAGNE WEBCAMS ====================
+• URL: /ski-resorts/france/la-plagne/ski-webcams
+---------------------------------------------------------------
+• Page title: La Plagne Webcams | Live view of La Plagne, France | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Méribel webcams
+
+==================== SUBMENU — MÉRIBEL WEBCAMS ====================
+• URL: /ski-resorts/france/meribel/ski-webcams
+---------------------------------------------------------------
+• Page title: Méribel Webcams | Live view of Méribel, France | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Tignes webcams
+
+==================== SUBMENU — TIGNES WEBCAMS ====================
+• URL: /ski-resorts/france/tignes/ski-webcams
+---------------------------------------------------------------
+• Page title: Tignes Webcams | Live view of Tignes, France | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Chamonix webcams
+
+==================== SUBMENU — CHAMONIX WEBCAMS ====================
+• URL: /ski-resorts/france/chamonix/ski-webcams
+---------------------------------------------------------------
+• Page title: Chamonix Webcams | Live view of Chamonix, France | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Cervinia webcams
+
+==================== SUBMENU — CERVINIA WEBCAMS ====================
+• URL: /ski-resorts/italy/cervinia/ski-webcams
+---------------------------------------------------------------
+• Page title: Cervinia Webcams | Live view of Cervinia, Italy | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: See all webcams
+
+==================== SUBMENU — SEE ALL WEBCAMS ====================
+• URL: /ski-webcams
+---------------------------------------------------------------
+• Page title: Ski Resort Webcams | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Family ski guides
+
+==================== SUBMENU — FAMILY SKI GUIDES ====================
+• URL: /guides/family-skiing
+---------------------------------------------------------------
+• Page title: Family ski holidays | Advice & Deals | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Group ski guides
+
+==================== SUBMENU — GROUP SKI GUIDES ====================
+• URL: /guides/group-skiing
+---------------------------------------------------------------
+• Page title: Group Ski Holidays | Group Ski Chalets | Group Ski Holiday Resorts | Igluski.com
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Beginners ski guide
+
+==================== SUBMENU — BEGINNERS SKI GUIDE ====================
+• URL: /guides/beginners-skiing
+---------------------------------------------------------------
+• Page title: Beginner Skiing Information Hub | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Resort recommendations guide
+
+==================== SUBMENU — RESORT RECOMMENDATIONS GUIDE ====================
+• URL: /guides/resort-recommendations
+---------------------------------------------------------------
+• Page title: Resort Recommendations
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Luxury ski guide
+
+==================== SUBMENU — LUXURY SKI GUIDE ====================
+• URL: /guides/luxury-guides
+---------------------------------------------------------------
+• Page title: Luxury skiing and luxury chalets and hotels
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: See more ski guides
+
+==================== SUBMENU — SEE MORE SKI GUIDES ====================
+• URL: /guides
+---------------------------------------------------------------
+• Page title: Ski Guides - From Beginners to Advanced - Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: How to book a ski holiday
+
+==================== SUBMENU — HOW TO BOOK A SKI HOLIDAY ====================
+• URL: https://www.igluski.com/blog/post/booking-your-ski-holiday-everything-you-need-to-know
+---------------------------------------------------------------
+• Page title: 7 Steps To Booking Your Ski Holiday: Everything You Need to Know
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Top ski resorts in Austria
+
+==================== SUBMENU — TOP SKI RESORTS IN AUSTRIA ====================
+• URL: https://www.igluski.com/blog/post/best-ski-resorts-austria
+---------------------------------------------------------------
+• Page title: Best Ski Resorts in Austria
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Top ski resorts in France
+
+==================== SUBMENU — TOP SKI RESORTS IN FRANCE ====================
+• URL: https://www.igluski.com/blog/post/best-ski-resorts-france
+---------------------------------------------------------------
+• Page title: Top 10 Best Ski Resorts in France
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Best après-ski resorts
+
+==================== SUBMENU — BEST APRÈS-SKI RESORTS ====================
+• URL: https://www.igluski.com/guides/resort-recommendations/best-apres-ski
+---------------------------------------------------------------
+• Page title: Après Ski - What is it and best après ski resorts
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Top half term ski resorts
+
+==================== SUBMENU — TOP HALF TERM SKI RESORTS ====================
+• URL: https://www.igluski.com/blog/post/best-ski-resorts-half-term
+---------------------------------------------------------------
+• Page title: Best ski resorts for half term
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: See more ski blogs
+
+==================== SUBMENU — SEE MORE SKI BLOGS ====================
+• URL: /blog
+---------------------------------------------------------------
+• Page title: 
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Iglu Ski's Paralympic legend, lift upgrades and new flights
+
+==================== SUBMENU — IGLU SKI'S PARALYMPIC LEGEND, LIFT UPGRADES AND NEW FLIGHTS ====================
+• URL: https://www.igluski.com/news/iglu-ski-s-paralympic-legend-lift-upgrades-and-new-flights_a19736661
+---------------------------------------------------------------
+• Page title: Iglu Ski's Paralympic legend, lift upgrades and new flights | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Backstreet Boys, new reservoir and fresh gondola
+
+==================== SUBMENU — BACKSTREET BOYS, NEW RESERVOIR AND FRESH GONDOLA ====================
+• URL: https://www.igluski.com/news/backstreet-boys-new-reservoir-and-fresh-gondola_a19736660
+---------------------------------------------------------------
+• Page title: Backstreet Boys, new reservoir and fresh gondola | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Eurostar expansion, classic gondolas and world-class tech
+
+==================== SUBMENU — EUROSTAR EXPANSION, CLASSIC GONDOLAS AND WORLD-CLASS TECH ====================
+• URL: https://www.igluski.com/news/eurostar-expansion-classic-gondolas-and-world-class-tech_a19736659
+---------------------------------------------------------------
+• Page title: Eurostar expansion, classic gondolas and world-class tech | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: Gondolas galore and Epic Pass expansion
+
+==================== SUBMENU — GONDOLAS GALORE AND EPIC PASS EXPANSION ====================
+• URL: https://www.igluski.com/news/gondolas-galore-and-epic-pass-expansion_a19736658
+---------------------------------------------------------------
+• Page title: Gondolas galore and Epic Pass expansion | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: New lifts, UK dry slope revival and climate change pact
+
+==================== SUBMENU — NEW LIFTS, UK DRY SLOPE REVIVAL AND CLIMATE CHANGE PACT ====================
+• URL: https://www.igluski.com/news/new-lifts-uk-dry-slope-revival-and-climate-change-pact_a19736657
+---------------------------------------------------------------
+• Page title: New lifts, UK dry slope revival and climate change pact | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
+• Validating submenu: See more ski news
+
+==================== SUBMENU — SEE MORE SKI NEWS ====================
+• URL: /news
+---------------------------------------------------------------
+• Page title: Ski News | Iglu Ski
+• ✓ Title contains expected label
+---------------------------------------------------------------
 ---------------------------------------------------------------
 • ✓ Navigation page closed
-✓ TC2 completed successfully
+
+==================== TC2 — SUMMARY OF ERRORS ====================
+❌ Title does NOT contain expected label: "B&B hotels"
+❌ Title does NOT contain expected label: "Hotels"
+❌ Title does NOT contain expected label: "All other countries"
+❌ Title does NOT contain expected label: "Alberg"
+=================================================================
+
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Click on the menu and optionally on the submenu" classname="home.spec.ts" time="17.4">
-<system-out>
-<![CDATA[
-==================== COOKIES — INITIAL STATE ====================
-• Navigating to home page...
----------------------------------------------------------------
-• Cookie banner detected.
-• Checking available accept buttons...
-• Clicked default accept button.
-• Cookie banner hidden.
-==================== COOKIES — COMPLETED =======================
-
-
-===== TEST STARTED: Click on the menu and optionally on the submenu =====
-
-
-==================== CLICK MENU — MAIN ====================
-• Menu: Ski Holidays
----------------------------------------------------------------
-• ✓ Clicked main menu: Ski Holidays
-• ✓ Page title validated for menu: Ski Holidays
----------------------------------------------------------------
-
-==================== CLICK MENU — SUBMENU ====================
-• Menu: Ski Holidays
-• Submenu: Family ski holidays
----------------------------------------------------------------
-• ✓ Clicked submenu: Family ski holidays
-• ✓ Page title validated for submenu: Family ski holidays
----------------------------------------------------------------
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page › TC3 — Validate Contact Information in the Header" classname="home.spec.ts" time="18.569">
+<testcase name="Home Page › TC3 — Validate Contact Information in the Header" classname="home.spec.ts" time="15.202">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -592,29 +1057,25 @@ PAGE TITLE: Ski News | Iglu Ski
 
 
 ==================== HEADER — PHONE VALIDATION ====================
-• Phone text: 020 3848 3700
+• ✓ Header phone visible → 020 3848 3700
+---------------------------------------------------------------
+
+==================== HEADER — PHONE VALIDATION ====================
+• ✓ Header phone visible → 020 3848 3700
 ---------------------------------------------------------------
 
 ==================== HEADER — CONTACT US TEXT VALIDATION ====================
-• Contact Us text: Phone 9:00 AM - 8:00 PM or book online
+• ✓ Contact Us link visible → Phone 9:00 AM - 8:00 PM or book online
 ---------------------------------------------------------------
 
 ==================== HEADER — CONTACT US REDIRECT VALIDATION ====================
-
-==================== REDIRECT — VALIDATION START ====================
-• Extracted URL from element: https://www.igluski.com/contact-us
-• Opening new tab to validate redirection...
----------------------------------------------------------------
-• Redirect OK → https://www.igluski.com/contact-us
-==================== REDIRECT — VALIDATION COMPLETE ==================
-
 • ✓ Contact Us redirects correctly
 ---------------------------------------------------------------
 ✓ TC3 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC4 — Validate &quot;Recently Viewed&quot; Button" classname="home.spec.ts" time="13.426">
+<testcase name="Home Page › TC4 — Validate &quot;Recently Viewed&quot; Button" classname="home.spec.ts" time="10.341">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -631,7 +1092,7 @@ PAGE TITLE: Ski News | Iglu Ski
 
 
 ==================== RECENTLY VIEWED — BUTTON TEXT VALIDATION ====================
-• ✓ Recently Viewed button text is correct
+• ✓ Recently Viewed button visible with correct text
 ---------------------------------------------------------------
 
 ==================== RECENTLY VIEWED — CLICK ====================
@@ -639,14 +1100,13 @@ PAGE TITLE: Ski News | Iglu Ski
 ---------------------------------------------------------------
 
 ==================== RECENTLY VIEWED — PANEL VALIDATION ====================
-• Panel text: No recently viewed properties
-• ✓ Recently Viewed panel is visible
+• ✓ Recently Viewed panel visible → No recently viewed properties
 ---------------------------------------------------------------
 ✓ TC4 completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC5 — Validate Access to the Customer Portal" classname="home.spec.ts" time="18.028">
+<testcase name="Home Page › TC5 — Validate Access to the Customer Portal" classname="home.spec.ts" time="12.189">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -663,7 +1123,7 @@ PAGE TITLE: Ski News | Iglu Ski
 
 
 ==================== CUSTOMER PORTAL — BUTTON TEXT VALIDATION ====================
-• ✓ Customer Portal button text is correct
+• ✓ Customer Portal button visible with correct text
 ---------------------------------------------------------------
 
 ==================== CUSTOMER PORTAL — CLICK ====================
@@ -682,7 +1142,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC6 — Validate Ratings &amp; Reviews in the Header" classname="home.spec.ts" time="19.927">
+<testcase name="Home Page › TC6 — Validate Ratings &amp; Reviews in the Header" classname="home.spec.ts" time="16.576">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -699,7 +1159,7 @@ PAGE TITLE: Ski News | Iglu Ski
 
 
 ==================== RATINGS & REVIEWS — TEXT VALIDATION ====================
-• ✓ Ratings & Reviews link text is correct
+• ✓ Ratings & Reviews link visible with correct text
 ---------------------------------------------------------------
 
 ==================== RATINGS & REVIEWS — CLICK ====================
@@ -707,14 +1167,6 @@ PAGE TITLE: Ski News | Iglu Ski
 ---------------------------------------------------------------
 
 ==================== RATINGS & REVIEWS — REDIRECT VALIDATION ====================
-
-==================== REDIRECT — VALIDATION START ====================
-• Extracted URL from element: https://www.igluski.com/customer-reviews
-• Opening new tab to validate redirection...
----------------------------------------------------------------
-• Redirect OK → https://www.igluski.com/customer-reviews
-==================== REDIRECT — VALIDATION COMPLETE ==================
-
 • ✓ Ratings & Reviews redirects correctly
 ---------------------------------------------------------------
 
@@ -725,7 +1177,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC15 — Validate Main Titles on the Homepage" classname="home.spec.ts" time="12.484">
+<testcase name="Home Page › TC15 — Validate Main Titles on the Home Page" classname="home.spec.ts" time="14.584">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -738,7 +1190,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: TC15 — Validate Main Titles on the Homepage =====
+===== TEST STARTED: TC15 — Validate Main Titles on the Home Page =====
 
 
 ==================== HOMEPAGE TITLE — VALIDATION ====================
@@ -762,7 +1214,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC16 — Validate Carousel of Promotions and Country Banners" classname="home.spec.ts" time="19.457">
+<testcase name="Home Page › TC16 — Validate Carousel of Promotions and Country Banners" classname="home.spec.ts" time="26.662">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -796,7 +1248,7 @@ PAGE TITLE: Ski News | Iglu Ski
 
 ==================== CAROUSEL — SLIDE 3 OF 3 ====================
 • CTA detected: https://www.igluski.com/ski-holidays/new-year-sale
-• ✓ CTA navigation OK → https://www.igluski.com/ski-holidays/new-year-sale
+• ❌ CTA navigation failed on slide 3
 ---------------------------------------------------------------
 
 ==================== COUNTRY BANNERS — FETCH LIST ====================
@@ -806,7 +1258,7 @@ PAGE TITLE: Ski News | Iglu Ski
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC17 — Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="22.638">
+<testcase name="Home Page › TC17 — Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="38.534">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -859,29 +1311,34 @@ IGLU SKI
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC18 — Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="90.288">
-<failure message="home.spec.ts:403:7 TC18 — Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
-<![CDATA[  [chromium] › home.spec.ts:403:7 › Home Page › TC18 — Validate Contact Section (Phone, Email, Newsletter) › Validate phone block 
+<testcase name="Home Page › TC18 — Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="11.895">
+<failure message="home.spec.ts:358:7 TC18 — Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
+<![CDATA[  [chromium] › home.spec.ts:358:7 › Home Page › TC18 — Validate Contact Section (Phone, Email, Newsletter) › Validate phone block 
 
-    Test timeout of 90000ms exceeded.
+    Error: expect(locator).toBeVisible() failed
 
-    Error: locator.click: Test timeout of 90000ms exceeded.
+    Locator: locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
     Call log:
+      - Expect "toBeVisible" with timeout 5000ms
       - waiting for locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]')
 
 
-       at ..\pages\home.page.ts:862
+       at ..\pages\home.page.ts:903
 
-      860 |     this.logInfo("Clicking phone number to validate navigation...");
-      861 |
-    > 862 |     await this.contactPhoneNumber.click();
-          |                                   ^
-      863 |     await expect(this.page).toHaveURL(/contact-us/);
-      864 |
-      865 |     this.logInfo("✓ Phone link navigation OK");
-        at HomePage.validateContactPhoneBlock (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:862:35)
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:413:7
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:412:5
+      901 |     // Validate navigation
+      902 |     this.logInfo("Clicking phone number to validate navigation...");
+    > 903 |     await expect(this.contactPhoneNumber).toBeVisible();
+          |                                           ^
+      904 |     await this.contactPhoneNumber.click();
+      905 |
+      906 |     await expect(this.page).toHaveURL(/contact-us/i);
+        at HomePage.validateContactPhoneBlock (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:903:43)
+        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:367:7
+        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:366:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\home-Home-Page-TC18-—-Vali-267d1-ion-Phone-Email-Newsletter--chromium\test-failed-1.png
@@ -916,7 +1373,7 @@ IGLU SKI
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC20 — Validate Footer Links" classname="home.spec.ts" time="76.038">
+<testcase name="Home Page › TC20 — Validate Footer Links" classname="home.spec.ts" time="152.665">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1232,7 +1689,7 @@ IGLU SKI
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC22 — Validate Carousel CTA Button" classname="home.spec.ts" time="8.893">
+<testcase name="Home Page › TC22 — Validate Carousel CTA Button" classname="home.spec.ts" time="8.725">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1259,7 +1716,7 @@ IGLU SKI
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › Validate Inline Links in Sections" classname="home.spec.ts" time="51.094">
+<testcase name="Home Page › TCXX — Validate Inline Links in Sections" classname="home.spec.ts" time="42.62">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1272,7 +1729,7 @@ IGLU SKI
 ==================== COOKIES — COMPLETED =======================
 
 
-===== TEST STARTED: Validate Inline Links in Sections =====
+===== TEST STARTED: TCXX — Validate Inline Links in Sections =====
 
 
 ==================== INLINE LINKS — SPEAK TO EXPERTS ====================
@@ -1283,124 +1740,48 @@ IGLU SKI
 ==================== INLINE LINK — SKI HOLIDAYS ====================
 • URL: https://www.igluski.com/ski-holidays
 ---------------------------------------------------------------
-  • Page title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
-  ✓ Title is similar to "ski holidays"
+• ✓ Page title: Ski Holidays 2026/2027 | Price Match Guarantee!
 ---------------------------------------------------------------
 
 ==================== INLINE LINK — SKI DEALS ====================
 • URL: https://www.igluski.com/ski-deals
 ---------------------------------------------------------------
-  • Page title: "Ski Deals And Cheap Ski Holidays for 2026 & 2027 | Iglu Ski"
-  ✓ Title is similar to "ski deals"
+• ✓ Page title: Ski Deals And Cheap Ski Holidays for 2026 & 2027 | Iglu Ski
 ---------------------------------------------------------------
 
 ==================== INLINE LINK — SKI CHALETS ====================
 • URL: https://www.igluski.com/ski-holidays/ski-chalet-holidays
 ---------------------------------------------------------------
-  • Page title: "Ski Chalet Holidays and Deals 2026/2027 | Iglu Ski"
-  ✓ Title is similar to "ski chalets"
+• ✓ Page title: Ski Chalet Holidays and Deals 2026/2027 | Iglu Ski
 ---------------------------------------------------------------
 
 ==================== INLINE LINK — HOTELS ====================
 • URL: https://www.igluski.com/ski-holidays/ski-hotels
 ---------------------------------------------------------------
-  • Page title: "Ski Hotels and Ski Hotel Deals | Iglu Ski"
-  ✓ Title is similar to "hotels"
+• ✓ Page title: Ski Hotels and Ski Hotel Deals | Iglu Ski
 ---------------------------------------------------------------
 
 ==================== INLINE LINK — APARTMENTS ====================
 • URL: https://www.igluski.com/ski-holidays/ski-apartments
 ---------------------------------------------------------------
-  • Page title: "Ski Apartments Deals 2026/2027 | Iglu Ski"
-  ✓ Title is similar to "apartments"
+• ✓ Page title: Ski Apartments Deals 2026/2027 | Iglu Ski
 ---------------------------------------------------------------
 
 ==================== INLINE LINK — PRICE MATCH GUARANTEE ====================
 • URL: https://www.igluski.com/price-match
 ---------------------------------------------------------------
-  • Page title: "Ski Holidays Price Match | Iglu Ski"
-  ✓ Title is similar to "price match guarantee"
+• ✓ Page title: Ski Holidays Price Match | Iglu Ski
 ---------------------------------------------------------------
 
 ==================== INLINE LINKS — FIND YOUR SKIING HOLIDAY ====================
 • Section title found: "Find Your Skiing Holiday"
-• Total links detected: 10
----------------------------------------------------------------
-
-==================== INLINE LINK — SKI DEALS ====================
-• URL: https://www.igluski.com/ski-deals
----------------------------------------------------------------
-  • Page title: "Ski Deals And Cheap Ski Holidays for 2026 & 2027 | Iglu Ski"
-  ✓ Title is similar to "ski deals"
----------------------------------------------------------------
-
-==================== INLINE LINK — 280 SKI RESORTS ====================
-• URL: https://www.igluski.com/ski-resorts
----------------------------------------------------------------
-  • Page title: "Ski Resorts | Find The Perfect Skiing Resort | Iglu Ski"
-  ✓ Title is similar to "280 ski resorts"
----------------------------------------------------------------
-
-==================== INLINE LINK — EUROPE ====================
-• URL: https://www.igluski.com/ski-resorts/ski-areas
----------------------------------------------------------------
-  • Page title: "Ski areas in Europe | Iglu Ski"
-  ✓ Title is similar to "Europe"
----------------------------------------------------------------
-
-==================== INLINE LINK — NORTH AMERICA ====================
-• URL: https://www.igluski.com/ski-resorts/ski-areas/ski-holidays-north-america
----------------------------------------------------------------
-  • Page title: "Ski holidays North America | Iglu Ski"
-  ✓ Title is similar to "North America"
----------------------------------------------------------------
-
-==================== INLINE LINK — JAPAN ====================
-• URL: https://www.igluski.com/ski-resorts/japan
----------------------------------------------------------------
-  • Page title: "Skiing in Japan | Japan Ski holidays | Iglu Ski"
-  ✓ Title is similar to "Japan"
----------------------------------------------------------------
-
-==================== INLINE LINK — FRANCE ====================
-• URL: https://www.igluski.com/ski-resorts/france
----------------------------------------------------------------
-  • Page title: "France Ski Holidays 2026/2027 | Best Deals and Resort Advice"
-  ✓ Title is similar to "France"
----------------------------------------------------------------
-
-==================== INLINE LINK — AUSTRIA ====================
-• URL: https://www.igluski.com/ski-resorts/austria
----------------------------------------------------------------
-  • Page title: "Austria Ski Holidays 2026/2027 | Best Deals and Resort Advice"
-  ✓ Title is similar to "Austria"
----------------------------------------------------------------
-
-==================== INLINE LINK — CANADA ====================
-• URL: https://www.igluski.com/ski-resorts/canada
----------------------------------------------------------------
-  • Page title: "Skiing in Canada | Canadaian ski holidays & resorts | Iglu Ski"
-  ✓ Title is similar to "Canada"
----------------------------------------------------------------
-
-==================== INLINE LINK — SNOWBOARDING HOLIDAYS ====================
-• URL: https://www.igluski.com/ski-holidays/snowboard-holidays
----------------------------------------------------------------
-  • Page title: "Snowboard holidays & snowboarding deals | Iglu Ski"
-  ✓ Title is similar to "snowboarding holidays"
----------------------------------------------------------------
-
-==================== INLINE LINK — PACKAGE SKI HOLIDAYS ====================
-• URL: https://www.igluski.com/ski-holidays
----------------------------------------------------------------
-  • Page title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
-  ✓ Title is similar to "Package ski holidays"
+• Total links detected: 0
 ---------------------------------------------------------------
 ✓ Inline links validation completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC26 — Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="11.614">
+<testcase name="Home Page › TC26 — Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="7.989">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1467,7 +1848,7 @@ IGLU SKI
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC28 — Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="home.spec.ts" time="7.075">
+<testcase name="Home Page › TC28 — Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="home.spec.ts" time="4.962">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1484,12 +1865,16 @@ IGLU SKI
 
 
 ==================== TC28 — VALIDATE 'SEARCH BY HOLIDAY ID' ====================
+
+==================== FOOTER — SCROLL ====================
 • ✓ Scrolled to footer
+---------------------------------------------------------------
 • ✓ Holiday ID container visible
 • ✓ 'Search by Holiday ID' button visible
 • ✓ Clicked 'Search by Holiday ID' button
 • ✓ Holiday ID form visible
 • ✓ Holiday ID input field visible
+• Input placeholder: Enter Holiday ID
 • ✓ Search button inside Holiday ID form visible
 • ✓ TC28 PASSED: Holiday ID search validated successfully
 ---------------------------------------------------------------
