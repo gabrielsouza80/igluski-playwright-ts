@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="15" failures="1" skipped="0" errors="0" time="198.3281799999997">
-<testsuite name="home.spec.ts" timestamp="2026-01-02T18:39:06.726Z" hostname="chromium" tests="15" failures="1" skipped="0" time="573.596" errors="0">
-<testcase name="Home Page › TC1 — Validate Logo Navigation" classname="home.spec.ts" time="21.655">
+<testsuites id="" name="" tests="9" failures="1" skipped="0" errors="0" time="155.69644199999982">
+<testsuite name="components.spec.ts" timestamp="2026-01-05T10:18:47.735Z" hostname="chromium" tests="9" failures="1" skipped="0" time="337.141" errors="0">
+<testcase name="Componets Page › TC1 — Validate Logo Navigation" classname="components.spec.ts" time="12.955">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -31,7 +31,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC2 — Header Navigation + Submenu Validation" classname="home.spec.ts" time="188.997">
+<testcase name="Componets Page › TC2 — Header Navigation + Submenu Validation" classname="components.spec.ts" time="145.153">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1040,7 +1040,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC3 — Validate Contact Information in the Header" classname="home.spec.ts" time="15.202">
+<testcase name="Componets Page › TC3 — Validate Contact Information in the Header" classname="components.spec.ts" time="20.351">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1075,7 +1075,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC4 — Validate &quot;Recently Viewed&quot; Button" classname="home.spec.ts" time="10.341">
+<testcase name="Componets Page › TC4 — Validate &quot;Recently Viewed&quot; Button" classname="components.spec.ts" time="16.057">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1106,7 +1106,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC5 — Validate Access to the Customer Portal" classname="home.spec.ts" time="12.189">
+<testcase name="Componets Page › TC5 — Validate Access to the Customer Portal" classname="components.spec.ts" time="14.568">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1142,7 +1142,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC6 — Validate Ratings &amp; Reviews in the Header" classname="home.spec.ts" time="16.576">
+<testcase name="Componets Page › TC6 — Validate Ratings &amp; Reviews in the Header" classname="components.spec.ts" time="20.63">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1177,143 +1177,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC15 — Validate Main Titles on the Home Page" classname="home.spec.ts" time="14.584">
-<system-out>
-<![CDATA[
-==================== COOKIES — INITIAL STATE ====================
-• Navigating to home page...
----------------------------------------------------------------
-• Cookie banner detected.
-• Checking available accept buttons...
-• Clicked default accept button.
-• Cookie banner hidden.
-==================== COOKIES — COMPLETED =======================
-
-
-===== TEST STARTED: TC15 — Validate Main Titles on the Home Page =====
-
-
-==================== HOMEPAGE TITLE — VALIDATION ====================
-• Validating title: "Welcome To The Home Of Ski"
----------------------------------------------------------------
-• ✓ Title found: "Welcome To The Home Of Ski"
----------------------------------------------------------------
-
-==================== HOMEPAGE TITLE — VALIDATION ====================
-• Validating title: "Speak to the ski experts"
----------------------------------------------------------------
-• ✓ Title found: "Speak to the ski experts"
----------------------------------------------------------------
-
-==================== HOMEPAGE TITLE — VALIDATION ====================
-• Validating title: "Find Your Skiing Holiday"
----------------------------------------------------------------
-• ✓ Title found: "Find Your Skiing Holiday"
----------------------------------------------------------------
-✓ TC15 completed successfully
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page › TC16 — Validate Carousel of Promotions and Country Banners" classname="home.spec.ts" time="26.662">
-<system-out>
-<![CDATA[
-==================== COOKIES — INITIAL STATE ====================
-• Navigating to home page...
----------------------------------------------------------------
-• Cookie banner detected.
-• Checking available accept buttons...
-• Clicked default accept button.
-• Cookie banner hidden.
-==================== COOKIES — COMPLETED =======================
-
-
-===== TEST STARTED: TC16 — Validate Carousel of Promotions and Country Banners =====
-
-
-==================== CAROUSEL — SLIDE COUNT ====================
-• Total slides detected: 3
----------------------------------------------------------------
-
-==================== CAROUSEL — SLIDE 1 OF 3 ====================
-• CTA detected: https://www.igluski.com/ski-holidays/new-year-sale
-• ✓ CTA navigation OK → https://www.igluski.com/ski-holidays/new-year-sale
-• Moving to next slide...
----------------------------------------------------------------
-
-==================== CAROUSEL — SLIDE 2 OF 3 ====================
-• CTA detected: https://www.igluski.com/ski-holidays
-• ✓ CTA navigation OK → https://www.igluski.com/ski-holidays
-• Moving to next slide...
----------------------------------------------------------------
-
-==================== CAROUSEL — SLIDE 3 OF 3 ====================
-• CTA detected: https://www.igluski.com/ski-holidays/new-year-sale
-• ❌ CTA navigation failed on slide 3
----------------------------------------------------------------
-
-==================== COUNTRY BANNERS — FETCH LIST ====================
-• Total banners detected: 0
----------------------------------------------------------------
-✓ TC16 completed successfully
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page › TC17 — Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="38.534">
-<system-out>
-<![CDATA[
-==================== COOKIES — INITIAL STATE ====================
-• Navigating to home page...
----------------------------------------------------------------
-• Cookie banner detected.
-• Checking available accept buttons...
-• Clicked default accept button.
-• Cookie banner hidden.
-==================== COOKIES — COMPLETED =======================
-
-
-===== TEST STARTED: TC17 — Validate CTA Boxes (Call To Action) =====
-
-
-==================== CTA BOXES — FETCH LIST ====================
-• Total CTA boxes detected: 3
----------------------------------------------------------------
-
-==================== CTA BOXES — FETCH LIST ====================
-• Total CTA boxes detected: 3
----------------------------------------------------------------
-
-==================== CTA BOX — 1 OF 3 ====================
-• Title: TALK TO
-A SKI EXPERT
-• Normalized: talk to a ski expert
-• URL: https://www.igluski.com/enquire
----------------------------------------------------------------
-• ✓ CTA navigation OK
----------------------------------------------------------------
-
-==================== CTA BOX — 2 OF 3 ====================
-• Title: ABOUT
-IGLU SKI
-• Normalized: about iglu ski
-• URL: https://www.igluski.com/about
----------------------------------------------------------------
-• ✓ CTA navigation OK
----------------------------------------------------------------
-
-==================== CTA BOX — 3 OF 3 ====================
-• Title: SIGN UP TO OUR NEWSLETTER
-• Normalized: sign up to our newsletter
-• URL: https://www.igluski.com/signup
----------------------------------------------------------------
-• ✓ CTA navigation OK
----------------------------------------------------------------
-✓ TC17 completed successfully
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page › TC18 — Validate Contact Section (Phone, Email, Newsletter)" classname="home.spec.ts" time="11.895">
-<failure message="home.spec.ts:358:7 TC18 — Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
-<![CDATA[  [chromium] › home.spec.ts:358:7 › Home Page › TC18 — Validate Contact Section (Phone, Email, Newsletter) › Validate phone block 
+<testcase name="Componets Page › TC18 — Validate Contact Section (Phone, Email, Newsletter)" classname="components.spec.ts" time="18.573">
+<failure message="components.spec.ts:261:9 TC18 — Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
+<![CDATA[  [chromium] › components.spec.ts:261:9 › Componets Page › TC18 — Validate Contact Section (Phone, Email, Newsletter) › Validate phone block 
 
     Error: expect(locator).toBeVisible() failed
 
@@ -1327,24 +1193,24 @@ IGLU SKI
       - waiting for locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]')
 
 
-       at ..\pages\home.page.ts:903
+       at ..\pages\components.page.ts:729
 
-      901 |     // Validate navigation
-      902 |     this.logInfo("Clicking phone number to validate navigation...");
-    > 903 |     await expect(this.contactPhoneNumber).toBeVisible();
-          |                                           ^
-      904 |     await this.contactPhoneNumber.click();
-      905 |
-      906 |     await expect(this.page).toHaveURL(/contact-us/i);
-        at HomePage.validateContactPhoneBlock (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:903:43)
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:367:7
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:366:5
+      727 |         // Validate navigation
+      728 |         this.logInfo("Clicking phone number to validate navigation...");
+    > 729 |         await expect(this.contactPhoneNumber).toBeVisible();
+          |                                               ^
+      730 |         await this.contactPhoneNumber.click();
+      731 |
+      732 |         await expect(this.page).toHaveURL(/contact-us/i);
+        at ComponentsPage.validateContactPhoneBlock (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\components.page.ts:729:47)
+        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\components.spec.ts:270:13
+        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\components.spec.ts:269:9
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\home-Home-Page-TC18-—-Vali-267d1-ion-Phone-Email-Newsletter--chromium\test-failed-1.png
+    ..\test-results\components-Componets-Page--300dd-ion-Phone-Email-Newsletter--chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\home-Home-Page-TC18-—-Vali-267d1-ion-Phone-Email-Newsletter--chromium\error-context.md
+    Error Context: ..\test-results\components-Componets-Page--300dd-ion-Phone-Email-Newsletter--chromium\error-context.md
 ]]>
 </failure>
 <system-out>
@@ -1367,13 +1233,13 @@ IGLU SKI
 • ✓ Phone title OK
 • Clicking phone number to validate navigation...
 
-[[ATTACHMENT|test-results\home-Home-Page-TC18-—-Vali-267d1-ion-Phone-Email-Newsletter--chromium\test-failed-1.png]]
+[[ATTACHMENT|test-results\components-Componets-Page--300dd-ion-Phone-Email-Newsletter--chromium\test-failed-1.png]]
 
-[[ATTACHMENT|test-results\home-Home-Page-TC18-—-Vali-267d1-ion-Phone-Email-Newsletter--chromium\error-context.md]]
+[[ATTACHMENT|test-results\components-Componets-Page--300dd-ion-Phone-Email-Newsletter--chromium\error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC20 — Validate Footer Links" classname="home.spec.ts" time="152.665">
+<testcase name="Componets Page › TC20 — Validate Footer Links" classname="components.spec.ts" time="78.766">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================
@@ -1689,166 +1555,7 @@ IGLU SKI
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC22 — Validate Carousel CTA Button" classname="home.spec.ts" time="8.725">
-<system-out>
-<![CDATA[
-==================== COOKIES — INITIAL STATE ====================
-• Navigating to home page...
----------------------------------------------------------------
-• Cookie banner detected.
-• Checking available accept buttons...
-• Clicked default accept button.
-• Cookie banner hidden.
-==================== COOKIES — COMPLETED =======================
-
-
-===== TEST STARTED: TC22 — Validate Carousel CTA Button =====
-
-
-==================== CAROUSEL CTA — VISIBILITY ====================
-• CTA href: https://www.igluski.com/ski-holidays/new-year-sale
----------------------------------------------------------------
-
-==================== CAROUSEL CTA — NAVIGATION ====================
-• ✓ CTA navigation OK → https://www.igluski.com/ski-holidays/new-year-sale
----------------------------------------------------------------
-✓ TC22 completed successfully
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page › TCXX — Validate Inline Links in Sections" classname="home.spec.ts" time="42.62">
-<system-out>
-<![CDATA[
-==================== COOKIES — INITIAL STATE ====================
-• Navigating to home page...
----------------------------------------------------------------
-• Cookie banner detected.
-• Checking available accept buttons...
-• Clicked default accept button.
-• Cookie banner hidden.
-==================== COOKIES — COMPLETED =======================
-
-
-===== TEST STARTED: TCXX — Validate Inline Links in Sections =====
-
-
-==================== INLINE LINKS — SPEAK TO EXPERTS ====================
-• Section title found: "Speak to the ski experts"
-• Total links detected: 6
----------------------------------------------------------------
-
-==================== INLINE LINK — SKI HOLIDAYS ====================
-• URL: https://www.igluski.com/ski-holidays
----------------------------------------------------------------
-• ✓ Page title: Ski Holidays 2026/2027 | Price Match Guarantee!
----------------------------------------------------------------
-
-==================== INLINE LINK — SKI DEALS ====================
-• URL: https://www.igluski.com/ski-deals
----------------------------------------------------------------
-• ✓ Page title: Ski Deals And Cheap Ski Holidays for 2026 & 2027 | Iglu Ski
----------------------------------------------------------------
-
-==================== INLINE LINK — SKI CHALETS ====================
-• URL: https://www.igluski.com/ski-holidays/ski-chalet-holidays
----------------------------------------------------------------
-• ✓ Page title: Ski Chalet Holidays and Deals 2026/2027 | Iglu Ski
----------------------------------------------------------------
-
-==================== INLINE LINK — HOTELS ====================
-• URL: https://www.igluski.com/ski-holidays/ski-hotels
----------------------------------------------------------------
-• ✓ Page title: Ski Hotels and Ski Hotel Deals | Iglu Ski
----------------------------------------------------------------
-
-==================== INLINE LINK — APARTMENTS ====================
-• URL: https://www.igluski.com/ski-holidays/ski-apartments
----------------------------------------------------------------
-• ✓ Page title: Ski Apartments Deals 2026/2027 | Iglu Ski
----------------------------------------------------------------
-
-==================== INLINE LINK — PRICE MATCH GUARANTEE ====================
-• URL: https://www.igluski.com/price-match
----------------------------------------------------------------
-• ✓ Page title: Ski Holidays Price Match | Iglu Ski
----------------------------------------------------------------
-
-==================== INLINE LINKS — FIND YOUR SKIING HOLIDAY ====================
-• Section title found: "Find Your Skiing Holiday"
-• Total links detected: 0
----------------------------------------------------------------
-✓ Inline links validation completed successfully
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page › TC26 — Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="7.989">
-<system-out>
-<![CDATA[
-==================== COOKIES — INITIAL STATE ====================
-• Navigating to home page...
----------------------------------------------------------------
-• Cookie banner detected.
-• Checking available accept buttons...
-• Clicked default accept button.
-• Cookie banner hidden.
-==================== COOKIES — COMPLETED =======================
-
-
-===== TEST STARTED: TC26 — Validate Page Responsiveness (Mobile/Tablet) =====
-
-
-==================== RESPONSIVENESS — 375PX ====================
-
-==================== RESPONSIVENESS — SET VIEWPORT ====================
-• Setting viewport to 375px
----------------------------------------------------------------
-• Viewport set to 375px
-
-==================== RESPONSIVENESS — HAMBURGER MENU ====================
-• ✓ Hamburger menu visible at 375px
----------------------------------------------------------------
-• ✓ Hamburger menu validated
-
-==================== RESPONSIVENESS — HORIZONTAL OVERFLOW ====================
-• ✓ No horizontal overflow at 375px
----------------------------------------------------------------
-• ✓ No horizontal overflow detected
-
-==================== RESPONSIVENESS — IMAGES ====================
-• ✓ All images responsive at 375px
----------------------------------------------------------------
-• ✓ Responsive images validated
-• ✓ TC26 PASSED at 375px
----------------------------------------------------------------
-
-==================== RESPONSIVENESS — 768PX ====================
-
-==================== RESPONSIVENESS — SET VIEWPORT ====================
-• Setting viewport to 768px
----------------------------------------------------------------
-• Viewport set to 768px
-
-==================== RESPONSIVENESS — HAMBURGER MENU ====================
-• ✓ Hamburger menu visible at 768px
----------------------------------------------------------------
-• ✓ Hamburger menu validated
-
-==================== RESPONSIVENESS — HORIZONTAL OVERFLOW ====================
-• ✓ No horizontal overflow at 768px
----------------------------------------------------------------
-• ✓ No horizontal overflow detected
-
-==================== RESPONSIVENESS — IMAGES ====================
-• ✓ All images responsive at 768px
----------------------------------------------------------------
-• ✓ Responsive images validated
-• ✓ TC26 PASSED at 768px
----------------------------------------------------------------
-✓ TC26 completed successfully
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page › TC28 — Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="home.spec.ts" time="4.962">
+<testcase name="Componets Page › TC28 — Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="components.spec.ts" time="10.088">
 <system-out>
 <![CDATA[
 ==================== COOKIES — INITIAL STATE ====================

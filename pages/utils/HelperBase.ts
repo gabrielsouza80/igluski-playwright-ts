@@ -3,7 +3,7 @@
 // Contains custom actions and validations for the platform.
 
 import { Page, Locator, expect } from '@playwright/test';
-import type { MenuSnapshot, SubLinkSnapshot } from '../home.page.ts';
+import type { MenuSnapshot, SubLinkSnapshot } from '../components.page';
 import fs from "fs";
 import path from "path";
 
