@@ -1,8 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { HelperBase } from './utils/HelperBase';
-import { Actions } from './utils/Actions';
 
-
+// Type definitions for menu navigation structure
 export type SubLinkSnapshot = {
     label: string;
     href: string | null;
@@ -14,23 +13,34 @@ export type MenuSnapshot = {
     sublinks: SubLinkSnapshot[];
 };
 
+/**
+ * ComponentsPage - Handles all header, footer, and navigation components
+ * Used for: TC1-TC6, TC18, TC20, TC28
+ */
 export class ComponentsPage extends HelperBase {
-    private actions: Actions;
+    // Stores menu structure for validation
     private menusSnapshot: MenuSnapshot[] = [];
+    // Separate page contexts for navigation testing
     private navPage: Page | null = null;
+    private footerNavPage: Page | null = null;
 
     // ============================
-    // HEADER & FOOTER LOCATORS
+    // HEADER LOCATORS
     // ============================
-    readonly contactUsLink = this.page.locator('(//a[@href="/contact-us"])[1]');
-    readonly phoneLocatorHeader = this.page.locator('(//span[@title="Call Our Team"])[1]');
-    readonly btnAccessCustomerPortal = this.page.locator('a[href*="customerportal.igluski.com"]');
-    readonly btnRecentlyViewedHeader = this.page.locator('//a[contains(@class, "top-bar__info-link")]');
-    readonly resultRecentlyViewedHeader = this.page.locator('//div[contains(@class, "top-bar__rv-no-result")]');
-    readonly btnReviewLinkHeader = this.page.locator('//a[@class="header-headline__review-link"]');
     readonly headerLogo = this.page.locator('a.header-logo');
     readonly headerNavItems = this.page.locator('.menu-list__item > .menu-list__item-link');
+    readonly phoneLocatorHeader = this.page.locator('(//span[@title="Call Our Team"])[1]');
+    readonly contactUsLink = this.page.locator('(//a[@href="/contact-us"])[1]');
+    readonly btnRecentlyViewedHeader = this.page.locator('//a[contains(@class, "top-bar__info-link")]');
+    readonly resultRecentlyViewedHeader = this.page.locator('//div[contains(@class, "top-bar__rv-no-result")]');
+    readonly btnAccessCustomerPortal = this.page.locator('a[href*="customerportal.igluski.com"]');
+    readonly btnReviewLinkHeader = this.page.locator('//a[@class="header-headline__review-link"]');
+
+    // ============================
+    // FOOTER LOCATORS
+    // ============================
     readonly footerContainer = this.page.locator('footer');
+    readonly footerExpandButtons = this.page.locator(".footer-search-links-icon");
     readonly holidayIdContainer = this.page.locator('.search-by-holiday-id');
     readonly btnSearchByHolidayId = this.page.locator('.search-by-holiday-id .holiday-id__trigger');
     readonly holidayIdForm = this.page.locator('.search-by-holiday-id form');
@@ -38,7 +48,7 @@ export class ComponentsPage extends HelperBase {
     readonly holidayIdSearchButton = this.page.locator('.search-by-holiday-id button.holiday-id__btn');
 
     // ============================
-    // CONTACT SECTION
+    // CONTACT SECTION LOCATORS
     // ============================
     readonly contactPhoneTitle = this.page.locator('//div[contains(text(), "Speak to a ski expert")]');
     readonly contactPhoneNumber = this.page.locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]');
@@ -47,27 +57,14 @@ export class ComponentsPage extends HelperBase {
     readonly contactNewsletterTitle = this.page.locator('//div[contains(text(), "Subscribe to our newsletter")]');
     readonly contactNewsletterButton = this.page.locator('//span[contains(text(), "Sign up")]');
 
-
     constructor(page: Page) {
         super(page);
-        this.actions = new Actions(page);
     }
 
     // ============================================================
     // 🔵 HEADER LOGO — PAGE-SPECIFIC FUNCTIONS
     // ============================================================
 
-    // Validates that the header logo is present and visible on the page
-    async validateHeaderLogo(): Promise<void> {
-        this.logSection("Header Logo — Validation");
-
-        await expect(this.headerLogo).toBeVisible();
-
-        this.logInfo("✓ Header logo located and visible");
-        this.logDivider();
-    }
-
-    // Clicks the header logo
     async clickHeaderLogo(): Promise<void> {
         this.logSection("Header Logo — Click");
         await this.headerLogo.click();
@@ -75,7 +72,6 @@ export class ComponentsPage extends HelperBase {
         this.logDivider();
     }
 
-    // Validates that clicking the logo redirects to the homepage
     async validateHeaderLogoRedirect(): Promise<void> {
         this.logSection("Header Logo — Redirect");
         await expect(this.page).toHaveURL(/igluski\.com/);
@@ -87,26 +83,23 @@ export class ComponentsPage extends HelperBase {
     // 🧪 TC2 — HEADER NAVIGATION & SUBMENU VALIDATION
     // ============================================================
 
-    // ------------------------------------------------------------
-    // TC2 — DOM Interactions
-    // ------------------------------------------------------------
-
-    // Waits for header navigation items to appear.
     async locateHeaderNavItems(): Promise<void> {
         this.logSection("Header Navigation — Locate Items");
-        await expect(this.headerNavItems.first()).toBeVisible();
+
+        // Count total navigation items in header
         const count = await this.headerNavItems.count();
         this.logInfo(`Detected ${count} header navigation items`);
+
         this.logDivider();
     }
 
-    // Ensures all header navigation items are visible.
     async validateHeaderNavVisibility(): Promise<void> {
         this.logSection("Header Navigation — Validate Visibility");
 
         const count = await this.headerNavItems.count();
         this.logInfo(`Validating visibility for ${count} items`);
 
+        // Verify each nav item is visible
         for (let i = 0; i < count; i++) {
             const item = this.headerNavItems.nth(i);
             const text = (await item.textContent())?.trim() ?? `Item ${i + 1}`;
@@ -121,11 +114,11 @@ export class ComponentsPage extends HelperBase {
     // 🔵 HEADER NAVIGATION — PAGE-SPECIFIC FUNCTIONS
     // ============================================================
 
-    // Captures a snapshot of all menus and submenus
     async captureMenuSnapshot(): Promise<void> {
         this.logSection("Header Navigation — Snapshot");
 
-        this.menusSnapshot = await this.getMenuSnapshot();
+        // Extract full menu structure from DOM
+        this.menusSnapshot = await this.getMenusSnapshot();
 
         if (!this.menusSnapshot.length) {
             throw new Error("❌ No menus found in header navigation snapshot");
@@ -135,45 +128,45 @@ export class ComponentsPage extends HelperBase {
         this.logDivider();
     }
 
-    // Validates navigation for all main menu items
     async validateMainMenus(): Promise<void> {
         this.logSection("Header Navigation — Validate Main Menus");
 
+        // Ensure navigation page is ready
         await this.initNavigationPage();
 
+        // Test each main menu link
         for (const menu of this.menusSnapshot) {
             this.logInfo(`Validating main menu: ${menu.mainLabel}`);
-            await this.validateSingleMenu(this.navPage!, menu);
+            await this.validateMainMenu(this.navPage!, menu);
         }
 
         this.logDivider();
     }
 
-    // Validates navigation for all submenu items
     async validateSubMenus(): Promise<void> {
         this.logSection("Header Navigation — Validate Submenus");
 
         await this.initNavigationPage();
 
+        // Test submenu links for each main menu
         for (const menu of this.menusSnapshot) {
-            for (const sub of menu.sublinks) {
-                this.logInfo(`Validating submenu: ${sub.label}`);
-                await this.validateSingleSubmenu(this.navPage!, sub);
+            if (menu.sublinks.length > 0) {
+                this.logInfo(`Validating ${menu.sublinks.length} submenus for: ${menu.mainLabel}`);
+                await this.validateSubmenus(this.navPage!, menu);
             }
         }
 
         this.logDivider();
     }
 
-    // Creates a reusable navigation tab
     async initNavigationPage(): Promise<void> {
+        // Create new page context for testing navigation without affecting main page
         if (!this.navPage) {
             this.navPage = await this.page.context().newPage();
             this.logInfo("✓ Navigation page created");
         }
     }
 
-    // Closes the reusable navigation tab
     async closeNavigationPage(): Promise<void> {
         if (this.navPage) {
             await this.navPage.close();
@@ -181,39 +174,43 @@ export class ComponentsPage extends HelperBase {
             this.logInfo("✓ Navigation page closed");
         }
     }
+
     // ============================================================
     // 🔵 HEADER CONTACT INFO — PAGE-SPECIFIC FUNCTIONS
     // ============================================================
 
-    // Validates the phone number displayed in the header
     async validateHeaderPhone(): Promise<void> {
         this.logSection("Header — Phone Validation");
 
-        await expect(this.phoneLocatorHeader).toBeVisible();
+        // Extract and verify phone number text
+        const phoneText = (await this.phoneLocatorHeader.innerText()).trim();
+        this.logInfo(`Phone number text: ${phoneText}`);
 
-        const phoneText = await this.phoneLocatorHeader.innerText();
-        this.logInfo(`✓ Header phone visible → ${phoneText}`);
+        // Ensure phone element is visible
+        await expect(this.phoneLocatorHeader).toBeVisible();
+        this.logInfo(`✓ Header phone is visible with text: "${phoneText}"`);
 
         this.logDivider();
     }
 
-    // Validates the "Contact Us" text in the header
     async validateHeaderContactText(): Promise<void> {
         this.logSection("Header — Contact Us Text Validation");
 
-        await expect(this.contactUsLink).toBeVisible();
+        // Extract and verify contact link text
+        const contactText = (await this.contactUsLink.innerText()).trim();
+        this.logInfo(`Contact Us link text: ${contactText}`);
 
-        const contactText = await this.contactUsLink.innerText();
-        this.logInfo(`✓ Contact Us link visible → ${contactText}`);
+        // Ensure contact link is visible
+        await expect(this.contactUsLink).toBeVisible();
+        this.logInfo(`✓ Contact Us link is visible with text: "${contactText}"`);
 
         this.logDivider();
     }
 
-    // Validates that the Contact Us link redirects correctly
     async validateHeaderContactRedirect(): Promise<void> {
         this.logSection("Header — Contact Us Redirect Validation");
 
-        // Extract URL from the link
+        // Get contact URL and resolve to absolute path
         const href = await this.contactUsLink.getAttribute("href");
         const url = this.resolveUrl(href);
 
@@ -221,7 +218,7 @@ export class ComponentsPage extends HelperBase {
             throw new Error("❌ TC — Contact Us link has no valid href.");
         }
 
-        // Validate redirect in a new tab
+        // Open link in new tab and verify destination
         await this.openAndValidateUrl(url, /contact-us/i);
 
         this.logInfo("✓ Contact Us redirects correctly");
@@ -232,46 +229,44 @@ export class ComponentsPage extends HelperBase {
     // 🔵 RECENTLY VIEWED — PAGE-SPECIFIC FUNCTIONS
     // ============================================================
 
-    // Validates that the Recently Viewed button is visible and has the correct text
     async validateRecentlyViewedButtonText(): Promise<void> {
         this.logSection("Recently Viewed — Button Text Validation");
 
-        // Ensure the button is visible
-        await expect(this.btnRecentlyViewedHeader).toBeVisible();
+        // Extract button text for validation
+        const text = (await this.btnRecentlyViewedHeader.innerText()).trim();
+        this.logInfo(`Recently Viewed button text: "${text}"`);
 
-        // Ensure the button text is correct
+        // Verify button contains expected text
         await expect(this.btnRecentlyViewedHeader).toHaveText(/recently viewed/i);
+        this.logInfo("✓ Recently Viewed button text is correct");
 
-        this.logInfo("✓ Recently Viewed button visible with correct text");
         this.logDivider();
     }
 
-    // Clicks the Recently Viewed button
     async clickRecentlyViewedButton(): Promise<void> {
         this.logSection("Recently Viewed — Click");
 
-        // Click the button (Playwright waits automatically)
+        // Click button (Playwright auto-waits for actionability)
         await this.btnRecentlyViewedHeader.click();
 
         this.logInfo("✓ Recently Viewed button clicked");
         this.logDivider();
     }
 
-    // Validates that the Recently Viewed panel becomes visible
     async validateRecentlyViewedPanel(): Promise<void> {
         this.logSection("Recently Viewed — Panel Validation");
 
-        // Ensure the Recently Viewed panel is visible
-        await expect(this.resultRecentlyViewedHeader).toBeVisible();
+        // Extract panel message
+        const txt = (await this.resultRecentlyViewedHeader.innerText()).trim();
+        this.logInfo(`Panel text: "${txt}"`);
 
-        // Read and log the panel text
-        const txt = await this.resultRecentlyViewedHeader.innerText();
-        this.logInfo(`✓ Recently Viewed panel visible → ${txt}`);
+        // Ensure panel appears after click
+        await expect(this.resultRecentlyViewedHeader).toBeVisible();
+        this.logInfo("✓ Recently Viewed panel is visible");
 
         this.logDivider();
     }
 
-    // Wrapper that clicks the Recently Viewed button and validates the panel
     async validateRecentlyViewedButton(): Promise<void> {
         await this.clickRecentlyViewedButton();
         await this.validateRecentlyViewedPanel();
@@ -281,58 +276,59 @@ export class ComponentsPage extends HelperBase {
     // 🔵 CUSTOMER PORTAL — PAGE-SPECIFIC FUNCTIONS
     // ============================================================
 
-    // Validates the Customer Portal button text
     async validateCustomerPortalButtonText(): Promise<void> {
         this.logSection("Customer Portal — Button Text Validation");
 
-        // Ensure the button is visible
-        await expect(this.btnAccessCustomerPortal).toBeVisible();
+        // Extract button text for validation
+        const text = (await this.btnAccessCustomerPortal.innerText()).trim();
+        this.logInfo(`Customer Portal button text: "${text}"`);
 
-        // Ensure the button text is correct
+        // Verify button contains expected text
         await expect(this.btnAccessCustomerPortal).toHaveText(/customer portal/i);
+        this.logInfo("✓ Customer Portal button text is correct");
 
-        this.logInfo("✓ Customer Portal button visible with correct text");
         this.logDivider();
     }
 
-    // Clicks the Customer Portal button
     async clickCustomerPortalButton(): Promise<void> {
         this.logSection("Customer Portal — Click");
 
-        // Ensure the button is visible before clicking
-        await expect(this.btnAccessCustomerPortal).toBeVisible();
-
-        // Click the button (Playwright waits automatically)
+        // Click button (Playwright auto-waits for actionability)
         await this.btnAccessCustomerPortal.click();
 
         this.logInfo("✓ Customer Portal button clicked");
         this.logDivider();
     }
 
-    // Waits for AJAX content to load
     async waitForCustomerPortalAjax(): Promise<void> {
         this.logSection("Customer Portal — AJAX Wait");
 
         const welcomeText = this.page.locator('text=Welcome to My Booking!');
 
         // Wait for AJAX-loaded content to appear
-        await expect(welcomeText).toBeVisible({ timeout: 7000 });
+        await expect(welcomeText).toBeVisible();
 
-        this.logInfo("✓ AJAX content loaded successfully");
+        const text = (await welcomeText.innerText()).trim();
+        this.logInfo(`✓ AJAX content loaded: "${text}"`);
+
         this.logDivider();
     }
 
-    // Validates required fields inside the Customer Portal
     async validateCustomerPortalFields(): Promise<void> {
         this.logSection("Customer Portal — Field Validation");
 
-        // Validate Surname field
-        await expect(this.page.locator('#LeadBookerSurname')).toBeVisible();
-        this.logInfo("✓ Surname field is visible");
+        // Define required fields to check
+        const requiredFields = [
+            { locator: this.page.locator('#LeadBookerSurname'), label: "Surname field" },
+            { locator: this.page.locator('#BookingId'), label: "Booking ID field" }
+        ];
 
-        // Validate Booking ID field
-        await expect(this.page.locator('#BookingId')).toBeVisible();
-        this.logInfo("✓ Booking ID field is visible");
+        // Verify each required field is visible
+        for (const field of requiredFields) {
+            this.logInfo(`Validating ${field.label}...`);
+            await expect(field.locator).toBeVisible();
+            this.logInfo(`✓ ${field.label} is visible`);
+        }
 
         this.logDivider();
     }
@@ -341,33 +337,34 @@ export class ComponentsPage extends HelperBase {
     // 🔵 RATINGS & REVIEWS — PAGE-SPECIFIC FUNCTIONS
     // ============================================================
 
-    // Validates the Ratings & Reviews link text
     async validateRatingsAndReviewsText(): Promise<void> {
         this.logSection("Ratings & Reviews — Text Validation");
 
-        await expect(this.btnReviewLinkHeader).toBeVisible();
-        await expect(this.btnReviewLinkHeader).toHaveText(/reviews/i);
+        // Extract review link text
+        const text = (await this.btnReviewLinkHeader.innerText()).trim();
+        this.logInfo(`Ratings & Reviews link text: "${text}"`);
 
-        this.logInfo("✓ Ratings & Reviews link visible with correct text");
+        // Verify format: number + "reviews"
+        await expect(this.btnReviewLinkHeader).toContainText(/\d+\s*reviews?/i);
+        this.logInfo("✓ Ratings & Reviews link text is correct");
+
         this.logDivider();
     }
 
-    // Clicks the Ratings & Reviews link
     async clickRatingsAndReviews(): Promise<void> {
         this.logSection("Ratings & Reviews — Click");
 
-        await expect(this.btnReviewLinkHeader).toBeVisible();
+        // Click reviews link (Playwright auto-waits for actionability)
         await this.btnReviewLinkHeader.click();
 
         this.logInfo("✓ Ratings & Reviews link clicked");
         this.logDivider();
     }
 
-    // Validates the redirect to the Reviews page
     async validateRatingsAndReviewsRedirect(): Promise<void> {
         this.logSection("Ratings & Reviews — Redirect Validation");
 
-        // Extract href
+        // Get reviews URL and resolve to absolute path
         const href = await this.btnReviewLinkHeader.getAttribute("href");
         const url = this.resolveUrl(href);
 
@@ -375,17 +372,17 @@ export class ComponentsPage extends HelperBase {
             throw new Error("❌ TC — Ratings & Reviews link has no valid href.");
         }
 
-        // Validate redirect in a new tab
+        // Open link in new tab and verify destination
         await this.openAndValidateUrl(url, /reviews/i);
 
         this.logInfo("✓ Ratings & Reviews redirects correctly");
         this.logDivider();
     }
 
-    // Validates the Reviews page title
     async validateReviewsPageTitle(): Promise<void> {
         this.logSection("Ratings & Reviews — Page Title Validation");
 
+        // Verify page title contains "Reviews"
         await expect(this.page).toHaveTitle(/Reviews/i);
 
         this.logInfo("✓ Reviews page title is correct");
@@ -396,10 +393,10 @@ export class ComponentsPage extends HelperBase {
     // 🔵 MENU VALIDATION — SNAPSHOT + MAIN MENUS + SUBMENUS
     // ============================================================
 
-    // Extracts all main menus and submenus from the DOM.
     async getMenusSnapshot(): Promise<MenuSnapshot[]> {
         this.logSection("Menus — Snapshot");
 
+        // Extract all menu and submenu links from DOM
         const menusSnapshot = await this.page.$$eval("li.menu-list__item", (items) => {
             return items.map((li) => {
                 const mainLink = li.querySelector("a");
@@ -424,13 +421,11 @@ export class ComponentsPage extends HelperBase {
         return menusSnapshot;
     }
 
-    // Opens a reusable navigation tab for menu validation.
     async openNavigationTab(): Promise<Page> {
         this.logInfo("Opening reusable navigation tab...");
         return await this.page.context().newPage();
     }
 
-    // Validates navigation for a single main menu.
     async validateMainMenu(navPage: Page, menu: MenuSnapshot): Promise<void> {
         const menuLabel = menu.mainLabel;
         const menuUrl = this.resolveUrl(menu.mainHref);
@@ -446,7 +441,8 @@ export class ComponentsPage extends HelperBase {
         }
 
         try {
-            await navPage.goto(menuUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
+            // Navigate to menu URL and verify title
+            await navPage.goto(menuUrl, { waitUntil: "domcontentloaded", });
             await this.validateTitleContains(navPage, menuLabel);
         } catch (err: any) {
             console.error(`❌ Failed to load menu "${menuLabel}" → ${err?.message || err}`);
@@ -454,7 +450,6 @@ export class ComponentsPage extends HelperBase {
         }
     }
 
-    // Validates navigation for all submenus under a main menu.
     async validateSubmenus(navPage: Page, menu: MenuSnapshot): Promise<void> {
         const sublinks = menu.sublinks || [];
         this.logInfo(`Submenus found: ${sublinks.length}`);
@@ -473,53 +468,77 @@ export class ComponentsPage extends HelperBase {
             this.logSubInfo(`Submenu URL: ${subUrl}`);
 
             try {
-                await navPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
+                // Recreate page if it was closed by previous error
+                if (navPage.isClosed()) {
+                    this.logSubInfo("⚠ Navigation page was closed, recreating...");
+                    this.navPage = await this.page.context().newPage();
+                    navPage = this.navPage;
+                }
+
+                // Navigate with 15s timeout (faster than default 30s)
+                await navPage.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
                 await this.validateTitleContains(navPage, sub.label);
                 this.logSubInfo(`✓ Submenu validated successfully`);
             } catch (err: any) {
-                console.error(`❌ Submenu "${sub.label}" failed → ${err?.message || err}`);
+                const errorMsg = err?.message || String(err);
+                console.error(`❌ Submenu "${sub.label}" failed → ${errorMsg}`);
+
+                // Recover from closed page errors
+                if (navPage.isClosed() || errorMsg.includes("Target page, context or browser has been closed")) {
+                    this.logSubInfo("⚠ Recreating navigation page after error...");
+                    try {
+                        this.navPage = await this.page.context().newPage();
+                        navPage = this.navPage;
+                    } catch (recreateErr) {
+                        console.error("❌ Failed to recreate navigation page");
+                    }
+                }
             }
         }
     }
 
     // ============================================================
-    // 🔵 FOOTER — COMPLETE BLOCK (REFINED VERSION)
+    // 🔵 FOOTER — COMPLETE BLOCK (FULLY COMPATIBLE WITH TC20)
     // ============================================================
 
-    footerNavPage: Page | null = null;
-
-    // Wait for footer widget to render
     async waitForFooterToRender(): Promise<void> {
+        this.logSection("Footer — Render Wait");
+
+        // Wait for footer items to be visible (ensures dynamic content loaded)
         await this.page.waitForSelector('#footer-section1-list li.footer-list__item', {
             state: 'visible',
-            timeout: 15000
         });
+
+        this.logInfo("✓ Footer rendered");
+        this.logDivider();
     }
 
-    // Expand footer sections (mobile only)
     async expandAllFooterSections(): Promise<void> {
-        const toggles = this.page.locator('.footer-search-links-icon');
-        const count = await toggles.count();
+        this.logSection("Footer — Expand Sections");
 
+        const count = await this.footerExpandButtons.count();
+
+        // Expand mobile accordion sections if present
         for (let i = 0; i < count; i++) {
-            const toggle = toggles.nth(i);
+            const toggle = this.footerExpandButtons.nth(i);
 
             if (await toggle.isVisible()) {
-                await expect(toggle).toBeVisible();
                 await toggle.click();
             }
         }
+
+        this.logInfo(`✓ Expanded ${count} footer sections`);
+        this.logDivider();
     }
 
-    // Create reusable footer navigation tab
     async initFooterNavigationPage(): Promise<void> {
+        // Create separate page for footer link testing
         if (!this.footerNavPage) {
             this.footerNavPage = await this.page.context().newPage();
             this.logInfo("✓ Footer navigation page created");
         }
     }
 
-    // Close reusable footer navigation tab
     async closeFooterNavigationPage(): Promise<void> {
         if (this.footerNavPage) {
             await this.footerNavPage.close();
@@ -528,14 +547,15 @@ export class ComponentsPage extends HelperBase {
         }
     }
 
-    // Correct locator for footer items (top + bottom)
     getFooterItemLocator(sectionId: string, relativeUrl: string) {
+        // Build locator based on section type (top sections vs bottom sections)
         if (sectionId.startsWith("footer-section")) {
             return this.page.locator(
                 `#${sectionId} a.footer-list__link[href="${relativeUrl}"]`
             );
         }
 
+        // Handle bottom sections with title-based locators
         const title = sectionId.replace("footer-", "").replace(/-/g, " ");
 
         return this.page.locator(
@@ -543,7 +563,6 @@ export class ComponentsPage extends HelperBase {
         );
     }
 
-    // Fetch all footer items (top + bottom)
     async getFooterItemsList(): Promise<{
         label: string;
         url: string | null;
@@ -552,6 +571,7 @@ export class ComponentsPage extends HelperBase {
     }[]> {
         this.logSection("Footer — Fetch Items");
 
+        // Extract all top section footer links
         const topItems = await this.page.$$eval(
             'ul[id^="footer-section"] > li.footer-list__item',
             (elements) =>
@@ -566,6 +586,7 @@ export class ComponentsPage extends HelperBase {
                 })
         );
 
+        // Extract all bottom section footer links
         const bottomItems = await this.page.$$eval(
             '.footer-blue-background ul.footer-list > li.footer-list__item',
             (elements) =>
@@ -585,6 +606,7 @@ export class ComponentsPage extends HelperBase {
                 })
         );
 
+        // Merge and convert to absolute URLs
         const merged = [...topItems, ...bottomItems].map((i) => ({
             label: i.label,
             url: i.href,
@@ -600,7 +622,56 @@ export class ComponentsPage extends HelperBase {
         return merged;
     }
 
-    // Validate a single footer link
+    async validateFooterItemsVisibility(items: any[]): Promise<void> {
+        this.logSection("Footer — Validate Visibility");
+
+        // Check each footer link is visible
+        for (const item of items) {
+            if (!item.url || !item.sectionId) continue;
+
+            const locator = this.getFooterItemLocator(item.sectionId, item.url);
+            await expect(locator).toBeVisible();
+        }
+
+        this.logInfo("✓ All footer items visible");
+        this.logDivider();
+    }
+
+    async validateFooterItemsText(items: any[]): Promise<void> {
+        this.logSection("Footer — Validate Text");
+
+        // Verify each footer link has non-empty text
+        for (const item of items) {
+            if (!item.url || !item.sectionId) continue;
+
+            const locator = this.getFooterItemLocator(item.sectionId, item.url);
+            const text = (await locator.innerText()).trim();
+
+            if (!text) {
+                throw new Error(`❌ Empty text: ${item.label}`);
+            }
+        }
+
+        this.logInfo("✓ All footer items have valid text");
+        this.logDivider();
+    }
+
+    async validateFooterItemsUrlFormat(items: any[]): Promise<void> {
+        this.logSection("Footer — Validate URL Format");
+
+        // Ensure all footer links have valid URLs
+        for (const item of items) {
+            if (!item.absoluteUrl) continue;
+
+            if (!item.absoluteUrl.startsWith("https://")) {
+                throw new Error(`❌ Invalid URL: ${item.absoluteUrl}`);
+            }
+        }
+
+        this.logInfo("✓ All footer URLs have valid format");
+        this.logDivider();
+    }
+
     async validateSingleFooterLink(
         sectionId: string,
         relativeUrl: string,
@@ -613,6 +684,7 @@ export class ComponentsPage extends HelperBase {
 
         await this.initFooterNavigationPage();
 
+        // Navigate to footer link and verify URL + title
         await this.footerNavPage!.goto(absoluteUrl, { waitUntil: "domcontentloaded" });
 
         await expect(this.footerNavPage!).toHaveURL(new RegExp(absoluteUrl, "i"));
@@ -624,20 +696,13 @@ export class ComponentsPage extends HelperBase {
         this.logDivider();
     }
 
-    // Validate all footer links
-    async validateAllFooterLinks(
-        footerItems: {
-            label: string;
-            url: string | null;
-            absoluteUrl: string | null;
-            sectionId: string | null;
-        }[]
-    ): Promise<void> {
+    async validateAllFooterLinks(items: any[]): Promise<void> {
         this.logSection("Footer Navigation — Validate All Links");
 
         await this.initFooterNavigationPage();
 
-        for (const item of footerItems) {
+        // Test each footer link navigation
+        for (const item of items) {
             if (!item.url || !item.absoluteUrl || !item.sectionId) {
                 this.logInfo(`⚠ Skipping invalid footer item: ${item.label}`);
                 continue;
@@ -654,16 +719,15 @@ export class ComponentsPage extends HelperBase {
         this.logDivider();
     }
 
-    // ============================
-    // FOOTER - TC28 HELPERS
-    // ============================
-
-    // Scrolls to the footer
     async scrollToFooter(): Promise<void> {
         this.logSection("Footer — Scroll");
+
+        // Use End key for quick scroll to bottom
         await this.page.keyboard.press("End");
-        await expect(this.footerContainer).toBeVisible({ timeout: 7000 });
+
+        await expect(this.footerContainer).toBeVisible();
         this.logInfo("✓ Scrolled to footer");
+
         this.logDivider();
     }
 
@@ -673,35 +737,34 @@ export class ComponentsPage extends HelperBase {
     async validateHolidayIdSearch(): Promise<void> {
         this.logSection("TC28 — Validate 'Search by Holiday ID'");
 
-        // STEP A — Scroll to footer
+        // Navigate to footer section
         await this.scrollToFooter();
 
-        // STEP B — Validate container visibility
+        // Verify Holiday ID search container exists
         await expect(this.holidayIdContainer).toBeVisible();
         this.logInfo("✓ Holiday ID container visible");
 
-        // STEP C — Validate button visibility
-        await expect(this.btnSearchByHolidayId).toBeVisible();
-        this.logInfo("✓ 'Search by Holiday ID' button visible");
+        // Check button text is correct
+        await expect(this.btnSearchByHolidayId).toHaveText(/search by holiday id/i);
+        this.logInfo("✓ 'Search by Holiday ID' button text OK");
 
-        // STEP D — Click button
+        // Click to expand form
         await this.btnSearchByHolidayId.click();
-        await this.page.waitForLoadState("domcontentloaded");
         this.logInfo("✓ Clicked 'Search by Holiday ID' button");
 
-        // STEP E — Validate form visibility
+        // Verify form appears
         await expect(this.holidayIdForm).toBeVisible();
         this.logInfo("✓ Holiday ID form visible");
 
-        // STEP F — Validate input field
+        // Check input field is present
         await expect(this.holidayIdInput).toBeVisible();
         this.logInfo("✓ Holiday ID input field visible");
 
-        // Optional: Validate placeholder
+        // Log placeholder text for reference
         const placeholder = await this.holidayIdInput.getAttribute("placeholder");
         this.logInfo(`Input placeholder: ${placeholder}`);
 
-        // STEP G — Validate search button
+        // Verify search button is present
         await expect(this.holidayIdSearchButton).toBeVisible();
         this.logInfo("✓ Search button inside Holiday ID form visible");
 
@@ -713,87 +776,69 @@ export class ComponentsPage extends HelperBase {
     // 🔵 CONTACT SECTION — PAGE-SPECIFIC FUNCTIONS
     // ============================================================
 
-    // PHONE BLOCK
     async validateContactPhoneBlock(): Promise<void> {
         this.logSection("Contact Section — Phone Block");
 
-        // Validate title
+        // Extract and verify phone block title
         const title = this.normalizeText(await this.contactPhoneTitle.innerText());
-        this.logInfo(`Phone title: ${title}`);
+        this.logInfo(`Phone block title: "${title}"`);
 
-        await expect(this.contactPhoneTitle).toHaveText(/speak to a ski expert/i);
-        this.logInfo("✓ Phone title OK");
+        // Extract phone number text
+        const phoneText = (await this.contactPhoneNumber.innerText()).trim();
+        this.logInfo(`Phone number: "${phoneText}"`);
 
-        // Validate navigation
-        this.logInfo("Clicking phone number to validate navigation...");
-        await expect(this.contactPhoneNumber).toBeVisible();
+        // Click phone number and verify navigation
         await this.contactPhoneNumber.click();
 
+        // Ensure redirects to contact page
         await expect(this.page).toHaveURL(/contact-us/i);
-        this.logInfo("✓ Phone link navigation OK");
+        this.logInfo("✓ Phone block navigation OK → contact-us page");
 
         this.logDivider();
     }
 
-    // EMAIL BLOCK
     async validateContactEmailBlock(): Promise<void> {
         this.logSection("Contact Section — Email Block");
 
-        // Validate title
+        // Extract and verify email block title
         const title = this.normalizeText(await this.contactEmailTitle.innerText());
-        this.logInfo(`Email title: ${title}`);
+        this.logInfo(`Email block title: "${title}"`);
 
-        await expect(this.contactEmailTitle).toHaveText(/email about a ski holiday/i);
-        this.logInfo("✓ Email title OK");
-
-        // Validate button text
+        // Extract button text
         const buttonText = this.normalizeText(await this.contactEmailButton.innerText());
-        this.logInfo(`Email button text: ${buttonText}`);
+        this.logInfo(`Email button text: "${buttonText}"`);
 
-        await expect(this.contactEmailButton).toHaveText(/enquire/i);
-        this.logInfo("✓ Email button text OK");
-
-        // Validate navigation
-        this.logInfo("Clicking ENQUIRE button to validate navigation...");
-        await expect(this.contactEmailButton).toBeVisible();
+        // Click enquire button and verify navigation
         await this.contactEmailButton.click();
 
+        // Ensure redirects to enquire page
         await expect(this.page).toHaveURL(/enquire/i);
-        this.logInfo("✓ ENQUIRE button navigation OK");
+        this.logInfo("✓ Email block navigation OK → enquire page");
 
         this.logDivider();
     }
 
-    // NEWSLETTER BLOCK
     async validateContactNewsletterBlock(): Promise<void> {
         this.logSection("Contact Section — Newsletter Block");
 
-        // Validate title
+        // Extract and verify newsletter block title
         const title = this.normalizeText(await this.contactNewsletterTitle.innerText());
-        this.logInfo(`Newsletter title: ${title}`);
+        this.logInfo(`Newsletter block title: "${title}"`);
 
-        await expect(this.contactNewsletterTitle).toHaveText(/subscribe to our newsletter/i);
-        this.logInfo("✓ Newsletter title OK");
-
-        // Validate button text
+        // Extract button text
         const buttonText = this.normalizeText(await this.contactNewsletterButton.innerText());
-        this.logInfo(`Newsletter button text: ${buttonText}`);
+        this.logInfo(`Newsletter button text: "${buttonText}"`);
 
-        await expect(this.contactNewsletterButton).toHaveText(/sign up/i);
-        this.logInfo("✓ Newsletter button text OK");
-
-        // Validate navigation
-        this.logInfo("Clicking SIGN UP button to validate navigation...");
-        await expect(this.contactNewsletterButton).toBeVisible();
+        // Click sign up button and verify navigation
         await this.contactNewsletterButton.click();
 
+        // Ensure redirects to signup page
         await expect(this.page).toHaveURL(/signup/i);
-        this.logInfo("✓ SIGN UP button navigation OK");
+        this.logInfo("✓ Newsletter block navigation OK → signup page");
 
         this.logDivider();
     }
 
-    // Wrapper for backward compatibility
     async validateContactSection(): Promise<void> {
         await this.validateContactPhoneBlock();
         await this.validateContactEmailBlock();

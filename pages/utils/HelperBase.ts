@@ -34,7 +34,7 @@ export class HelperBase {
 
       if (await btn.count()) {
         try {
-          await expect(btn).toBeVisible({ timeout: 3000 });
+          await expect(btn).toBeVisible();
           await btn.click();
           return;
         } catch { /* ignore */ }
@@ -154,6 +154,14 @@ export class HelperBase {
     console.log(`---------------------------------------------------------------`);
   }
 
+  protected logWarn(message: string): void {
+    console.log(`⚠ ${message}`);
+  }
+
+  protected logError(message: string): void {
+    console.log(`❌ ${message}`);
+  }
+
 
   // ============================================================
   // 🧪 TC2 — GENERIC MENU UTILITIES (HELPER FUNCTIONS)
@@ -197,8 +205,7 @@ export class HelperBase {
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
         await page.goto(url, {
-          waitUntil: "domcontentloaded",
-          timeout: 45000,
+          waitUntil: "domcontentloaded"
         });
         return;
       } catch (err) {
@@ -268,4 +275,47 @@ export class HelperBase {
   protected logTestStart(testName: string): void {
     console.log(`\n===== TEST STARTED: ${testName} =====\n`);
   }
+
+  // ============================================================
+  // 🔵 RESPONSIVENESS HELPERS
+  // ============================================================
+
+  /**
+   * Checks if the page has horizontal overflow (scrollable content wider than viewport)
+   * @returns {Promise<boolean>} True if horizontal overflow is detected
+   */
+  protected async hasHorizontalOverflow(): Promise<boolean> {
+    const overflow = await this.page.evaluate(() => {
+      return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+    });
+    return overflow;
+  }
+
+  /**
+   * Validates that all images on the page are responsive (not wider than viewport)
+   * @param {number} width - The viewport width to validate against
+   * @returns {Promise<{valid: boolean, invalidImages: string}>} Validation result
+   */
+  protected async validateImagesResponsive(width: number): Promise<{ valid: boolean; invalidImages: string }> {
+    const result = await this.page.evaluate((viewportWidth) => {
+      const images = Array.from(document.querySelectorAll('img'));
+      const invalidImages: string[] = [];
+
+      images.forEach((img, index) => {
+        const rect = img.getBoundingClientRect();
+        if (rect.width > viewportWidth) {
+          const src = img.src || `image-${index}`;
+          invalidImages.push(`${src} (${Math.round(rect.width)}px)`);
+        }
+      });
+
+      return {
+        valid: invalidImages.length === 0,
+        invalidImages: invalidImages.join(', ')
+      };
+    }, width);
+
+    return result;
+  }
+
 }

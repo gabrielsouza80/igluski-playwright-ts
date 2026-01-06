@@ -1,4 +1,4 @@
-import { test, expect } from '../support/baseTest';
+import { test } from '../support/baseTest';
 
 // ================================================================
 // Test Suite: Home Page
@@ -170,8 +170,6 @@ test.describe('Home Page', () => {
   // 🔵 TC26 — Validate Page Responsiveness (Mobile + Tablet)
   // ============================================================
   test('TC26 — Validate Page Responsiveness (Mobile/Tablet)', async ({ pm }, testInfo) => {
-    test.setTimeout(300000);
-
     // STEP 0 — Start test
     await test.step('Start test', async () => {
       pm.onHomePage().logTestStart(testInfo.title);
