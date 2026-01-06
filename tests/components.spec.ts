@@ -82,10 +82,10 @@ test.describe('Components Page', () => {
         await test.step('Finish test', async () => {
             await pm.onComponentsPage().closeNavigationPage();
 
-            if (pm.onComponentsPage().tc2Errors.length > 0) {
+            if (pm.onComponentsPage().testCaseErrors.length > 0) {
                 console.log("\n==================== TC2 — SUMMARY OF ERRORS ====================");
 
-                const summary = pm.onComponentsPage().tc2Errors.join("\n");
+                const summary = pm.onComponentsPage().testCaseErrors.join("\n");
 
                 console.log(summary);
                 console.log("=================================================================\n");

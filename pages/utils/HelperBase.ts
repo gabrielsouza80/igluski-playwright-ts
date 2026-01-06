@@ -10,7 +10,7 @@ import path from "path";
 export class HelperBase {
 
   protected readonly page: Page;
-  public tc2Errors: string[] = [];
+  public testCaseErrors: string[] = [];
   // Load JSON once and keep it as a protected property
   protected readonly urls: Record<string, string> = JSON.parse(
     fs.readFileSync(path.join(process.cwd(), "tests/fixtures/secrets.urls.json"), "utf-8")
@@ -101,7 +101,7 @@ export class HelperBase {
 
       if (!match) {
         const msg = `❌ Title does NOT contain expected label: "${label}"`;
-        this.tc2Errors.push(msg);
+        this.testCaseErrors.push(msg);
         this.logInfo(msg);
       } else {
         this.logInfo(`✓ Title contains expected label`);
@@ -109,7 +109,7 @@ export class HelperBase {
 
     } catch {
       const msg = `❌ Title validation failed for label: "${label}"`;
-      this.tc2Errors.push(msg);
+      this.testCaseErrors.push(msg);
       this.logInfo(msg);
     }
   }
@@ -164,11 +164,11 @@ export class HelperBase {
 
 
   // ============================================================
-  // 🧪 TC2 — GENERIC MENU UTILITIES (HELPER FUNCTIONS)
+  // 🧪 TEST CASE — GENERIC MENU UTILITIES (HELPER FUNCTIONS)
   // ============================================================
 
   // ------------------------------------------------------------
-  // TC2 — Snapshot
+  // Test Case — Snapshot
   // ------------------------------------------------------------
   async getMenuSnapshot(): Promise<MenuSnapshot[]> {
     this.logSection("Header Navigation — Build Snapshot");

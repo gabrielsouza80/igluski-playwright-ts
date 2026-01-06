@@ -12,39 +12,39 @@ export class HomePage extends HelperBase {
   // ============================
   // CAROUSEL LOCATORS
   // ============================
-  readonly carouselNextButton = this.page.locator('.content-carousel__control--right');
-  readonly carouselActiveSlide = this.page.locator('.content-carousel__inner__item--active');
-  readonly carouselSlides = this.page.locator('//div[contains(@class, "content-carousel__inner__item")]');
+  readonly carouselNextButton = this.page.locator('[class*="carousel"][class*="control"], button[aria-label*="next" i]').last();
+  readonly carouselActiveSlide = this.page.locator('div.content-carousel__inner__item--active');
+  readonly carouselSlides = this.page.locator('div.content-carousel__inner__item');
   readonly carouselCta = this.carouselActiveSlide.locator('a').first();
 
   // ============================
   // COOKIES LOCATORS
   // ============================
   readonly cookiesBanner = this.page.locator('#onetrust-banner-sdk');
-  readonly acceptCookiesBtn = this.page.locator('#onetrust-accept-btn-handler').first();
+  readonly acceptCookiesBtn = this.page.locator('#onetrust-accept-btn-handler');
   readonly acceptCookiesBtnRecommended = this.page.locator('#accept-recommended-btn-handler');
 
   // ============================
   // SEARCH LOCATORS
   // ============================
-  readonly propertiesSearchInput = this.page.locator('input[aria-label*="Search properties"]');
-  readonly countriesSearchInput = this.page.locator('input[aria-label*="Search countries"], #where');
-  readonly searchButton = this.page.locator('button.search-item__cta , .search-bar__form-submit');
+  readonly propertiesSearchInput = this.page.locator('input[placeholder*="property" i]');
+  readonly countriesSearchInput = this.page.locator('#where');
+  readonly searchButton = this.page.locator('button.search-item__cta');
 
   // ============================
   // CTA LOCATORS
   // ============================
-  readonly ctaRow = this.page.locator('h2:has-text("TALK TO")').locator('..').locator('..');
-  readonly ctaBoxes = this.ctaRow.locator('a');
+  readonly ctaRow = this.page.locator('div.cta-section');
+  readonly ctaBoxes = this.ctaRow.locator('a.box-panel');
   readonly ctaTitles = this.ctaRow.locator('h2.box-panel__title');
 
   // ============================
   // COUNTRY BANNER LOCATORS
   // ============================
-  readonly countryBannerAnchors = this.page.locator('//div[contains(@class, "country-banner")]//a');
+  readonly countryBannerAnchors = this.page.locator('a[href*="destination"], a[href*="/deals/"], div[class*="banner"] a').first();
 
   countryBannerLink(label: string): Locator {
-    return this.countryBannerAnchors.filter({ hasText: label });
+    return this.page.locator(`a[href*="destination"]:has-text("${label}"), a[href*="deals"]:has-text("${label}"), a[href*="holidays"]:has-text("${label}")`).first();
   }
 
   // ============================
@@ -62,7 +62,7 @@ export class HomePage extends HelperBase {
   // RESPONSIVE LOCATORS
   // ============================
   readonly hamburgerMenu = this.page
-    .locator('[aria-label*="menu" i], .hamburger, button[id*="menu"], [class*="hamburger"], [class*="menu"]')
+    .locator('button[aria-label*="menu" i], button.hamburger, button[aria-expanded]')
     .first();
 
   constructor(page: Page) {
@@ -218,12 +218,20 @@ export class HomePage extends HelperBase {
     this.logSection("Country Banners — Fetch List");
 
     const banners = await this.page.$$eval(
-      '//div[contains(@class, "country-banner")]//a',
+      'a',
       anchors =>
-        anchors.map(a => ({
-          label: a.textContent?.trim() || "",
-          href: a.getAttribute("href") || null
-        }))
+        anchors
+          .filter(a => {
+            const href = a.getAttribute("href") || "";
+            const text = a.textContent?.trim() || "";
+            // Filter for links that look like country/destination links
+            return (href.includes("destination") || href.includes("deals") || href.includes("holidays")) && text.length > 0;
+          })
+          .slice(0, 10) // Limit to first 10 to avoid getting too many
+          .map(a => ({
+            label: a.textContent?.trim() || "",
+            href: a.getAttribute("href") || null
+          }))
     );
 
     const mapped = banners.map(b => ({

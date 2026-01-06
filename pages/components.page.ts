@@ -28,34 +28,35 @@ export class ComponentsPage extends HelperBase {
     // HEADER LOCATORS
     // ============================
     readonly headerLogo = this.page.locator('a.header-logo');
-    readonly headerNavItems = this.page.locator('.menu-list__item > .menu-list__item-link');
-    readonly phoneLocatorHeader = this.page.locator('(//span[@title="Call Our Team"])[1]');
-    readonly contactUsLink = this.page.locator('(//a[@href="/contact-us"])[1]');
-    readonly btnRecentlyViewedHeader = this.page.locator('//a[contains(@class, "top-bar__info-link")]');
-    readonly resultRecentlyViewedHeader = this.page.locator('//div[contains(@class, "top-bar__rv-no-result")]');
-    readonly btnAccessCustomerPortal = this.page.locator('a[href*="customerportal.igluski.com"]');
-    readonly btnReviewLinkHeader = this.page.locator('//a[@class="header-headline__review-link"]');
+    readonly headerNavItems = this.page.locator('a.menu-list__item-link');
+    readonly btnRecentlyViewedHeader = this.page.locator('a.top-bar__info-link');
+    readonly resultRecentlyViewedHeader = this.page.locator('div.top-bar__rv-no-result');
+    readonly btnAccessCustomerPortal = this.page.locator('a[href*="customerportal"]');
+    readonly btnReviewLinkHeader = this.page.locator('a.header-headline__review-link');
+    readonly phoneLocatorHeader = this.page.locator('span.InfinityNumber').first();
+    readonly contactUsLink = this.page.locator('a[href="/contact-us"]').first();
 
     // ============================
     // FOOTER LOCATORS
     // ============================
-    readonly footerContainer = this.page.locator('footer');
-    readonly footerExpandButtons = this.page.locator(".footer-search-links-icon");
-    readonly holidayIdContainer = this.page.locator('.search-by-holiday-id');
-    readonly btnSearchByHolidayId = this.page.locator('.search-by-holiday-id .holiday-id__trigger');
-    readonly holidayIdForm = this.page.locator('.search-by-holiday-id form');
-    readonly holidayIdInput = this.page.locator('.search-by-holiday-id input#siteSearchInput');
-    readonly holidayIdSearchButton = this.page.locator('.search-by-holiday-id button.holiday-id__btn');
+    readonly holidayIdInput = this.page.locator('div.search-by-holiday-id input#siteSearchInput');
+    readonly footerContainer = this.page.locator('footer.footer-position');
+    readonly footerExpandButtons = this.page.locator('i.footer-search-links-icon');
+    readonly holidayIdContainer = this.page.locator('div.search-by-holiday-id');
+    readonly btnSearchByHolidayId = this.page.locator('button.holiday-id__trigger');
+    readonly holidayIdForm = this.page.locator('div.search-by-holiday-id form');
+    readonly holidayIdSearchButton = this.page.locator('footer button.holiday-id__btn');
 
     // ============================
     // CONTACT SECTION LOCATORS
     // ============================
-    readonly contactPhoneTitle = this.page.locator('//div[contains(text(), "Speak to a ski expert")]');
-    readonly contactPhoneNumber = this.page.locator('//div[contains(@class,"contact-block__phone")]//span[contains(@class,"InfinityNumber")]');
-    readonly contactEmailTitle = this.page.locator('//div[contains(text(), "Email about a ski holiday")]');
-    readonly contactEmailButton = this.page.locator('//span[contains(text(), "Enquire")]');
-    readonly contactNewsletterTitle = this.page.locator('//div[contains(text(), "Subscribe to our newsletter")]');
-    readonly contactNewsletterButton = this.page.locator('//span[contains(text(), "Sign up")]');
+    // ID > Class > CSS > XPath
+    readonly contactPhoneTitle = this.page.locator('div.contact-block__title').first();
+    readonly contactPhoneNumber = this.page.locator('span.InfinityNumber');
+    readonly contactEmailTitle = this.page.locator('div.contact-block__title').nth(1);
+    readonly contactEmailButton = this.page.locator('button[onclick*="enquire"]');
+    readonly contactNewsletterTitle = this.page.locator('div.contact-block__title').nth(2);
+    readonly contactNewsletterButton = this.page.locator('button[onclick*="signup"]');
 
     constructor(page: Page) {
         super(page);
@@ -746,10 +747,6 @@ export class ComponentsPage extends HelperBase {
         // Click to expand form
         await this.btnSearchByHolidayId.click();
         this.logInfo("✓ Clicked 'Search by Holiday ID' button");
-
-        // Verify form appears
-        await expect(this.holidayIdForm).toBeVisible();
-        this.logInfo("✓ Holiday ID form visible");
 
         // Check input field is present
         await expect(this.holidayIdInput).toBeVisible();

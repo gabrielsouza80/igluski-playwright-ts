@@ -5,14 +5,14 @@ export class SearchPage extends HelperBase {
   constructor(page: Page) { super(page) }
 
   // Header & Navigation
-  readonly main: Locator = this.page.locator('.main.body-additional-bottom-margin');
+  readonly main: Locator = this.page.locator('main.main');
   // Filters sidebar
   readonly filtersSidebar: Locator = this.main.getByText('Refine resort details', { exact: false });
   readonly searchResults: Locator = this.main.locator('a:has(h3)');
-  readonly pagination: Locator = this.main.getByRole('navigation', { name: /Displaying 1 -/ }).or(this.main.getByText('Next', { exact: false }));
-  readonly sortSelect: Locator = this.main.getByText('Sort by:', { exact: false }).locator('select');
-  readonly resultsPerPageSelect: Locator = this.main.getByText('Results per page', { exact: false }).locator('select');
-  readonly firstBookOnlineBtn: Locator = this.searchResults.locator('(//button[contains(@class,"book-online-btn")])[1]');
+  readonly pagination: Locator = this.main.getByRole('navigation', { name: /Displaying 1 -/ });
+  readonly sortSelect: Locator = this.main.locator('select').first();
+  readonly resultsPerPageSelect: Locator = this.main.locator('select').nth(1);
+  readonly firstBookOnlineBtn: Locator = this.searchResults.locator('button.book-online-btn').first();
 
   // --------------------------
   // Page Actions
