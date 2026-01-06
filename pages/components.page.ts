@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { HelperBase } from './utils/HelperBase';
 
 // Type definitions for menu navigation structure
@@ -303,12 +303,12 @@ export class ComponentsPage extends HelperBase {
     async waitForCustomerPortalAjax(): Promise<void> {
         this.logSection("Customer Portal — AJAX Wait");
 
-        const welcomeText = this.page.locator('text=Welcome to My Booking!');
+        const bookingWelcomeMessage = this.page.locator('text=Welcome to My Booking!');
 
         // Wait for AJAX-loaded content to appear
-        await expect(welcomeText).toBeVisible();
+        await expect(bookingWelcomeMessage).toBeVisible();
 
-        const text = (await welcomeText.innerText()).trim();
+        const text = (await bookingWelcomeMessage.innerText()).trim();
         this.logInfo(`✓ AJAX content loaded: "${text}"`);
 
         this.logDivider();
@@ -318,15 +318,15 @@ export class ComponentsPage extends HelperBase {
         this.logSection("Customer Portal — Field Validation");
 
         // Define required fields to check
-        const requiredFields = [
-            { locator: this.page.locator('#LeadBookerSurname'), label: "Surname field" },
-            { locator: this.page.locator('#BookingId'), label: "Booking ID field" }
+        const requiredBookingFields = [
+            { fieldLocator: this.page.locator('#LeadBookerSurname'), label: "Surname field" },
+            { fieldLocator: this.page.locator('#BookingId'), label: "Booking ID field" }
         ];
 
         // Verify each required field is visible
-        for (const field of requiredFields) {
+        for (const field of requiredBookingFields) {
             this.logInfo(`Validating ${field.label}...`);
-            await expect(field.locator).toBeVisible();
+            await expect(field.fieldLocator).toBeVisible();
             this.logInfo(`✓ ${field.label} is visible`);
         }
 
@@ -419,11 +419,6 @@ export class ComponentsPage extends HelperBase {
         this.logDivider();
 
         return menusSnapshot;
-    }
-
-    async openNavigationTab(): Promise<Page> {
-        this.logInfo("Opening reusable navigation tab...");
-        return await this.page.context().newPage();
     }
 
     async validateMainMenu(navPage: Page, menu: MenuSnapshot): Promise<void> {
@@ -556,10 +551,10 @@ export class ComponentsPage extends HelperBase {
         }
 
         // Handle bottom sections with title-based locators
-        const title = sectionId.replace("footer-", "").replace(/-/g, " ");
+        const footerSectionTitle = sectionId.replace("footer-", "").replace(/-/g, " ");
 
         return this.page.locator(
-            `h4.footer-list__title:has-text("${title}") + ul.footer-list a.footer-list__link[href="${relativeUrl}"]`
+            `h4.footer-list__title:has-text("${footerSectionTitle}") + ul.footer-list a.footer-list__link[href="${relativeUrl}"]`
         );
     }
 
@@ -629,8 +624,8 @@ export class ComponentsPage extends HelperBase {
         for (const item of items) {
             if (!item.url || !item.sectionId) continue;
 
-            const locator = this.getFooterItemLocator(item.sectionId, item.url);
-            await expect(locator).toBeVisible();
+            const footerLink = this.getFooterItemLocator(item.sectionId, item.url);
+            await expect(footerLink).toBeVisible();
         }
 
         this.logInfo("✓ All footer items visible");
@@ -644,8 +639,8 @@ export class ComponentsPage extends HelperBase {
         for (const item of items) {
             if (!item.url || !item.sectionId) continue;
 
-            const locator = this.getFooterItemLocator(item.sectionId, item.url);
-            const text = (await locator.innerText()).trim();
+            const footerLink = this.getFooterItemLocator(item.sectionId, item.url);
+            const text = (await footerLink.innerText()).trim();
 
             if (!text) {
                 throw new Error(`❌ Empty text: ${item.label}`);

@@ -2,19 +2,12 @@ import { Page, Locator, expect } from '@playwright/test';
 import { HelperBase } from './utils/HelperBase';
 
 export class HomePage extends HelperBase {
-  // ============================
-  // INLINE SECTION LOCATORS
-  // ============================
-  sectionTitle = (text: string) =>
-    this.page.locator(
-      `//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "${text.toLowerCase()}")]`
-    );
+  // Menu locators
+  mainMenuLink = (label: string) =>
+    this.page.locator(`li.menu-list__item a:has-text("${label}")`).first();
 
-  sectionContainer = (title: Locator) =>
-    title.locator('xpath=..');
-
-  sectionLinks = (section: Locator) =>
-    section.locator('a');
+  submenuLink = (label: string) =>
+    this.page.locator(`.submenu-list__block-item a:has-text("${label}")`).first();
 
   // ============================
   // CAROUSEL LOCATORS
@@ -22,6 +15,7 @@ export class HomePage extends HelperBase {
   readonly carouselNextButton = this.page.locator('.content-carousel__control--right');
   readonly carouselActiveSlide = this.page.locator('.content-carousel__inner__item--active');
   readonly carouselSlides = this.page.locator('//div[contains(@class, "content-carousel__inner__item")]');
+  readonly carouselCta = this.carouselActiveSlide.locator('a').first();
 
   // ============================
   // COOKIES LOCATORS
@@ -38,13 +32,38 @@ export class HomePage extends HelperBase {
   readonly searchButton = this.page.locator('button.search-item__cta , .search-bar__form-submit');
 
   // ============================
+  // CTA LOCATORS
+  // ============================
+  readonly ctaRow = this.page.locator('h2:has-text("TALK TO")').locator('..').locator('..');
+  readonly ctaBoxes = this.ctaRow.locator('a');
+  readonly ctaTitles = this.ctaRow.locator('h2.box-panel__title');
+
+  // ============================
+  // COUNTRY BANNER LOCATORS
+  // ============================
+  readonly countryBannerAnchors = this.page.locator('//div[contains(@class, "country-banner")]//a');
+
+  countryBannerLink(label: string): Locator {
+    return this.countryBannerAnchors.filter({ hasText: label });
+  }
+
+  // ============================
+  // INLINE SECTIONS LOCATORS
+  // ============================
+  readonly speakToExpertsHeading = this.page.getByRole('heading', { name: /speak to the ski experts/i });
+  readonly speakToExpertsSection = this.speakToExpertsHeading.locator("xpath=ancestor::div[contains(@class,'row')]");
+  readonly speakToExpertsLinks = this.speakToExpertsSection.locator('a');
+
+  readonly findHolidayHeading = this.page.getByRole('heading', { name: /find your skiing holiday/i });
+  readonly findHolidaySection = this.findHolidayHeading.locator("xpath=ancestor::div[contains(@class,'row')]");
+  readonly findHolidayLinks = this.findHolidaySection.locator('a');
+
+  // ============================
   // RESPONSIVE LOCATORS
   // ============================
   readonly hamburgerMenu = this.page
     .locator('[aria-label*="menu" i], .hamburger, button[id*="menu"], [class*="hamburger"], [class*="menu"]')
     .first();
-
-  readonly allImages = this.page.locator('img');
 
   constructor(page: Page) {
     super(page);
@@ -82,11 +101,8 @@ export class HomePage extends HelperBase {
   async validateSingleCarouselSlide(index: number, total: number): Promise<void> {
     this.logSection(`Carousel — Slide ${index + 1} of ${total}`);
 
-    // Get CTA inside the slide
-    const bannerCTA = this.carouselActiveSlide.locator("a");
-
-    // Click CTA
-    await bannerCTA.click();
+    // Click CTA inside the active slide
+    await this.carouselCta.click();
     this.logInfo("✓ CTA clicked");
 
     // Return to homepage
@@ -94,7 +110,7 @@ export class HomePage extends HelperBase {
 
     // Move to next slide (if not last)
     if (index < total - 1) {
-      const href = await bannerCTA.getAttribute("href");
+      const href = await this.carouselCta.getAttribute("href");
       this.logInfo("Moving to next slide...");
       await this.carouselNextButton.click();
       await this.waitForCarouselSlideChange(href!);
@@ -122,22 +138,17 @@ export class HomePage extends HelperBase {
   async getCtaBoxesList(): Promise<{ title: string; normalized: string; url: string | null }[]> {
     this.logSection("CTA Boxes — Fetch List");
 
-    const ctaRow = this.page.locator('h2:has-text("TALK TO")').locator('..').locator('..');
-
-    const ctaBoxes = ctaRow.locator('a');
-    const ctaTitles = ctaRow.locator('h2.box-panel__title');
-
-    const total = await ctaBoxes.count();
+    const total = await this.ctaBoxes.count();
     this.logInfo(`Total CTA boxes detected: ${total}`);
     this.logDivider();
 
     const list: { title: string; normalized: string; url: string | null }[] = [];
 
     for (let i = 0; i < total; i++) {
-      const rawTitle = await ctaTitles.nth(i).innerText();
+      const rawTitle = await this.ctaTitles.nth(i).innerText();
       const normalized = this.normalizeText(rawTitle);
 
-      const href = await ctaBoxes.nth(i).getAttribute("href");
+      const href = await this.ctaBoxes.nth(i).getAttribute("href");
       const url = this.resolveUrl(href);
 
       list.push({ title: rawTitle, normalized, url });
@@ -231,11 +242,9 @@ export class HomePage extends HelperBase {
     this.logInfo(`URL: ${url}`);
     this.logDivider();
 
-    const locator = this.page.locator(
-      `//div[contains(@class, "country-banner")]//a[contains(text(), "${label}")]`
-    );
+    const countryLink = this.countryBannerLink(label);
 
-    await this.scrollIntoView(locator);
+    await this.scrollIntoView(countryLink);
 
     try {
       await this.openAndValidateUrl(url, new RegExp(url, "i"));
@@ -273,11 +282,7 @@ export class HomePage extends HelperBase {
     this.logInfo(`Menu: ${menuLabel}`);
     this.logDivider();
 
-    const menu = this.page.locator(
-      `li.menu-list__item a:has-text("${menuLabel}")`
-    ).first();
-
-    await menu.click();
+    await this.mainMenuLink(menuLabel).click();
 
     this.logInfo(`✓ Clicked main menu: ${menuLabel}`);
     this.logDivider();
@@ -290,18 +295,10 @@ export class HomePage extends HelperBase {
     this.logDivider();
 
     // Hover main menu
-    const menu = this.page.locator(
-      `li.menu-list__item a:has-text("${menuLabel}")`
-    ).first();
-
-    await menu.hover();
+    await this.mainMenuLink(menuLabel).hover();
 
     // Click submenu
-    const submenu = this.page.locator(
-      `.submenu-list__block-item a:has-text("${subLabel}")`
-    ).first();
-
-    await submenu.click();
+    await this.submenuLink(subLabel).click();
 
     this.logInfo(`✓ Clicked submenu: ${subLabel}`);
     this.logDivider();
@@ -325,14 +322,14 @@ export class HomePage extends HelperBase {
     this.logInfo(`Validating title: "${expected}"`);
 
     // Locate the title using Playwright's native text selector
-    const locator = this.page.getByText(expected, { exact: false });
+    const titleLocator = this.page.getByText(expected, { exact: false });
 
     // Get text to confirm it exists
-    const text = await locator.textContent();
+    const text = await titleLocator.textContent();
     this.logInfo(`Title text: "${text}"`);
 
     // VALIDATION — Must be visible
-    await expect(locator).toBeVisible();
+    await expect(titleLocator).toBeVisible();
     this.logInfo(`✓ Title found and visible: "${expected}"`);
 
     this.logDivider();
@@ -351,13 +348,8 @@ export class HomePage extends HelperBase {
   async validateCarouselCtaVisibility(): Promise<void> {
     this.logSection("Carousel CTA — Visibility");
 
-    const activeSlide = this.carouselActiveSlide;
-
-    // Locate CTA inside the active slide
-    const cta = activeSlide.locator("a").first();
-
     // Capture CTA href for validation and logging
-    const href = await cta.getAttribute("href");
+    const href = await this.carouselCta.getAttribute("href");
     this.logInfo(`CTA href: ${href}`);
 
     if (!href) {
@@ -370,17 +362,14 @@ export class HomePage extends HelperBase {
   async validateCarouselCtaNavigation(): Promise<void> {
     this.logSection("Carousel CTA — Navigation");
 
-    const activeSlide = this.carouselActiveSlide;
-    const cta = activeSlide.locator("a").first();
-
     // Extract CTA href
-    const href = await cta.getAttribute("href");
+    const href = await this.carouselCta.getAttribute("href");
     if (!href) {
       throw new Error("❌ CTA button has no href attribute");
     }
 
     // Click CTA
-    await cta.click();
+    await this.carouselCta.click();
     this.logInfo("✓ CTA clicked");
 
     // Navigation must match CTA href
@@ -402,15 +391,7 @@ export class HomePage extends HelperBase {
   async getSpeakToExpertsLinks(): Promise<{ text: string; url: string }[]> {
     this.logSection("Inline Links — Speak to Experts");
 
-    // Locate section title
-    const title = this.page.getByRole("heading", { name: /speak to the ski experts/i });
-
-    // Locate the section container (closest parent with class row)
-    const section = title.locator("xpath=ancestor::div[contains(@class,'row')]");
-
-    // Locate all inline links inside the section
-    const links = section.locator("a");
-    const total = await links.count();
+    const total = await this.speakToExpertsLinks.count();
 
     this.logInfo(`Total links detected: ${total}`);
     this.logDivider();
@@ -418,7 +399,7 @@ export class HomePage extends HelperBase {
     const list: { text: string; url: string }[] = [];
 
     for (let i = 0; i < total; i++) {
-      const link = links.nth(i);
+      const link = this.speakToExpertsLinks.nth(i);
 
       const text = (await link.textContent())?.trim() ?? "";
       const href = await link.getAttribute("href");
@@ -473,15 +454,7 @@ export class HomePage extends HelperBase {
   async getFindYourSkiingHolidayLinks(): Promise<{ text: string; url: string }[]> {
     this.logSection("Inline Links — Find Your Skiing Holiday");
 
-    // Locate section title
-    const title = this.page.getByRole("heading", { name: /find your skiing holiday/i });
-
-    // Locate the section container (closest parent with class row)
-    const section = title.locator("xpath=ancestor::div[contains(@class,'row')]");
-
-    // Locate all inline links inside the section
-    const links = section.locator("a");
-    const total = await links.count();
+    const total = await this.findHolidayLinks.count();
 
     this.logInfo(`Total links detected: ${total}`);
     this.logDivider();
@@ -489,7 +462,7 @@ export class HomePage extends HelperBase {
     const list: { text: string; url: string }[] = [];
 
     for (let i = 0; i < total; i++) {
-      const link = links.nth(i);
+      const link = this.findHolidayLinks.nth(i);
 
       const text = (await link.textContent())?.trim() ?? "";
       const href = await link.getAttribute("href");
