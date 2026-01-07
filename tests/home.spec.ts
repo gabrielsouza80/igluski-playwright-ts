@@ -8,208 +8,186 @@ test.describe('Home Page', () => {
 
   // BEFORE EACH
   test.beforeEach(async ({ pm }) => {
-    await test.step('✓ Navigate to the homepage and handle cookie banner', async () => {
+    await test.step('✓ Navigate to the Home Page and handle cookie banner', async () => {
       await pm.onHomePage().navigateAndAcceptCookies();
     });
   });
 
-  // TC 1 — Validate Iglu Ski Logo
-  test('Validate Iglu Ski Logo', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
+  // ============================================================
+  // 🔵 TC15 — Validate Main Titles on the Home Page
+  // ============================================================
+  // This test validates the main titles displayed on the Home Page.
+  test('TC15 — Validate Main Titles on the Home Page', async ({ pm }, testInfo) => {
 
-    await test.step('✓ Validate that clicking the Iglu Ski logo redirects to the homepage', async () => {
-      await pm.onHomePage().validateLogo();
+    // STEP 0 — Start test
+    await test.step('Start test', async () => {
+      pm.onHomePage().logTestStart(testInfo.title);
+    });
+
+    // STEP 1 — Define expected Home Page titles
+    const expectedTitles = [
+      "Welcome To The Home Of Ski Holidays",
+      "Speak to the ski experts",
+      "Find Your Skiing Holiday"
+    ];
+
+    // STEP 2 — Validate each Home Page title individually
+    await test.step('Validate each home Page title', async () => {
+      for (const title of expectedTitles) {
+        await pm.onHomePage().validateSingleTitle(title);
+      }
+    });
+
+    // STEP 3 — Finish test
+    await test.step('Finish test', async () => {
+      console.log('✓ TC15 completed successfully');
     });
   });
 
-  // TC 2 — Validate Menu + Submenus
-  test('Validate Main Navigation Menu', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
-    test.setTimeout(300000);
+  // ============================================================
+  // 🔵 TC16 — Validate Carousel of Promotions and Country Banners
+  // ============================================================
+  // This test validates the promotional carousel and all country banners.
+  test('TC16 — Validate Carousel of Promotions and Country Banners', async ({ pm }, testInfo) => {
 
-    const home = pm.onHomePage();
+    // STEP 0 — Start test
+    await test.step('Start test', async () => {
+      pm.onHomePage().logTestStart(testInfo.title);
+    });
 
-    // STEP 1 — Snapshot
-    const menusSnapshot = await test.step(
-      'Capture snapshot of all main menus and submenus',
-      async () => {
-        return await home.getMenusSnapshot();
+    // STEP 1 — Count carousel slides
+    const totalSlides = await pm.onHomePage().getCarouselSlideCount();
+
+    // STEP 2 — Validate each carousel slide
+    await test.step('Validate each carousel slide', async () => {
+      for (let i = 0; i < totalSlides; i++) {
+        await pm.onHomePage().validateSingleCarouselSlide(i, totalSlides);
       }
-    );
+    });
 
-    // STEP 2 — Open navigation tab
-    const navPage = await test.step(
-      'Open reusable navigation tab',
-      async () => {
-        return await home.openNavigationTab();
-      }
-    );
+    // STEP 3 — Get country banners list
+    const banners = await pm.onHomePage().getCountryBannerList();
 
-    // STEP 3 — Validate each menu
-    for (const menu of menusSnapshot) {
-      await test.step(`Validate main menu: "${menu.mainLabel}"`, async () => {
-        await home.validateMainMenu(navPage, menu);
-      });
-
-      // STEP 4 — Validate submenus for this menu
-      await test.step(
-        `Validate submenus for menu: "${menu.mainLabel}"`,
-        async () => {
-          await home.validateSubmenus(navPage, menu);
+    // STEP 4 — Validate each country banner and its redirection
+    await test.step('Validate each country banner and its redirection', async () => {
+      for (const banner of banners) {
+        if (!banner.url) {
+          // Logging happens inside the Home Page class
+          continue;
         }
-      );
-    }
+        await pm.onHomePage().validateSingleCountryBanner(banner.label, banner.url);
+      }
+    });
 
-    // STEP 5 — Close navigation tab
-    await test.step('Close navigation tab', async () => {
-      await navPage.close();
+    // STEP 5 — Finish test
+    await test.step('Finish test', async () => {
+      console.log('✓ TC16 completed successfully');
     });
   });
 
-  // TC — Click on menu and submenu
-  test('Click on the menu and optionally on the submenu', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
+  // ============================================================
+  // 🔵 TC17 — Validate CTA Boxes (Call To Action)
+  // ============================================================
+  // This test validates all CTA boxes, their titles, and their redirections.
+  test('TC17 — Validate CTA Boxes (Call To Action)', async ({ pm }, testInfo) => {
 
-    await test.step('✓ Click the main menu item "Ski Holidays"', async () => {
-      await pm.onHomePage().clickMenu("Ski Holidays");
+    // STEP 0 — Start test
+    await test.step('Start test', async () => {
+      pm.onHomePage().logTestStart(testInfo.title);
     });
 
-    await test.step('✓ Click the submenu item "Family ski holidays" under "Ski Holidays"', async () => {
-      await pm.onHomePage().clickMenu("Ski Holidays", "Family ski holidays");
+    // STEP 1 — Fetch CTA boxes list (optional, only for logging)
+    await pm.onHomePage().getCtaBoxesList();
+
+    // STEP 2 — Validate each CTA box
+    await test.step('Validate CTA titles and redirections', async () => {
+      await pm.onHomePage().validateCtaBoxesList();
     });
-  });
 
-  // TC 3 — Validate Contact Information in Header
-  test('Validate Contact Information in the Header', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
-
-    await test.step('✓ Validate phone number, contact link, and redirection in the header', async () => {
-      await pm.onHomePage().validateHeaderContactInfo();
-    });
-  });
-
-  // TC 4 — Validate "Recently Viewed" Button
-  test('Validate "Recently Viewed" Button', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
-
-    await test.step('✓ Validate that the Recently Viewed button opens the correct panel', async () => {
-      await pm.onHomePage().validateRecentlyViewedButton();
+    // STEP 3 — Finish test
+    await test.step('Finish test', async () => {
+      console.log('✓ TC17 completed successfully');
     });
   });
 
-  // TC 5 — Validate Access to the Customer Portal
-  test('Validate Access to the Customer Portal', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
+  // ============================================================
+  // 🔵 TC22 — Validate Carousel CTA Button
+  // ============================================================
+  // This test validates the CTA button inside the active carousel slide.
+  test('TC22 — Validate Carousel CTA Button', async ({ pm }, testInfo) => {
 
-    await test.step('✓ Validate that the Customer Portal button redirects to the correct page', async () => {
-      await pm.onHomePage().validateAccessCustomerPortal();
+    // STEP 0 — Start test
+    await test.step('Start test', async () => {
+      pm.onHomePage().logTestStart(testInfo.title);
+    });
+
+    // STEP 1 — Validate CTA visibility inside the active slide
+    await test.step('Validate CTA visibility inside the active carousel slide', async () => {
+      await pm.onHomePage().validateCarouselCtaVisibility();
+    });
+
+    // STEP 2 — Validate CTA navigation
+    await test.step('Validate CTA navigation from the active carousel slide', async () => {
+      await pm.onHomePage().validateCarouselCtaNavigation();
+    });
+
+    // STEP 3 — Finish test
+    await test.step('Finish test', async () => {
+      console.log('✓ TC22 completed successfully');
     });
   });
 
-  // TC 6 — Validate Ratings and Reviews in the Header
-  test('Validate Ratings and Reviews in the Header', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
+  // ============================================================
+  // 🔵 TCXX — Validate Inline Links in Sections
+  // ============================================================
+  // This test validates inline links inside two Home Page sections:
+  // 1) Speak to the ski experts
+  // 2) Find Your Skiing Holiday
+  test('TCXX — Validate Inline Links in Sections', async ({ pm }, testInfo) => {
 
-    await test.step('✓ Validate that the Ratings & Reviews link redirects correctly', async () => {
-      await pm.onHomePage().validateRatingsAndReviews();
+    // STEP 0 — Start test
+    await test.step('Start test', async () => {
+      pm.onHomePage().logTestStart(testInfo.title);
+    });
+
+    // STEP 1 — Validate Speak to Experts section
+    await test.step('Validate inline links inside the "Speak to Experts" section', async () => {
+      await pm.onHomePage().validateSpeakToExpertsLinksList();
+    });
+
+    // STEP 2 — Validate Find Your Skiing Holiday section
+    await test.step('Validate inline links inside the "Find Your Skiing Holiday" section', async () => {
+      await pm.onHomePage().validateFindYourSkiingHolidayLinksList();
+    });
+
+    // STEP 3 — Finish test
+    await test.step('Finish test', async () => {
+      console.log('✓ Inline links validation completed successfully');
     });
   });
 
-  // TC 15 — Validate Main Titles on the Homepage
-  test('Validate Main Titles on the Homepage', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
-
-    await test.step('✓ Validate the presence and correctness of the main homepage titles', async () => {
-      await pm.onHomePage().validateMultipleTitles([
-        "Welcome To The Home Of Ski",
-        "Speak to the ski experts",
-        "Find Your Skiing Holiday"
-      ]);
-    });
-  });
-
-  // TC 16 — Validate carousel + country banners
-  test('Validate Carousel of Promotions and Country Banners', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
-
-    await test.step('✓ Validate the promotional carousel functionality and CTA behavior', async () => {
-      await pm.onHomePage().validateCarouselHome();
+  // ============================================================
+  // 🔵 TC26 — Validate Page Responsiveness (Mobile + Tablet)
+  // ============================================================
+  test('TC26 — Validate Page Responsiveness (Mobile/Tablet)', async ({ pm }, testInfo) => {
+    // STEP 0 — Start test
+    await test.step('Start test', async () => {
+      pm.onHomePage().logTestStart(testInfo.title);
     });
 
-    await test.step('✓ Validate all country banners and their respective redirections', async () => {
-      await pm.onHomePage().validateCountryBanners();
-    });
-  });
-
-  // TC 17 — Validate CTA Boxes
-  test('Validate CTA Boxes (Call To Action)', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
-
-    await test.step('✓ Validate all CTA boxes, titles, and redirections', async () => {
-      await pm.onHomePage().validateCtaBoxes();
-    });
-  });
-
-  // TC 18 — Validate Contact Section
-  test('Validate Contact Section (Phone, Email, Newsletter)', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
-
-    await test.step('✓ Validate the full contact section including phone, email, and newsletter blocks', async () => {
-      await pm.onHomePage().validateContactSection();
-    });
-  });
-
-  // TC 20 — Validate Footer Links
-  test('Validate Footer Links', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
-    test.setTimeout(300000);
-
-    await test.step('✓ Validate all footer links and ensure correct redirections', async () => {
-      await pm.onHomePage().validateFooterItems();
-    });
-  });
-
-  // TC 22 — Validate Carousel CTA Button
-  test('Validate Carousel CTA Button', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
-
-    await test.step('✓ Validate the CTA button inside the promotional carousel', async () => {
-      await pm.onHomePage().validateCarouselCTA();
-    });
-  });
-
-  // Validate Inline Links
-  test('Validate Inline Links in Sections', async ({ pm }, testInfo) => {
-    console.log(`\n===== TEST STARTED: ${testInfo.title} =====\n`);
-
-    await test.step('✓ Validate inline links inside the "Speak to Experts" section', async () => {
-      await pm.onHomePage().validateSpeakToExpertsLinks();
+    // STEP 1 — Validate at 375px (mobile)
+    await test.step('Validate layout and responsiveness at 375px (mobile)', async () => {
+      await pm.onHomePage().validateResponsivenessAtWidth(375);
     });
 
-    await test.step('✓ Validate inline links inside the "Find Your Skiing Holiday" section', async () => {
-      await pm.onHomePage().validateFindYourSkiingHolidayLinks();
-    });
-  });
-
-  // TC 26 — Validate Page Responsiveness
-  test('Validate Page Responsiveness (Mobile/Tablet)', async ({ pm }, testInfo) => {
-    pm.onHomePage().logTestStart(testInfo.title);
-
-    await test.step('✓ Validate layout and responsiveness at 375px (mobile)', async () => {
-      await pm.onHomePage().validateResponsiveness(375);
+    // STEP 2 — Validate at 768px (tablet)
+    await test.step('Validate layout and responsiveness at 768px (tablet)', async () => {
+      await pm.onHomePage().validateResponsivenessAtWidth(768);
     });
 
-    await test.step('✓ Validate layout and responsiveness at 768px (tablet)', async () => {
-      await pm.onHomePage().validateResponsiveness(768);
-    });
-  });
-
-  // TC 28 — Validate Holiday ID Search
-  test('Validate "Search by Holiday ID" Button in Footer', async ({ pm }, testInfo) => {
-    pm.onHomePage().logTestStart(testInfo.title);
-
-    await test.step('✓ Validate the Holiday ID search functionality in the footer', async () => {
-      await pm.onHomePage().validateHolidayIdSearch();
+    // STEP 3 — Finish test
+    await test.step('Finish test', async () => {
+      console.log("✓ TC26 completed successfully");
     });
   });
 

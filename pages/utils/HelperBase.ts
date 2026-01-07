@@ -3,13 +3,14 @@
 // Contains custom actions and validations for the platform.
 
 import { Page, Locator, expect } from '@playwright/test';
+import type { MenuSnapshot, SubLinkSnapshot } from '../components.page';
 import fs from "fs";
 import path from "path";
 
 export class HelperBase {
 
   protected readonly page: Page;
-
+  public testCaseErrors: string[] = [];
   // Load JSON once and keep it as a protected property
   protected readonly urls: Record<string, string> = JSON.parse(
     fs.readFileSync(path.join(process.cwd(), "tests/fixtures/secrets.urls.json"), "utf-8")
@@ -19,133 +20,54 @@ export class HelperBase {
     this.page = page;
   }
 
-  // Standardized simple log
-  protected log(message: string): void {
-    console.log(message);
-  }
+  // ============================================================
+  // 🔵 COOKIE BANNER HANDLING
+  // ============================================================
+  async acceptCookies(): Promise<void> {
+    const selectors = [
+      'button:has-text("Accept Cookies & Close")',
+      'button:has-text("Accept")'
+    ];
 
-  // Wait until a selector or locator is visible.
-  protected async waitForVisible(target: string | Locator, timeout = 5000): Promise<boolean> {
-    const locator = typeof target === 'string' ? this.page.locator(target) : target;
-    try {
-      await locator.waitFor({ state: 'visible', timeout });
-      return true;
-    } catch {
-      return false;
-    }
-  }
+    for (const selector of selectors) {
+      const btn = this.page.locator(selector).first();
 
-  // Click securely on selector or locator (wait for visibility first).
-  protected async safeClick(target: string | Locator, timeout = 5000): Promise<void> {
-    const locator = typeof target === 'string' ? this.page.locator(target) : target;
-    await this.waitForVisible(locator, timeout).catch(() => null);
-    await locator.click({ timeout }).catch(() => null);
-  }
-
-  async waitSpinnerToDisappear(timeout = 20000): Promise<void> {
-    const spinner = this.page.locator('.spinner.hide');
-    try {
-      await spinner.waitFor({ state: 'hidden', timeout });
-    } catch (e) {
-      console.log('Spinner did not disappear within the timeout period.');
-    }
-  }
-
-  // Try closing the cookie banner using different (site-specific) selectors.
-  async acceptCookies() {
-    try {
-      const button = await this.page.locator('button:has-text("Accept Cookies & Close")').first();
-
-      if (await button.isVisible({ timeout: 5000 })) {
-        await button.click({ timeout: 5000 });
-        await this.page.waitForTimeout(500);
-      }
-    } catch (e) {
-      try {
-        const altButton = await this.page.locator('button:has-text("Accept")').first();
-        if (await altButton.isVisible({ timeout: 3000 })) {
-          await altButton.click();
-          await this.page.waitForTimeout(500);
-        }
-      } catch (e2) {
-        console.log('Cookie banner not found or already closed');
+      if (await btn.count()) {
+        try {
+          await expect(btn).toBeVisible();
+          await btn.click();
+          return;
+        } catch { /* ignore */ }
       }
     }
+
+    this.logInfo("Cookie banner not found or already closed");
   }
 
-  // validateRedirectButton: opens the link in a new tab and validates the URL (specific to the site)
-  async validateRedirectButton(button: Locator | null, expectedUrl: string): Promise<void> {
-    console.log(`\n==================== REDIRECT — VALIDATION START ====================`);
-
-    let urlToOpen = expectedUrl;
-
-    if (button) {
-      const href = await button.getAttribute('href');
-
-      urlToOpen = href && !href.startsWith("http")
-        ? new URL(href, this.page.url()).toString()
-        : (href || expectedUrl);
-
-      console.log(`• Extracted URL from element: ${urlToOpen}`);
-    } else {
-      console.log(`• No element provided. Using expected URL: ${expectedUrl}`);
-    }
-
-    console.log(`• Opening new tab to validate redirection...`);
-    console.log(`---------------------------------------------------------------`);
-
-    const newPage = await this.page.context().newPage();
-
-    await newPage.goto(urlToOpen, {
-      waitUntil: "domcontentloaded",
-      timeout: 60000,
-    });
-
-    await expect(newPage).toHaveURL(new RegExp(urlToOpen, 'i'));
-    console.log(`• Redirect OK → ${urlToOpen}`);
-
-    await newPage.close();
-
-    console.log(`==================== REDIRECT — VALIDATION COMPLETE ==================\n`);
-  }
-
-  // extractFullUrl: automatically generates absolute URLs (site-specific)
-  async extractFullUrl(button: Locator): Promise<string | null> {
-
-    const href = await button.getAttribute('href');
+  // ============================================================
+  // 🔵 URL HELPERS
+  // ============================================================
+  protected resolveUrl(href: string | null | undefined): string | null {
     if (!href) return null;
-
-    return href.startsWith('http')
+    return href.startsWith("http")
       ? href
       : new URL(href, this.page.url()).href;
   }
 
-  async scrollDown(pixels: number = 500): Promise<void> {
-    await this.page.evaluate((scrollAmount) => {
-      window.scrollBy(0, scrollAmount);
-    }, pixels);
+  async openAndValidateUrl(url: string, expectedPattern: RegExp): Promise<void> {
+    const newPage = await this.page.context().newPage();
+
+    try {
+      await newPage.goto(url, { waitUntil: "domcontentloaded" });
+      await expect(newPage).toHaveURL(expectedPattern);
+    } finally {
+      await newPage.close();
+    }
   }
 
-  async scrollToBottom(): Promise<void> {
-    await this.page.evaluate(() => {
-      window.scrollTo(0, document.body.scrollHeight);
-    });
-  }
-
-  async scrollToTop(): Promise<void> {
-    await this.page.evaluate(() => {
-      window.scrollTo(0, 0);
-    });
-  }
-
-  protected generateInvalidEmail() {
-    return Math.random().toString(36).substring(2, 7) + '@invalid';
-
-  }
   // ============================================================
-  // 🔵 NEW GENERIC METHODS (ADDED)
+  // 🔵 TEXT NORMALIZATION
   // ============================================================
-
   protected normalizeText(text: string): string {
     return text
       .toLowerCase()
@@ -155,7 +77,10 @@ export class HelperBase {
       .trim();
   }
 
-  protected async validateTitleContains(page: Page, label: string): Promise<boolean> {
+  // ============================================================
+  // 🔵 TITLE VALIDATION
+  // ============================================================
+  protected async validateTitleContains(page: Page, label: string): Promise<void> {
     const normalize = (txt: string) =>
       txt.toLowerCase()
         .normalize("NFD")
@@ -166,33 +91,32 @@ export class HelperBase {
     const normalizedLabel = normalize(label);
 
     try {
-      const h1TextRaw = await page.locator("h1").first().innerText();
-      const h1Text = normalize(h1TextRaw);
+      const h1 = page.locator("h1").first();
+      await expect(h1).toBeVisible();
+
+      const h1Text = normalize(await h1.innerText());
       const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
 
-      return labelWords.some(w => h1Text.includes(w));
+      const match = labelWords.some(w => h1Text.includes(w));
+
+      if (!match) {
+        const msg = `❌ Title does NOT contain expected label: "${label}"`;
+        this.testCaseErrors.push(msg);
+        this.logInfo(msg);
+      } else {
+        this.logInfo(`✓ Title contains expected label`);
+      }
+
     } catch {
-      return false;
+      const msg = `❌ Title validation failed for label: "${label}"`;
+      this.testCaseErrors.push(msg);
+      this.logInfo(msg);
     }
   }
 
-  async openAndValidateUrl(url: string, expectedPattern: RegExp): Promise<void> {
-    // Create a new tab without touching the main page
-    const context = this.page.context();
-    const newPage = await context.newPage();
-
-    try {
-      // Navigate to the target URL in the new tab
-      await newPage.goto(url, { waitUntil: "domcontentloaded" });
-
-      // Validate the final URL using the expected pattern
-      await expect(newPage).toHaveURL(expectedPattern);
-    } finally {
-      // Always close only the temporary tab
-      await newPage.close();
-    }
-  }
-
+  // ============================================================
+  // 🔵 CAROUSEL HELPERS
+  // ============================================================
   protected async waitForCarouselSlideChange(previousHref: string): Promise<void> {
     await this.page.waitForFunction(
       (href) => {
@@ -203,53 +127,17 @@ export class HelperBase {
     );
   }
 
+  // ============================================================
+  // 🔵 SCROLL HELPERS
+  // ============================================================
   protected async scrollIntoView(locator: Locator): Promise<void> {
-    try {
-      await locator.scrollIntoViewIfNeeded();
-      await this.page.waitForTimeout(300);
-    } catch { }
+    await locator.scrollIntoViewIfNeeded();
+    await expect(locator).toBeVisible();
   }
 
-  protected resolveUrl(href: string | null | undefined): string | null {
-    if (!href) return null;
-    return href.startsWith("http") ? href : new URL(href, this.page.url()).href;
-  }
-
-  async validatePageTitleContains(page: any, expected: string): Promise<void> {
-    const title = await page.title();
-    console.log(`  • Page title: "${title}"`);
-
-    if (title.toLowerCase().includes(expected.toLowerCase())) {
-      console.log(`  ✓ Title contains "${expected}"`);
-    } else {
-      console.error(`  ❌ Title does NOT contain "${expected}"`);
-    }
-  }
-  async validatePageTitleFuzzy(page: any, expected: string): Promise<void> {
-    const title = await page.title();
-    console.log(`  • Page title: "${title}"`);
-
-    const t = title.toLowerCase();
-    const e = expected.toLowerCase();
-
-    // tolerance rules
-    const similar =
-      t.includes(e) ||                          // contains literal
-      t.includes(e.replace(/s$/, "")) ||        // singular/plural
-      t.includes(e.replace(/ing$/, "")) ||      // snowboard / snowboarding
-      t.includes(e.split(" ")[0]) ||            // first word
-      e.split(" ").some(word => t.includes(word)); // any relevant word
-
-    if (similar) {
-      console.log(`  ✓ Title is similar to "${expected}"`);
-    } else {
-      console.error(`  ❌ Title is NOT similar to "${expected}"`);
-    }
-  }
-
-  // ============================
-  // STRUCTURED LOGGING HELPERS
-  // ============================
+  // ============================================================
+  // 🔵 STRUCTURED LOGGING
+  // ============================================================
   protected logSection(title: string): void {
     console.log(`\n==================== ${title.toUpperCase()} ====================`);
   }
@@ -265,4 +153,169 @@ export class HelperBase {
   protected logDivider(): void {
     console.log(`---------------------------------------------------------------`);
   }
+
+  protected logWarn(message: string): void {
+    console.log(`⚠ ${message}`);
+  }
+
+  protected logError(message: string): void {
+    console.log(`❌ ${message}`);
+  }
+
+
+  // ============================================================
+  // 🧪 TEST CASE — GENERIC MENU UTILITIES (HELPER FUNCTIONS)
+  // ============================================================
+
+  // ------------------------------------------------------------
+  // Test Case — Snapshot
+  // ------------------------------------------------------------
+  async getMenuSnapshot(): Promise<MenuSnapshot[]> {
+    this.logSection("Header Navigation — Build Snapshot");
+
+    const snapshot = await this.page.$$eval("li.menu-list__item", (items) => {
+      return items.map((li) => {
+        const mainLink = li.querySelector("a");
+        const mainHref = mainLink?.getAttribute("href") || null;
+        const mainLabel = mainLink?.textContent?.trim() || "";
+
+        const subAnchors = Array.from(
+          li.querySelectorAll(".submenu-list__block-item a")
+        );
+
+        const sublinks = subAnchors.map((a) => ({
+          label: a.textContent?.trim() || "",
+          href: a.getAttribute("href"),
+        }));
+
+        return { mainLabel, mainHref, sublinks };
+      });
+    });
+
+    this.logInfo(`Snapshot captured: ${snapshot.length} main menus`);
+    this.logDivider();
+
+    return snapshot;
+  }
+
+  // ------------------------------------------------------------
+  // Safe navigation with retry
+  // ------------------------------------------------------------
+  async safeGoto(page: Page, url: string): Promise<void> {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        await page.goto(url, {
+          waitUntil: "domcontentloaded"
+        });
+        return;
+      } catch (err) {
+        this.logInfo(`⚠ Navigation failed (attempt ${attempt}) → ${url}`);
+        if (attempt === 2) throw err;
+        await page.waitForTimeout(1000);
+      }
+    }
+  }
+
+  // ------------------------------------------------------------
+  // Validate a single main menu
+  // ------------------------------------------------------------
+  async validateSingleMenu(navPage: Page, menu: MenuSnapshot): Promise<void> {
+    this.logSection(`Main Menu — ${menu.mainLabel}`);
+    this.logInfo(`URL: ${menu.mainHref}`);
+    this.logDivider();
+
+    const menuUrl = this.resolveUrl(menu.mainHref);
+    if (!menuUrl) {
+      this.logInfo(`⚠ Skipping menu (no URL): ${menu.mainLabel}`);
+      return;
+    }
+
+    await this.safeGoto(navPage, menuUrl);
+
+    // Validate URL only (correct behaviour)
+    await expect(navPage).toHaveURL(new RegExp(menuUrl, "i"));
+
+    const pageTitle = await navPage.title();
+    this.logInfo(`Page title: ${pageTitle}`);
+
+    this.logInfo(`✓ Main menu validated successfully`);
+    this.logDivider();
+  }
+
+  // ------------------------------------------------------------
+  // Validate a single submenu
+  // ------------------------------------------------------------
+  async validateSingleSubmenu(navPage: Page, sub: SubLinkSnapshot): Promise<void> {
+    this.logSection(`Submenu — ${sub.label}`);
+    this.logInfo(`URL: ${sub.href}`);
+    this.logDivider();
+
+    const subUrl = this.resolveUrl(sub.href);
+    if (!subUrl) {
+      this.logInfo(`⚠ Skipping submenu (no URL): ${sub.label}`);
+      return;
+    }
+
+    await this.safeGoto(navPage, subUrl);
+
+    await expect(navPage).toHaveURL(new RegExp(subUrl, "i"));
+
+    const pageTitle = await navPage.title();
+    this.logInfo(`Page title: ${pageTitle}`);
+
+    // Submenus usually match title → keep validation
+    await this.validateTitleContains(navPage, sub.label);
+
+    this.logDivider();
+  }
+
+  // ------------------------------------------------------------
+  // Test start log
+  // ------------------------------------------------------------
+  protected logTestStart(testName: string): void {
+    console.log(`\n===== TEST STARTED: ${testName} =====\n`);
+  }
+
+  // ============================================================
+  // 🔵 RESPONSIVENESS HELPERS
+  // ============================================================
+
+  /**
+   * Checks if the page has horizontal overflow (scrollable content wider than viewport)
+   * @returns {Promise<boolean>} True if horizontal overflow is detected
+   */
+  protected async hasHorizontalOverflow(): Promise<boolean> {
+    const overflow = await this.page.evaluate(() => {
+      return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+    });
+    return overflow;
+  }
+
+  /**
+   * Validates that all images on the page are responsive (not wider than viewport)
+   * @param {number} width - The viewport width to validate against
+   * @returns {Promise<{valid: boolean, invalidImages: string}>} Validation result
+   */
+  protected async validateImagesResponsive(width: number): Promise<{ valid: boolean; invalidImages: string }> {
+    const result = await this.page.evaluate((viewportWidth) => {
+      const images = Array.from(document.querySelectorAll('img'));
+      const invalidImages: string[] = [];
+
+      images.forEach((img, index) => {
+        const rect = img.getBoundingClientRect();
+        if (rect.width > viewportWidth) {
+          const src = img.src || `image-${index}`;
+          invalidImages.push(`${src} (${Math.round(rect.width)}px)`);
+        }
+      });
+
+      return {
+        valid: invalidImages.length === 0,
+        invalidImages: invalidImages.join(', ')
+      };
+    }, width);
+
+    return result;
+  }
+
 }

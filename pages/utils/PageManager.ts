@@ -11,20 +11,22 @@ import { SummaryPage } from '../../pages/summary.page';
 import { BookingDetailsPage } from '../../pages/bookingDetails.page';
 import { PeopleAndContactDetailsPage } from '../../pages/people.page';
 import { PaymentPage } from '../../pages/payment.page';
+import { ComponentsPage } from "../../pages/components.page";
 import { Actions } from '../utils/Actions';
 
 export class PageManager {
     private readonly page: Page
     private readonly homePage: HomePage
     private readonly searchPage: SearchPage
-    private readonly enquirePage: EnquirePage 
-    private readonly accommodationPage: AccommodationPage 
+    private readonly enquirePage: EnquirePage
+    private readonly accommodationPage: AccommodationPage
     private readonly travelOptionsPage: TravelOptionsPage
     private readonly extrasPage: ExtrasPage
     private readonly summaryPage: SummaryPage
     private readonly bookingDetailsPage: BookingDetailsPage
     private readonly peopleAndContactDetailsPage: PeopleAndContactDetailsPage
     private readonly paymentPage: PaymentPage
+    private readonly componentsPage: ComponentsPage
 
     private _actions?: Actions;
 
@@ -40,6 +42,7 @@ export class PageManager {
         this.bookingDetailsPage = new BookingDetailsPage(page)
         this.peopleAndContactDetailsPage = new PeopleAndContactDetailsPage(page)
         this.paymentPage = new PaymentPage(page)
+        this.componentsPage = new ComponentsPage(page)
     }
 
     onHomePage() {
@@ -50,7 +53,7 @@ export class PageManager {
         return this.enquirePage;
     }
 
-     onSearchPage() {
+    onSearchPage() {
         return this.searchPage;
     }
 
@@ -65,19 +68,27 @@ export class PageManager {
     onExtrasPage() {
         return this.extrasPage;
     }
+
     onSummaryPage() {
         return this.summaryPage;
     }
+
     onBookingDetailsPage() {
         return this.bookingDetailsPage;
     }
+
     onPeopleAndContactDetailsPage() {
         return this.peopleAndContactDetailsPage;
     }
+
     onPaymentPage() {
         return this.paymentPage;
     }
-    
+
+    onComponentsPage() {
+        return this.componentsPage;
+    }
+
     // Retorna singleton lazy de Actions
     get actions(): Actions {
         if (!this._actions) this._actions = new Actions(this.page);
