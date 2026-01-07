@@ -5,8 +5,24 @@
         "lastUpdated": "2025-01-07",
         "maintainer": "QA Automation Team",
         "coverage": {
-            "homePage": ["TC15", "TC16", "TC17", "TC22", "TC26"],
-            "componentsPage": ["TC1", "TC2", "TC3", "TC4", "TC5", "TC6", "TC18", "TC20", "TC28"]
+            "homePage": [
+                "TC15",
+                "TC16",
+                "TC17",
+                "TC22",
+                "TC26"
+            ],
+            "componentsPage": [
+                "TC1",
+                "TC2",
+                "TC3",
+                "TC4",
+                "TC5",
+                "TC6",
+                "TC18",
+                "TC20",
+                "TC28"
+            ]
         }
     },
     "urls": {
@@ -120,7 +136,10 @@
             "_comment": "Footer component data",
             "holidayIdSearch": {
                 "description": "Holiday ID search form configuration in footer",
-                "testCase": ["TC20", "TC28"],
+                "testCase": [
+                    "TC20",
+                    "TC28"
+                ],
                 "inputPlaceholder": "Enter your holiday ID",
                 "buttonText": "Search"
             }

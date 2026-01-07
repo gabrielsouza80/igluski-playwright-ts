@@ -351,7 +351,7 @@ test.describe('Components Page', () => {
     // 🔵 TC28 — Validate "Search by Holiday ID" Button in Footer
     // ============================================================
     test('TC28 — Validate "Search by Holiday ID" Button in Footer', async ({ pm }, testInfo) => {
-        
+
         const holidayIdData = testData.components.footer.holidayIdSearch;
 
         // STEP 0 — Start test

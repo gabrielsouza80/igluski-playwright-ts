@@ -97,7 +97,7 @@ test.describe('Home Page', () => {
   });
 
   // ============================================================
-  // 🔵 TC22 — Validate Carousel CTA Button - develop
+  // 🔵 TC22 — Validate Carousel CTA Button
   // ============================================================
   // This test validates the CTA button for each carousel slide.
   test('TC22 — Validate Carousel CTA Button', async ({ pm }, testInfo) => {
@@ -207,7 +207,7 @@ test.describe('Home Page', () => {
   // 🔵 TC26 — Validate Page Responsiveness (Mobile + Tablet)
   // ============================================================
   test('TC26 — Validate Page Responsiveness (Mobile/Tablet)', async ({ pm }, testInfo) => {
-    
+
     const viewports = testData.responsiveness.viewports;
 
     // STEP 0 — Start test

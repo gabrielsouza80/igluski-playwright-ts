@@ -197,7 +197,7 @@ export class HomePage extends HelperBase {
       }
 
       const expectedPattern = expectedPatterns[i] || /./; // Fallback pattern if not enough data
-      
+
       await this.validateSingleCtaBox(
         i,
         list.length,
@@ -425,7 +425,7 @@ export class HomePage extends HelperBase {
     // Close the new tab
     await newPage.close();
     this.logInfo(`✓ Tab closed`);
-    
+
     this.logDivider();
   }
 
@@ -438,15 +438,15 @@ export class HomePage extends HelperBase {
     const nextIndex = currentIndex !== undefined && totalSlides ? currentIndex + 1 : null;
     const slideName = nextIndex !== null ? `Slide ${nextIndex + 1}/${totalSlides}` : "Carousel";
     this.logSection(`${slideName} — Advancing to Next Slide`);
-    
+
     // Get current active slide href to detect when slide changes
     const currentHref = await this.carouselCta.getAttribute('href');
     this.logInfo(`Current slide CTA href: ${currentHref}`);
-    
+
     // Click next button
     await this.carouselNextButton.click();
     this.logInfo("✓ Clicked Next button");
-    
+
     // Wait for slide to change (CTA href should be different)
     await this.page.waitForFunction(
       (href) => {
@@ -457,7 +457,7 @@ export class HomePage extends HelperBase {
       currentHref,
       { timeout: 5000 }
     );
-    
+
     const newHref = await this.carouselCta.getAttribute('href');
     this.logInfo(`✓ Carousel advanced → New slide CTA href: ${newHref}`);
     this.logDivider();
@@ -465,47 +465,47 @@ export class HomePage extends HelperBase {
 
   async findNextUniqueSlideCTA(validatedCTAs: Set<string>): Promise<string> {
     this.logSection("Finding Next Unique Slide");
-    
+
     // Get current CTA href
     let currentCTA = await this.carouselCta.getAttribute('href');
     this.logInfo(`Current slide CTA: ${currentCTA}`);
-    
+
     // If current CTA is new, return it
     if (!validatedCTAs.has(currentCTA!)) {
       this.logInfo(`✓ Found new unique CTA`);
       this.logDivider();
       return currentCTA!;
     }
-    
+
     // Otherwise, keep clicking next until we find a different CTA
     this.logInfo(`CTA already validated, searching for new one...`);
     let attempts = 0;
     const maxAttempts = 10;
-    
+
     while (validatedCTAs.has(currentCTA!) && attempts < maxAttempts) {
       this.logInfo(`Attempt ${attempts + 1}/${maxAttempts}: Clicking next...`);
-      
+
       const previousCTA = currentCTA;
       await this.carouselNextButton.click();
       await this.page.waitForTimeout(500);
-      
+
       currentCTA = await this.carouselCta.getAttribute('href');
       this.logInfo(`New slide CTA: ${currentCTA}`);
-      
+
       // If we found a new CTA, break
       if (!validatedCTAs.has(currentCTA!)) {
         this.logInfo(`✓ Found new unique CTA after ${attempts + 1} clicks`);
         this.logDivider();
         return currentCTA!;
       }
-      
+
       attempts++;
     }
-    
+
     if (attempts >= maxAttempts) {
       this.logInfo(`⚠ Reached max attempts (${maxAttempts}). All visible CTAs may be the same.`);
     }
-    
+
     this.logDivider();
     return currentCTA!;
   }
@@ -539,11 +539,11 @@ export class HomePage extends HelperBase {
 
     // Get banner link
     const bannerLink = this.countryBannerBoxes.nth(index);
-    
+
     // Extract href and country name
     const href = await bannerLink.getAttribute('href');
     const title = await bannerLink.locator('h2.box-panel__title').textContent();
-    
+
     this.logInfo(`Country: ${title}`);
     this.logInfo(`URL: ${href}`);
 
@@ -683,7 +683,7 @@ export class HomePage extends HelperBase {
     this.logInfo(`Setting viewport to ${width}px`);
 
     await this.page.setViewportSize({ width, height: 900 });
-    
+
     // Reload page after viewport change to apply responsive styles
     await this.page.reload({ waitUntil: 'domcontentloaded' });
     this.logInfo(`✓ Page reloaded after viewport change`);

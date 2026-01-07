@@ -770,7 +770,7 @@ export class ComponentsPage extends HelperBase {
     // 🔵 CONTACT SECTION — PAGE-SPECIFIC FUNCTIONS
     // ============================================================
 
-    async validateContactPhoneBlock(phoneBlock?: { type?: string; title?: string; [key: string]: any }): Promise<void> {
+    async validateContactPhoneBlock(phoneBlock?: { type?: string; title?: string;[key: string]: any }): Promise<void> {
         this.logSection("Contact Section — Phone Block");
 
         // Extract and verify phone block title
@@ -792,7 +792,7 @@ export class ComponentsPage extends HelperBase {
         this.logDivider();
     }
 
-    async validateContactEmailBlock(emailBlock?: { type?: string; title?: string; [key: string]: any }): Promise<void> {
+    async validateContactEmailBlock(emailBlock?: { type?: string; title?: string;[key: string]: any }): Promise<void> {
         this.logSection("Contact Section — Email Block");
 
         // Extract and verify email block title
@@ -814,7 +814,7 @@ export class ComponentsPage extends HelperBase {
         this.logDivider();
     }
 
-    async validateContactNewsletterBlock(newsletterBlock?: { type?: string; title?: string; [key: string]: any }): Promise<void> {
+    async validateContactNewsletterBlock(newsletterBlock?: { type?: string; title?: string;[key: string]: any }): Promise<void> {
         this.logSection("Contact Section — Newsletter Block");
 
         // Extract and verify newsletter block title
