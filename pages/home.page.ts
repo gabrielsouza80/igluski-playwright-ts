@@ -70,21 +70,6 @@ export class HomePage extends HelperBase {
   }
 
   // ============================================================
-  // 🔵 NAVIGATION — HOME PAGE SETUP
-  // ============================================================
-
-  async navigateAndAcceptCookies(): Promise<void> {
-    await this.page.goto('/', { waitUntil: 'load' });
-    try {
-      await this.page.waitForLoadState('networkidle');
-    } catch {
-      // networkidle may never occur (analytics, long-polling). Continue and
-      // wait for a key element to be visible so tests proceed deterministically.
-    }
-    await this.acceptCookies();
-  }
-
-  // ============================================================
   // 🔵 CAROUSEL — SMALL, MODULAR FUNCTIONS (REFINED)
   // ============================================================
 

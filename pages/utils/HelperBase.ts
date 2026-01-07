@@ -130,6 +130,20 @@ export class HelperBase {
   }
 
   // ============================================================
+  // 🔵 NAVIGATION
+  // ============================================================
+  async navigateAndAcceptCookies(path: string = '/'): Promise<void> {
+    await this.page.goto(path, { waitUntil: 'load' });
+    try {
+      await this.page.waitForLoadState('networkidle');
+    } catch {
+      // networkidle may never occur (analytics, long-polling). Continue and
+      // wait for a key element to be visible so tests proceed deterministically.
+    }
+    await this.acceptCookies();
+  }
+
+  // ============================================================
   // 🔵 STRUCTURED LOGGING
   // ============================================================
   protected logSection(title: string): void {

@@ -1,7 +1,7 @@
 {
     "_metadata": {
         "description": "Centralized test data for igluski.com E2E automation suite",
-        "purpose": "Single source of truth for all test data across home.spec.ts and components.spec.ts",
+        "purpose": "Single source of truth for all test data across home.spec.ts, components.spec.ts and search.spec.ts",
         "lastUpdated": "2025-01-07",
         "maintainer": "QA Automation Team",
         "coverage": {
@@ -22,6 +22,22 @@
                 "TC18",
                 "TC20",
                 "TC28"
+            ],
+            "searchPage": [
+                "TC-001",
+                "TC-002",
+                "TC-003",
+                "TC-004",
+                "TC-005",
+                "TC-006",
+                "TC-007",
+                "TC-008",
+                "TC-009",
+                "TC-010",
+                "TC-011",
+                "TC-012",
+                "TC-013",
+                "TC-014"
             ]
         }
     },
@@ -168,6 +184,92 @@
                     "description": "Newsletter signup block with CTA button"
                 }
             ]
+        }
+    },
+    "searchPage": {
+        "_comment": "Search and filter page test data for ski holidays",
+        "filters": {
+            "nights": {
+                "description": "Duration filter options in nights",
+                "testCases": [
+                    "TC-001",
+                    "TC-002",
+                    "TC-003",
+                    "TC-004"
+                ],
+                "min": 2,
+                "default": 7,
+                "max": 14,
+                "maxOpen": "14+"
+            },
+            "travelers": {
+                "description": "Adults and children filter limits",
+                "testCases": [
+                    "TC-005",
+                    "TC-006"
+                ],
+                "adults": {
+                    "min": 1,
+                    "max": "30+"
+                },
+                "children": {
+                    "min": 0,
+                    "max": 10
+                }
+            },
+            "countries": {
+                "description": "Country selection with expected property behavior",
+                "testCases": [
+                    "TC-007",
+                    "TC-008",
+                    "TC-009",
+                    "TC-010"
+                ],
+                "highVolume": {
+                    "code": "FR",
+                    "name": "France",
+                    "description": "Country with many properties (1000+)"
+                },
+                "lowVolume": {
+                    "code": "US",
+                    "name": "USA",
+                    "description": "Country with few properties (10-100)",
+                    "alternativeCode": "NO",
+                    "alternativeName": "Norway"
+                }
+            }
+        },
+        "resultsDisplay": {
+            "description": "Results pagination and sorting options",
+            "testCases": [
+                "TC-011",
+                "TC-012",
+                "TC-013"
+            ],
+            "defaultPerPage": 10,
+            "perPageOptions": [
+                10,
+                20,
+                30
+            ],
+            "sortOptions": [
+                "Iglu recommends",
+                "Discount",
+                "Price (Low - High)",
+                "Price (High - Low)",
+                "Rating"
+            ]
+        },
+        "negativeScenario": {
+            "description": "Combination that should return no results",
+            "testCase": "TC-014",
+            "filters": {
+                "nights": 2,
+                "adults": 30,
+                "children": 10,
+                "country": "NO"
+            },
+            "expectedMessage": "no results"
         }
     }
 }
