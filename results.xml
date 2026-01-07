@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="47.86461599999992">
-<testsuite name="home.spec.ts" timestamp="2026-01-07T09:39:44.217Z" hostname="chromium" tests="6" failures="0" skipped="0" time="145.192" errors="0">
-<testcase name="Home Page › TC15 — Validate Main Titles on the Home Page" classname="home.spec.ts" time="14.205">
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="58.399559000000124">
+<testsuite name="home.spec.ts" timestamp="2026-01-07T10:23:49.792Z" hostname="chromium" tests="6" failures="0" skipped="0" time="155.507" errors="0">
+<testcase name="Home Page › TC15 — Validate Main Titles on the Home Page" classname="home.spec.ts" time="13.923">
 <system-out>
 <![CDATA[
 ===== TEST STARTED: TC15 — Validate Main Titles on the Home Page =====
@@ -27,7 +27,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC16 — Validate Country Banners (Ski Resorts)" classname="home.spec.ts" time="29.748">
+<testcase name="Home Page › TC16 — Validate Country Banners (Ski Resorts)" classname="home.spec.ts" time="30.742">
 <system-out>
 <![CDATA[
 ===== TEST STARTED: TC16 — Validate Country Banners (Ski Resorts) =====
@@ -88,7 +88,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC17 — Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="12.423">
+<testcase name="Home Page › TC17 — Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="14.407">
 <system-out>
 <![CDATA[
 ===== TEST STARTED: TC17 — Validate CTA Boxes (Call To Action) =====
@@ -105,7 +105,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC22 — Validate Carousel CTA Button" classname="home.spec.ts" time="32.332">
+<testcase name="Home Page › TC22 — Validate Carousel CTA Button" classname="home.spec.ts" time="32.458">
 <system-out>
 <![CDATA[
 ===== TEST STARTED: TC22 — Validate Carousel CTA Button =====
@@ -201,49 +201,14 @@ Total unique CTAs validated: 3
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TCXX — Validate Inline Links in Sections" classname="home.spec.ts" time="39.361">
+<testcase name="Home Page › TCXX — Validate Inline Links in Sections" classname="home.spec.ts" time="48.829">
 <system-out>
 <![CDATA[
 ===== TEST STARTED: TCXX — Validate Inline Links in Sections =====
 
 
 ==================== INLINE LINKS — SPEAK TO EXPERTS ====================
-• Total links detected: 11
----------------------------------------------------------------
-
-==================== INLINE LINK —  ====================
-• URL: https://www.igluski.com/ski-holidays/new-year-sale
----------------------------------------------------------------
-• ✓ Navigation OK → https://www.igluski.com/ski-holidays/new-year-sale
-• ✓ Page title: New Year - New Sale!
----------------------------------------------------------------
-
-==================== INLINE LINK —  ====================
-• URL: https://www.igluski.com/ski-holidays
----------------------------------------------------------------
-• ✓ Navigation OK → https://www.igluski.com/ski-holidays
-• ✓ Page title: Ski Holidays 2026/2027 | Price Match Guarantee!
----------------------------------------------------------------
-
-==================== INLINE LINK —  ====================
-• URL: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
----------------------------------------------------------------
-• ✓ Navigation OK → https://www.igluski.com/ski-holidays/last-minute-ski-holidays
-• ✓ Page title: Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals
----------------------------------------------------------------
-
-==================== INLINE LINK — PREVIOUS ====================
-• URL: https://www.igluski.com/#
----------------------------------------------------------------
-• ✓ Navigation OK → https://www.igluski.com/#
-• ✓ Page title: Ski Holidays 2026/2027 | Unbeatable Prices Guaranteed! | Iglu Ski
----------------------------------------------------------------
-
-==================== INLINE LINK — NEXT ====================
-• URL: https://www.igluski.com/#
----------------------------------------------------------------
-• ✓ Navigation OK → https://www.igluski.com/#
-• ✓ Page title: Ski Holidays 2026/2027 | Unbeatable Prices Guaranteed! | Iglu Ski
+• Total links detected: 6
 ---------------------------------------------------------------
 
 ==================== INLINE LINK — SKI HOLIDAYS ====================
@@ -289,13 +254,83 @@ Total unique CTAs validated: 3
 ---------------------------------------------------------------
 
 ==================== INLINE LINKS — FIND YOUR SKIING HOLIDAY ====================
-• Total links detected: 0
+• Total links detected: 10
+---------------------------------------------------------------
+
+==================== INLINE LINK — SKI DEALS ====================
+• URL: https://www.igluski.com/ski-deals
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-deals
+• ✓ Page title: Ski Deals And Cheap Ski Holidays for 2026 & 2027 | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINK — 280 SKI RESORTS ====================
+• URL: https://www.igluski.com/ski-resorts
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-resorts
+• ✓ Page title: Ski Resorts | Find The Perfect Skiing Resort | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINK — EUROPE ====================
+• URL: https://www.igluski.com/ski-resorts/ski-areas
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-resorts/ski-areas
+• ✓ Page title: Ski areas in Europe | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINK — NORTH AMERICA ====================
+• URL: https://www.igluski.com/ski-resorts/ski-areas/ski-holidays-north-america
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-resorts/ski-areas/ski-holidays-north-america
+• ✓ Page title: Ski holidays North America | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINK — JAPAN ====================
+• URL: https://www.igluski.com/ski-resorts/japan
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-resorts/japan
+• ✓ Page title: Japan Ski Holidays 2026/27 | Best Resort Prices Guaranteed
+---------------------------------------------------------------
+
+==================== INLINE LINK — FRANCE ====================
+• URL: https://www.igluski.com/ski-resorts/france
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-resorts/france
+• ✓ Page title: France Ski Holidays 2026/2027 | Best Deals and Resort Advice
+---------------------------------------------------------------
+
+==================== INLINE LINK — AUSTRIA ====================
+• URL: https://www.igluski.com/ski-resorts/austria
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-resorts/austria
+• ✓ Page title: Austria Ski Holidays 2026/27 | Best Resort Prices Guaranteed
+---------------------------------------------------------------
+
+==================== INLINE LINK — CANADA ====================
+• URL: https://www.igluski.com/ski-resorts/canada
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-resorts/canada
+• ✓ Page title: Canada Ski Holidays 2026/27 | Best Resort Prices Guaranteed
+---------------------------------------------------------------
+
+==================== INLINE LINK — SNOWBOARDING HOLIDAYS ====================
+• URL: https://www.igluski.com/ski-holidays/snowboard-holidays
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays/snowboard-holidays
+• ✓ Page title: Snowboard holidays & snowboarding deals | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINK — PACKAGE SKI HOLIDAYS ====================
+• URL: https://www.igluski.com/ski-holidays
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays
+• ✓ Page title: Ski Holidays 2026/2027 | Price Match Guarantee!
 ---------------------------------------------------------------
 ✓ Inline links validation completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Home Page › TC26 — Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="17.123">
+<testcase name="Home Page › TC26 — Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="15.148">
 <system-out>
 <![CDATA[
 ===== TEST STARTED: TC26 — Validate Page Responsiveness (Mobile/Tablet) =====

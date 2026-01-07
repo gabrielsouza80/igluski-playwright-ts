@@ -52,12 +52,11 @@ export class HomePage extends HelperBase {
   // INLINE SECTIONS LOCATORS
   // ============================
   readonly speakToExpertsHeading = this.page.getByRole('heading', { name: /speak to the ski experts/i });
-  readonly speakToExpertsSection = this.speakToExpertsHeading.locator("xpath=ancestor::div[contains(@class,'row')]");
-  readonly speakToExpertsLinks = this.speakToExpertsSection.locator('a');
+  // Captures inline links within paragraphs and text following the "Speak to the ski experts" heading
+  // This includes links in <p> tags and also links in subsequent text nodes until the next heading/row
+  readonly speakToExpertsLinks = this.speakToExpertsHeading.locator("xpath=following-sibling::p//a | following-sibling::*[not(contains(@class, 'row') or self::h2 or self::h3)]//a");
 
   readonly findHolidayHeading = this.page.getByRole('heading', { name: /find your skiing holiday/i });
-  readonly findHolidaySection = this.findHolidayHeading.locator("xpath=ancestor::div[contains(@class,'row')]");
-  readonly findHolidayLinks = this.findHolidaySection.locator('a');
 
   // ============================
   // RESPONSIVE LOCATORS
@@ -572,26 +571,82 @@ export class HomePage extends HelperBase {
   async getSpeakToExpertsLinks(): Promise<{ text: string; url: string }[]> {
     this.logSection("Inline Links — Speak to Experts");
 
-    const total = await this.speakToExpertsLinks.count();
+    // Traverse sibling elements after the heading until the next heading/row and collect anchors
+    const list = await this.page.evaluate(() => {
+      const heading = Array.from(document.querySelectorAll('h1, h2, h3'))
+        .find(h => /speak to the ski experts/i.test(h.textContent || ''));
+      if (!heading) return [] as Array<{ text: string; url: string }>;
 
-    this.logInfo(`Total links detected: ${total}`);
-    this.logDivider();
+      const links: Array<{ text: string; url: string }> = [];
+      const seen = new Set<string>();
 
-    const list: { text: string; url: string }[] = [];
+      let elem: Element | null = heading.nextElementSibling as Element | null;
+      while (elem) {
+        // Stop when reaching a new section or grid rows
+        if (elem.matches('h1, h2, h3, .row')) break;
 
-    for (let i = 0; i < total; i++) {
-      const link = this.speakToExpertsLinks.nth(i);
+        // Skip CTA/grid panels
+        if (elem.closest('.box-panel, .box-panel__promo, .box-panel__deal')) break;
 
-      const text = (await link.textContent())?.trim() ?? "";
-      const href = await link.getAttribute("href");
-      const url = this.resolveUrl(href);
+        // Collect anchors within this block
+        // 1) If this element is itself an anchor, collect it
+        if (elem.tagName === 'A') {
+          const a = elem as HTMLAnchorElement;
+          const text = (a.textContent || '').trim();
+          const href = a.getAttribute('href');
+          const inPanel = a.closest('.box-panel, .box-panel__promo, .box-panel__deal');
+          if (!inPanel && text && href && !seen.has(href)) {
+            links.push({ text, url: href });
+            seen.add(href);
+          }
+        }
 
-      if (!url) continue;
+        // 2) Collect descendant anchors
+        elem.querySelectorAll('a').forEach(a => {
+          const text = (a.textContent || '').trim();
+          const href = a.getAttribute('href');
+          const inPanel = a.closest('.box-panel, .box-panel__promo, .box-panel__deal');
+          if (!inPanel && text && href && !seen.has(href)) {
+            links.push({ text, url: href });
+            seen.add(href);
+          }
+        });
 
-      list.push({ text, url });
+        elem = elem.nextElementSibling as Element | null;
+      }
+
+      // Fallback: if nothing collected, try container-level anchors within same parent block
+      if (links.length === 0) {
+        const parent = heading.parentElement;
+        if (parent) {
+          parent.querySelectorAll('a').forEach(a => {
+            const text = (a.textContent || '').trim();
+            const href = a.getAttribute('href');
+            const inPanel = a.closest('.box-panel, .box-panel__promo, .box-panel__deal');
+            if (!inPanel && text && href && !seen.has(href)) {
+              links.push({ text, url: href });
+              seen.add(href);
+            }
+          });
+        }
+      }
+
+      return links;
+    });
+
+    // Resolve relative URLs to absolute
+    const resolved: { text: string; url: string }[] = [];
+    for (const item of list) {
+      const url = this.resolveUrl(item.url);
+      if (url) {
+        resolved.push({ text: item.text, url });
+      }
     }
 
-    return list;
+    this.logInfo(`Total links detected: ${resolved.length}`);
+    this.logDivider();
+
+    return resolved;
   }
 
   async validateSingleInlineLink(text: string, url: string): Promise<void> {
@@ -635,26 +690,82 @@ export class HomePage extends HelperBase {
   async getFindYourSkiingHolidayLinks(): Promise<{ text: string; url: string }[]> {
     this.logSection("Inline Links — Find Your Skiing Holiday");
 
-    const total = await this.findHolidayLinks.count();
+    // Traverse sibling elements after the heading until the next heading/row and collect anchors
+    const list = await this.page.evaluate(() => {
+      const heading = Array.from(document.querySelectorAll('h1, h2, h3'))
+        .find(h => /find your skiing holiday/i.test(h.textContent || ''));
+      if (!heading) return [] as Array<{ text: string; url: string }>;
 
-    this.logInfo(`Total links detected: ${total}`);
-    this.logDivider();
+      const links: Array<{ text: string; url: string }> = [];
+      const seen = new Set<string>();
 
-    const list: { text: string; url: string }[] = [];
+      let elem: Element | null = heading.nextElementSibling as Element | null;
+      while (elem) {
+        // Stop when reaching a new section or grid rows
+        if (elem.matches('h1, h2, h3, .row')) break;
 
-    for (let i = 0; i < total; i++) {
-      const link = this.findHolidayLinks.nth(i);
+        // Skip CTA/grid panels
+        if (elem.closest('.box-panel, .box-panel__promo, .box-panel__deal')) break;
 
-      const text = (await link.textContent())?.trim() ?? "";
-      const href = await link.getAttribute("href");
-      const url = this.resolveUrl(href);
+        // Collect anchors within this block
+        // 1) If this element is itself an anchor, collect it
+        if (elem.tagName === 'A') {
+          const a = elem as HTMLAnchorElement;
+          const text = (a.textContent || '').trim();
+          const href = a.getAttribute('href');
+          const inPanel = a.closest('.box-panel, .box-panel__promo, .box-panel__deal');
+          if (!inPanel && text && href && !seen.has(href)) {
+            links.push({ text, url: href });
+            seen.add(href);
+          }
+        }
 
-      if (!url) continue;
+        // 2) Collect descendant anchors
+        elem.querySelectorAll('a').forEach(a => {
+          const text = (a.textContent || '').trim();
+          const href = a.getAttribute('href');
+          const inPanel = a.closest('.box-panel, .box-panel__promo, .box-panel__deal');
+          if (!inPanel && text && href && !seen.has(href)) {
+            links.push({ text, url: href });
+            seen.add(href);
+          }
+        });
 
-      list.push({ text, url });
+        elem = elem.nextElementSibling as Element | null;
+      }
+
+      // Fallback: if nothing collected, try container-level anchors within same parent block
+      if (links.length === 0) {
+        const parent = heading.parentElement;
+        if (parent) {
+          parent.querySelectorAll('a').forEach(a => {
+            const text = (a.textContent || '').trim();
+            const href = a.getAttribute('href');
+            const inPanel = a.closest('.box-panel, .box-panel__promo, .box-panel__deal');
+            if (!inPanel && text && href && !seen.has(href)) {
+              links.push({ text, url: href });
+              seen.add(href);
+            }
+          });
+        }
+      }
+
+      return links;
+    });
+
+    // Resolve relative URLs to absolute
+    const resolved: { text: string; url: string }[] = [];
+    for (const item of list) {
+      const url = this.resolveUrl(item.url);
+      if (url) {
+        resolved.push({ text: item.text, url });
+      }
     }
 
-    return list;
+    this.logInfo(`Total links detected: ${resolved.length}`);
+    this.logDivider();
+
+    return resolved;
   }
 
   async validateFindYourSkiingHolidayLinksList(): Promise<void> {
