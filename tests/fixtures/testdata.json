@@ -1,0 +1,154 @@
+{
+    "_metadata": {
+        "description": "Centralized test data for igluski.com E2E automation suite",
+        "purpose": "Single source of truth for all test data across home.spec.ts and components.spec.ts",
+        "lastUpdated": "2025-01-07",
+        "maintainer": "QA Automation Team",
+        "coverage": {
+            "homePage": ["TC15", "TC16", "TC17", "TC22", "TC26"],
+            "componentsPage": ["TC1", "TC2", "TC3", "TC4", "TC5", "TC6", "TC18", "TC20", "TC28"]
+        }
+    },
+    "urls": {
+        "_comment": "External URLs used across test suite",
+        "reviewsPage": "https://www.igluski.com/customer-reviews"
+    },
+    "homePage": {
+        "_comment": "Home page specific test data",
+        "titles": {
+            "description": "Main headings and section titles displayed on home page",
+            "testCase": "TC15",
+            "data": [
+                "Welcome To The Home Of Ski Holidays",
+                "Speak to the ski experts",
+                "Find Your Skiing Holiday"
+            ]
+        },
+        "countryBanners": {
+            "description": "Country/resort banner boxes with ski destination names",
+            "testCase": "TC16",
+            "expectedCount": 8,
+            "note": "Must validate all 8 country banners and their redirection links",
+            "data": [
+                "FRANCE",
+                "AUSTRIA",
+                "ITALY",
+                "ANDORRA",
+                "BULGARIA",
+                "SWITZERLAND",
+                "CANADA",
+                "JAPAN"
+            ]
+        },
+        "ctaBoxes": {
+            "description": "Call-to-action boxes with titles and URL patterns",
+            "testCase": "TC17",
+            "note": "Each CTA box contains a title and URL pattern for validation",
+            "data": [
+                {
+                    "title": "TALK TO A SKI EXPERT",
+                    "urlPattern": "/enquire",
+                    "description": "Contact specialist button"
+                },
+                {
+                    "title": "ABOUT IGLU SKI",
+                    "urlPattern": "/about",
+                    "description": "Company information button"
+                },
+                {
+                    "title": "SIGN UP TO OUR NEWSLETTER",
+                    "urlPattern": "/signup",
+                    "description": "Newsletter subscription button"
+                }
+            ]
+        }
+    },
+    "responsiveness": {
+        "_comment": "Responsive design breakpoints for testing",
+        "description": "Viewport configurations for mobile and tablet testing",
+        "testCase": "TC26",
+        "viewports": [
+            {
+                "name": "mobile",
+                "width": 375,
+                "height": 900,
+                "description": "Mobile portrait viewport"
+            },
+            {
+                "name": "tablet",
+                "width": 768,
+                "height": 900,
+                "description": "Tablet portrait viewport"
+            }
+        ]
+    },
+    "components": {
+        "_comment": "Components page specific test data",
+        "header": {
+            "_comment": "Header component data",
+            "contactTexts": {
+                "description": "Header contact information labels and URLs",
+                "testCase": "TC3",
+                "phoneTitle": "Phone",
+                "contactUsLink": "Contact Us",
+                "contactUsUrl": "/contact-us"
+            },
+            "recentlyViewed": {
+                "description": "Recently Viewed items panel configuration",
+                "testCase": "TC4",
+                "buttonText": "Recently Viewed",
+                "panelDescription": "Your recently viewed properties"
+            },
+            "customerPortal": {
+                "description": "Customer Portal login button and expected form fields",
+                "testCase": "TC5",
+                "buttonText": "Customer Portal",
+                "requiredFields": [
+                    "Email",
+                    "Password",
+                    "Sign in"
+                ]
+            },
+            "reviewsLink": {
+                "description": "Ratings & Reviews header link configuration",
+                "testCase": "TC6",
+                "text": "Ratings & Reviews",
+                "expectedUrl": "/customer-reviews"
+            }
+        },
+        "footer": {
+            "_comment": "Footer component data",
+            "holidayIdSearch": {
+                "description": "Holiday ID search form configuration in footer",
+                "testCase": ["TC20", "TC28"],
+                "inputPlaceholder": "Enter your holiday ID",
+                "buttonText": "Search"
+            }
+        },
+        "contact": {
+            "_comment": "Contact section data",
+            "description": "Contact blocks for phone, email, and newsletter",
+            "testCase": "TC18",
+            "blocks": [
+                {
+                    "type": "phone",
+                    "title": "Phone",
+                    "hasPhoneNumber": true,
+                    "description": "Phone contact block"
+                },
+                {
+                    "type": "email",
+                    "title": "Email",
+                    "hasButton": true,
+                    "description": "Email contact block with CTA button"
+                },
+                {
+                    "type": "newsletter",
+                    "title": "Newsletter",
+                    "hasButton": true,
+                    "description": "Newsletter signup block with CTA button"
+                }
+            ]
+        }
+    }
+}

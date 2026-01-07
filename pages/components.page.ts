@@ -730,7 +730,7 @@ export class ComponentsPage extends HelperBase {
     // ============================================================
     // 🔵 TC28 — Validate "Search by Holiday ID" in Footer
     // ============================================================
-    async validateHolidayIdSearch(): Promise<void> {
+    async validateHolidayIdSearch(holidayIdData?: { inputPlaceholder: string; buttonText: string; description: string }): Promise<void> {
         this.logSection("TC28 — Validate 'Search by Holiday ID'");
 
         // Navigate to footer section
@@ -741,8 +741,9 @@ export class ComponentsPage extends HelperBase {
         this.logInfo("✓ Holiday ID container visible");
 
         // Check button text is correct
-        await expect(this.btnSearchByHolidayId).toHaveText(/search by holiday id/i);
-        this.logInfo("✓ 'Search by Holiday ID' button text OK");
+        const expectedButtonText = holidayIdData?.buttonText || "Search by Holiday ID";
+        await expect(this.btnSearchByHolidayId).toHaveText(new RegExp(expectedButtonText, "i"));
+        this.logInfo(`✓ '${expectedButtonText}' button text OK`);
 
         // Click to expand form
         await this.btnSearchByHolidayId.click();
@@ -754,7 +755,8 @@ export class ComponentsPage extends HelperBase {
 
         // Log placeholder text for reference
         const placeholder = await this.holidayIdInput.getAttribute("placeholder");
-        this.logInfo(`Input placeholder: ${placeholder}`);
+        const expectedPlaceholder = holidayIdData?.inputPlaceholder || "Enter your holiday ID";
+        this.logInfo(`Input placeholder: "${placeholder}" (expected: "${expectedPlaceholder}")`);
 
         // Verify search button is present
         await expect(this.holidayIdSearchButton).toBeVisible();
@@ -768,12 +770,13 @@ export class ComponentsPage extends HelperBase {
     // 🔵 CONTACT SECTION — PAGE-SPECIFIC FUNCTIONS
     // ============================================================
 
-    async validateContactPhoneBlock(): Promise<void> {
+    async validateContactPhoneBlock(phoneBlock?: { type?: string; title?: string; [key: string]: any }): Promise<void> {
         this.logSection("Contact Section — Phone Block");
 
         // Extract and verify phone block title
         const title = this.normalizeText(await this.contactPhoneTitle.innerText());
-        this.logInfo(`Phone block title: "${title}"`);
+        const expectedTitle = phoneBlock?.title || "Phone";
+        this.logInfo(`Phone block title: "${title}" (expected: "${expectedTitle}")`);
 
         // Extract phone number text
         const phoneText = (await this.contactPhoneNumber.innerText()).trim();
@@ -789,12 +792,13 @@ export class ComponentsPage extends HelperBase {
         this.logDivider();
     }
 
-    async validateContactEmailBlock(): Promise<void> {
+    async validateContactEmailBlock(emailBlock?: { type?: string; title?: string; [key: string]: any }): Promise<void> {
         this.logSection("Contact Section — Email Block");
 
         // Extract and verify email block title
         const title = this.normalizeText(await this.contactEmailTitle.innerText());
-        this.logInfo(`Email block title: "${title}"`);
+        const expectedTitle = emailBlock?.title || "Email";
+        this.logInfo(`Email block title: "${title}" (expected: "${expectedTitle}")`);
 
         // Extract button text
         const buttonText = this.normalizeText(await this.contactEmailButton.innerText());
@@ -810,12 +814,13 @@ export class ComponentsPage extends HelperBase {
         this.logDivider();
     }
 
-    async validateContactNewsletterBlock(): Promise<void> {
+    async validateContactNewsletterBlock(newsletterBlock?: { type?: string; title?: string; [key: string]: any }): Promise<void> {
         this.logSection("Contact Section — Newsletter Block");
 
         // Extract and verify newsletter block title
         const title = this.normalizeText(await this.contactNewsletterTitle.innerText());
-        this.logInfo(`Newsletter block title: "${title}"`);
+        const expectedTitle = newsletterBlock?.title || "Newsletter";
+        this.logInfo(`Newsletter block title: "${title}" (expected: "${expectedTitle}")`);
 
         // Extract button text
         const buttonText = this.normalizeText(await this.contactNewsletterButton.innerText());

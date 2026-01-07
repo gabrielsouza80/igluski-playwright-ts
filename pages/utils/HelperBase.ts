@@ -4,17 +4,11 @@
 
 import { Page, Locator, expect } from '@playwright/test';
 import type { MenuSnapshot, SubLinkSnapshot } from '../components.page';
-import fs from "fs";
-import path from "path";
 
 export class HelperBase {
 
   protected readonly page: Page;
   public testCaseErrors: string[] = [];
-  // Load JSON once and keep it as a protected property
-  protected readonly urls: Record<string, string> = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), "tests/fixtures/secrets.urls.json"), "utf-8")
-  );
 
   constructor(page: Page) {
     this.page = page;

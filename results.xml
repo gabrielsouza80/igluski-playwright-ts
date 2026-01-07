@@ -1,87 +1,348 @@
-<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="24.053963999999688">
-<testsuite name="home.spec.ts" timestamp="2026-01-06T17:24:22.088Z" hostname="chromium" tests="1" failures="1" skipped="0" time="19.123" errors="0">
-<testcase name="Home Page › TC16 — Validate Carousel of Promotions and Country Banners" classname="home.spec.ts" time="19.123">
-<failure message="home.spec.ts:51:7 TC16 — Validate Carousel of Promotions and Country Banners" type="FAILURE">
-<![CDATA[  [chromium] › home.spec.ts:51:7 › Home Page › TC16 — Validate Carousel of Promotions and Country Banners › Validate each country banner and its redirection 
-
-    Error: locator.scrollIntoViewIfNeeded: Error: strict mode violation: locator('a:text("Ski Holidays")') resolved to 23 elements:
-        1) <a href="/ski-holidays" class="menu-list__item-link">Ski Holidays</a> aka getByRole('link', { name: 'Ski Holidays', exact: true })
-        2) <a class="submenu-list__block-link" href="https://www.igluski.com/ski-holidays/last-minute-ski-holidays">Last minute ski holidays</a> aka getByRole('navigation').getByText('Last minute ski holidays')
-        3) <a class="submenu-list__block-link" href="/ski-holidays/group-ski-holidays">Group ski holidays</a> aka getByRole('navigation').getByText('Group ski holidays')
-        4) <a class="submenu-list__block-link" href="/ski-holidays/family-ski-holidays">Family ski holidays</a> aka getByRole('navigation').getByText('Family ski holidays')
-        5) <a class="submenu-list__block-link" href="/ski-holidays/high-altitude-ski-holidays">High altitude ski holidays</a> aka getByText('High altitude ski holidays')
-        6) <a href="/ski-deals/o2251" class="submenu-list__block-link">Cheap ski holidays</a> aka getByText('Cheap ski holidays')
-        7) <a class="submenu-list__block-link" href="/ski-holidays/tailor-made-ski-holidays">Tailor-made ski holidays</a> aka getByRole('navigation').getByText('Tailor-made ski holidays')
-        8) <a href="/club-med-ski-holidays" class="submenu-list__block-link">Club Med ski holidays</a> aka getByText('Club Med ski holidays')
-        9) <a class="submenu-list__block-link" href="/ski-holidays/ski-holiday-for-singles">Solo ski holidays</a> aka getByText('Solo ski holidays')
-        10) <a class="submenu-list__block-link" href="/ski-holidays/ski-chalet-holidays">Catered ski holidays</a> aka getByText('Catered ski holidays', { exact: true })
-        ...
-
-    Call log:
-      - waiting for locator('a:text("Ski Holidays")')
-
-
-       at ..\pages\utils\HelperBase.ts:134
-
-      132 |   // ============================================================
-      133 |   protected async scrollIntoView(locator: Locator): Promise<void> {
-    > 134 |     await locator.scrollIntoViewIfNeeded();
-          |                   ^
-      135 |     await expect(locator).toBeVisible();
-      136 |   }
-      137 |
-        at HomePage.scrollIntoView (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\utils\HelperBase.ts:134:19)
-        at HomePage.validateSingleCountryBanner (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\home.page.ts:255:16)
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:78:31
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\home.spec.ts:72:5
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\home-Home-Page-TC16-—-Vali-0b3da-motions-and-Country-Banners-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\home-Home-Page-TC16-—-Vali-0b3da-motions-and-Country-Banners-chromium\error-context.md
-]]>
-</failure>
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="47.86461599999992">
+<testsuite name="home.spec.ts" timestamp="2026-01-07T09:39:44.217Z" hostname="chromium" tests="6" failures="0" skipped="0" time="145.192" errors="0">
+<testcase name="Home Page › TC15 — Validate Main Titles on the Home Page" classname="home.spec.ts" time="14.205">
 <system-out>
 <![CDATA[
-===== TEST STARTED: TC16 — Validate Carousel of Promotions and Country Banners =====
+===== TEST STARTED: TC15 — Validate Main Titles on the Home Page =====
+
+
+==================== HOMEPAGE TITLE — VALIDATION ====================
+• Validating title: "Welcome To The Home Of Ski Holidays"
+• Title text: "Welcome To The Home Of Ski Holidays"
+• ✓ Title found and visible: "Welcome To The Home Of Ski Holidays"
+---------------------------------------------------------------
+
+==================== HOMEPAGE TITLE — VALIDATION ====================
+• Validating title: "Speak to the ski experts"
+• Title text: "Speak to the ski experts"
+• ✓ Title found and visible: "Speak to the ski experts"
+---------------------------------------------------------------
+
+==================== HOMEPAGE TITLE — VALIDATION ====================
+• Validating title: "Find Your Skiing Holiday"
+• Title text: "Find Your Skiing Holiday"
+• ✓ Title found and visible: "Find Your Skiing Holiday"
+---------------------------------------------------------------
+✓ TC15 completed successfully - validated 3 titles
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › TC16 — Validate Country Banners (Ski Resorts)" classname="home.spec.ts" time="29.748">
+<system-out>
+<![CDATA[
+===== TEST STARTED: TC16 — Validate Country Banners (Ski Resorts) =====
+
+
+==================== COUNTRY BANNERS — COUNT ====================
+• Total country banners visible: 8
+---------------------------------------------------------------
+
+==================== COUNTRY BANNER — 1 ====================
+• Country: FRANCE         SKI resorts
+• URL: https://www.igluski.com/ski-resorts/france
+• ✓ Page title: "France Ski Holidays 2026/2027 | Best Deals and Resort Advice"
+---------------------------------------------------------------
+
+==================== COUNTRY BANNER — 2 ====================
+• Country: AUSTRIA         SKI resorts
+• URL: https://www.igluski.com/ski-resorts/austria
+• ✓ Page title: "Austria Ski Holidays 2026/27 | Best Resort Prices Guaranteed"
+---------------------------------------------------------------
+
+==================== COUNTRY BANNER — 3 ====================
+• Country: ITALY         SKI resorts
+• URL: https://www.igluski.com/ski-resorts/italy
+• ✓ Page title: "Italy Ski Holidays 2026/27 | Best Resort Prices Guaranteed"
+---------------------------------------------------------------
+
+==================== COUNTRY BANNER — 4 ====================
+• Country: ANDORRA         SKI resorts
+• URL: https://www.igluski.com/ski-resorts/andorra
+• ✓ Page title: "Andorra Ski Holidays 2026/27 | Best Resort Prices Guaranteed"
+---------------------------------------------------------------
+
+==================== COUNTRY BANNER — 5 ====================
+• Country: BULGARIA         SKI resorts
+• URL: /ski-resorts/bulgaria
+• ✓ Page title: "Bulgaria Ski Holidays 2026/27 | Best Resort Prices Guaranteed"
+---------------------------------------------------------------
+
+==================== COUNTRY BANNER — 6 ====================
+• Country: SWITZERLAND         SKI resorts
+• URL: /ski-resorts/switzerland
+• ✓ Page title: "Switzerland Ski Holidays 2026/27 | Best Resort Prices Guaranteed"
+---------------------------------------------------------------
+
+==================== COUNTRY BANNER — 7 ====================
+• Country: CANADA         SKI resorts
+• URL: /ski-resorts/canada
+• ✓ Page title: "Canada Ski Holidays 2026/27 | Best Resort Prices Guaranteed"
+---------------------------------------------------------------
+
+==================== COUNTRY BANNER — 8 ====================
+• Country: JAPAN         SKI resorts
+• URL: /ski-resorts/japan
+• ✓ Page title: "Japan Ski Holidays 2026/27 | Best Resort Prices Guaranteed"
+---------------------------------------------------------------
+✓ TC16 completed successfully - validated 8 banners
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › TC17 — Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="12.423">
+<system-out>
+<![CDATA[
+===== TEST STARTED: TC17 — Validate CTA Boxes (Call To Action) =====
+
+
+==================== CTA BOXES — FETCH LIST ====================
+• Total CTA boxes detected: 0
+---------------------------------------------------------------
+
+==================== CTA BOXES — FETCH LIST ====================
+• Total CTA boxes detected: 0
+---------------------------------------------------------------
+✓ TC17 completed successfully - validated 3 CTA boxes
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › TC22 — Validate Carousel CTA Button" classname="home.spec.ts" time="32.332">
+<system-out>
+<![CDATA[
+===== TEST STARTED: TC22 — Validate Carousel CTA Button =====
 
 
 ==================== CAROUSEL — SLIDE COUNT ====================
 • Total slides detected: 3
 ---------------------------------------------------------------
 
-==================== CAROUSEL — SLIDE 1 OF 3 ====================
-• ✓ CTA clicked
-• Moving to next slide...
+==================== FINDING NEXT UNIQUE SLIDE ====================
+• Current slide CTA: https://www.igluski.com/ski-holidays/new-year-sale
+• ✓ Found new unique CTA
 ---------------------------------------------------------------
 
-==================== CAROUSEL — SLIDE 2 OF 3 ====================
-• ✓ CTA clicked
-• Moving to next slide...
+==================== CAROUSEL — CTA VISIBILITY ====================
+• CTA href: https://www.igluski.com/ski-holidays/new-year-sale
 ---------------------------------------------------------------
 
-==================== CAROUSEL — SLIDE 3 OF 3 ====================
-• ✓ CTA clicked
+==================== CAROUSEL — CTA NAVIGATION & PAGE TITLE ====================
+• CTA href: https://www.igluski.com/ski-holidays/new-year-sale
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays/new-year-sale
+• Page title: "New Year - New Sale!"
+• ✓ Page title validated
+• ✓ Tab closed
+---------------------------------------------------------------
+• Cookie banner not found or already closed
+
+==================== CAROUSEL — ADVANCING TO NEXT SLIDE ====================
+• Current slide CTA href: https://www.igluski.com/ski-holidays/new-year-sale
+• ✓ Clicked Next button
+• ✓ Carousel advanced → New slide CTA href: https://www.igluski.com/ski-holidays
 ---------------------------------------------------------------
 
-==================== COUNTRY BANNERS — FETCH LIST ====================
-• Total banners detected: 10
+==================== FINDING NEXT UNIQUE SLIDE ====================
+• Current slide CTA: https://www.igluski.com/ski-holidays
+• ✓ Found new unique CTA
 ---------------------------------------------------------------
 
-==================== COUNTRY BANNER — SEARCH ====================
+==================== CAROUSEL — CTA VISIBILITY ====================
+• CTA href: https://www.igluski.com/ski-holidays
+---------------------------------------------------------------
+
+==================== CAROUSEL — CTA NAVIGATION & PAGE TITLE ====================
+• CTA href: https://www.igluski.com/ski-holidays
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays
+• Page title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
+• ✓ Page title validated
+• ✓ Tab closed
+---------------------------------------------------------------
+• Cookie banner not found or already closed
+
+==================== CAROUSEL — ADVANCING TO NEXT SLIDE ====================
+• Current slide CTA href: https://www.igluski.com/ski-holidays/new-year-sale
+• ✓ Clicked Next button
+• ✓ Carousel advanced → New slide CTA href: https://www.igluski.com/ski-holidays
+---------------------------------------------------------------
+
+==================== FINDING NEXT UNIQUE SLIDE ====================
+• Current slide CTA: https://www.igluski.com/ski-holidays
+• CTA already validated, searching for new one...
+• Attempt 1/10: Clicking next...
+• New slide CTA: https://www.igluski.com/ski-holidays
+• Attempt 2/10: Clicking next...
+• New slide CTA: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+• ✓ Found new unique CTA after 2 clicks
+---------------------------------------------------------------
+
+==================== CAROUSEL — CTA VISIBILITY ====================
+• CTA href: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+---------------------------------------------------------------
+
+==================== CAROUSEL — CTA NAVIGATION & PAGE TITLE ====================
+• CTA href: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+• Page title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
+• ✓ Page title validated
+• ✓ Tab closed
+---------------------------------------------------------------
+
+
+==================== ✓ CAROUSEL CTA VALIDATION SUMMARY ====================
+Total unique CTAs validated: 3
+---------------------------------------------------------------
+1. https://www.igluski.com/ski-holidays/new-year-sale
+   └─ Page Title: "New Year - New Sale!"
+2. https://www.igluski.com/ski-holidays
+   └─ Page Title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
+3. https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+   └─ Page Title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
+=========================================================================
+
+✓ TC22 completed successfully
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › TCXX — Validate Inline Links in Sections" classname="home.spec.ts" time="39.361">
+<system-out>
+<![CDATA[
+===== TEST STARTED: TCXX — Validate Inline Links in Sections =====
+
+
+==================== INLINE LINKS — SPEAK TO EXPERTS ====================
+• Total links detected: 11
+---------------------------------------------------------------
+
+==================== INLINE LINK —  ====================
+• URL: https://www.igluski.com/ski-holidays/new-year-sale
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays/new-year-sale
+• ✓ Page title: New Year - New Sale!
+---------------------------------------------------------------
+
+==================== INLINE LINK —  ====================
 • URL: https://www.igluski.com/ski-holidays
 ---------------------------------------------------------------
-• ✓ Country banner navigation OK
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays
+• ✓ Page title: Ski Holidays 2026/2027 | Price Match Guarantee!
 ---------------------------------------------------------------
 
-==================== COUNTRY BANNER — SKI HOLIDAYS ====================
+==================== INLINE LINK —  ====================
+• URL: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+• ✓ Page title: Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals
+---------------------------------------------------------------
+
+==================== INLINE LINK — PREVIOUS ====================
+• URL: https://www.igluski.com/#
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/#
+• ✓ Page title: Ski Holidays 2026/2027 | Unbeatable Prices Guaranteed! | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINK — NEXT ====================
+• URL: https://www.igluski.com/#
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/#
+• ✓ Page title: Ski Holidays 2026/2027 | Unbeatable Prices Guaranteed! | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINK — SKI HOLIDAYS ====================
 • URL: https://www.igluski.com/ski-holidays
 ---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays
+• ✓ Page title: Ski Holidays 2026/2027 | Price Match Guarantee!
+---------------------------------------------------------------
 
-[[ATTACHMENT|test-results\home-Home-Page-TC16-—-Vali-0b3da-motions-and-Country-Banners-chromium\test-failed-1.png]]
+==================== INLINE LINK — SKI DEALS ====================
+• URL: https://www.igluski.com/ski-deals
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-deals
+• ✓ Page title: Ski Deals And Cheap Ski Holidays for 2026 & 2027 | Iglu Ski
+---------------------------------------------------------------
 
-[[ATTACHMENT|test-results\home-Home-Page-TC16-—-Vali-0b3da-motions-and-Country-Banners-chromium\error-context.md]]
+==================== INLINE LINK — SKI CHALETS ====================
+• URL: https://www.igluski.com/ski-holidays/ski-chalet-holidays
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays/ski-chalet-holidays
+• ✓ Page title: Ski Chalet Holidays and Deals 2026/2027 | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINK — HOTELS ====================
+• URL: https://www.igluski.com/ski-holidays/ski-hotels
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays/ski-hotels
+• ✓ Page title: Ski Hotels and Ski Hotel Deals | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINK — APARTMENTS ====================
+• URL: https://www.igluski.com/ski-holidays/ski-apartments
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/ski-holidays/ski-apartments
+• ✓ Page title: Ski Apartments Deals 2026/2027 | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINK — PRICE MATCH GUARANTEE ====================
+• URL: https://www.igluski.com/price-match
+---------------------------------------------------------------
+• ✓ Navigation OK → https://www.igluski.com/price-match
+• ✓ Page title: Ski Holidays Price Match | Iglu Ski
+---------------------------------------------------------------
+
+==================== INLINE LINKS — FIND YOUR SKIING HOLIDAY ====================
+• Total links detected: 0
+---------------------------------------------------------------
+✓ Inline links validation completed successfully
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page › TC26 — Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="17.123">
+<system-out>
+<![CDATA[
+===== TEST STARTED: TC26 — Validate Page Responsiveness (Mobile/Tablet) =====
+
+
+==================== RESPONSIVENESS — 375PX ====================
+
+==================== RESPONSIVENESS — SET VIEWPORT ====================
+• Setting viewport to 375px
+• ✓ Page reloaded after viewport change
+---------------------------------------------------------------
+
+==================== RESPONSIVENESS — LAYOUT ====================
+• ✓ Page layout responsive at 375px
+---------------------------------------------------------------
+
+==================== RESPONSIVENESS — HORIZONTAL OVERFLOW ====================
+• ✓ No horizontal overflow at 375px
+---------------------------------------------------------------
+
+==================== RESPONSIVENESS — IMAGES ====================
+• ✓ All images responsive at 375px
+---------------------------------------------------------------
+• ✓ TC26 PASSED at 375px
+---------------------------------------------------------------
+
+==================== RESPONSIVENESS — 768PX ====================
+
+==================== RESPONSIVENESS — SET VIEWPORT ====================
+• Setting viewport to 768px
+• ✓ Page reloaded after viewport change
+---------------------------------------------------------------
+
+==================== RESPONSIVENESS — LAYOUT ====================
+• ✓ Page layout responsive at 768px
+---------------------------------------------------------------
+
+==================== RESPONSIVENESS — HORIZONTAL OVERFLOW ====================
+• ✓ No horizontal overflow at 768px
+---------------------------------------------------------------
+
+==================== RESPONSIVENESS — IMAGES ====================
+• ✓ All images responsive at 768px
+---------------------------------------------------------------
+• ✓ TC26 PASSED at 768px
+---------------------------------------------------------------
+✓ TC26 completed successfully - validated 2 viewports
 ]]>
 </system-out>
 </testcase>

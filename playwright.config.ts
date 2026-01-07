@@ -66,7 +66,7 @@ projects: [
     ['list'],
     ['allure-playwright'],
     ['junit', { outputFile: 'results.xml' }],
-    ['html', { open: 'never' }]
+    ['html', { outputFolder: 'my-report', open: 'never' }]
   ],
 
   outputDir: 'test-results/',

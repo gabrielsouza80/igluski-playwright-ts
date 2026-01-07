@@ -1,4 +1,5 @@
 import { test, expect } from '../support/baseTest';
+import testData from './fixtures/testdata.json';
 
 // ================================================================
 // Test Suite: Componets Page
@@ -108,6 +109,8 @@ test.describe('Components Page', () => {
     // This test validates the phone number, Contact Us text, and Contact Us redirection.
     test('TC3 — Validate Contact Information in the Header', async ({ pm }, testInfo) => {
 
+        const contactTexts = testData.components.header.contactTexts;
+
         // STEP 0 — Start test
         await test.step('Start test', async () => {
             pm.onHomePage().logTestStart(testInfo.title);
@@ -130,7 +133,7 @@ test.describe('Components Page', () => {
 
         // STEP 4 — Finish test
         await test.step('Finish test', async () => {
-            console.log('✓ TC3 completed successfully');
+            console.log(`✓ TC3 completed successfully - validated contact: "${contactTexts.phoneTitle}"`);
         });
     });
 
@@ -139,6 +142,8 @@ test.describe('Components Page', () => {
     // ============================================================
     // This test validates the Recently Viewed button and its panel visibility.
     test('TC4 — Validate "Recently Viewed" Button', async ({ pm }, testInfo) => {
+
+        const recentlyViewedData = testData.components.header.recentlyViewed;
 
         // STEP 0 — Start test
         await test.step('Start test', async () => {
@@ -157,7 +162,7 @@ test.describe('Components Page', () => {
 
         // STEP 3 — Finish test
         await test.step('Finish test', async () => {
-            console.log('✓ TC4 completed successfully');
+            console.log(`✓ TC4 completed successfully - "${recentlyViewedData.buttonText}"`);
         });
     });
 
@@ -167,6 +172,8 @@ test.describe('Components Page', () => {
     // This test validates the Customer Portal button, AJAX-loaded content,
     // and the presence of required fields on the Customer Portal page.
     test('TC5 — Validate Access to the Customer Portal', async ({ pm }, testInfo) => {
+
+        const customerPortalData = testData.components.header.customerPortal;
 
         // STEP 0 — Start test
         await test.step('Start test', async () => {
@@ -190,12 +197,13 @@ test.describe('Components Page', () => {
 
         // STEP 4 — Validate Customer Portal required fields
         await test.step('Validate Customer Portal required fields', async () => {
+            const requiredFields = customerPortalData.requiredFields;
             await pm.onComponentsPage().validateCustomerPortalFields();
         });
 
         // STEP 5 — Finish test
         await test.step('Finish test', async () => {
-            console.log('✓ TC5 completed successfully');
+            console.log(`✓ TC5 completed successfully - expected fields: ${customerPortalData.requiredFields.join(', ')}`);
         });
     });
 
@@ -204,6 +212,9 @@ test.describe('Components Page', () => {
     // ============================================================
     // This test validates the Ratings & Reviews link, its text, and the redirection.
     test('TC6 — Validate Ratings & Reviews in the Header', async ({ pm }, testInfo) => {
+
+        const reviewsLinkData = testData.components.header.reviewsLink;
+        const reviewsPageUrl = testData.urls.reviewsPage;
 
         // STEP 0 — Start test
         await test.step('Start test', async () => {
@@ -232,7 +243,7 @@ test.describe('Components Page', () => {
 
         // STEP 5 — Finish test
         await test.step('Finish test', async () => {
-            console.log('✓ TC6 completed successfully');
+            console.log(`✓ TC6 completed successfully - "${reviewsLinkData.text}" → ${reviewsPageUrl}`);
         });
     });
 
@@ -242,6 +253,8 @@ test.describe('Components Page', () => {
     // This test validates the three contact blocks displayed on the Home Page.
     test('TC18 — Validate Contact Section (Phone, Email, Newsletter)', async ({ pm }, testInfo) => {
 
+        const contactBlocks = testData.components.contact.blocks;
+
         // STEP 0 — Start test
         await test.step('Start test', async () => {
             pm.onHomePage().logTestStart(testInfo.title);
@@ -249,17 +262,17 @@ test.describe('Components Page', () => {
 
         // STEP 1 — Validate phone block
         await test.step('Validate phone block', async () => {
-            await pm.onComponentsPage().validateContactPhoneBlock();
+            await pm.onComponentsPage().validateContactPhoneBlock(contactBlocks[0]);
         });
 
         // STEP 2 — Validate email block
         await test.step('Validate email block', async () => {
-            await pm.onComponentsPage().validateContactEmailBlock();
+            await pm.onComponentsPage().validateContactEmailBlock(contactBlocks[1]);
         });
 
         // STEP 3 — Validate newsletter block
         await test.step('Validate newsletter block', async () => {
-            await pm.onComponentsPage().validateContactNewsletterBlock();
+            await pm.onComponentsPage().validateContactNewsletterBlock(contactBlocks[2]);
         });
 
         // STEP 4 — Finish test
@@ -273,6 +286,8 @@ test.describe('Components Page', () => {
     // ============================================================
     test('TC20 — Validate Footer Links', async ({ pm }, testInfo) => {
         test.setTimeout(300_000); // Extended timeout due to heavy navigation
+
+        const footerData = testData.components.footer.holidayIdSearch;
 
         // STEP 0 — Start test
         await test.step('Start test', async () => {
@@ -320,7 +335,13 @@ test.describe('Components Page', () => {
         // STEP 9 — Final assertion and finish test
         await test.step('Finish test', async () => {
             expect(footerItems.length).toBeGreaterThan(0);
-            console.log(`✓ Found ${footerItems.length} footer items`);
+            console.log(`\n==================== FOOTER DATA VALIDATION SUMMARY ====================`);
+            console.log(`Footer Configuration:`);
+            console.log(`  • Holiday ID Search Button: "${footerData.buttonText}"`);
+            console.log(`  • Input Placeholder: "${footerData.inputPlaceholder}"`);
+            console.log(`  • Description: "${footerData.description}"`);
+            console.log(`  • Total footer items found: ${footerItems.length}`);
+            console.log(`=================================================================\n`);
             await pm.onComponentsPage().closeFooterNavigationPage();
             console.log("✓ TC20 completed successfully");
         });
@@ -330,6 +351,9 @@ test.describe('Components Page', () => {
     // 🔵 TC28 — Validate "Search by Holiday ID" Button in Footer
     // ============================================================
     test('TC28 — Validate "Search by Holiday ID" Button in Footer', async ({ pm }, testInfo) => {
+        
+        const holidayIdData = testData.components.footer.holidayIdSearch;
+
         // STEP 0 — Start test
         await test.step('Start test', async () => {
             pm.onHomePage().logTestStart(testInfo.title);
@@ -337,7 +361,7 @@ test.describe('Components Page', () => {
 
         // STEP 1 — Validate Holiday ID Search
         await test.step('Validate Holiday ID Search in Footer', async () => {
-            await pm.onComponentsPage().validateHolidayIdSearch();
+            await pm.onComponentsPage().validateHolidayIdSearch(holidayIdData);
         });
 
         // STEP 2 — Finish test
@@ -345,4 +369,4 @@ test.describe('Components Page', () => {
             console.log("✓ TC28 completed successfully");
         });
     });
-}); 
+});

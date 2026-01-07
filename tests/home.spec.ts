@@ -1,4 +1,5 @@
 import { test } from '../support/baseTest';
+import testData from './fixtures/testdata.json';
 
 // ================================================================
 // Test Suite: Home Page
@@ -25,11 +26,7 @@ test.describe('Home Page', () => {
     });
 
     // STEP 1 — Define expected Home Page titles
-    const expectedTitles = [
-      "Welcome To The Home Of Ski Holidays",
-      "Speak to the ski experts",
-      "Find Your Skiing Holiday"
-    ];
+    const expectedTitles = testData.homePage.titles.data;
 
     // STEP 2 — Validate each Home Page title individually
     await test.step('Validate each home Page title', async () => {
@@ -40,48 +37,35 @@ test.describe('Home Page', () => {
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
-      console.log('✓ TC15 completed successfully');
+      console.log(`✓ TC15 completed successfully - validated ${expectedTitles.length} titles`);
     });
   });
 
   // ============================================================
-  // 🔵 TC16 — Validate Carousel of Promotions and Country Banners
+  // 🔵 TC16 — Validate Country Banners (Ski Resorts)
   // ============================================================
-  // This test validates the promotional carousel and all country banners.
-  test('TC16 — Validate Carousel of Promotions and Country Banners', async ({ pm }, testInfo) => {
+  // This test validates country banner boxes and their redirections.
+  test('TC16 — Validate Country Banners (Ski Resorts)', async ({ pm }, testInfo) => {
+
+    const bannerData = testData.homePage.countryBanners;
 
     // STEP 0 — Start test
     await test.step('Start test', async () => {
       pm.onHomePage().logTestStart(testInfo.title);
     });
 
-    // STEP 1 — Count carousel slides
-    const totalSlides = await pm.onHomePage().getCarouselSlideCount();
-
-    // STEP 2 — Validate each carousel slide
-    await test.step('Validate each carousel slide', async () => {
-      for (let i = 0; i < totalSlides; i++) {
-        await pm.onHomePage().validateSingleCarouselSlide(i, totalSlides);
+    // STEP 1 — Count and validate all country banners
+    let bannerCount = 0;
+    await test.step(`Validate all country banners (${bannerData.data.join(', ')})`, async () => {
+      bannerCount = await pm.onHomePage().getCountryBannersCount();
+      for (let i = 0; i < bannerCount; i++) {
+        await pm.onHomePage().validateSingleCountryBannerRedirection(i);
       }
     });
 
-    // STEP 3 — Get country banners list
-    const banners = await pm.onHomePage().getCountryBannerList();
-
-    // STEP 4 — Validate each country banner and its redirection
-    await test.step('Validate each country banner and its redirection', async () => {
-      for (const banner of banners) {
-        if (!banner.url) {
-          // Logging happens inside the Home Page class
-          continue;
-        }
-        await pm.onHomePage().validateSingleCountryBanner(banner.label, banner.url);
-      }
-    });
-
-    // STEP 5 — Finish test
+    // STEP 2 — Finish test
     await test.step('Finish test', async () => {
-      console.log('✓ TC16 completed successfully');
+      console.log(`✓ TC16 completed successfully - validated ${bannerCount} banners`);
     });
   });
 
@@ -90,6 +74,8 @@ test.describe('Home Page', () => {
   // ============================================================
   // This test validates all CTA boxes, their titles, and their redirections.
   test('TC17 — Validate CTA Boxes (Call To Action)', async ({ pm }, testInfo) => {
+
+    const ctaBoxesData = testData.homePage.ctaBoxes;
 
     // STEP 0 — Start test
     await test.step('Start test', async () => {
@@ -101,19 +87,19 @@ test.describe('Home Page', () => {
 
     // STEP 2 — Validate each CTA box
     await test.step('Validate CTA titles and redirections', async () => {
-      await pm.onHomePage().validateCtaBoxesList();
+      await pm.onHomePage().validateCtaBoxesList(ctaBoxesData.data);
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
-      console.log('✓ TC17 completed successfully');
+      console.log(`✓ TC17 completed successfully - validated ${ctaBoxesData.data.length} CTA boxes`);
     });
   });
 
   // ============================================================
-  // 🔵 TC22 — Validate Carousel CTA Button
+  // 🔵 TC22 — Validate Carousel CTA Button - develop
   // ============================================================
-  // This test validates the CTA button inside the active carousel slide.
+  // This test validates the CTA button for each carousel slide.
   test('TC22 — Validate Carousel CTA Button', async ({ pm }, testInfo) => {
 
     // STEP 0 — Start test
@@ -121,14 +107,65 @@ test.describe('Home Page', () => {
       pm.onHomePage().logTestStart(testInfo.title);
     });
 
-    // STEP 1 — Validate CTA visibility inside the active slide
-    await test.step('Validate CTA visibility inside the active carousel slide', async () => {
-      await pm.onHomePage().validateCarouselCtaVisibility();
+    // STEP 1 — Count carousel slides
+    let totalSlides: number = 0;
+    await test.step('Count carousel slides', async () => {
+      totalSlides = await pm.onHomePage().getCarouselSlideCount();
     });
 
-    // STEP 2 — Validate CTA navigation
-    await test.step('Validate CTA navigation from the active carousel slide', async () => {
-      await pm.onHomePage().validateCarouselCtaNavigation();
+    // STEP 2 — Validate CTA for each carousel slide
+    await test.step('Validate CTA button and navigation for each carousel slide', async () => {
+      const validatedCTAs = new Set<string>();
+      const ctaList: { order: number; href: string; pageTitle: string }[] = [];
+
+      // Keep validating unique CTAs until we've cycled through all slides
+      while (validatedCTAs.size < totalSlides) {
+        await test.step(`Validating unique CTA (${validatedCTAs.size + 1}/${totalSlides})`, async () => {
+          // STEP 2.1 — Find next unique CTA
+          await test.step('Find next unique CTA', async () => {
+            const ctaHref = await pm.onHomePage().findNextUniqueSlideCTA(validatedCTAs);
+            validatedCTAs.add(ctaHref);
+          });
+
+          // STEP 2.2 — Validate CTA visibility
+          await test.step('Validate CTA visibility', async () => {
+            await pm.onHomePage().validateCarouselCtaVisibility();
+          });
+
+          // STEP 2.3 — Validate CTA navigation and page title
+          let pageTitle: string = '';
+          await test.step('Validate CTA navigation and page title', async () => {
+            const href = await pm.onHomePage().getCarouselCtaHref();
+            await pm.onHomePage().validateCarouselCtaWithPageTitle();
+            pageTitle = await pm.onHomePage().getLastValidatedPageTitle();
+            ctaList.push({
+              order: validatedCTAs.size,
+              href: href,
+              pageTitle: pageTitle
+            });
+          });
+
+          // STEP 2.4 — Advance carousel (if not last CTA)
+          if (validatedCTAs.size < totalSlides) {
+            await test.step('Advance to next slide', async () => {
+              await pm.onHomePage().navigateAndAcceptCookies();
+              await pm.onHomePage().clickCarouselNextButton();
+            });
+          }
+        });
+      }
+
+      // STEP 2.5 — Summary of validated CTAs
+      await test.step('Summary of validated CTAs', async () => {
+        console.log('\n\n==================== ✓ CAROUSEL CTA VALIDATION SUMMARY ====================');
+        console.log(`Total unique CTAs validated: ${ctaList.length}`);
+        console.log('---------------------------------------------------------------');
+        ctaList.forEach(cta => {
+          console.log(`${cta.order}. ${cta.href}`);
+          console.log(`   └─ Page Title: "${cta.pageTitle}"`);
+        });
+        console.log('=========================================================================\n');
+      });
     });
 
     // STEP 3 — Finish test
@@ -170,24 +207,27 @@ test.describe('Home Page', () => {
   // 🔵 TC26 — Validate Page Responsiveness (Mobile + Tablet)
   // ============================================================
   test('TC26 — Validate Page Responsiveness (Mobile/Tablet)', async ({ pm }, testInfo) => {
+    
+    const viewports = testData.responsiveness.viewports;
+
     // STEP 0 — Start test
     await test.step('Start test', async () => {
       pm.onHomePage().logTestStart(testInfo.title);
     });
 
     // STEP 1 — Validate at 375px (mobile)
-    await test.step('Validate layout and responsiveness at 375px (mobile)', async () => {
-      await pm.onHomePage().validateResponsivenessAtWidth(375);
+    await test.step(`Validate layout and responsiveness at ${viewports[0].width}px (${viewports[0].name})`, async () => {
+      await pm.onHomePage().validateResponsivenessAtWidth(viewports[0].width);
     });
 
     // STEP 2 — Validate at 768px (tablet)
-    await test.step('Validate layout and responsiveness at 768px (tablet)', async () => {
-      await pm.onHomePage().validateResponsivenessAtWidth(768);
+    await test.step(`Validate layout and responsiveness at ${viewports[1].width}px (${viewports[1].name})`, async () => {
+      await pm.onHomePage().validateResponsivenessAtWidth(viewports[1].width);
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
-      console.log("✓ TC26 completed successfully");
+      console.log(`✓ TC26 completed successfully - validated ${viewports.length} viewports`);
     });
   });
 
