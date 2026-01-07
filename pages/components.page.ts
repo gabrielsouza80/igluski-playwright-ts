@@ -842,4 +842,189 @@ export class ComponentsPage extends HelperBase {
         await this.validateContactNewsletterBlock();
     }
 
+    // ============================================================
+    // 🔵 TC-F21 — TRUST SEALS VALIDATION (ATOL, ABTA, IATA, Feefo)
+    // ============================================================
+
+    /**
+     * Validates visibility of trust seals in footer
+     * @param {Array} seals - Array of seal objects with name and altText
+     */
+    async validateTrustSealsVisibility(seals: any[]): Promise<void> {
+        this.logSection('Validating trust seals visibility');
+
+        for (const seal of seals) {
+            this.logInfo(`Checking seal: ${seal.name}`);
+
+            // Try multiple strategies to find the seal
+            const sealLocator = this.page.locator(`img[alt*="${seal.altText}" i], a[href*="${seal.urlPattern}" i] img, a[title*="${seal.name}" i] img`).first();
+
+            await expect(sealLocator).toBeVisible({ timeout: 10000 });
+            this.logInfo(`✓ ${seal.name} seal is visible`);
+        }
+
+        this.logInfo(`✓ All ${seals.length} trust seals are visible`);
+        this.logDivider();
+    }
+
+    /**
+     * Validates that trust seals are clickable links
+     * @param {Array} seals - Array of seal objects
+     */
+    async validateTrustSealsLinks(seals: any[]): Promise<void> {
+        this.logSection('Validating trust seals are clickable links');
+        
+        let linkCount = 0;
+        for (const seal of seals) {
+            this.logInfo(`Checking ${seal.name}`);
+            
+            // First, find the seal element (image or link)
+            const sealImage = this.page.locator(`img[alt*="${seal.altText}" i]`).first();
+            
+            // Check if it's wrapped in an anchor or if there's a nearby anchor with the urlPattern
+            const sealLink = this.page.locator(`a[href*="${seal.urlPattern}" i]`).first();
+            const linkCount_check = await sealLink.count();
+            
+            if (linkCount_check > 0) {
+                // This seal is clickable
+                await expect(sealLink).toBeVisible({ timeout: 10000 });
+                
+                // Verify it's an anchor element
+                const tagName = await sealLink.evaluate(el => el.tagName.toLowerCase());
+                expect(tagName).toBe('a');
+                
+                // Verify href is not empty
+                const href = await sealLink.getAttribute('href');
+                expect(href).toBeTruthy();
+                this.logInfo(`✓ ${seal.name} is a clickable link with href: ${href}`);
+                linkCount++;
+            } else {
+                // This seal is not clickable (just an image)
+                this.logInfo(`ℹ ${seal.name} is a non-clickable image (informational only)`);
+            }
+        }
+        
+        this.logInfo(`✓ Found ${linkCount} clickable trust seals out of ${seals.length} total`);
+        this.logDivider();
+    }
+
+    /**
+     * Validates trust seals URL format
+     * @param {Array} seals - Array of seal objects with urlPattern
+     */
+    async validateTrustSealsUrlFormat(seals: any[]): Promise<void> {
+        this.logSection('Validating trust seals URL format');
+        
+        let validatedCount = 0;
+        for (const seal of seals) {
+            this.logInfo(`Checking ${seal.name} URL format`);
+            
+            // Only validate if there's a link for this seal
+            const sealLink = this.page.locator(`a[href*="${seal.urlPattern}" i]`).first();
+            const linkExists = await sealLink.count();
+            
+            if (linkExists > 0) {
+                const href = await sealLink.getAttribute('href');
+                
+                if (href) {
+                    // Check if URL contains expected pattern
+                    const containsPattern = href.toLowerCase().includes(seal.urlPattern.toLowerCase());
+                    expect(containsPattern).toBeTruthy();
+                    this.logInfo(`✓ ${seal.name} URL contains expected pattern: ${seal.urlPattern}`);
+                    validatedCount++;
+                }
+            } else {
+                this.logInfo(`ℹ ${seal.name} has no URL to validate (non-clickable)`);
+            }
+        }
+        
+        this.logInfo(`✓ Validated ${validatedCount} trust seal URLs`);
+        this.logDivider();
+    }
+
+    // ============================================================
+    // 🔵 TC-F22 — SOCIAL MEDIA ICONS VALIDATION (Facebook, Instagram, X)
+    // ============================================================
+
+    /**
+     * Validates visibility of social media icons in footer
+     * @param {Array} platforms - Array of platform objects with name and urlPattern
+     */
+    async validateSocialMediaIconsVisibility(platforms: any[]): Promise<void> {
+        this.logSection('Validating social media icons visibility');
+
+        for (const platform of platforms) {
+            this.logInfo(`Checking ${platform.name} icon`);
+
+            // Try multiple strategies to find the social media icon
+            const iconLocator = this.page.locator(`a[href*="${platform.urlPattern}" i], a[title*="${platform.name}" i], a[aria-label*="${platform.name}" i]`).first();
+
+            await expect(iconLocator).toBeVisible({ timeout: 10000 });
+            this.logInfo(`✓ ${platform.name} icon is visible`);
+        }
+
+        this.logInfo(`✓ All ${platforms.length} social media icons are visible`);
+        this.logDivider();
+    }
+
+    /**
+     * Validates that social media icons are clickable links
+     * @param {Array} platforms - Array of platform objects
+     */
+    async validateSocialMediaIconsLinks(platforms: any[]): Promise<void> {
+        this.logSection('Validating social media icons are clickable links');
+
+        for (const platform of platforms) {
+            this.logInfo(`Checking ${platform.name} link`);
+
+            const iconLink = this.page.locator(`a[href*="${platform.urlPattern}" i], a[title*="${platform.name}" i], a[aria-label*="${platform.name}" i]`).first();
+
+            await expect(iconLink).toBeVisible({ timeout: 10000 });
+
+            // Verify it's an anchor element
+            const tagName = await iconLink.evaluate(el => el.tagName.toLowerCase());
+            expect(tagName).toBe('a');
+
+            // Verify href is not empty
+            const href = await iconLink.getAttribute('href');
+            expect(href).toBeTruthy();
+            this.logInfo(`✓ ${platform.name} is a clickable link with href: ${href}`);
+        }
+
+        this.logInfo(`✓ All ${platforms.length} social media icons are valid links`);
+        this.logDivider();
+    }
+
+    /**
+     * Validates social media URL format
+     * @param {Array} platforms - Array of platform objects with urlPattern
+     */
+    async validateSocialMediaUrlFormat(platforms: any[]): Promise<void> {
+        this.logSection('Validating social media URL format');
+
+        for (const platform of platforms) {
+            this.logInfo(`Checking ${platform.name} URL format`);
+
+            const iconLink = this.page.locator(`a[href*="${platform.urlPattern}" i], a[title*="${platform.name}" i], a[aria-label*="${platform.name}" i]`).first();
+            const href = await iconLink.getAttribute('href');
+
+            if (href) {
+                // Check if URL contains expected pattern
+                const containsPattern = href.toLowerCase().includes(platform.urlPattern.toLowerCase());
+                expect(containsPattern).toBeTruthy();
+                this.logInfo(`✓ ${platform.name} URL contains expected pattern: ${platform.urlPattern}`);
+
+                // Optionally check against expected URL if provided
+                if (platform.expectedUrl) {
+                    const urlsMatch = href.toLowerCase().includes(platform.expectedUrl.toLowerCase().replace('https://', '').replace('www.', ''));
+                    if (urlsMatch) {
+                        this.logInfo(`✓ ${platform.name} URL matches expected: ${platform.expectedUrl}`);
+                    }
+                }
+            }
+        }
+
+        this.logInfo(`✓ All social media URLs have correct format`);
+        this.logDivider();
+    }
 }

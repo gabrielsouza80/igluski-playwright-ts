@@ -1,16 +1,67 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="21.992377000000328">
-<testsuite name="search.spec.ts" timestamp="2026-01-07T14:37:38.812Z" hostname="chromium" tests="1" failures="0" skipped="0" time="16.134" errors="0">
-<testcase name="Search and Filters — Ski Holidays › TC-011 — Validate results per page change (10 → 20)" classname="search.spec.ts" time="16.134">
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="94.97892200000211">
+<testsuite name="search.spec.ts" timestamp="2026-01-07T17:22:42.927Z" hostname="chromium" tests="1" failures="1" skipped="0" time="90.35" errors="0">
+<testcase name="Search and Filters — Ski Holidays › TC-014 — Extremes: 2 minimums and 2 maximums" classname="search.spec.ts" time="90.35">
+<failure message="search.spec.ts:344:7 TC-014 — Extremes: 2 minimums and 2 maximums" type="FAILURE">
+<![CDATA[  [chromium] › search.spec.ts:344:7 › Search and Filters — Ski Holidays › TC-014 — Extremes: 2 minimums and 2 maximums 
+
+    Test timeout of 90000ms exceeded.
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\search-Search-and-Filters--acb7c-s-2-minimums-and-2-maximums-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\search-Search-and-Filters--acb7c-s-2-minimums-and-2-maximums-chromium\error-context.md
+]]>
+</failure>
 <system-out>
 <![CDATA[
-==================== CHANGING RESULTS PER PAGE TO 20 ====================
-• Selected 20 results per page
+==================== SELECTING 2 NIGHTS FILTER ====================
+• Deselecting current: 7(4472)
+• ✓ Nights set to 2
 
-==================== VALIDATING RESULTS COUNT CHANGED ====================
-• ✓ Results updated: 
-                        Displaying 1 - 10 of 4473 results
-                    
-✓ TC-011 completed - validated results per page change
+==================== SELECTING TRAVELERS: 1 ADULTS, 0 CHILDREN ====================
+• ✓ Selected 1 adults
+• ⚠ Children 0 unavailable → using 0
+• ✓ Children set to 0
+• ✓ Travelers set → Adults: 1, Children: 0
+🔎 EXTREME MIN #1 (1a,0c,2n): results present → 10 cards
+
+==================== SELECTING 2 NIGHTS FILTER ====================
+• ❌ Cannot click nights option: TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+Call log:
+[2m  - waiting for locator('a.dropdown-item').filter({ hasText: /^2/ }).first() to be visible[22m
+ - skipping
+
+==================== SELECTING TRAVELERS: 2 ADULTS, 0 CHILDREN ====================
+• ✓ Selected 2 adults
+• ⚠ Children 0 unavailable → using 0
+• ✓ Children set to 0
+• ✓ Travelers set → Adults: 2, Children: 0
+🔎 EXTREME MIN #2 (2a,0c,2n): results present → 10 cards
+
+==================== SELECTING 14+ NIGHTS FILTER ====================
+• ✓ Nights set to 14+
+
+==================== SELECTING TRAVELERS: 30+ ADULTS, 10 CHILDREN ====================
+• ✓ Selected 30+ adults
+• ⚠ Children 10 unavailable → using 0
+• ✓ Children set to 0
+• ✓ Travelers set → Adults: 30+, Children: 0
+🔎 EXTREME MAX #1 (30+ a,10c,14+ n): results present → 10 cards
+
+==================== SELECTING 14 NIGHTS FILTER ====================
+• Already selected: 14+(2550) - skipping
+
+==================== SELECTING TRAVELERS: 29 ADULTS, 10 CHILDREN ====================
+• ❌ Error selecting travelers: Error: locator.all: Target page, context or browser has been closed - continuing anyway
+
+==================== VALIDATING NO RESULTS MESSAGE ====================
+⚠ EXTREME MAX #2 (29a,10c,14 n): Could not validate results - Error: locator._expect: Target page, context or browser has been closed
+✓ TC-014 completed — extremes (2 min, 2 max) executed
+
+[[ATTACHMENT|test-results\search-Search-and-Filters--acb7c-s-2-minimums-and-2-maximums-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\search-Search-and-Filters--acb7c-s-2-minimums-and-2-maximums-chromium\error-context.md]]
 ]]>
 </system-out>
 </testcase>

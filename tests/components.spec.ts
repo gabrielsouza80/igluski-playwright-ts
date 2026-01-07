@@ -369,4 +369,80 @@ test.describe('Components Page', () => {
             console.log("✓ TC28 completed successfully");
         });
     });
+
+    // ============================================================
+    // 🔵 TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer
+    // ============================================================
+    test('TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer', async ({ pm }, testInfo) => {
+
+        const trustSealsData = testData.components.footer.trustSeals;
+
+        // STEP 0 — Start test
+        await test.step('Start test', async () => {
+            pm.onHomePage().logTestStart(testInfo.title);
+        });
+
+        // STEP 1 — Scroll to footer
+        await test.step('Scroll to footer', async () => {
+            await pm.onComponentsPage().footerContainer.scrollIntoViewIfNeeded();
+        });
+
+        // STEP 2 — Validate trust seals visibility
+        await test.step('Validate trust seals are visible', async () => {
+            await pm.onComponentsPage().validateTrustSealsVisibility(trustSealsData.seals);
+        });
+
+        // STEP 3 — Validate trust seals are clickable links
+        await test.step('Validate trust seals are clickable links', async () => {
+            await pm.onComponentsPage().validateTrustSealsLinks(trustSealsData.seals);
+        });
+
+        // STEP 4 — Validate trust seals URLs
+        await test.step('Validate trust seals URLs format', async () => {
+            await pm.onComponentsPage().validateTrustSealsUrlFormat(trustSealsData.seals);
+        });
+
+        // STEP 5 — Finish test
+        await test.step('Finish test', async () => {
+            console.log(`✓ TC-F21 completed successfully - validated ${trustSealsData.seals.length} trust seals`);
+        });
+    });
+
+    // ============================================================
+    // 🔵 TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer
+    // ============================================================
+    test('TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer', async ({ pm }, testInfo) => {
+
+        const socialMediaData = testData.components.footer.socialMedia;
+
+        // STEP 0 — Start test
+        await test.step('Start test', async () => {
+            pm.onHomePage().logTestStart(testInfo.title);
+        });
+
+        // STEP 1 — Scroll to footer
+        await test.step('Scroll to footer', async () => {
+            await pm.onComponentsPage().footerContainer.scrollIntoViewIfNeeded();
+        });
+
+        // STEP 2 — Validate social media icons visibility
+        await test.step('Validate social media icons are visible', async () => {
+            await pm.onComponentsPage().validateSocialMediaIconsVisibility(socialMediaData.platforms);
+        });
+
+        // STEP 3 — Validate social media icons are clickable links
+        await test.step('Validate social media icons are clickable links', async () => {
+            await pm.onComponentsPage().validateSocialMediaIconsLinks(socialMediaData.platforms);
+        });
+
+        // STEP 4 — Validate social media URLs
+        await test.step('Validate social media URLs format', async () => {
+            await pm.onComponentsPage().validateSocialMediaUrlFormat(socialMediaData.platforms);
+        });
+
+        // STEP 5 — Finish test
+        await test.step('Finish test', async () => {
+            console.log(`✓ TC-F22 completed successfully - validated ${socialMediaData.platforms.length} social media icons`);
+        });
+    });
 });

@@ -21,7 +21,9 @@
                 "TC6",
                 "TC18",
                 "TC20",
-                "TC28"
+                "TC28",
+                "TC-F21",
+                "TC-F22"
             ],
             "searchPage": [
                 "TC-001",
@@ -37,7 +39,15 @@
                 "TC-011",
                 "TC-012",
                 "TC-013",
-                "TC-014"
+                "TC-014",
+                "TC-015",
+                "TC-016",
+                "TC-017",
+                "TC-018",
+                "TC-019",
+                "TC-020",
+                "TC-021",
+                "TC-022"
             ]
         }
     },
@@ -158,6 +168,60 @@
                 ],
                 "inputPlaceholder": "Enter your holiday ID",
                 "buttonText": "Search"
+            },
+            "trustSeals": {
+                "description": "Trust and certification seals in footer",
+                "testCase": "TC-F21",
+                "seals": [
+                    {
+                        "name": "ATOL",
+                        "altText": "ATOL",
+                        "urlPattern": "atol",
+                        "description": "ATOL protection certification"
+                    },
+                    {
+                        "name": "ABTA",
+                        "altText": "ABTA",
+                        "urlPattern": "abta",
+                        "description": "ABTA membership certification"
+                    },
+                    {
+                        "name": "IATA",
+                        "altText": "IATA",
+                        "urlPattern": "iata",
+                        "description": "IATA accreditation"
+                    },
+                    {
+                        "name": "Feefo",
+                        "altText": "Feefo",
+                        "urlPattern": "feefo",
+                        "description": "Feefo reviews certification"
+                    }
+                ]
+            },
+            "socialMedia": {
+                "description": "Social media icons and links in footer",
+                "testCase": "TC-F22",
+                "platforms": [
+                    {
+                        "name": "Facebook",
+                        "urlPattern": "facebook.com",
+                        "expectedUrl": "https://www.facebook.com/igluskiholidays",
+                        "description": "Facebook social profile"
+                    },
+                    {
+                        "name": "Instagram",
+                        "urlPattern": "instagram.com",
+                        "expectedUrl": "https://www.instagram.com/igluski",
+                        "description": "Instagram social profile"
+                    },
+                    {
+                        "name": "X",
+                        "urlPattern": "twitter.com",
+                        "expectedUrl": "https://twitter.com/igluski",
+                        "description": "X (Twitter) social profile"
+                    }
+                ]
             }
         },
         "contact": {
@@ -206,16 +270,78 @@
                 "description": "Adults and children filter limits",
                 "testCases": [
                     "TC-005",
-                    "TC-006"
+                    "TC-006",
+                    "TC-015",
+                    "TC-016"
                 ],
                 "adults": {
                     "min": 1,
+                    "default": 2,
                     "max": "30+"
                 },
                 "children": {
                     "min": 0,
                     "max": 10
                 }
+            },
+            "accommodation": {
+                "description": "Property type filter options",
+                "testCase": "TC-017",
+                "types": [
+                    "Hotel",
+                    "Chalet",
+                    "Apartment"
+                ],
+                "selected": "Hotel"
+            },
+            "boardBasis": {
+                "description": "Board basis (meal plan) filter options",
+                "testCase": "TC-018",
+                "options": [
+                    "Self catered",
+                    "Half board",
+                    "Full board",
+                    "All inclusive"
+                ],
+                "selected": "Self catered"
+            },
+            "rating": {
+                "description": "Iglu Ski Snowflake rating filter",
+                "testCase": "TC-019",
+                "min": 1,
+                "max": 5,
+                "selected": 5
+            },
+            "propertyFeatures": {
+                "description": "Property amenities and facilities",
+                "testCase": "TC-020",
+                "features": [
+                    "WiFi",
+                    "Pool",
+                    "Sauna",
+                    "Hot tub"
+                ],
+                "selected": "WiFi"
+            },
+            "skiArea": {
+                "description": "Ski area filter selection",
+                "testCase": "TC-021",
+                "areas": [
+                    "The 3 Valleys",
+                    "Portes du Soleil",
+                    "Paradiski"
+                ],
+                "selected": "The 3 Valleys"
+            },
+            "resort": {
+                "description": "Specific resort filter selection",
+                "testCase": "TC-022",
+                "resorts": [
+                    "Val d'Isère",
+                    "St Anton",
+                    "Chamonix"
+                ],
+                "selected": "Val d'Isère"
             },
             "countries": {
                 "description": "Country selection with expected property behavior",
@@ -261,7 +387,7 @@
             ]
         },
         "negativeScenario": {
-            "description": "Combination that should return no results",
+            "description": "Testing extreme filter combination (30+ adults + 10 children) - Tests cascading filter availability and business logic",
             "testCase": "TC-014",
             "filters": {
                 "nights": 2,
@@ -269,7 +395,51 @@
                 "children": 10,
                 "country": "NO"
             },
-            "expectedMessage": "no results"
+            "expectedMessage": "Testing extreme combination availability"
+        },
+        "extremes": {
+            "description": "Extreme min/max combinations across filters for TC-014 and related analyses",
+            "testCase": "TC-014",
+            "combinations": [
+                {
+                    "label": "EXTREME MIN #1 (1a,0c,2n)",
+                    "nights": 2,
+                    "adults": 1,
+                    "children": 0
+                },
+                {
+                    "label": "EXTREME MIN #2 (2a,0c,2n)",
+                    "nights": 2,
+                    "adults": 2,
+                    "children": 0
+                },
+                {
+                    "label": "EXTREME MAX #1 (30+ a,10c,14+ n)",
+                    "nights": "14+",
+                    "adults": "30+",
+                    "children": 10
+                },
+                {
+                    "label": "EXTREME MAX #2 (29a,10c,14 n)",
+                    "nights": 14,
+                    "adults": 29,
+                    "children": 10
+                }
+            ],
+            "auxiliaryExtremes": {
+                "rating": {
+                    "min": 1,
+                    "max": 5
+                },
+                "resultsPerPage": {
+                    "min": 10,
+                    "max": 30
+                },
+                "countries": {
+                    "min": "US",
+                    "max": "FR"
+                }
+            }
         }
     }
 }
