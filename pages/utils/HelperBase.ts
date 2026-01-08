@@ -1,17 +1,51 @@
 // HelperBase: base class for Pages and Helpers.
-// Provides the Playwright `page` object and common utilities (logs, waits, safe clicks).
-// Contains custom actions and validations for the platform.
+// Provides the Playwright `page` object and common utilities (logs, waits, soft validations).
 
 import { Page, Locator, expect } from '@playwright/test';
 import type { MenuSnapshot, SubLinkSnapshot } from '../components.page';
+import testdata from '../../tests/fixtures/testdata.json';
+
+type LogLevel = 'minimal' | 'verbose';
 
 export class HelperBase {
-
   protected readonly page: Page;
+
   public testCaseErrors: string[] = [];
+  public testCaseWarnings: string[] = [];
 
   constructor(page: Page) {
     this.page = page;
+  }
+
+  // ============================================================
+  // 🔵 CONFIG
+  // ============================================================
+  private get logLevel(): LogLevel {
+    const fromEnv = (process.env.LOG_LEVEL || '').toLowerCase().trim();
+    if (fromEnv === 'verbose') return 'verbose';
+    if (fromEnv === 'minimal') return 'minimal';
+    const fromJson = (testdata as any)?.framework?.logging?.level;
+    return fromJson === 'verbose' ? 'verbose' : 'minimal';
+  }
+
+  // ============================================================
+  // 🔵 SOFT ISSUES (anti-false-positive)
+  // ============================================================
+  public clearSoftIssues(): void {
+    this.testCaseErrors = [];
+    this.testCaseWarnings = [];
+  }
+
+  protected addSoftError(message: string): void {
+    const msg = this.sanitizeLogMessage(message);
+    this.testCaseErrors.push(msg);
+    this.logError(msg);
+  }
+
+  protected addSoftWarning(message: string): void {
+    const msg = this.sanitizeLogMessage(message);
+    this.testCaseWarnings.push(msg);
+    this.logWarn(msg);
   }
 
   // ============================================================
@@ -20,22 +54,22 @@ export class HelperBase {
   async acceptCookies(): Promise<void> {
     const selectors = [
       'button:has-text("Accept Cookies & Close")',
-      'button:has-text("Accept")'
+      'button:has-text("Accept")',
     ];
 
     for (const selector of selectors) {
       const btn = this.page.locator(selector).first();
-
-      if (await btn.count()) {
-        try {
-          await expect(btn).toBeVisible();
-          await btn.click();
-          return;
-        } catch { /* ignore */ }
+      if (!(await btn.count())) continue;
+      try {
+        await expect(btn).toBeVisible();
+        await btn.click();
+        return;
+      } catch {
+        // ignore
       }
     }
 
-    this.logInfo("Cookie banner not found or already closed");
+    this.logInfo('Cookie banner not found or already closed');
   }
 
   // ============================================================
@@ -43,16 +77,13 @@ export class HelperBase {
   // ============================================================
   protected resolveUrl(href: string | null | undefined): string | null {
     if (!href) return null;
-    return href.startsWith("http")
-      ? href
-      : new URL(href, this.page.url()).href;
+    return href.startsWith('http') ? href : new URL(href, this.page.url()).href;
   }
 
   async openAndValidateUrl(url: string, expectedPattern: RegExp): Promise<void> {
     const newPage = await this.page.context().newPage();
-
     try {
-      await newPage.goto(url, { waitUntil: "domcontentloaded" });
+      await newPage.goto(url, { waitUntil: 'domcontentloaded' });
       await expect(newPage).toHaveURL(expectedPattern);
     } finally {
       await newPage.close();
@@ -63,11 +94,11 @@ export class HelperBase {
   // 🔵 TEXT NORMALIZATION
   // ============================================================
   protected normalizeText(text: string): string {
-    return text
+    return (text ?? '')
       .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, " ")
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
       .trim();
   }
 
@@ -76,35 +107,30 @@ export class HelperBase {
   // ============================================================
   protected async validateTitleContains(page: Page, label: string): Promise<void> {
     const normalize = (txt: string) =>
-      txt.toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9\s]/gi, " ")
+      (txt ?? '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9\s]/gi, ' ')
         .trim();
 
     const normalizedLabel = normalize(label);
 
     try {
-      const h1 = page.locator("h1").first();
+      const h1 = page.locator('h1').first();
       await expect(h1).toBeVisible();
 
       const h1Text = normalize(await h1.innerText());
       const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
-
       const match = labelWords.some(w => h1Text.includes(w));
 
       if (!match) {
-        const msg = `❌ Title does NOT contain expected label: "${label}"`;
-        this.testCaseErrors.push(msg);
-        this.logInfo(msg);
+        this.addSoftError(`Title does NOT contain expected label: "${label}"`);
       } else {
-        this.logInfo(`✓ Title contains expected label`);
+        this.logInfo('[OK] Title contains expected label');
       }
-
     } catch {
-      const msg = `❌ Title validation failed for label: "${label}"`;
-      this.testCaseErrors.push(msg);
-      this.logInfo(msg);
+      this.addSoftError(`Title validation failed for label: "${label}"`);
     }
   }
 
@@ -137,63 +163,70 @@ export class HelperBase {
     try {
       await this.page.waitForLoadState('networkidle');
     } catch {
-      // networkidle may never occur (analytics, long-polling). Continue and
-      // wait for a key element to be visible so tests proceed deterministically.
+      // networkidle may never occur; continue.
     }
     await this.acceptCookies();
   }
 
   // ============================================================
-  // 🔵 STRUCTURED LOGGING
+  // 🔵 STRUCTURED LOGGING (ASCII-safe)
   // ============================================================
+  private sanitizeLogMessage(message: string): string {
+    return (message ?? '')
+      .replace(/[✓✔]/g, '[OK]')
+      .replace(/[❌✗✖]/g, '[FAIL]')
+      .replace(/[⚠]/g, '[WARN]')
+      .replace(/[ℹ]/g, '[INFO]')
+      .replace(/🔎/g, '[INFO]')
+      .replace(/[•]/g, '-')
+      .replace(/[→]/g, '->')
+      .replace(/[—–]/g, '-')
+      .replace(/[“”]/g, '"')
+      .replace(/[’]/g, "'");
+  }
+
   protected logSection(title: string): void {
-    console.log(`\n==================== ${title.toUpperCase()} ====================`);
+    console.log(`\n==================== ${String(title).toUpperCase()} ====================`);
   }
 
   protected logInfo(message: string): void {
-    console.log(`• ${message}`);
+    const msg = this.sanitizeLogMessage(message);
+    if (this.logLevel === 'minimal' && msg.startsWith('[OK]')) return;
+    console.log(`- ${msg}`);
   }
 
   protected logSubInfo(message: string): void {
-    console.log(`  • ${message}`);
+    const msg = this.sanitizeLogMessage(message);
+    if (this.logLevel === 'minimal' && msg.startsWith('[OK]')) return;
+    console.log(`  - ${msg}`);
   }
 
   protected logDivider(): void {
-    console.log(`---------------------------------------------------------------`);
+    console.log('---------------------------------------------------------------');
   }
 
   protected logWarn(message: string): void {
-    console.log(`⚠ ${message}`);
+    console.log(`[WARN] ${this.sanitizeLogMessage(message)}`);
   }
 
   protected logError(message: string): void {
-    console.log(`❌ ${message}`);
+    console.log(`[ERROR] ${this.sanitizeLogMessage(message)}`);
   }
 
-
   // ============================================================
-  // 🧪 TEST CASE — GENERIC MENU UTILITIES (HELPER FUNCTIONS)
+  // 🧪 GENERIC MENU UTILITIES
   // ============================================================
-
-  // ------------------------------------------------------------
-  // Test Case — Snapshot
-  // ------------------------------------------------------------
   async getMenuSnapshot(): Promise<MenuSnapshot[]> {
-    this.logSection("Header Navigation — Build Snapshot");
-
-    const snapshot = await this.page.$$eval("li.menu-list__item", (items) => {
+    const snapshot = await this.page.$$eval('li.menu-list__item', (items) => {
       return items.map((li) => {
-        const mainLink = li.querySelector("a");
-        const mainHref = mainLink?.getAttribute("href") || null;
-        const mainLabel = mainLink?.textContent?.trim() || "";
+        const mainLink = li.querySelector('a');
+        const mainHref = mainLink?.getAttribute('href') || null;
+        const mainLabel = mainLink?.textContent?.trim() || '';
 
-        const subAnchors = Array.from(
-          li.querySelectorAll(".submenu-list__block-item a")
-        );
-
+        const subAnchors = Array.from(li.querySelectorAll('.submenu-list__block-item a'));
         const sublinks = subAnchors.map((a) => ({
-          label: a.textContent?.trim() || "",
-          href: a.getAttribute("href"),
+          label: a.textContent?.trim() || '',
+          href: a.getAttribute('href'),
         }));
 
         return { mainLabel, mainHref, sublinks };
@@ -202,128 +235,127 @@ export class HelperBase {
 
     this.logInfo(`Snapshot captured: ${snapshot.length} main menus`);
     this.logDivider();
-
     return snapshot;
   }
 
-  // ------------------------------------------------------------
-  // Safe navigation with retry
-  // ------------------------------------------------------------
   async safeGoto(page: Page, url: string): Promise<void> {
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
-        await page.goto(url, {
-          waitUntil: "domcontentloaded"
-        });
+        await page.goto(url, { waitUntil: 'domcontentloaded' });
         return;
       } catch (err) {
-        this.logInfo(`⚠ Navigation failed (attempt ${attempt}) → ${url}`);
+        this.logWarn(`Navigation failed (attempt ${attempt}) -> ${url}`);
         if (attempt === 2) throw err;
-        await page.waitForTimeout(1000);
       }
     }
   }
 
-  // ------------------------------------------------------------
-  // Validate a single main menu
-  // ------------------------------------------------------------
   async validateSingleMenu(navPage: Page, menu: MenuSnapshot): Promise<void> {
-    this.logSection(`Main Menu — ${menu.mainLabel}`);
     this.logInfo(`URL: ${menu.mainHref}`);
     this.logDivider();
 
     const menuUrl = this.resolveUrl(menu.mainHref);
     if (!menuUrl) {
-      this.logInfo(`⚠ Skipping menu (no URL): ${menu.mainLabel}`);
+      this.addSoftWarning(`Skipping menu (no URL): ${menu.mainLabel}`);
       return;
     }
 
     await this.safeGoto(navPage, menuUrl);
-
-    // Validate URL only (correct behaviour)
-    await expect(navPage).toHaveURL(new RegExp(menuUrl, "i"));
-
+    await expect(navPage).toHaveURL(new RegExp(menuUrl, 'i'));
     const pageTitle = await navPage.title();
     this.logInfo(`Page title: ${pageTitle}`);
-
-    this.logInfo(`✓ Main menu validated successfully`);
+    this.logInfo('[OK] Main menu validated');
     this.logDivider();
   }
 
-  // ------------------------------------------------------------
-  // Validate a single submenu
-  // ------------------------------------------------------------
   async validateSingleSubmenu(navPage: Page, sub: SubLinkSnapshot): Promise<void> {
-    this.logSection(`Submenu — ${sub.label}`);
     this.logInfo(`URL: ${sub.href}`);
     this.logDivider();
 
     const subUrl = this.resolveUrl(sub.href);
     if (!subUrl) {
-      this.logInfo(`⚠ Skipping submenu (no URL): ${sub.label}`);
+      this.addSoftWarning(`Skipping submenu (no URL): ${sub.label}`);
       return;
     }
 
     await this.safeGoto(navPage, subUrl);
-
-    await expect(navPage).toHaveURL(new RegExp(subUrl, "i"));
-
+    await expect(navPage).toHaveURL(new RegExp(subUrl, 'i'));
     const pageTitle = await navPage.title();
     this.logInfo(`Page title: ${pageTitle}`);
-
-    // Submenus usually match title → keep validation
     await this.validateTitleContains(navPage, sub.label);
-
     this.logDivider();
-  }
-
-  // ------------------------------------------------------------
-  // Test start log
-  // ------------------------------------------------------------
-  protected logTestStart(testName: string): void {
-    console.log(`\n===== TEST STARTED: ${testName} =====\n`);
   }
 
   // ============================================================
   // 🔵 RESPONSIVENESS HELPERS
   // ============================================================
-
-  /**
-   * Checks if the page has horizontal overflow (scrollable content wider than viewport)
-   * @returns {Promise<boolean>} True if horizontal overflow is detected
-   */
   protected async hasHorizontalOverflow(): Promise<boolean> {
-    const overflow = await this.page.evaluate(() => {
-      return document.documentElement.scrollWidth > document.documentElement.clientWidth;
-    });
-    return overflow;
+    return await this.page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
   }
 
-  /**
-   * Validates that all images on the page are responsive (not wider than viewport)
-   * @param {number} width - The viewport width to validate against
-   * @returns {Promise<{valid: boolean, invalidImages: string}>} Validation result
-   */
-  protected async validateImagesResponsive(width: number): Promise<{ valid: boolean; invalidImages: string }> {
-    const result = await this.page.evaluate((viewportWidth) => {
+  protected async validateImagesResponsive(width: number): Promise<{ valid: boolean; invalidImages: string }>{
+    return await this.page.evaluate((viewportWidth) => {
       const images = Array.from(document.querySelectorAll('img'));
       const invalidImages: string[] = [];
-
       images.forEach((img, index) => {
         const rect = img.getBoundingClientRect();
         if (rect.width > viewportWidth) {
-          const src = img.src || `image-${index}`;
+          const src = (img as HTMLImageElement).src || `image-${index}`;
           invalidImages.push(`${src} (${Math.round(rect.width)}px)`);
         }
       });
-
-      return {
-        valid: invalidImages.length === 0,
-        invalidImages: invalidImages.join(', ')
-      };
+      return { valid: invalidImages.length === 0, invalidImages: invalidImages.join(', ') };
     }, width);
-
-    return result;
   }
 
+  // ============================================================
+  // 🔵 PAGE GUARDS
+  // ============================================================
+  protected checkPageAlive(context: string): boolean {
+    if (this.page.isClosed()) {
+      this.addSoftError(`Page closed - ${context}`);
+      return false;
+    }
+    return true;
+  }
+
+  // ============================================================
+  // 🔵 CHECKBOX SELECTION HELPER
+  // ============================================================
+  protected async selectCheckboxByStrategies(
+    filterName: string,
+    filterValue: string,
+    strategies: Locator[],
+    container: Locator
+  ): Promise<boolean> {
+    try {
+      await container.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+      await container.scrollIntoViewIfNeeded().catch(() => {});
+
+      let checkbox: Locator | null = null;
+      for (const strategy of strategies) {
+        if (await strategy.count()) {
+          checkbox = strategy;
+          break;
+        }
+      }
+
+      if (!checkbox || !(await checkbox.count())) {
+        const allCheckboxes = await container.locator('input[type="checkbox"]').all();
+        this.addSoftWarning(`Could not find checkbox for ${filterName}: ${filterValue} (found ${allCheckboxes.length} checkboxes)`);
+        return false;
+      }
+
+      await checkbox.scrollIntoViewIfNeeded().catch(() => {});
+      await checkbox.check({ force: true });
+      await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+      await this.page.waitForTimeout(500).catch(() => {});
+
+      this.logInfo(`[OK] Selected ${filterName}: ${filterValue}`);
+      return true;
+    } catch (error) {
+      this.addSoftError(`Error selecting ${filterName}: ${String(error)}`);
+      return false;
+    }
+  }
 }

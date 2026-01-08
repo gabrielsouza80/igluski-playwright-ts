@@ -1,67 +1,462 @@
-<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="94.97892200000211">
-<testsuite name="search.spec.ts" timestamp="2026-01-07T17:22:42.927Z" hostname="chromium" tests="1" failures="1" skipped="0" time="90.35" errors="0">
-<testcase name="Search and Filters — Ski Holidays › TC-014 — Extremes: 2 minimums and 2 maximums" classname="search.spec.ts" time="90.35">
-<failure message="search.spec.ts:344:7 TC-014 — Extremes: 2 minimums and 2 maximums" type="FAILURE">
-<![CDATA[  [chromium] › search.spec.ts:344:7 › Search and Filters — Ski Holidays › TC-014 — Extremes: 2 minimums and 2 maximums 
+<testsuites id="" name="" tests="28" failures="3" skipped="0" errors="0" time="85.6382360000005">
+<testsuite name="search.spec.ts" timestamp="2026-01-08T16:18:22.373Z" hostname="chromium" tests="28" failures="3" skipped="0" time="523.377" errors="0">
+<testcase name="Search and Filters — Ski Holidays › TC-001 — Validate minimum nights filter (2 nights)" classname="search.spec.ts" time="22.54">
+<failure message="search.spec.ts:81:7 TC-001 — Validate minimum nights filter (2 nights)" type="FAILURE">
+<![CDATA[  [chromium] › search.spec.ts:81:7 › Search and Filters — Ski Holidays › TC-001 — Validate minimum nights filter (2 nights) 
 
-    Test timeout of 90000ms exceeded.
+    Error: Soft validation errors detected:
+    - No exact match for "2 Night" in first 10 results. Actual: ["3 Nights","7 Nights","7 Nights","7 Nights","7 Nights","7 Nights","7 Nights","7 Nights","7 Nights","3 Nights"]
+
+       at ..\support\baseTest.ts:26
+
+      24 |     if (errors.length > 0) {
+      25 |       console.log(`=== END: FAIL (soft errors: ${errors.length}) ===`);
+    > 26 |       throw new Error(`Soft validation errors detected:\n- ${errors.join('\n- ')}`);
+         |             ^
+      27 |     }
+      28 |
+      29 |     if (strictWarnings && warnings.length > 0) {
+        at Object.pm (C:\Gabriel\projects\playwright\igluski-playwright-ts\support\baseTest.ts:26:13)
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\search-Search-and-Filters--acb7c-s-2-minimums-and-2-maximums-chromium\test-failed-1.png
+    ..\test-results\search-Search-and-Filters--16826-mum-nights-filter-2-nights--chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\search-Search-and-Filters--acb7c-s-2-minimums-and-2-maximums-chromium\error-context.md
+    Error Context: ..\test-results\search-Search-and-Filters--16826-mum-nights-filter-2-nights--chromium\error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-==================== SELECTING 2 NIGHTS FILTER ====================
-• Deselecting current: 7(4472)
-• ✓ Nights set to 2
+=== TEST: TC-001 — Validate minimum nights filter (2 nights) ===
+- Deselecting current: 7(4472)
+- Found 10 total result cards
+- Checked 10 result cards (exact matches before separator)
+[ERROR] No exact match for "2 Night" in first 10 results. Actual: ["3 Nights","7 Nights","7 Nights","7 Nights","7 Nights","7 Nights","7 Nights","7 Nights","7 Nights","3 Nights"]
+✓ TC-001 completed - validated 2 nights filter
+=== END: FAIL (soft errors: 1) ===
 
-==================== SELECTING TRAVELERS: 1 ADULTS, 0 CHILDREN ====================
-• ✓ Selected 1 adults
-• ⚠ Children 0 unavailable → using 0
-• ✓ Children set to 0
-• ✓ Travelers set → Adults: 1, Children: 0
-🔎 EXTREME MIN #1 (1a,0c,2n): results present → 10 cards
+[[ATTACHMENT|test-results\search-Search-and-Filters--16826-mum-nights-filter-2-nights--chromium\test-failed-1.png]]
 
-==================== SELECTING 2 NIGHTS FILTER ====================
-• ❌ Cannot click nights option: TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
-Call log:
-[2m  - waiting for locator('a.dropdown-item').filter({ hasText: /^2/ }).first() to be visible[22m
- - skipping
-
-==================== SELECTING TRAVELERS: 2 ADULTS, 0 CHILDREN ====================
-• ✓ Selected 2 adults
-• ⚠ Children 0 unavailable → using 0
-• ✓ Children set to 0
-• ✓ Travelers set → Adults: 2, Children: 0
-🔎 EXTREME MIN #2 (2a,0c,2n): results present → 10 cards
-
-==================== SELECTING 14+ NIGHTS FILTER ====================
-• ✓ Nights set to 14+
-
-==================== SELECTING TRAVELERS: 30+ ADULTS, 10 CHILDREN ====================
-• ✓ Selected 30+ adults
-• ⚠ Children 10 unavailable → using 0
-• ✓ Children set to 0
-• ✓ Travelers set → Adults: 30+, Children: 0
-🔎 EXTREME MAX #1 (30+ a,10c,14+ n): results present → 10 cards
-
-==================== SELECTING 14 NIGHTS FILTER ====================
-• Already selected: 14+(2550) - skipping
-
-==================== SELECTING TRAVELERS: 29 ADULTS, 10 CHILDREN ====================
-• ❌ Error selecting travelers: Error: locator.all: Target page, context or browser has been closed - continuing anyway
-
-==================== VALIDATING NO RESULTS MESSAGE ====================
-⚠ EXTREME MAX #2 (29a,10c,14 n): Could not validate results - Error: locator._expect: Target page, context or browser has been closed
+[[ATTACHMENT|test-results\search-Search-and-Filters--16826-mum-nights-filter-2-nights--chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-002 — Validate default nights filter (7 nights)" classname="search.spec.ts" time="16.864">
+<system-out>
+<![CDATA[
+=== TEST: TC-002 — Validate default nights filter (7 nights) ===
+- Already selected: 7(4472) - skipping
+- Found 10 total result cards
+- Checked 1 result cards (exact matches before separator)
+✓ TC-002 completed - validated 7 nights filter
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-003 — Validate maximum nights filter (14 nights)" classname="search.spec.ts" time="21.245">
+<system-out>
+<![CDATA[
+=== TEST: TC-003 — Validate maximum nights filter (14 nights) ===
+- Deselecting current: 7(4472)
+✓ TC-003 completed - validated 14 nights filter
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-004 — Validate open maximum nights filter (14+ nights)" classname="search.spec.ts" time="21.568">
+<system-out>
+<![CDATA[
+=== TEST: TC-004 — Validate open maximum nights filter (14+ nights) ===
+- Deselecting current: 7(4472)
+✓ TC-004 completed - validated 14+ nights filter
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-007 — Validate country with many properties (France)" classname="search.spec.ts" time="19.324">
+<system-out>
+<![CDATA[
+=== TEST: TC-007 — Validate country with many properties (France) ===
+✓ TC-007 completed - validated France country filter
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-008 — Validate country with few properties (USA)" classname="search.spec.ts" time="17.802">
+<system-out>
+<![CDATA[
+=== TEST: TC-008 — Validate country with few properties (USA) ===
+✓ TC-008 completed - validated USA country filter
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-009 — Validate 7 nights + France combination" classname="search.spec.ts" time="26.047">
+<system-out>
+<![CDATA[
+=== TEST: TC-009 — Validate 7 nights + France combination ===
+- Already selected: 7(4472) - skipping
+- Found 10 total result cards
+- Checked 1 result cards (exact matches before separator)
+✓ TC-009 completed - validated 7 nights + France
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-010 — Validate 14+ nights + USA combination" classname="search.spec.ts" time="20.439">
+<system-out>
+<![CDATA[
+=== TEST: TC-010 — Validate 14+ nights + USA combination ===
+- Deselecting current: 7(4472)
+✓ TC-010 completed - validated 14+ nights + USA
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-011 — Validate results per page change (10 → 20)" classname="search.spec.ts" time="21.97">
+<system-out>
+<![CDATA[
+=== TEST: TC-011 — Validate results per page change (10 → 20) ===
+- Selected 20 results per page
+✓ TC-011 completed - validated results per page change
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-012 — Validate pagination (next page)" classname="search.spec.ts" time="31.397">
+<system-out>
+<![CDATA[
+=== TEST: TC-012 — Validate pagination (next page) ===
+- Navigated to page 2
+✓ TC-012 completed - validated pagination
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-013 — Validate sorting (Iglu recommends → Price Low to High)" classname="search.spec.ts" time="19.913">
+<system-out>
+<![CDATA[
+=== TEST: TC-013 — Validate sorting (Iglu recommends → Price Low to High) ===
+- Selected sort option: Price (Low - High)
+✓ TC-013 completed - validated sorting by Price (Low - High)
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-014 — Extremes: 2 minimums and 2 maximums" classname="search.spec.ts" time="45.921">
+<system-out>
+<![CDATA[
+=== TEST: TC-014 — Extremes: 2 minimums and 2 maximums ===
+- Deselecting current: 7(4472)
+🔎 EXTREME MIN #1 (1a,0c,2n): results present → 4 cards
+- Already selected: 2(4) - skipping
+🔎 EXTREME MIN #2 (2a,0c,2n): results present → 4 cards
+- Deselecting current: 2(4)
+🔎 EXTREME MAX #1 (30+ a,10c,14+ n): results present → 4500 cards
+- Deselecting current: 14+(3201)
+🔎 EXTREME MAX #2 (29a,10c,14 n): results present → 4500 cards
 ✓ TC-014 completed — extremes (2 min, 2 max) executed
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-015 — Validate minimum travelers (1 adult, 0 children)" classname="search.spec.ts" time="7.841">
+<system-out>
+<![CDATA[
+=== TEST: TC-015 — Validate minimum travelers (1 adult, 0 children) ===
+✓ TC-015 completed - validated minimum travelers
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-016 — Validate maximum travelers (30+ adults, 10 children)" classname="search.spec.ts" time="8.277">
+<system-out>
+<![CDATA[
+=== TEST: TC-016 — Validate maximum travelers (30+ adults, 10 children) ===
+- [WARN] Children 10 unavailable -> using 0
+✓ TC-016 completed - validated maximum travelers
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-017 — Validate accommodation filter (Hotel)" classname="search.spec.ts" time="14.406">
+<system-out>
+<![CDATA[
+=== TEST: TC-017 — Validate accommodation filter (Hotel) ===
+- Checking 5 result cards
+✓ TC-017 completed - validated Hotel filter
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-018 — Validate board basis filter (Self catered)" classname="search.spec.ts" time="23.753">
+<system-out>
+<![CDATA[
+=== TEST: TC-018 — Validate board basis filter (Self catered) ===
+- Checking 1 result cards
+✓ TC-018 completed - validated Self catered filter
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-019 — Validate rating filter (5 snowflakes)" classname="search.spec.ts" time="10.6">
+<system-out>
+<![CDATA[
+=== TEST: TC-019 — Validate rating filter (5 snowflakes) ===
+- Checking 5 result cards
+-   [FAIL] Result 1 has 2 snowflakes (expected 5)
+-   [FAIL] Result 2 has 2 snowflakes (expected 5)
+-   [OK] Result 3 has 5 snowflakes rating
+-   [OK] Result 4 has 5 snowflakes rating
+-   [FAIL] Result 5 has 2 snowflakes (expected 5)
+-   Rating distribution: {"2":3,"5":2}
+✓ TC-019 completed - validated 5 snowflakes rating
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-020 — Validate property feature filter (WiFi)" classname="search.spec.ts" time="36.299">
+<system-out>
+<![CDATA[
+=== TEST: TC-020 — Validate property feature filter (WiFi) ===
+- Checking 5 result cards
+⚠ TC-020: Test execution exceeded 30s - completing test
+✓ TC-020 completed - validated WiFi feature
+=== END: PASS ===
+-   First card text excerpt: "
+    
+        
+            
+                
+                    
+                        
+         ..."
+-   WiFi-related elements: 0
+[ERROR] Page closed - validation at card 1
+[WARN] Feature "WiFi" not visibly displayed in sampled result cards
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-021 — Validate ski area filter (The 3 Valleys)" classname="search.spec.ts" time="14.283">
+<system-out>
+<![CDATA[
+=== TEST: TC-021 — Validate ski area filter (The 3 Valleys) ===
+- Checking 5 result cards
+[WARN] No results found for ski area "The 3 Valleys" in sampled cards
+✓ TC-021 completed - validated The 3 Valleys ski area
+=== END: PASS (warnings: 1) ===
+Warnings summary:
+- No results found for ski area "The 3 Valleys" in sampled cards
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-022 — Validate resort filter (Val d&apos;Isère)" classname="search.spec.ts" time="11.922">
+<system-out>
+<![CDATA[
+=== TEST: TC-022 — Validate resort filter (Val d'Isère) ===
+- Checking 5 result cards
+✓ TC-022 completed - validated Val d'Isère resort
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-023 — Validate &quot;Clear all changes&quot; functionality" classname="search.spec.ts" time="16.048">
+<failure message="search.spec.ts:689:7 TC-023 — Validate &quot;Clear all changes&quot; functionality" type="FAILURE">
+<![CDATA[  [chromium] › search.spec.ts:689:7 › Search and Filters — Ski Holidays › TC-023 — Validate "Clear all changes" functionality 
 
-[[ATTACHMENT|test-results\search-Search-and-Filters--acb7c-s-2-minimums-and-2-maximums-chromium\test-failed-1.png]]
+    Error: Soft validation errors detected:
+    - Error selecting accommodation type: Error: locator.check: Clicking the checkbox did not change its state
+    Call log:
+      - waiting for locator('label:has-text("Hotel") input[type="checkbox"]').first()
+        - locator resolved to <input name="chh" value="true" type="checkbox" class="faceted-search__input--check-box"/>
+      - attempting click action
+        - scrolling into view if needed
+        - done scrolling
+        - forcing action
+        - performing click action
+        - click action done
+        - waiting for scheduled navigations to finish
+        - navigations have finished
 
-[[ATTACHMENT|test-results\search-Search-and-Filters--acb7c-s-2-minimums-and-2-maximums-chromium\error-context.md]]
+
+       at ..\support\baseTest.ts:26
+
+      24 |     if (errors.length > 0) {
+      25 |       console.log(`=== END: FAIL (soft errors: ${errors.length}) ===`);
+    > 26 |       throw new Error(`Soft validation errors detected:\n- ${errors.join('\n- ')}`);
+         |             ^
+      27 |     }
+      28 |
+      29 |     if (strictWarnings && warnings.length > 0) {
+        at Object.pm (C:\Gabriel\projects\playwright\igluski-playwright-ts\support\baseTest.ts:26:13)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\search-Search-and-Filters--9787e-r-all-changes-functionality-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\search-Search-and-Filters--9787e-r-all-changes-functionality-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+=== TEST: TC-023 — Validate "Clear all changes" functionality ===
+- Deselecting current: 7(4472)
+[ERROR] Error selecting accommodation type: Error: locator.check: Clicking the checkbox did not change its state
+Call log:
+[2m  - waiting for locator('label:has-text("Hotel") input[type="checkbox"]').first()[22m
+[2m    - locator resolved to <input name="chh" value="true" type="checkbox" class="faceted-search__input--check-box"/>[22m
+[2m  - attempting click action[22m
+[2m    - scrolling into view if needed[22m
+[2m    - done scrolling[22m
+[2m    - forcing action[22m
+[2m    - performing click action[22m
+[2m    - click action done[22m
+[2m    - waiting for scheduled navigations to finish[22m
+[2m    - navigations have finished[22m
+
+✓ Filters applied - Results: 4500
+✓ All filters cleared - Results restored: 1213
+✓ TC-023 completed - validated clear all filters functionality
+=== END: FAIL (soft errors: 1) ===
+
+[[ATTACHMENT|test-results\search-Search-and-Filters--9787e-r-all-changes-functionality-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\search-Search-and-Filters--9787e-r-all-changes-functionality-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-024 — Validate section &quot;clear&quot; button (Country)" classname="search.spec.ts" time="11.908">
+<system-out>
+<![CDATA[
+=== TEST: TC-024 — Validate section "clear" button (Country) ===
+✓ Filters applied - Results: 1900
+- [WARN] Country clear button not found
+✓ Country cleared, Accommodation active - Results: 1900
+✓ TC-024 completed - validated section clear functionality
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-025 — Validate URL parameter synchronization" classname="search.spec.ts" time="14.488">
+<failure message="search.spec.ts:757:7 TC-025 — Validate URL parameter synchronization" type="FAILURE">
+<![CDATA[  [chromium] › search.spec.ts:757:7 › Search and Filters — Ski Holidays › TC-025 — Validate URL parameter synchronization 
+
+    Error: Soft validation errors detected:
+    - Error selecting accommodation type: Error: locator.check: Clicking the checkbox did not change its state
+    Call log:
+      - waiting for locator('label:has-text("Hotel") input[type="checkbox"]').first()
+        - locator resolved to <input name="chh" value="true" type="checkbox" class="faceted-search__input--check-box"/>
+      - attempting click action
+        - scrolling into view if needed
+        - done scrolling
+        - forcing action
+        - performing click action
+        - click action done
+        - waiting for scheduled navigations to finish
+        - navigations have finished
+
+
+       at ..\support\baseTest.ts:26
+
+      24 |     if (errors.length > 0) {
+      25 |       console.log(`=== END: FAIL (soft errors: ${errors.length}) ===`);
+    > 26 |       throw new Error(`Soft validation errors detected:\n- ${errors.join('\n- ')}`);
+         |             ^
+      27 |     }
+      28 |
+      29 |     if (strictWarnings && warnings.length > 0) {
+        at Object.pm (C:\Gabriel\projects\playwright\igluski-playwright-ts\support\baseTest.ts:26:13)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\search-Search-and-Filters--bd5be-L-parameter-synchronization-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\search-Search-and-Filters--bd5be-L-parameter-synchronization-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+=== TEST: TC-025 — Validate URL parameter synchronization ===
+- Deselecting current: 7(4472)
+[ERROR] Error selecting accommodation type: Error: locator.check: Clicking the checkbox did not change its state
+Call log:
+[2m  - waiting for locator('label:has-text("Hotel") input[type="checkbox"]').first()[22m
+[2m    - locator resolved to <input name="chh" value="true" type="checkbox" class="faceted-search__input--check-box"/>[22m
+[2m  - attempting click action[22m
+[2m    - scrolling into view if needed[22m
+[2m    - done scrolling[22m
+[2m    - forcing action[22m
+[2m    - performing click action[22m
+[2m    - click action done[22m
+[2m    - waiting for scheduled navigations to finish[22m
+[2m    - navigations have finished[22m
+
+✓ URL with filters: https://www.igluski.com/ski-holidays?country=FR&nts=14&nts=15&nts=16&nts=17&nts=18&nts=19&nts=20&nts=21&nts=22&nts=23&nts=24&nts=25&nts=26&nts=27&nts=28&ad=2&ch=0&perpage=10&sort=0&state=4
+✓ URL synchronized with filters
+✓ TC-025 completed - validated URL parameter synchronization
+=== END: FAIL (soft errors: 1) ===
+
+[[ATTACHMENT|test-results\search-Search-and-Filters--bd5be-L-parameter-synchronization-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\search-Search-and-Filters--bd5be-L-parameter-synchronization-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-026 — Validate multi-country selection (France + Austria + Italy)" classname="search.spec.ts" time="15.043">
+<system-out>
+<![CDATA[
+=== TEST: TC-026 — Validate multi-country selection (France + Austria + Italy) ===
+✓ Multi-country selection (France + Austria + Italy) - Results: 1900
+✓ All 3 countries selected and returning results
+✓ URL: https://www.igluski.com/ski-holidays?country=FR&nts=7&ad=2&ch=0&perpage=10&sort=0&state=4
+✓ TC-026 completed - validated multi-country selection (France + Austria + Italy)
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-027 — Validate individual country removal from multi-selection" classname="search.spec.ts" time="15.525">
+<system-out>
+<![CDATA[
+=== TEST: TC-027 — Validate individual country removal from multi-selection ===
+✓ Results with 3 countries: 2779
+✓ Results with 2 countries (Austria + Italy): 2779
+✓ TC-027 completed - validated individual country removal from multi-selection
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-028 — Validate multi-accommodation selection (Hotel + Chalet)" classname="search.spec.ts" time="12.024">
+<system-out>
+<![CDATA[
+=== TEST: TC-028 — Validate multi-accommodation selection (Hotel + Chalet) ===
+- [WARN] Chalet error
+✓ Multi-accommodation selection (Hotel + Chalet) - Results: 7
+✓ Both accommodation types selected and returning results
+✓ TC-028 completed - validated multi-accommodation selection
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-029 — Validate multi-board basis selection (Self Catered + Bed &amp; Breakfast)" classname="search.spec.ts" time="10.156">
+<system-out>
+<![CDATA[
+=== TEST: TC-029 — Validate multi-board basis selection (Self Catered + Bed & Breakfast) ===
+- [WARN] Bed & Breakfast error
+✓ Multi-board basis selection (Self catered + Bed & Breakfast) - Results: 1
+✓ Both board basis options selected and returning results
+✓ TC-029 completed - validated multi-board basis selection
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-030 — Validate multi-ski area selection (The 3 Valleys + Paradiski)" classname="search.spec.ts" time="15.774">
+<system-out>
+<![CDATA[
+=== TEST: TC-030 — Validate multi-ski area selection (The 3 Valleys + Paradiski) ===
+✓ Multi-ski area selection (The 3 Valleys + Paradiski) - Results: 840
+✓ Both ski areas selected and returning results
+✓ TC-030 completed - validated multi-ski area selection
+=== END: PASS ===
 ]]>
 </system-out>
 </testcase>

@@ -45,6 +45,40 @@ export class PageManager {
         this.componentsPage = new ComponentsPage(page)
     }
 
+    resetSoftIssues(): void {
+        this.homePage.clearSoftIssues();
+        this.searchPage.clearSoftIssues();
+        this.enquirePage.clearSoftIssues();
+        this.accommodationPage.clearSoftIssues();
+        this.travelOptionsPage.clearSoftIssues();
+        this.extrasPage.clearSoftIssues();
+        this.summaryPage.clearSoftIssues();
+        this.bookingDetailsPage.clearSoftIssues();
+        this.peopleAndContactDetailsPage.clearSoftIssues();
+        this.paymentPage.clearSoftIssues();
+        this.componentsPage.clearSoftIssues();
+    }
+
+    collectSoftIssues(): { errors: string[]; warnings: string[] } {
+        const pages = [
+            this.homePage,
+            this.searchPage,
+            this.enquirePage,
+            this.accommodationPage,
+            this.travelOptionsPage,
+            this.extrasPage,
+            this.summaryPage,
+            this.bookingDetailsPage,
+            this.peopleAndContactDetailsPage,
+            this.paymentPage,
+            this.componentsPage,
+        ];
+
+        const errors = pages.flatMap(p => p.testCaseErrors || []);
+        const warnings = pages.flatMap(p => p.testCaseWarnings || []);
+        return { errors, warnings };
+    }
+
     onHomePage() {
         return this.homePage;
     }

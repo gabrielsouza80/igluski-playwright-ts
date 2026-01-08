@@ -55,6 +55,17 @@
         "_comment": "External URLs used across test suite",
         "reviewsPage": "https://www.igluski.com/customer-reviews"
     },
+    "framework": {
+        "_comment": "Framework-level behavior toggles (logging + strictness)",
+        "logging": {
+            "level": "minimal",
+            "note": "minimal hides most [OK] lines; set LOG_LEVEL=verbose to show everything"
+        },
+        "strictness": {
+            "failOnWarnings": false,
+            "note": "When true, any soft warning fails the test (in addition to soft errors)"
+        }
+    },
     "homePage": {
         "_comment": "Home page specific test data",
         "titles": {
@@ -440,6 +451,16 @@
                     "max": "FR"
                 }
             }
+        },
+        "validationConstants": {
+            "maxExactMatches": 4,
+            "maxDebugItems": 5
+        },
+        "countryMappings": {
+            "finland": "Finland",
+            "france": "France",
+            "usa": "USA",
+            "norway": "Norway"
         }
     }
 }

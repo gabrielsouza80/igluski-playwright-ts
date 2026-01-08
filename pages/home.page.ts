@@ -74,7 +74,7 @@ export class HomePage extends HelperBase {
   // ============================================================
 
   async getCarouselSlideCount(): Promise<number> {
-    this.logSection("Carousel — Slide Count");
+
 
     const totalSlides = await this.carouselSlides.count();
     this.logInfo(`Total slides detected: ${totalSlides}`);
@@ -84,7 +84,7 @@ export class HomePage extends HelperBase {
   }
 
   async validateSingleCarouselSlide(index: number, total: number): Promise<void> {
-    this.logSection(`Carousel — Slide ${index + 1} of ${total}`);
+
 
     // Click CTA inside the active slide
     await this.carouselCta.click();
@@ -121,7 +121,7 @@ export class HomePage extends HelperBase {
   // ============================================================
 
   async getCtaBoxesList(): Promise<{ title: string; normalized: string; url: string | null }[]> {
-    this.logSection("CTA Boxes — Fetch List");
+
 
     const total = await this.ctaBoxes.count();
     this.logInfo(`Total CTA boxes detected: ${total}`);
@@ -150,7 +150,7 @@ export class HomePage extends HelperBase {
     url: string,
     expectedPattern: RegExp
   ): Promise<void> {
-    this.logSection(`CTA Box — ${index + 1} of ${total}`);
+
     this.logInfo(`Title: ${title}`);
     this.logInfo(`Normalized: ${normalized}`);
     this.logInfo(`URL: ${url}`);
@@ -202,7 +202,7 @@ export class HomePage extends HelperBase {
   // ============================================================
 
   async getCountryBannerList(): Promise<{ label: string; url: string | null }[]> {
-    this.logSection("Country Banners — Fetch List");
+
 
     const banners = await this.page.$$eval(
       'a',
@@ -233,7 +233,7 @@ export class HomePage extends HelperBase {
   }
 
   async validateSingleCountryBanner(label: string, url: string): Promise<void> {
-    this.logSection(`Country Banner — ${label}`);
+
     this.logInfo(`URL: ${url}`);
     this.logDivider();
 
@@ -273,7 +273,7 @@ export class HomePage extends HelperBase {
   // ============================================================
 
   async clickMainMenu(menuLabel: string): Promise<void> {
-    this.logSection("Click Menu — Main");
+
     this.logInfo(`Menu: ${menuLabel}`);
     this.logDivider();
 
@@ -284,7 +284,7 @@ export class HomePage extends HelperBase {
   }
 
   async clickSubmenu(menuLabel: string, subLabel: string): Promise<void> {
-    this.logSection("Click Menu — Submenu");
+
     this.logInfo(`Menu: ${menuLabel}`);
     this.logInfo(`Submenu: ${subLabel}`);
     this.logDivider();
@@ -313,7 +313,7 @@ export class HomePage extends HelperBase {
   // ============================================================
 
   async validateSingleTitle(expected: string): Promise<void> {
-    this.logSection("Homepage Title — Validation");
+
     this.logInfo(`Validating title: "${expected}"`);
 
     // Locate the title using Playwright's native text selector
@@ -342,7 +342,7 @@ export class HomePage extends HelperBase {
 
   async validateCarouselCtaVisibility(slideIndex?: number): Promise<void> {
     const slideName = slideIndex !== undefined ? `Slide ${slideIndex + 1}` : "Carousel";
-    this.logSection(`${slideName} — CTA Visibility`);
+
 
     // Capture CTA href for validation and logging
     const href = await this.carouselCta.getAttribute("href");
@@ -356,7 +356,7 @@ export class HomePage extends HelperBase {
   }
 
   async validateCarouselCtaNavigation(): Promise<void> {
-    this.logSection("Carousel CTA — Navigation");
+
 
     // Extract CTA href
     const href = await this.carouselCta.getAttribute("href");
@@ -377,7 +377,7 @@ export class HomePage extends HelperBase {
 
   async validateCarouselCtaWithPageTitle(slideIndex?: number): Promise<void> {
     const slideName = slideIndex !== undefined ? `Slide ${slideIndex + 1}` : "Carousel";
-    this.logSection(`${slideName} — CTA Navigation & Page Title`);
+
 
     // Extract CTA href
     const href = await this.carouselCta.getAttribute("href");
@@ -421,7 +421,7 @@ export class HomePage extends HelperBase {
   async clickCarouselNextButton(currentIndex?: number, totalSlides?: number): Promise<void> {
     const nextIndex = currentIndex !== undefined && totalSlides ? currentIndex + 1 : null;
     const slideName = nextIndex !== null ? `Slide ${nextIndex + 1}/${totalSlides}` : "Carousel";
-    this.logSection(`${slideName} — Advancing to Next Slide`);
+
 
     // Get current active slide href to detect when slide changes
     const currentHref = await this.carouselCta.getAttribute('href');
@@ -438,8 +438,7 @@ export class HomePage extends HelperBase {
         const cta = activeSlide?.querySelector('a');
         return cta?.getAttribute('href') !== href;
       },
-      currentHref,
-      { timeout: 5000 }
+      currentHref
     );
 
     const newHref = await this.carouselCta.getAttribute('href');
@@ -448,7 +447,7 @@ export class HomePage extends HelperBase {
   }
 
   async findNextUniqueSlideCTA(validatedCTAs: Set<string>): Promise<string> {
-    this.logSection("Finding Next Unique Slide");
+
 
     // Get current CTA href
     let currentCTA = await this.carouselCta.getAttribute('href');
@@ -471,7 +470,6 @@ export class HomePage extends HelperBase {
 
       const previousCTA = currentCTA;
       await this.carouselNextButton.click();
-      await this.page.waitForTimeout(500);
 
       currentCTA = await this.carouselCta.getAttribute('href');
       this.logInfo(`New slide CTA: ${currentCTA}`);
@@ -509,7 +507,7 @@ export class HomePage extends HelperBase {
   // ============================================================
 
   async getCountryBannersCount(): Promise<number> {
-    this.logSection("Country Banners — Count");
+
 
     const count = await this.countryBannerBoxes.count();
     this.logInfo(`Total country banners visible: ${count}`);
@@ -519,7 +517,7 @@ export class HomePage extends HelperBase {
   }
 
   async validateSingleCountryBannerRedirection(index: number): Promise<void> {
-    this.logSection(`Country Banner — ${index + 1}`);
+
 
     // Get banner link
     const bannerLink = this.countryBannerBoxes.nth(index);
@@ -554,7 +552,7 @@ export class HomePage extends HelperBase {
   // ============================================================
 
   async getSpeakToExpertsLinks(): Promise<{ text: string; url: string }[]> {
-    this.logSection("Inline Links — Speak to Experts");
+
 
     // Traverse sibling elements after the heading until the next heading/row and collect anchors
     const list = await this.page.evaluate(() => {
@@ -635,7 +633,7 @@ export class HomePage extends HelperBase {
   }
 
   async validateSingleInlineLink(text: string, url: string): Promise<void> {
-    this.logSection(`Inline Link — ${text}`);
+
     this.logInfo(`URL: ${url}`);
     this.logDivider();
 
@@ -673,7 +671,7 @@ export class HomePage extends HelperBase {
   // ============================================================
 
   async getFindYourSkiingHolidayLinks(): Promise<{ text: string; url: string }[]> {
-    this.logSection("Inline Links — Find Your Skiing Holiday");
+
 
     // Traverse sibling elements after the heading until the next heading/row and collect anchors
     const list = await this.page.evaluate(() => {
@@ -775,7 +773,7 @@ export class HomePage extends HelperBase {
   // ============================================================
 
   async setViewport(width: number): Promise<void> {
-    this.logSection("Responsiveness — Set Viewport");
+
     this.logInfo(`Setting viewport to ${width}px`);
 
     await this.page.setViewportSize({ width, height: 900 });
@@ -788,7 +786,7 @@ export class HomePage extends HelperBase {
   }
 
   async validateHamburgerMenu(width: number): Promise<void> {
-    this.logSection("Responsiveness — Layout");
+
 
     // Simply check that page is still accessible and responsive
     const isVisible = await this.page.isVisible('body').catch(() => false);
@@ -802,7 +800,7 @@ export class HomePage extends HelperBase {
   }
 
   async validateNoHorizontalOverflow(width: number): Promise<void> {
-    this.logSection("Responsiveness — Horizontal Overflow");
+
 
     const overflow = await this.hasHorizontalOverflow();
 
@@ -815,7 +813,7 @@ export class HomePage extends HelperBase {
   }
 
   async validateResponsiveImages(width: number): Promise<void> {
-    this.logSection("Responsiveness — Images");
+
 
     const result = await this.validateImagesResponsive(width);
 
@@ -830,7 +828,7 @@ export class HomePage extends HelperBase {
   }
 
   async validateResponsivenessAtWidth(width: number): Promise<void> {
-    this.logSection(`Responsiveness — ${width}px`);
+
 
     // STEP A — Set viewport
     await this.setViewport(width);
