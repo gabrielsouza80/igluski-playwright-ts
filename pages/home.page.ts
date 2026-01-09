@@ -83,6 +83,16 @@ export class HomePage extends HelperBase {
     return totalSlides;
   }
 
+  async hasCarouselCta(): Promise<boolean> {
+    try {
+      const count = await this.carouselCta.count();
+      const isVisible = count > 0 ? await this.carouselCta.isVisible() : false;
+      return isVisible;
+    } catch {
+      return false;
+    }
+  }
+
   async validateSingleCarouselSlide(index: number, total: number): Promise<void> {
 
 

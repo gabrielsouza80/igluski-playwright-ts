@@ -119,6 +119,8 @@ export class SearchPage extends HelperBase {
     try {
       detailPage = await this.page.context().newPage();
       await detailPage.goto(href, { waitUntil: 'domcontentloaded', timeout: testdata.searchPage.timeouts.detailPageLoad });
+      // MANDATORY: Settlement wait for detail page to fully render before interacting
+      // Without this, JavaScript-heavy pages may not have fully initialized
       await detailPage.waitForTimeout(testdata.searchPage.timeouts.pageSettlement).catch(() => { });
       return { detailPage, detailUrl: href };
     } catch (error) {
@@ -346,6 +348,8 @@ export class SearchPage extends HelperBase {
       });
       // Wait for page response after selection
       await this.page.waitForLoadState('domcontentloaded').catch(() => { });
+      // MANDATORY: Settlement wait for results to update after nights selection
+      await this.page.waitForTimeout(500).catch(() => { });
       const count = await this.getResultsCount();
       this.logInfo(`✓ ${nights} nights → ${count} results`);
     } catch (error) {
@@ -371,6 +375,8 @@ export class SearchPage extends HelperBase {
         try {
           await adultsSelect.selectOption(adultsValue);
           await this.page.waitForLoadState('domcontentloaded').catch(() => { });
+          // MANDATORY: Settlement wait for results to update after adults selection
+          await this.page.waitForTimeout(500).catch(() => { });
           this.logInfo(`✓ ${adultsValue} adults selected`);
         } catch (e) {
           // If exact value not available, use first valid option
@@ -416,6 +422,8 @@ export class SearchPage extends HelperBase {
         // Select the determined value
         await childrenSelect.selectOption(finalValue);
         await this.page.waitForLoadState('domcontentloaded').catch(() => { });
+        // MANDATORY: Settlement wait for results to update after children selection
+        await this.page.waitForTimeout(500).catch(() => { });
         const count = await this.getResultsCount();
         this.logInfo(`✓ Travelers: ${adultsValue} adults, ${finalValue} children → ${count} results`);
       } else {
@@ -428,23 +436,35 @@ export class SearchPage extends HelperBase {
   }
 
   async selectCountryFilter(countryCode: string): Promise<void> {
+    if (!this.checkPageAlive(`selecting country ${countryCode}`)) return;
+
     await this.filtersSidebar.waitFor({ state: 'visible' }).catch(() => { });
     await this.filtersSidebar.scrollIntoViewIfNeeded().catch(() => { });
     let countryCheckbox = this.page.locator(`input#${countryCode}`);
 
-    if (!(await countryCheckbox.count())) {
-      countryCheckbox = this.filtersSidebar.locator(`input[value="${countryCode}" i], input[id*="${countryCode}" i]`).first();
-    }
-
-    if (!(await countryCheckbox.count())) {
-      const countryLabel = this.filtersSidebar.locator('label', { hasText: /Finland|France|USA|Norway/i }).first();
-      if (await countryLabel.count()) {
-        countryCheckbox = countryLabel.locator('input').first();
+    try {
+      if (!(await countryCheckbox.count())) {
+        countryCheckbox = this.filtersSidebar.locator(`input[value="${countryCode}" i], input[id*="${countryCode}" i]`).first();
       }
+    } catch {
+      this.logInfo(`Country ${countryCode} lookup failed - page may be closed`);
+      return;
     }
 
-    if (!(await countryCheckbox.count())) {
-      this.logInfo(`Country ${countryCode} not found`);
+    try {
+      if (!(await countryCheckbox.count())) {
+        const countryLabel = this.filtersSidebar.locator('label', { hasText: /Finland|France|USA|Norway/i }).first();
+        if (await countryLabel.count()) {
+          countryCheckbox = countryLabel.locator('input').first();
+        }
+      }
+
+      if (!(await countryCheckbox.count())) {
+        this.logInfo(`Country ${countryCode} not found`);
+        return;
+      }
+    } catch {
+      this.logInfo(`Country ${countryCode} selection failed - page may be closed`);
       return;
     }
 
@@ -480,6 +500,8 @@ export class SearchPage extends HelperBase {
           // Wait for page response
           try {
             await this.page.waitForLoadState('domcontentloaded').catch(() => { });
+            // MANDATORY: Settlement wait for results to update after country selection
+            await this.page.waitForTimeout(500).catch(() => { });
           } catch { }
           const count = await this.getResultsCount();
           this.logInfo(`✓ ${countryCode} → ${count} results`);
@@ -762,10 +784,14 @@ export class SearchPage extends HelperBase {
 
     this.logInfo(`✓ ${rating}-snowflake filter applied`);
 
-    // Wait for results count to update after filter applied
+    // Wait for results to actually update with new filtered data
     try {
       await this.page.waitForLoadState('domcontentloaded');
-
+      
+      // MANDATORY: Wait for JavaScript to process filter and re-render result cards
+      // Without this settlement wait, we'd validate old results still in DOM before new ones load
+      await this.page.waitForTimeout(500);
+      
       const filteredCount = await this.getResultsCount();
       this.logInfo(`✓ Results filtered: ${filteredCount} properties with ${rating} snowflakes`);
     } catch (err) {
@@ -809,19 +835,18 @@ export class SearchPage extends HelperBase {
 
     this.logInfo(`✓ ${skiArea} ski area filter applied`);
 
-    // Wait for results to filter
+    // Wait for results to actually update with new filtered data
     try {
-      await this.page.waitForFunction(
-        () => {
-          // Look for "Displaying X - Y of Z results" text that changed from 4476
-          const pageText = document.body.textContent || '';
-          return !pageText.includes('4476');
-        }
-      ).catch(() => {
-        this.logInfo(`  Note: Result filtering wait completed or timed out`);
-      });
-    } catch (error) {
-      // Results may not have visible count, continue anyway
+      await this.page.waitForLoadState('domcontentloaded');
+      
+      // MANDATORY: Wait for JavaScript to process filter and re-render result cards
+      // Without this settlement wait, we'd validate old results still in DOM before new ones load
+      await this.page.waitForTimeout(500);
+      
+      const filteredCount = await this.getResultsCount();
+      this.logInfo(`✓ Results filtered: ${filteredCount} properties in ski area ${skiArea}`);
+    } catch {
+      this.logInfo(`  Note: Result filtering completed or timed out`);
     }
   }
 
@@ -829,6 +854,17 @@ export class SearchPage extends HelperBase {
   /** Checks resort filter with special character escaping and multi-strategy selectors */
   async selectResortFilter(resort: string): Promise<void> {
     if (!this.checkPageAlive(`selecting resort ${resort}`)) return;
+
+    // First, find and scroll to the resort label to ensure it's visible
+    const resortLabel = this.page.locator(`label:has-text("${resort}") input[type="checkbox"]`).first();
+    try {
+      await resortLabel.scrollIntoViewIfNeeded().catch(() => {});
+    } catch (e) {
+      this.logInfo(`Note: Could not scroll resort label into view initially`);
+    }
+
+    // Add a small wait to let the scroll complete
+    await this.page.waitForTimeout(300);
 
     const safeResortId = resort.replace(/[^A-Za-z0-9_-]/g, '');
     const strategies = [
@@ -846,17 +882,16 @@ export class SearchPage extends HelperBase {
 
     this.logInfo(`✓ ${resort} resort filter applied`);
 
-    // Wait for results to filter
+    // Wait for results to actually update with new filtered data
     try {
-      await this.page.waitForFunction(
-        () => {
-          // Look for "Displaying X - Y of Z results" text that changed from 4476
-          const pageText = document.body.textContent || '';
-          return !pageText.includes('4476');
-        }
-      ).catch(() => {
-        this.logInfo(`  Note: Result filtering wait completed or timed out`);
-      });
+      await this.page.waitForLoadState('domcontentloaded');
+      
+      // MANDATORY: Settlement wait - allows DOM to reflect resort filter changes before validation
+      // Resort filter requires longer wait due to large dataset and animation delays
+      await this.page.waitForTimeout(800);
+      
+      const filteredCount = await this.getResultsCount();
+      this.logInfo(`✓ Results filtered: ${filteredCount} properties in resort ${resort}`);
     } catch (error) {
       // Results may not have visible count, continue anyway
     }

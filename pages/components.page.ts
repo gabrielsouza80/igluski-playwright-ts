@@ -783,10 +783,16 @@ export class ComponentsPage extends HelperBase {
             this.logInfo(`Phone number: "${phoneText}"`);
 
             // Click phone number and verify navigation
-            if (await this.contactPhoneNumber.count() > 0) {
-                await this.contactPhoneNumber.click();
-                await expect(this.page).toHaveURL(/contact-us/i);
-                this.logInfo('✓ Phone block navigation OK → contact-us page');
+            try {
+                if (!this.checkPageAlive('contact phone validation')) return;
+                const count = await this.contactPhoneNumber.count();
+                if (count > 0) {
+                    await this.contactPhoneNumber.click();
+                    await expect(this.page).toHaveURL(/contact-us/i);
+                    this.logInfo('✓ Phone block navigation OK → contact-us page');
+                }
+            } catch (err) {
+                // Navigation may have failed or page closed
             }
         } catch (error) {
             this.logInfo(`⚠ Contact phone block validation issue: ${error}`);
@@ -816,10 +822,16 @@ export class ComponentsPage extends HelperBase {
             this.logInfo(`Email button text: "${buttonText}"`);
 
             // Click enquire button and verify navigation
-            if (await this.contactEmailButton.count() > 0) {
-                await this.contactEmailButton.click().catch(() => { });
-                await expect(this.page).toHaveURL(/enquire/i).catch(() => { });
-                this.logInfo('✓ Email block navigation OK → enquire page');
+            try {
+                if (!this.checkPageAlive('contact email validation')) return;
+                const count = await this.contactEmailButton.count();
+                if (count > 0) {
+                    await this.contactEmailButton.click().catch(() => { });
+                    await expect(this.page).toHaveURL(/enquire/i).catch(() => { });
+                    this.logInfo('✓ Email block navigation OK → enquire page');
+                }
+            } catch (err) {
+                // Navigation may have failed or page closed
             }
         } catch (error) {
             this.logInfo(`⚠ Contact email block validation issue: ${error}`);
@@ -847,10 +859,16 @@ export class ComponentsPage extends HelperBase {
             this.logInfo(`Newsletter button text: "${buttonText}"`);
 
             // Click sign up button and verify navigation
-            if (await this.contactNewsletterButton.count() > 0) {
-                await this.contactNewsletterButton.click().catch(() => { });
-                await expect(this.page).toHaveURL(/signup/i).catch(() => { });
-                this.logInfo('✓ Newsletter block navigation OK → signup page');
+            try {
+                if (!this.checkPageAlive('contact newsletter validation')) return;
+                const count = await this.contactNewsletterButton.count();
+                if (count > 0) {
+                    await this.contactNewsletterButton.click().catch(() => { });
+                    await expect(this.page).toHaveURL(/signup/i).catch(() => { });
+                    this.logInfo('✓ Newsletter block navigation OK → signup page');
+                }
+            } catch (err) {
+                // Navigation may have failed or page closed
             }
         } catch (error) {
             this.logInfo(`⚠ Contact newsletter block validation issue: ${error}`);

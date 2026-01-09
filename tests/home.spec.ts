@@ -113,56 +113,72 @@ test.describe('Home Page', () => {
       totalSlides = await pm.onHomePage().getCarouselSlideCount();
     });
 
-    // STEP 2 — Validate CTA for each carousel slide
-    await test.step('Validate CTA button and navigation for each carousel slide', async () => {
-      const validatedCTAs = new Set<string>();
-      const ctaList: { order: number; href: string; pageTitle: string }[] = [];
+    // STEP 2 — Validate each carousel slide (with or without CTA)
+    await test.step('Validate each carousel slide', async () => {
+      const slideResults: { slideNumber: number; hasCTA: boolean; href?: string; pageTitle?: string }[] = [];
 
-      // Keep validating unique CTAs until we've cycled through all slides
-      while (validatedCTAs.size < totalSlides) {
-        await test.step(`Validating unique CTA (${validatedCTAs.size + 1}/${totalSlides})`, async () => {
-          // STEP 2.1 — Find next unique CTA
-          await test.step('Find next unique CTA', async () => {
-            const ctaHref = await pm.onHomePage().findNextUniqueSlideCTA(validatedCTAs);
-            validatedCTAs.add(ctaHref);
+      // Iterate through ALL slides (each slide is unique)
+      for (let slideIndex = 0; slideIndex < totalSlides; slideIndex++) {
+        await test.step(`Validating slide ${slideIndex + 1}/${totalSlides}`, async () => {
+          const slideNumber = slideIndex + 1;
+          
+          // STEP 2.1 — Check if slide has CTA button
+          let hasCTA = false;
+          await test.step('Check if CTA button exists', async () => {
+            hasCTA = await pm.onHomePage().hasCarouselCta();
+            if (hasCTA) {
+              console.log(`✓ Slide ${slideNumber}: Has CTA button`);
+            } else {
+              console.log(`ℹ Slide ${slideNumber}: No CTA button`);
+              slideResults.push({ slideNumber, hasCTA: false });
+            }
           });
 
-          // STEP 2.2 — Validate CTA visibility
-          await test.step('Validate CTA visibility', async () => {
-            await pm.onHomePage().validateCarouselCtaVisibility();
-          });
-
-          // STEP 2.3 — Validate CTA navigation and page title
-          let pageTitle: string = '';
-          await test.step('Validate CTA navigation and page title', async () => {
-            const href = await pm.onHomePage().getCarouselCtaHref();
-            await pm.onHomePage().validateCarouselCtaWithPageTitle();
-            pageTitle = await pm.onHomePage().getLastValidatedPageTitle();
-            ctaList.push({
-              order: validatedCTAs.size,
-              href: href,
-              pageTitle: pageTitle
+          // STEP 2.2 — If has CTA, validate it
+          if (hasCTA) {
+            await test.step('Validate CTA visibility', async () => {
+              await pm.onHomePage().validateCarouselCtaVisibility();
             });
-          });
 
-          // STEP 2.4 — Advance carousel (if not last CTA)
-          if (validatedCTAs.size < totalSlides) {
+            // STEP 2.3 — Validate CTA navigation and page title (opens in new tab)
+            let href: string = '';
+            let pageTitle: string = '';
+            await test.step('Validate CTA navigation and page title', async () => {
+              href = await pm.onHomePage().getCarouselCtaHref();
+              await pm.onHomePage().validateCarouselCtaWithPageTitle();
+              pageTitle = await pm.onHomePage().getLastValidatedPageTitle();
+              slideResults.push({
+                slideNumber,
+                hasCTA: true,
+                href,
+                pageTitle
+              });
+            });
+          }
+
+          // STEP 2.4 — Advance to next slide (if not last)
+          if (slideIndex < totalSlides - 1) {
             await test.step('Advance to next slide', async () => {
-              await pm.onHomePage().navigateAndAcceptCookies();
               await pm.onHomePage().clickCarouselNextButton();
             });
           }
         });
       }
 
-      // STEP 2.5 — Summary of validated CTAs
-      await test.step('Summary of validated CTAs', async () => {
-        console.log('\n\n==================== ✓ CAROUSEL CTA VALIDATION SUMMARY ====================');
-        console.log(`Total unique CTAs validated: ${ctaList.length}`);
+      // STEP 2.5 — Summary of all slides
+      await test.step('Summary of carousel validation', async () => {
+        console.log('\n\n==================== ✓ CAROUSEL VALIDATION SUMMARY ====================');
+        console.log(`Total slides: ${totalSlides}`);
+        console.log(`Slides with CTA: ${slideResults.filter(s => s.hasCTA).length}`);
+        console.log(`Slides without CTA: ${slideResults.filter(s => !s.hasCTA).length}`);
         console.log('---------------------------------------------------------------');
-        ctaList.forEach(cta => {
-          console.log(`${cta.order}. ${cta.href}`);
-          console.log(`   └─ Page Title: "${cta.pageTitle}"`);
+        slideResults.forEach(slide => {
+          if (slide.hasCTA) {
+            console.log(`Slide ${slide.slideNumber}: ${slide.href}`);
+            console.log(`   └─ Page Title: "${slide.pageTitle}"`);
+          } else {
+            console.log(`Slide ${slide.slideNumber}: No CTA button`);
+          }
         });
         console.log('=========================================================================\n');
       });

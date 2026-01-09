@@ -104,19 +104,23 @@ export class HelperBase {
   // 🔵 COOKIE BANNER HANDLING
   // ============================================================
   async acceptCookies(): Promise<void> {
+    if (!this.checkPageAlive('acceptCookies')) return;
+
     const selectors = [
       'button:has-text("Accept Cookies & Close")',
       'button:has-text("Accept")',
     ];
 
     for (const selector of selectors) {
+      if (!this.checkPageAlive('acceptCookies iteration')) return;
       const btn = this.page.locator(selector).first();
-      if (!(await btn.count())) continue;
       try {
+        const count = await btn.count();
+        if (!count) continue;
         await btn.click();
         return;
       } catch {
-        // ignore
+        // ignore - button not found or page closed
       }
     }
 
