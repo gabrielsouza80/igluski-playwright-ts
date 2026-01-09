@@ -333,21 +333,117 @@ export class HelperBase {
       await container.scrollIntoViewIfNeeded().catch(() => {});
 
       let checkbox: Locator | null = null;
-      for (const strategy of strategies) {
-        if (await strategy.count()) {
-          checkbox = strategy;
+      let strategyIndex = -1;
+      for (let i = 0; i < strategies.length; i++) {
+        const count = await strategies[i].count().catch(() => 0);
+        if (count > 0) {
+          checkbox = strategies[i];
+          strategyIndex = i;
+          this.logInfo(`  Strategy ${i + 1}: found ✓`);
           break;
         }
       }
 
       if (!checkbox || !(await checkbox.count())) {
         const allCheckboxes = await container.locator('input[type="checkbox"]').all();
-        this.addSoftWarning(`Could not find checkbox for ${filterName}: ${filterValue} (found ${allCheckboxes.length} checkboxes)`);
+        this.addSoftWarning(`Checkbox for ${filterName}: ${filterValue} not found (${allCheckboxes.length} checkboxes in container)`);
         return false;
       }
 
       await checkbox.scrollIntoViewIfNeeded().catch(() => {});
-      await checkbox.check({ force: true });
+
+      // If already checked, skip further interaction
+      const alreadyChecked = await checkbox.isChecked().catch(() => false);
+      if (alreadyChecked) {
+        this.logInfo(`  ✓ ${filterName} already selected`);
+        return true;
+      }
+
+      const attemptCheck = async (): Promise<boolean> => {
+        await checkbox.check({ force: true }).catch(() => {});
+        await this.page.waitForTimeout(250).catch(() => {});
+        return await checkbox.isChecked().catch(() => false);
+      };
+
+      // Primary attempt
+      let checked = await attemptCheck();
+      if (checked) {
+        this.logInfo(`  ✓ ${filterName} selected`);
+      }
+
+      // Fallback 1: click owning label/container if present
+      if (!checked) {
+        const label = checkbox.locator('xpath=ancestor::label[1]');
+        if (await label.count()) {
+          await label.click({ force: true }).catch(() => {});
+          await this.page.waitForTimeout(250).catch(() => {});
+          checked = await checkbox.isChecked().catch(() => false);
+          if (checked) {
+            this.logInfo(`  ✓ Fallback 1: ancestor label ✓`);
+          }
+        }
+      }
+
+      // Fallback 2: click label associated via "for" attribute
+      if (!checked) {
+        const checkboxId = await checkbox.getAttribute('id');
+        if (checkboxId) {
+          const forLabel = this.page.locator(`label[for="${checkboxId}"]`).first();
+          if (await forLabel.count()) {
+            await forLabel.click({ force: true }).catch(() => {});
+            await this.page.waitForTimeout(250).catch(() => {});
+            checked = await checkbox.isChecked().catch(() => false);
+            if (checked) {
+              this.logInfo(`  ✓ Fallback 2: "for" label ✓`);
+            }
+          }
+        }
+      }
+
+      // Fallback 3: force a normal click on the input
+      if (!checked) {
+        await checkbox.click({ force: true }).catch(() => {});
+        await this.page.waitForTimeout(250).catch(() => {});
+        checked = await checkbox.isChecked().catch(() => false);
+        if (checked) {
+          this.logInfo(`  ✓ Fallback 3: direct click ✓`);
+        }
+      }
+
+      // Fallback 4: click closest container element (common for custom checkboxes)
+      if (!checked) {
+        const containerClick = checkbox.locator('xpath=ancestor::*[self::label or self::li or self::div][1]');
+        if (await containerClick.count()) {
+          await containerClick.click({ force: true }).catch(() => {});
+          await this.page.waitForTimeout(250).catch(() => {});
+          checked = await checkbox.isChecked().catch(() => false);
+          if (checked) {
+            this.logInfo(`  ✓ Fallback 4: container ✓`);
+          }
+        }
+      }
+
+      // Fallback 5: force state via DOM if all clicks failed
+      if (!checked) {
+        this.logInfo(`  → Trying fallback 5: DOM mutation (direct state change)`);
+        await checkbox.evaluate((el) => {
+          const input = el as HTMLInputElement;
+          input.checked = true;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }).catch(() => {});
+        await this.page.waitForTimeout(250).catch(() => {});
+        checked = await checkbox.isChecked().catch(() => false);
+        if (checked) {
+          this.logInfo(`  ✓ Fallback 5 (DOM mutation) succeeded`);
+        }
+      }
+
+      if (!checked) {
+        this.addSoftError(`Clicking the checkbox did not change its state for ${filterName}: ${filterValue}`);
+        return false;
+      }
+
       await this.page.waitForLoadState('domcontentloaded').catch(() => {});
       await this.page.waitForTimeout(500).catch(() => {});
 

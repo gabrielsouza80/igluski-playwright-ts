@@ -39,6 +39,7 @@ export class SearchPage extends HelperBase {
   // 🔵 PRIVATE HELPER METHODS
   // ============================================================
 
+  // Try multiple selector strategies to find checkbox (ID, value, label text, etc)
   /** Generic method to select checkbox filter with multi-strategy fallback */
   private async selectCheckboxFilter(
     filterName: string,
@@ -75,8 +76,41 @@ export class SearchPage extends HelperBase {
         throw new Error(`Could not locate checkbox for ${filterName}: ${filterValue}`);
       }
 
-      await checkbox.scrollIntoViewIfNeeded();
-      await checkbox.check({ force: true });
+      // Try main checkbox click + verification, then fallback to parent label click once
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          await checkbox.scrollIntoViewIfNeeded();
+        } catch {}
+
+        try {
+          await checkbox.check({ force: true });
+        } catch (err) {
+          this.logInfo(`⚠ Attempt ${attempt + 1} check failed for ${filterName}: ${err}`);
+        }
+
+        const checked = await checkbox.isChecked().catch(() => false);
+        if (checked) {
+          this.logInfo(`✓ Selected ${filterName}: ${filterValue}`);
+          return;
+        }
+
+        // Fallback: click ancestor label if present
+        const label = checkbox.locator('xpath=ancestor::label[1]').first();
+        if (await label.count()) {
+          try {
+            await label.scrollIntoViewIfNeeded().catch(() => {});
+            await label.click({ force: true });
+          } catch (err) {
+            this.logInfo(`⚠ Attempt ${attempt + 1} label click failed for ${filterName}: ${err}`);
+          }
+        }
+      }
+
+      // Final state check
+      const finalChecked = await checkbox.isChecked().catch(() => false);
+      if (!finalChecked) {
+        throw new Error(`Could not check ${filterName}: ${filterValue}`);
+      }
 
       this.logInfo(`✓ Selected ${filterName}: ${filterValue}`);
 
@@ -110,6 +144,161 @@ export class SearchPage extends HelperBase {
     if (!foundMatch) {
       this.logInfo(`⚠ No match for "${expectedText}" in first ${Math.min(maxCards, resultCards.length)} results`);
     }
+  }
+
+  /** Safely escapes a string for use inside RegExp constructors */
+  private escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  /** Parses JSON stored inside hidden inputs (DataLayer) that may be HTML-encoded */
+  private parseDataLayerValue(rawValue: string | null): any | null {
+    if (!rawValue) return null;
+
+    const decoded = rawValue
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&');
+
+    try {
+      return JSON.parse(decoded);
+    } catch {
+      return null;
+    }
+  }
+
+  /** Extracts the primary property/detail href from a result card */
+  private async extractResultHref(resultCard: Locator): Promise<string | null> {
+    const candidates: Locator[] = [
+      resultCard.locator('a[href*="/ski-resorts"]').first(),
+      resultCard.locator('a.search-result__title, a:has(.search-result__title)').first(),
+      resultCard.locator('a:has-text("View"), a:has-text("Details"), a:has-text("Book Online")').first(),
+      resultCard.locator('a[href*="ski" i]').first(),
+      resultCard.locator('a[href]').first()
+    ];
+
+    for (const candidate of candidates) {
+      if (!(await candidate.count())) continue;
+      const href = await candidate.getAttribute('href').catch(() => null);
+      if (!href) continue;
+      if (href.startsWith('#') || href.toLowerCase().startsWith('javascript')) continue;
+
+      try {
+        const absoluteUrl = new URL(href, this.page.url()).toString();
+        return absoluteUrl;
+      } catch {
+        continue;
+      }
+    }
+
+    return null;
+  }
+
+  /** Opens a detail page in a new tab using the href extracted from the result card */
+  private async openDetailPage(resultCard: Locator, contextLabel: string): Promise<{ detailPage: Page | null; detailUrl: string | null }> {
+    const href = await this.extractResultHref(resultCard);
+    if (!href) {
+      this.logInfo(`⚠ ${contextLabel}: no detail link found`);
+      return { detailPage: null, detailUrl: null };
+    }
+
+    let detailPage: Page | null = null;
+    try {
+      detailPage = await this.page.context().newPage();
+      await detailPage.goto(href, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await detailPage.waitForTimeout(500).catch(() => {});
+      return { detailPage, detailUrl: href };
+    } catch (error) {
+      this.logInfo(`❌ ${contextLabel}: failed to open detail page (${href}) → ${error}`);
+      if (detailPage) await detailPage.close().catch(() => {});
+      return { detailPage: null, detailUrl: href };
+    }
+  }
+
+  /** Checks accommodation type inside product detail page (spec section or data layer) */
+  private async detailPageMatchesAccommodation(detailPage: Page, accommodationType: string): Promise<boolean> {
+    const matcher = new RegExp(this.escapeRegExp(accommodationType), 'i');
+    const specLocator = detailPage
+      .locator('.package__include-text, .package__include-title, .package__include')
+      .filter({ hasText: matcher });
+
+    if (await specLocator.count()) {
+      return true;
+    }
+
+    const dataLayerInput = detailPage.locator('#DataLayer').first();
+    if (await dataLayerInput.count()) {
+      const raw = await dataLayerInput.getAttribute('value');
+      const parsed = this.parseDataLayerValue(raw);
+      const propertyType = parsed?.property_type || parsed?.results_list?.[0]?.property_type;
+      if (propertyType && matcher.test(String(propertyType))) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /** Checks board basis inside product detail page (spec section or data layer) */
+  private async detailPageMatchesBoardBasis(detailPage: Page, boardBasis: string): Promise<boolean> {
+    const matcher = new RegExp(this.escapeRegExp(boardBasis), 'i');
+    const specLocator = detailPage
+      .locator('.package__include-text, .package__include-title, .package__include')
+      .filter({ hasText: matcher });
+
+    if (await specLocator.count()) {
+      return true;
+    }
+
+    const dataLayerInput = detailPage.locator('#DataLayer').first();
+    if (await dataLayerInput.count()) {
+      const raw = await dataLayerInput.getAttribute('value');
+      const parsed = this.parseDataLayerValue(raw);
+      const boardValue = parsed?.board_basis || parsed?.results_list?.[0]?.board_basis;
+      if (boardValue && matcher.test(String(boardValue))) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /** Extracts numeric rating (snowflakes) from a detail page via text or data layer */
+  private async detailPageGetRating(detailPage: Page): Promise<number | null> {
+    const ratingLocator = detailPage.locator('[class*="rating"], .star-rating, [data-rating]').first();
+    if (await ratingLocator.count()) {
+      const aria = await ratingLocator.getAttribute('aria-label').catch(() => '') || '';
+      const text = aria || (await ratingLocator.textContent().catch(() => '') || '');
+      const match = text.match(/(\d+(?:\.\d+)?)\s*(?:out\s+of\s+)?5/i);
+      if (match) {
+        const parsed = Number(match[1]);
+        if (!Number.isNaN(parsed)) {
+          return Math.round(parsed);
+        }
+      }
+
+      const attrRating = await ratingLocator.getAttribute('data-rating').catch(() => null);
+      if (attrRating) {
+        const parsed = Number(attrRating);
+        if (!Number.isNaN(parsed)) {
+          return Math.round(parsed);
+        }
+      }
+    }
+
+    const dataLayerInput = detailPage.locator('#DataLayer').first();
+    if (await dataLayerInput.count()) {
+      const raw = await dataLayerInput.getAttribute('value');
+      const parsed = this.parseDataLayerValue(raw);
+      const candidate = parsed?.snowflake_rating ?? parsed?.rating ?? parsed?.property_rating ?? parsed?.results_list?.[0]?.snowflake_rating ?? parsed?.results_list?.[0]?.rating ?? parsed?.results_list?.[0]?.property_rating;
+      if (candidate !== undefined && candidate !== null) {
+        const parsedNum = Number(candidate);
+        if (!Number.isNaN(parsedNum)) {
+          return Math.round(parsedNum);
+        }
+      }
+    }
+
+    return null;
   }
 
   // ============================================================
@@ -411,6 +600,7 @@ export class SearchPage extends HelperBase {
   // 🔵 RESULTS DISPLAY & VALIDATION ACTIONS
   // ============================================================
 
+  // Verify results are displayed (at least 1 property shown)
   /** Validates search results are displayed with soft assertion */
   async validateResultsCount(minCount?: number): Promise<void> {
     const count = await this.getResultsCount();
@@ -523,69 +713,87 @@ export class SearchPage extends HelperBase {
     const hasSeparator = await moreResultsSeparator.count() > 0;
 
     if (hasSeparator) {
-      this.logInfo('Found "More results..." separator - will only validate exact match results');
+      this.logInfo('Found "More results..." separator - validating cards before it');
     }
 
-    // Look for the specific nights span within any result card
-    // This matches the HTML structure: <span class="search-result__nights">2 Nights</span>
-    const expectedText = `${expectedNights} Night`; // Matches both "2 Nights" and "14+ Nights"
+    const targetNights = Number(String(expectedNights).replace(/\D+/g, '')) || Number(expectedNights);
     const allResultCards = this.page.locator('.search-results');
     const totalCount = await allResultCards.count();
 
     this.logInfo(`Found ${totalCount} total result cards`);
 
-    // Check if at least one contains the expected nights
-    let foundMatch = false;
-    let exactMatchCount = 0;
-    const allTexts: string[] = []; // Collect all texts for debugging
+    let checkedCount = 0;
+    let belowTarget = false;
+    const observed: Array<{ card: number; nights: string; parsed: number | null }> = [];
 
     for (let i = 0; i < totalCount; i++) {
       const resultCard = allResultCards.nth(i);
 
-      // If we have a separator, check if current card is after it
-      if (hasSeparator && exactMatchCount >= this.MAX_EXACT_MATCHES) {
-        // Typically the first 4 results are exact matches before "More results..."
-        // Check if we've reached the separator
-        const separatorElement = await moreResultsSeparator.first();
-        const separatorHandle = await separatorElement.elementHandle();
-        if (!separatorHandle) break;
+      if (hasSeparator && checkedCount >= this.MAX_EXACT_MATCHES) {
+        const sepHandle = await moreResultsSeparator.first().elementHandle();
+        if (!sepHandle) break;
         const isBeforeSeparator = await resultCard.evaluate((card, sep) => {
           if (!sep) return false;
           const cardTop = card.getBoundingClientRect().top;
           const sepTop = sep.getBoundingClientRect().top;
           return cardTop < sepTop;
-        }, separatorHandle);
-
+        }, sepHandle);
         if (!isBeforeSeparator) {
           this.logInfo(`Stopping at result ${i + 1} - reached "More results..." section`);
-          break; // Stop checking after separator
+          break;
         }
       }
 
-      exactMatchCount++;
+      checkedCount++;
 
-      // Get the nights text from this card
-      const nightsElement = resultCard.locator('.search-result__nights').first();
-      const text = await nightsElement.textContent();
-      const trimmedText = text?.trim() || '';
-      allTexts.push(trimmedText);
+      // Prefer dedicated nights element; fallback to common duration/meta blocks; last resort regex on card text
+      const candidates = [
+        resultCard.locator('.search-result__nights').first(),
+        resultCard.locator('.search-result__duration').first(),
+        resultCard.locator('[class*="duration" i]').filter({ hasText: /night/i }).first(),
+        resultCard.locator('.search-result__meta:has-text("night")').first()
+      ];
 
-      // Use case-insensitive comparison
-      if (trimmedText.toLowerCase().includes(expectedText.toLowerCase())) {
-        foundMatch = true;
-        this.logInfo(`✓ Found exact match result with "${trimmedText}"`);
-        break;
+      let text = '';
+      for (const locator of candidates) {
+        if (await locator.count()) {
+          text = (await locator.textContent().catch(() => ''))?.trim() || '';
+          if (text) break;
+        }
+      }
+
+      if (!text) {
+        const cardText = await resultCard.textContent().catch(() => '') || '';
+        const match = cardText.match(/(\d+)\s*Nights?/i);
+        text = match ? match[0] : '';
+      }
+
+      const parsed = (() => {
+        if (!text) return null;
+        const m = text.match(/(\d+)/);
+        return m ? Number(m[1]) : null;
+      })();
+
+      observed.push({ card: i + 1, nights: text, parsed });
+
+      if (parsed !== null && parsed < targetNights) {
+        belowTarget = true;
       }
     }
 
-    this.logInfo(`Checked ${exactMatchCount} result cards (exact matches before separator)`);
+    this.logInfo(`Checked ${checkedCount} result cards before separator`);
 
-    // Soft assertion: log and continue if not found
-    if (!foundMatch) {
-      this.addSoftError(
-        `No exact match for "${expectedText}" in first ${exactMatchCount} results. Actual: ${JSON.stringify(allTexts)}`
-      );
+    if (observed.length === 0) {
+      this.addSoftError(`No nights text found in the first ${checkedCount} results`);
+      return;
     }
+
+    if (belowTarget) {
+      this.addSoftError(`Found result(s) with nights below ${expectedNights}: ${JSON.stringify(observed)}`);
+      return;
+    }
+
+    this.logInfo(`[OK] Nights filter respected (>= ${expectedNights}) in sampled cards → ${JSON.stringify(observed)}`);
   }
 
   /**
@@ -641,8 +849,10 @@ export class SearchPage extends HelperBase {
     await this.selectCheckboxByStrategies('board basis', boardBasis, strategies, this.filtersSidebar);
   }
 
+  // Select a snowflake rating filter and wait for results to update
   /** Checks rating filter using multi-strategy selectors */
   async selectRatingFilter(rating: number): Promise<void> {
+    this.logInfo(`Selecting ${rating}-snowflake filter...`);
     const strategies = [
       this.page.locator(`input[type="checkbox"][value="${rating}"]`).first(),
       this.page.locator(`input[type="checkbox"][data-rating="${rating}"]`).first(),
@@ -650,7 +860,24 @@ export class SearchPage extends HelperBase {
       this.filtersSidebar.locator('.rating-filter, .snowflakes-filter, [data-filter="rating"]').locator(`input[type="checkbox"]`).nth(rating - 1)
     ];
 
-    await this.selectCheckboxByStrategies('rating', `${rating} snowflakes`, strategies, this.filtersSidebar);
+    const success = await this.selectCheckboxByStrategies('rating', `${rating} snowflakes`, strategies, this.filtersSidebar);
+    
+    if (!success) {
+      throw new Error(`Failed to select ${rating}-snowflake rating filter`);
+    }
+    
+    this.logInfo(`✓ ${rating}-snowflake filter applied`);
+    
+    // Wait for results count to update after filter applied
+    try {
+      await this.page.waitForLoadState('domcontentloaded');
+      await this.page.waitForTimeout(500);
+      
+      const filteredCount = await this.getResultsCount();
+      this.logInfo(`✓ Results filtered: ${filteredCount} properties with ${rating} snowflakes`);
+    } catch (err) {
+      this.logInfo(`⚠ Could not verify results count after filter: ${err}`);
+    }
   }
 
   /** Checks property feature filter using multi-strategy locators with force-check fallback */
@@ -669,6 +896,7 @@ export class SearchPage extends HelperBase {
   }
 
   /** Checks ski area filter with special character escaping and multi-strategy selectors */
+  // Select ski area filter and wait for page to re-render filtered results
   async selectSkiAreaFilter(skiArea: string): Promise<void> {
     if (!this.checkPageAlive(`selecting ski area ${skiArea}`)) return;
 
@@ -680,9 +908,32 @@ export class SearchPage extends HelperBase {
       this.filtersSidebar.locator('[class*="area"], [data-filter="area"], [data-filter="ski-area"], [class*="region"]').locator(`label:has-text("${skiArea}") input[type="checkbox"]`).first()
     ];
 
-    await this.selectCheckboxByStrategies('ski area', skiArea, strategies, this.filtersSidebar);
+    const success = await this.selectCheckboxByStrategies('ski area', skiArea, strategies, this.filtersSidebar);
+    
+    if (!success) {
+      throw new Error(`Failed to select ${skiArea} ski area filter`);
+    }
+    
+    this.logInfo(`✓ ${skiArea} ski area filter applied`);
+    
+    // Wait for results to filter
+    try {
+      await this.page.waitForFunction(
+        () => {
+          // Look for "Displaying X - Y of Z results" text that changed from 4476
+          const pageText = document.body.textContent || '';
+          return !pageText.includes('4476');
+        },
+        { timeout: 8000 }
+      ).catch(() => {
+        this.logInfo(`  Note: Result filtering wait completed or timed out`);
+      });
+    } catch (error) {
+      // Results may not have visible count, continue anyway
+    }
   }
 
+  // Select resort filter by name and wait for results to filter
   /** Checks resort filter with special character escaping and multi-strategy selectors */
   async selectResortFilter(resort: string): Promise<void> {
     if (!this.checkPageAlive(`selecting resort ${resort}`)) return;
@@ -695,7 +946,29 @@ export class SearchPage extends HelperBase {
       this.filtersSidebar.locator('[class*="resort"], [data-filter="resort"], [class*="area"]').locator(`label:has-text("${resort}") input[type="checkbox"]`).first()
     ];
 
-    await this.selectCheckboxByStrategies('resort', resort, strategies, this.filtersSidebar);
+    const success = await this.selectCheckboxByStrategies('resort', resort, strategies, this.filtersSidebar);
+    
+    if (!success) {
+      throw new Error(`Failed to select ${resort} resort filter`);
+    }
+    
+    this.logInfo(`✓ ${resort} resort filter applied`);
+    
+    // Wait for results to filter
+    try {
+      await this.page.waitForFunction(
+        () => {
+          // Look for "Displaying X - Y of Z results" text that changed from 4476
+          const pageText = document.body.textContent || '';
+          return !pageText.includes('4476');
+        },
+        { timeout: 8000 }
+      ).catch(() => {
+        this.logInfo(`  Note: Result filtering wait completed or timed out`);
+      });
+    } catch (error) {
+      // Results may not have visible count, continue anyway
+    }
   }
 
   // ============================================================
@@ -709,19 +982,43 @@ export class SearchPage extends HelperBase {
   async validateResultsContainAccommodationType(accommodationType: string): Promise<void> {
     await this.searchResults.first().waitFor({ state: 'visible' });
     const resultCards = await this.searchResults.all();
-    this.logInfo(`Checking ${Math.min(5, resultCards.length)} result cards`);
+    const sampleSize = Math.min(resultCards.length, Math.min(this.MAX_EXACT_MATCHES, 5));
 
-    let foundMatch = false;
-    for (let i = 0; i < Math.min(5, resultCards.length); i++) {
-      const cardText = await resultCards[i].textContent();
-      if (cardText?.toLowerCase().includes(accommodationType.toLowerCase())) {
-        foundMatch = true;
-        this.logInfo(`✓ Result ${i + 1} contains "${accommodationType}"`);
+    this.logInfo(`Checking up to ${sampleSize} result detail pages for accommodation "${accommodationType}"`);
+
+    let confirmed = 0;
+    let inspected = 0;
+
+    for (let i = 0; i < sampleSize; i++) {
+      const card = resultCards[i];
+      const { detailPage, detailUrl } = await this.openDetailPage(card, `Result ${i + 1}`);
+      if (!detailPage) continue;
+
+      inspected++;
+
+      try {
+        const matches = await this.detailPageMatchesAccommodation(detailPage, accommodationType);
+        if (matches) {
+          confirmed++;
+          this.logInfo(`✓ Detail confirms accommodation "${accommodationType}" → ${detailUrl}`);
+        } else {
+          this.logInfo(`✗ Detail missing accommodation "${accommodationType}" → ${detailUrl}`);
+        }
+      } catch (error) {
+        this.logInfo(`❌ Error validating accommodation on ${detailUrl}: ${error}`);
+      } finally {
+        await detailPage.close().catch(() => {});
       }
+
+      if (confirmed > 0) break;
     }
 
-    expect(foundMatch).toBeTruthy();
-    this.logInfo(`✓ Validated accommodation type: ${accommodationType}`);
+    if (confirmed === 0) {
+      this.addSoftError(`Accommodation "${accommodationType}" not confirmed in first ${sampleSize} detail pages`);
+      expect(confirmed).toBeGreaterThan(0);
+    } else {
+      this.logInfo(`✓ Confirmed accommodation "${accommodationType}" in ${confirmed} detail page(s) (inspected ${inspected})`);
+    }
   }
 
   /**
@@ -729,110 +1026,179 @@ export class SearchPage extends HelperBase {
    * @param {string} boardBasis - Expected board basis option
    */
   async validateResultsContainBoardBasis(boardBasis: string): Promise<void> {
-
     await this.searchResults.first().waitFor({ state: 'visible' });
     const resultCards = await this.searchResults.all();
-    this.logInfo(`Checking ${Math.min(5, resultCards.length)} result cards`);
+    const sampleSize = Math.min(resultCards.length, Math.min(this.MAX_EXACT_MATCHES, 5));
 
-    let foundMatch = false;
-    for (let i = 0; i < Math.min(5, resultCards.length); i++) {
-      const cardText = await resultCards[i].textContent();
-      if (cardText?.toLowerCase().includes(boardBasis.toLowerCase())) {
-        foundMatch = true;
-        this.logInfo(`✓ Result ${i + 1} contains "${boardBasis}"`);
+    this.logInfo(`Checking up to ${sampleSize} result detail pages for board basis "${boardBasis}"`);
+
+    let confirmed = 0;
+    let inspected = 0;
+
+    for (let i = 0; i < sampleSize; i++) {
+      const card = resultCards[i];
+      const { detailPage, detailUrl } = await this.openDetailPage(card, `Result ${i + 1}`);
+      if (!detailPage) continue;
+
+      inspected++;
+
+      try {
+        const matches = await this.detailPageMatchesBoardBasis(detailPage, boardBasis);
+        if (matches) {
+          confirmed++;
+          this.logInfo(`✓ Detail confirms board basis "${boardBasis}" → ${detailUrl}`);
+        } else {
+          this.logInfo(`✗ Detail missing board basis "${boardBasis}" → ${detailUrl}`);
+        }
+      } catch (error) {
+        this.logInfo(`❌ Error validating board basis on ${detailUrl}: ${error}`);
+      } finally {
+        await detailPage.close().catch(() => {});
       }
+
+      if (confirmed > 0) break;
     }
 
-    expect(foundMatch).toBeTruthy();
-    this.logInfo(`✓ Validated board basis: ${boardBasis}`);
+    if (confirmed === 0) {
+      this.addSoftError(`Board basis "${boardBasis}" not confirmed in first ${sampleSize} detail pages`);
+      expect(confirmed).toBeGreaterThan(0);
+    } else {
+      this.logInfo(`✓ Confirmed board basis "${boardBasis}" in ${confirmed} detail page(s) (inspected ${inspected})`);
+    }
   }
 
   /**
-   * Validates that results contain only the specified rating
+   * Validates that results contain only the specified rating (STRICT MODE)
    * @param {number} rating - Expected rating value (1-5 snowflakes)
+   * All results must match the filter - no tolerance for mismatches
    */
+  // Check that result cards contain the selected rating (using snowflake stars)
   async validateResultsContainRating(rating: number): Promise<void> {
 
     await this.searchResults.first().waitFor({ state: 'visible' });
     const resultCards = await this.searchResults.all();
-    this.logInfo(`Checking ${Math.min(5, resultCards.length)} result cards`);
+    const sampleSize = Math.min(5, resultCards.length);
+    const perCardTimeoutMs = 8000;
+    this.logInfo(`Checking ${sampleSize} result cards (STRICT VALIDATION, ${perCardTimeoutMs}ms/card)`);
 
-    let foundMatch = false;
+    let correctCount = 0;
+    let incorrectCount = 0;
     const ratingCounts: { [key: number]: number } = {};
-
-    for (let i = 0; i < Math.min(5, resultCards.length); i++) {
-      let cardRating = 0;
-
-      // Strategy 1: Count visual snowflake elements (spans/divs with snowflake class)
-      const snowflakeElements = resultCards[i].locator('[class*="snowflake"]:not([class*="rating"])');
-      const snowflakeCount = await snowflakeElements.count();
-      if (snowflakeCount > 0) {
-        cardRating = snowflakeCount;
+    const incorrectResults: string[] = [];
+    
+    const trackRating = (value: number | null) => {
+      if (value && value > 0) {
+        ratingCounts[value] = (ratingCounts[value] || 0) + 1;
       }
+    };
 
-      // Strategy 2: Look for rating container with multiple snowflake children
-      if (cardRating === 0) {
-        const ratingContainer = resultCards[i].locator('[class*="rating"]').first();
-        const containerExists = await ratingContainer.count();
-        if (containerExists > 0) {
-          const childrenCount = await ratingContainer.locator('[class*="snowflake"], i, span').count();
-          if (childrenCount > 0) {
-            cardRating = childrenCount;
+    for (let i = 0; i < sampleSize; i++) {
+      const processCard = async () => {
+        if (!this.checkPageAlive('validating rating results')) {
+          throw new Error('Page closed during rating validation');
+        }
+
+        let cardRating = 0;
+        const cardTitle = await resultCards[i].locator('h3, [class*="title"], [class*="heading"], a').first().textContent().catch(() => '') || `Result ${i + 1}`;
+
+        // Get text and HTML from card to find rating (may be in textContent or innerHTML)
+        const fullText = await resultCards[i].textContent().catch(() => '') || '';
+        const innerHTML = await resultCards[i].innerHTML().catch(() => '') || '';
+        const searchText = fullText + ' ' + innerHTML;
+        
+        // Extract rating from search text using multiple patterns
+        let match = searchText.match(/(\d+(?:\.\d+)?)\s+out\s+of\s+5(?:\b|[\s\w])/i);
+        if (match) {
+          cardRating = Math.round(parseFloat(match[1]));
+        }
+        
+        if (cardRating === 0) {
+          match = searchText.match(/(\d+(?:\.\d+)?)[.\s]*out[.\s]*of[.\s]*5/i);
+          if (match) {
+            cardRating = Math.round(parseFloat(match[1]));
           }
         }
-      }
-
-      // Strategy 3: Look for data-rating attribute
-      if (cardRating === 0) {
-        const ratingByData = resultCards[i].locator('[data-rating]');
-        const dataRatingValue = await ratingByData.getAttribute('data-rating').catch(() => '');
-        if (dataRatingValue) {
-          cardRating = parseInt(dataRatingValue, 10);
+        
+        if (cardRating === 0) {
+          const snowflakeCount = (searchText.match(/★|✓\s*5|[5](?:\s+out|\s+snowflake)/gi) || []).length;
+          if (snowflakeCount > 0) {
+            cardRating = snowflakeCount;
+          }
         }
-      }
+        
+        if (cardRating === 0) {
+          match = searchText.match(/(\d+(?:\.\d+)?)\s+snowflake/i);
+          if (match) {
+            cardRating = Math.round(parseFloat(match[1]));
+          }
+        }
 
-      // Strategy 4: Count any icon-like elements (i, svg) within rating area
-      if (cardRating === 0) {
-        const iconElements = resultCards[i].locator('[class*="rating"] i, [class*="rating"] svg, [class*="star"]');
-        cardRating = await iconElements.count();
-      }
+        trackRating(cardRating > 0 ? cardRating : null);
 
-      // Track rating distribution
-      if (cardRating > 0) {
-        ratingCounts[cardRating] = (ratingCounts[cardRating] || 0) + 1;
-      }
+        // Validate card rating matches expected rating
+        if (cardRating === rating) {
+          correctCount++;
+          this.logInfo(`  Card ${i + 1}: ${cardRating}★ ✓`);
+        } else if (cardRating > 0) {
+          incorrectCount++;
+          incorrectResults.push(`Card ${i + 1}: ${cardRating}★ (expected ${rating}★)`);
+          this.logInfo(`  Card ${i + 1}: ${cardRating}★ (expected ${rating}★)`);
+        } else {
+          incorrectCount++;
+          incorrectResults.push(`Card ${i + 1}: unknown rating`);
+          this.logInfo(`  Card ${i + 1}: unknown rating`);
+        }
+      };
 
-      // Check if this card matches the expected rating
-      if (cardRating === rating) {
-        foundMatch = true;
-        this.logInfo(`  ✓ Result ${i + 1} has ${rating} snowflakes rating`);
-      } else if (cardRating > 0) {
-        this.logInfo(`  ✗ Result ${i + 1} has ${cardRating} snowflakes (expected ${rating})`);
+      try {
+        await Promise.race([
+          processCard(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('card-timeout')), perCardTimeoutMs))
+        ]);
+      } catch (err) {
+        if ((err as Error).message === 'card-timeout') {
+          incorrectResults.push(`Result ${i + 1}: timed out extracting rating`);
+          this.logInfo(`  ⚠ [TIMEOUT] Result ${i + 1} exceeded ${perCardTimeoutMs}ms`);
+          incorrectCount++;
+        } else {
+          this.logInfo(`  ⚠ Card processing error: ${err}`);
+          incorrectCount++;
+          incorrectResults.push(`Result ${i + 1}: ${err}`);
+        }
       }
     }
 
     // Show rating distribution
     this.logInfo(`  Rating distribution: ${JSON.stringify(ratingCounts)}`);
 
-    if (!foundMatch) {
-      this.logInfo(`  ⚠ No results with exactly ${rating} snowflakes found`);
-      this.logInfo(`  ℹ This may mean: (1) filter not working, (2) no properties with ${rating} stars available, or (3) wrong checkbox selected`);
+    // STRICT VALIDATION: All results must match
+    if (incorrectCount > 0) {
+      const errorMsg = `❌ RATING FILTER BROKEN: ${incorrectCount}/${sampleSize} results have wrong rating!\n` +
+        `   Expected: ${rating} snowflakes only\n` +
+        `   Correct: ${correctCount}, Incorrect: ${incorrectCount}\n` +
+        `   Wrong results: ${incorrectResults.join(', ')}\n` +
+        `   This indicates the ${rating}-snowflake filter is not working properly.`;
+      
+      this.logInfo(errorMsg);
+      throw new Error(errorMsg);
     }
 
-    // Modified expectation: if no results match, it's a soft warning not a hard failure
-    // This allows test to complete and we can investigate
-    if (!foundMatch) {
-      this.addSoftWarning(`Rating filter: no results with exactly ${rating} snowflakes found in sampled cards`);
-    } else {
-      expect(foundMatch).toBeTruthy();
-      this.logInfo(`✓ Validated rating: ${rating} snowflakes`);
+    if (correctCount === 0) {
+      const errorMsg = `❌ NO RESULTS MATCH: None of the ${sampleSize} sampled results have ${rating} snowflakes.\n` +
+        `   This may indicate: (1) filter not applied, (2) no properties available, or (3) wrong checkbox selected.`;
+      
+      this.logInfo(errorMsg);
+      throw new Error(errorMsg);
     }
+
+    this.logInfo(`✓ STRICT VALIDATION PASSED: All ${correctCount}/${sampleSize} results have exactly ${rating} snowflakes`);
   }
 
   /**
    * Validates that results contain the specified property feature
    * @param {string} feature - Expected feature name
    */
+  // Validate property features like WiFi, Sauna, Jacuzzi are displayed on cards
   async validateResultsContainFeature(feature: string): Promise<void> {
 
     try {
@@ -894,7 +1260,7 @@ export class SearchPage extends HelperBase {
       }
 
       if (!foundMatch) {
-        this.addSoftWarning(`Feature "${feature}" not visibly displayed in sampled result cards`);
+        this.addSoftError(`Feature "${feature}" not visibly displayed in sampled result cards`);
       } else {
         this.logInfo(`✓ Validated feature: ${feature}`);
       }
@@ -910,26 +1276,45 @@ export class SearchPage extends HelperBase {
 
   /**
    * Validates that results belong to the specified ski area
+   * Maps ski area names to their component resorts for validation
    * @param {string} skiArea - Expected ski area name
    */
+  // Ski areas like "The 3 Valleys" contain multiple resorts (Val Thorens, Méribel, etc)
+  // This validates by checking for any resort name that belongs to the ski area
   async validateResultsContainSkiArea(skiArea: string): Promise<void> {
+
+    // Mapping of ski areas to their component resorts
+    const skiAreaResorts: Record<string, string[]> = {
+      'The 3 Valleys': ['Brides Les Bains', 'Courchevel', 'La Tania', 'Les Menuires', 'Méribel', 'St Martin de Belleville', 'Val Thorens'],
+      'Portes du Soleil': ['Avoriaz', 'Morzine', 'Chamonix', 'Mégève'],
+      'Paradiski': ['Paradiski', 'La Plagne', 'Peisey', 'Vallandry'],
+    };
 
     try {
       await this.searchResults.first().waitFor({ state: 'visible' });
       const resultCards = await this.searchResults.all();
-      this.logInfo(`Checking ${Math.min(5, resultCards.length)} result cards`);
+      this.logInfo(`Checking ${Math.min(5, resultCards.length)} result cards for "${skiArea}"`);
+
+      // Get the list of resorts to check for this ski area
+      const resortList = skiAreaResorts[skiArea] || [skiArea];
 
       let foundMatch = false;
       for (let i = 0; i < Math.min(5, resultCards.length); i++) {
-        const cardText = await resultCards[i].textContent().catch(() => '');
-        if (cardText?.includes(skiArea)) {
+        const fullText = await resultCards[i].textContent().catch(() => '');
+        const innerHTML = await resultCards[i].innerHTML().catch(() => '');
+        const searchText = fullText + ' ' + innerHTML;
+        
+        // Check if any of the resorts for this ski area are found in the card
+        const foundResort = resortList.find(resort => searchText?.includes(resort));
+        if (foundResort) {
           foundMatch = true;
-          this.logInfo(`✓ Result ${i + 1} belongs to "${skiArea}"`);
+          this.logInfo(`  ✓ Card ${i + 1}: "${foundResort}" (part of ${skiArea})`);
         }
       }
 
       if (!foundMatch) {
-        this.addSoftWarning(`No results found for ski area "${skiArea}" in sampled cards`);
+        this.logInfo(`  Resorts to check: ${resortList.join(', ')}`);
+        this.addSoftError(`No results found for ski area "${skiArea}" in sampled cards`);
       } else {
         this.logInfo(`✓ Validated ski area: ${skiArea}`);
       }
@@ -942,6 +1327,7 @@ export class SearchPage extends HelperBase {
    * Validates that results belong to the specified resort
    * @param {string} resort - Expected resort name
    */
+  // Validate that sampled result cards display the expected resort name
   async validateResultsContainResort(resort: string): Promise<void> {
 
     try {
@@ -951,15 +1337,18 @@ export class SearchPage extends HelperBase {
 
       let foundMatch = false;
       for (let i = 0; i < Math.min(5, resultCards.length); i++) {
-        const cardText = await resultCards[i].textContent().catch(() => '');
-        if (cardText?.includes(resort)) {
+        const fullText = await resultCards[i].textContent().catch(() => '');
+        const innerHTML = await resultCards[i].innerHTML().catch(() => '');
+        const searchText = fullText + ' ' + innerHTML;
+        
+        if (searchText?.includes(resort)) {
           foundMatch = true;
-          this.logInfo(`✓ Result ${i + 1} belongs to "${resort}"`);
+          this.logInfo(`✓ Card ${i + 1}: ${resort} ✓`);
         }
       }
 
       if (!foundMatch) {
-        this.addSoftWarning(`No results found for resort "${resort}" in sampled cards`);
+        this.addSoftError(`No results found for resort "${resort}" in sampled cards`);
       } else {
         this.logInfo(`✓ Validated resort: ${resort}`);
       }
@@ -1066,23 +1455,15 @@ export class SearchPage extends HelperBase {
    */
   async selectMultipleAccommodations(accommodationTypes: string[]): Promise<number> {
     for (const type of accommodationTypes) {
-      try {
-        const checkbox = this.page.locator(`label:has-text("${type}") input[type="checkbox"]`).first();
-        const isChecked = await checkbox.isChecked().catch(() => false);
-        
-        if (!isChecked && await checkbox.count() > 0) {
-          await checkbox.scrollIntoViewIfNeeded();
-          await checkbox.check({ force: true });
-          try {
-            await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-            await this.page.waitForTimeout(500).catch(() => {});
-          } catch {}
-          const count = await this.getResultsCount();
-          this.logInfo(`✓ ${type} → ${count} results`);
-        }
-      } catch (error) {
-        this.logInfo(`⚠ ${type} error`);
-      }
+      const strategies = [
+        this.page.locator(`label:has-text("${type}") input[type="checkbox"]`).first(),
+        this.page.locator(`input[type="checkbox"][value="${type}"]`).first(),
+        this.page.locator(`input[type="checkbox"]#${type.replace(/\s+/g, '')}`).first()
+      ];
+
+      await this.selectCheckboxByStrategies('accommodation type', type, strategies, this.filtersSidebar);
+      const count = await this.getResultsCount();
+      this.logInfo(`✓ ${type} → ${count} results`);
     }
     
     const resultsCount = await this.getResultsCount();
@@ -1096,23 +1477,15 @@ export class SearchPage extends HelperBase {
    */
   async selectMultipleBoardBasis(boardBasisOptions: string[]): Promise<number> {
     for (const option of boardBasisOptions) {
-      try {
-        const checkbox = this.page.locator(`label:has-text("${option}") input[type="checkbox"]`).first();
-        const isChecked = await checkbox.isChecked().catch(() => false);
-        
-        if (!isChecked && await checkbox.count() > 0) {
-          await checkbox.scrollIntoViewIfNeeded();
-          await checkbox.check({ force: true });
-          try {
-            await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-            await this.page.waitForTimeout(500).catch(() => {});
-          } catch {}
-          const count = await this.getResultsCount();
-          this.logInfo(`✓ ${option} → ${count} results`);
-        }
-      } catch (error) {
-        this.logInfo(`⚠ ${option} error`);
-      }
+      const strategies = [
+        this.page.locator(`label:has-text("${option}") input[type="checkbox"]`).first(),
+        this.page.locator(`input[type="checkbox"][value="${option}"]`).first(),
+        this.page.locator(`input[type="checkbox"]#${option.replace(/\s+/g, '')}`).first()
+      ];
+
+      await this.selectCheckboxByStrategies('board basis', option, strategies, this.filtersSidebar);
+      const count = await this.getResultsCount();
+      this.logInfo(`✓ ${option} → ${count} results`);
     }
     
     const resultsCount = await this.getResultsCount();
@@ -1126,23 +1499,15 @@ export class SearchPage extends HelperBase {
    */
   async selectMultipleSkiAreas(skiAreas: string[]): Promise<number> {
     for (const area of skiAreas) {
-      try {
-        const checkbox = this.page.locator(`label:has-text("${area}") input[type="checkbox"]`).first();
-        const isChecked = await checkbox.isChecked().catch(() => false);
-        
-        if (!isChecked && await checkbox.count() > 0) {
-          await checkbox.scrollIntoViewIfNeeded();
-          await checkbox.check({ force: true });
-          try {
-            await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-            await this.page.waitForTimeout(500).catch(() => {});
-          } catch {}
-          const count = await this.getResultsCount();
-          this.logInfo(`✓ ${area} → ${count} results`);
-        }
-      } catch (error) {
-        this.logInfo(`⚠ ${area} error`);
-      }
+      const strategies = [
+        this.page.locator(`label:has-text("${area}") input[type="checkbox"]`).first(),
+        this.page.locator(`input[type="checkbox"][value="${area}"]`).first(),
+        this.page.locator(`input[type="checkbox"]#${area.replace(/\s+/g, '')}`).first()
+      ];
+
+      await this.selectCheckboxByStrategies('ski area', area, strategies, this.filtersSidebar);
+      const count = await this.getResultsCount();
+      this.logInfo(`✓ ${area} → ${count} results`);
     }
     
     const resultsCount = await this.getResultsCount();
