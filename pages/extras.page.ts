@@ -15,6 +15,6 @@ export class ExtrasPage   extends HelperBase {
   }
 
   async isExtrasPageLoaded(): Promise<boolean> {
-    return await this.adult1Dropdown.isVisible({ timeout: 5000 }).catch(() => false);
+    return await this.adult1Dropdown.isVisible().catch(() => false);
   }
 }

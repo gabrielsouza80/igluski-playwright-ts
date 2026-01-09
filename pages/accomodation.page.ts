@@ -49,14 +49,14 @@ export class AccommodationPage  extends HelperBase {
     // Seleciona ambos adultos para a sala
     await this.selectAdultForRoom(1);
     await this.selectAdultForRoom(2);
-    // Fecha o modal/mostra opções de sala
+    // Closes the modal/shows room options
     await this.showRoomOptionsBtn.click();
-    // Aguarda verificação de disponibilidade
+    // Waits for availability check
     await this.page.waitForLoadState('networkidle');
   }
 
   async selectRoomOption(): Promise<void> {
-    // Clica em "Select" para selecionar a opção de quarto
+    // Clicks 'Select' to choose the room option
     const selectBtn = this.page.locator('button:has-text("Select")').first();
     await selectBtn.click();
   }
@@ -67,6 +67,6 @@ export class AccommodationPage  extends HelperBase {
   }
 
   async isAccommodationPageLoaded(): Promise<boolean> {
-    return await this.confirmNumberOfPeopleBtn.isVisible({ timeout: 5000 }).catch(() => false);
+    return await this.confirmNumberOfPeopleBtn.isVisible().catch(() => false);
   }
 }

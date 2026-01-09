@@ -263,6 +263,80 @@
     },
     "searchPage": {
         "_comment": "Search and filter page test data for ski holidays",
+        "locators": {
+            "_comment": "CSS selectors and accessor patterns for SearchPage - organized by section",
+            "pageStructure": {
+                "_comment": "Main page container and layout elements",
+                "main": "main.main",
+                "description": "Main content container"
+            },
+            "filterSidebar": {
+                "_comment": "Filter panel locators",
+                "sidebar": "#holiday-collapse",
+                "checkboxes": "input[type='checkbox']",
+                "dropdownButton": "button.dropdown-toggle",
+                "nights": {
+                    "pattern": "/nights|Any/",
+                    "description": "Duration filter button pattern"
+                },
+                "adults": {
+                    "pattern": "/Adult/",
+                    "description": "Adults dropdown button pattern within sidebar"
+                },
+                "children": {
+                    "pattern": "/Children/",
+                    "description": "Children dropdown button pattern within sidebar"
+                },
+                "labelAncestor": "xpath=ancestor::label[1]",
+                "description": "Fallback label selector for checkbox interaction"
+            },
+            "resultsDisplay": {
+                "_comment": "Results grid and pagination locators",
+                "cards": ".search-results",
+                "statsText": ".faceted-search__details__stats",
+                "paginationRole": {
+                    "name": "/Displaying 1 -/",
+                    "description": "Navigation element for pagination"
+                },
+                "sortButton": "button#results-sort",
+                "resultsPerPageButton": "button#results-per-page",
+                "bookOnlineButton": {
+                    "role": "button",
+                    "name": "Book Online",
+                    "description": "First Book Online CTA button"
+                },
+                "noResultsMessage": "text=/no results|no properties/i"
+            },
+            "detailPage": {
+                "_comment": "Detail page locators within opened tabs/pages",
+                "specSelectors": ".package__include-text, .package__include-title, .package__include",
+                "dataLayer": "#DataLayer",
+                "ratingLocators": "[class*='rating'], .star-rating, [data-rating]",
+                "linkPatterns": {
+                    "skiResorts": "a[href*='/ski-resorts']",
+                    "title": "a.search-result__title, a:has(.search-result__title)",
+                    "cta": "a:has-text('View'), a:has-text('Details'), a:has-text('Book Online')",
+                    "ski": "a[href*='ski' i]",
+                    "fallback": "a[href]"
+                }
+            },
+            "regexPatterns": {
+                "_comment": "Regex patterns used across page interactions",
+                "resultsMessage": "/We\\s+have\\s+found\\s+\\d+\\s+properties?/",
+                "displayingStats": "/of\\s+\\d+\\s+results?/i",
+                "ariaRating": "/(\\d+(?:\\.\\d+)?)\\s*(?:out\\s+of\\s+)?5/i",
+                "propertyType": "Hotel|Chalet|Apartment|Resort|Cottage",
+                "boardBasis": "Self catered|Half board|Full board|All inclusive"
+            }
+        },
+        "timeouts": {
+            "_comment": "Wait times for various page elements",
+            "sidebarVisible": 10000,
+            "resultsVisible": 5000,
+            "detailPageLoad": 30000,
+            "pageSettlement": 500,
+            "networkIdle": "domcontentloaded"
+        },
         "filters": {
             "nights": {
                 "description": "Duration filter options in nights",

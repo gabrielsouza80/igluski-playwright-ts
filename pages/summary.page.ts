@@ -20,6 +20,6 @@ export class SummaryPage    extends HelperBase {
   }
 
   async isSummaryPageLoaded(): Promise<boolean> {
-    return await this.roomsAndBoardSection.isVisible({ timeout: 5000 }).catch(() => false);
+    return await this.roomsAndBoardSection.isVisible().catch(() => false);
   }
 }

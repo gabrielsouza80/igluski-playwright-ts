@@ -6,7 +6,7 @@ export class PaymentPage  extends HelperBase {
 
   async isPaymentPageDisplayed(): Promise<boolean> {
     const pageUrl = this.page.url();
-    const hasPaymentText = await this.page.locator('text=/payment|checkout|pay/i').first().isVisible({ timeout: 3000 }).catch(() => false);
+    const hasPaymentText = await this.page.locator('text=/payment|checkout|pay/i').first().isVisible().catch(() => false);
     return pageUrl.includes('payment') || pageUrl.includes('checkout') || hasPaymentText;
   }
 

@@ -5,147 +5,60 @@ import testdata from '../tests/fixtures/testdata.json';
 export class SearchPage extends HelperBase {
   constructor(page: Page) { super(page) }
 
-  // Validation constants from testdata.json
+  // ============================================================
+  // 📌 VALIDATION CONSTANTS & PATTERNS (from testdata)
+  // ============================================================
   private readonly MAX_EXACT_MATCHES = testdata.searchPage.validationConstants.maxExactMatches;
   private readonly MAX_DEBUG_ITEMS = testdata.searchPage.validationConstants.maxDebugItems;
 
-  // ============================
-  // PAGE STRUCTURE LOCATORS
-  // ============================
+  // Extract regex patterns from testdata
+  private readonly PATTERN_NIGHTS = /nights|Any/;
+  private readonly PATTERN_ADULTS = /Adult/;
+  private readonly PATTERN_CHILDREN = /Children/;
+  private readonly PATTERN_PAGINATION = /Displaying 1 -/;
+  private readonly PATTERN_RESULTS_MESSAGE = /We\s+have\s+found\s+\d+\s+properties?/;
+  private readonly PATTERN_DISPLAYING_STATS = /of\s+\d+\s+results?/i;
+  private readonly PATTERN_ARIA_RATING = /(\d+(?:\.\d+)?)\s*(?:out\s+of\s+)?5/i;
+
+  // ============================================================
+  // 🔴 READONLY LOCATORS (Grouped by Page Section - Better Organization)
+  // ============================================================
+
+  // PAGE STRUCTURE
   readonly main: Locator = this.page.locator('main.main');
 
-  // ============================
-  // FILTER SIDEBAR LOCATORS
-  // ============================
-  // Sidebar container for holiday filters on results page
+  // FILTER SIDEBAR - Main Container & Dropdowns
   readonly filtersSidebar: Locator = this.page.locator('#holiday-collapse');
+  readonly nightsButton: Locator = this.page.locator('button.dropdown-toggle').filter({ hasText: this.PATTERN_NIGHTS }).first();
+  readonly adultsButton: Locator = this.page.locator('#holiday-collapse button.dropdown-toggle').filter({ hasText: this.PATTERN_ADULTS }).first();
+  readonly childrenButton: Locator = this.page.locator('#holiday-collapse button.dropdown-toggle').filter({ hasText: this.PATTERN_CHILDREN }).first();
 
-  // Bootstrap-select custom dropdowns (not native <select> elements)
-  readonly nightsButton: Locator = this.page.locator('button.dropdown-toggle').filter({ hasText: /nights|Any/ }).first(); // Duration filter button
-  readonly adultsButton: Locator = this.page.locator('#holiday-collapse button.dropdown-toggle').filter({ hasText: /Adult/ }).first(); // Adults dropdown button (sidebar)
-  readonly childrenButton: Locator = this.page.locator('#holiday-collapse button.dropdown-toggle').filter({ hasText: /Children/ }).first(); // Children dropdown button (sidebar)
-
-  // ============================
-  // RESULTS DISPLAY LOCATORS
-  // ============================
-  readonly searchResults: Locator = this.page.locator('.search-results'); // Property result cards (corrected to plural)
-  readonly resultsCountText: Locator = this.page.locator('.faceted-search__details__stats'); // "Displaying 1-10 of X results"
-  readonly pagination: Locator = this.main.getByRole('navigation', { name: /Displaying 1 -/ }); // Pagination controls
-  readonly sortButton: Locator = this.page.locator('button#results-sort').first(); // Sort dropdown button (use first to avoid strict mode)
-  readonly resultsPerPageButton: Locator = this.page.locator('button#results-per-page').first(); // Results per page button (use first)
-  readonly firstBookOnlineBtn: Locator = this.page.getByRole('button', { name: 'Book Online' }).first(); // First "Book Online" CTA
+  // RESULTS DISPLAY - Cards, Pagination, Sort, etc.
+  readonly searchResults: Locator = this.page.locator('.search-results');
+  readonly resultsCountText: Locator = this.page.locator('.faceted-search__details__stats');
+  readonly pagination: Locator = this.main.getByRole('navigation', { name: this.PATTERN_PAGINATION });
+  readonly sortButton: Locator = this.page.locator('button#results-sort').first();
+  readonly resultsPerPageButton: Locator = this.page.locator('button#results-per-page').first();
+  readonly firstBookOnlineBtn: Locator = this.page.getByRole('button', { name: 'Book Online' }).first();
 
   // ============================================================
-  // 🔵 PRIVATE HELPER METHODS
+  // 🔵 PRIVATE HELPER METHODS (Organized by Function)
   // ============================================================
 
-  // Try multiple selector strategies to find checkbox (ID, value, label text, etc)
-  /** Generic method to select checkbox filter with multi-strategy fallback */
-  private async selectCheckboxFilter(
-    filterName: string,
-    filterValue: string,
-    strategies: ((value: string) => Locator)[]
-  ): Promise<void> {
-
-    try {
-      await this.filtersSidebar.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-      await this.filtersSidebar.scrollIntoViewIfNeeded().catch(() => {});
-
-      let checkbox: Locator | null = null;
-
-      // Try each strategy until one finds the checkbox
-      for (const strategy of strategies) {
-        const candidate = strategy(filterValue);
-        if (await candidate.count() > 0) {
-          checkbox = candidate;
-          break;
-        }
-      }
-
-      // If still not found, log debug info
-      if (!checkbox || await checkbox.count() === 0) {
-        const allCheckboxes = await this.filtersSidebar.locator('input[type="checkbox"]').all();
-        this.logInfo(`⚠ Could not find checkbox. Found ${allCheckboxes.length} checkboxes in filters`);
-
-        for (let i = 0; i < Math.min(this.MAX_DEBUG_ITEMS, allCheckboxes.length); i++) {
-          const value = await allCheckboxes[i].getAttribute('value');
-          const id = await allCheckboxes[i].getAttribute('id');
-          this.logInfo(`  Checkbox ${i}: id="${id}", value="${value}"`);
-        }
-
-        throw new Error(`Could not locate checkbox for ${filterName}: ${filterValue}`);
-      }
-
-      // Try main checkbox click + verification, then fallback to parent label click once
-      for (let attempt = 0; attempt < 2; attempt++) {
-        try {
-          await checkbox.scrollIntoViewIfNeeded();
-        } catch {}
-
-        try {
-          await checkbox.check({ force: true });
-        } catch (err) {
-          this.logInfo(`⚠ Attempt ${attempt + 1} check failed for ${filterName}: ${err}`);
-        }
-
-        const checked = await checkbox.isChecked().catch(() => false);
-        if (checked) {
-          this.logInfo(`✓ Selected ${filterName}: ${filterValue}`);
-          return;
-        }
-
-        // Fallback: click ancestor label if present
-        const label = checkbox.locator('xpath=ancestor::label[1]').first();
-        if (await label.count()) {
-          try {
-            await label.scrollIntoViewIfNeeded().catch(() => {});
-            await label.click({ force: true });
-          } catch (err) {
-            this.logInfo(`⚠ Attempt ${attempt + 1} label click failed for ${filterName}: ${err}`);
-          }
-        }
-      }
-
-      // Final state check
-      const finalChecked = await checkbox.isChecked().catch(() => false);
-      if (!finalChecked) {
-        throw new Error(`Could not check ${filterName}: ${filterValue}`);
-      }
-
-      this.logInfo(`✓ Selected ${filterName}: ${filterValue}`);
-
-    } catch (error) {
-      this.logInfo(`❌ Error selecting ${filterName}: ${error}`);
-      throw error;
-    }
+  // --- Detail Page Locators (from testdata.locators.detailPage) ---
+  private getDetailPageSpecLocator(detailPage: Page): Locator {
+    return detailPage.locator('.package__include-text, .package__include-title, .package__include');
   }
 
-  /** Generic method to validate results contain specific text */
-  private async validateResultsContainText(
-    description: string,
-    expectedText: string,
-    maxCards: number = this.MAX_DEBUG_ITEMS
-  ): Promise<void> {
-
-    await this.searchResults.first().waitFor({ state: 'visible' });
-    const resultCards = await this.searchResults.all();
-    this.logInfo(`Checking ${Math.min(maxCards, resultCards.length)} result cards`);
-
-    let foundMatch = false;
-    for (let i = 0; i < Math.min(maxCards, resultCards.length); i++) {
-      const cardText = await resultCards[i].textContent().catch(() => '');
-      if (cardText?.toLowerCase().includes(expectedText.toLowerCase())) {
-        foundMatch = true;
-        this.logInfo(`✓ Found ${description} in result ${i + 1}`);
-        break;
-      }
-    }
-
-    if (!foundMatch) {
-      this.logInfo(`⚠ No match for "${expectedText}" in first ${Math.min(maxCards, resultCards.length)} results`);
-    }
+  private getDetailPageDataLayerLocator(detailPage: Page): Locator {
+    return detailPage.locator('#DataLayer').first();
   }
 
+  private getDetailPageRatingLocator(detailPage: Page): Locator {
+    return detailPage.locator('[class*="rating"], .star-rating, [data-rating]').first();
+  }
+
+  // --- Text Validation Helpers ---
   /** Safely escapes a string for use inside RegExp constructors */
   private escapeRegExp(value: string): string {
     return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -166,6 +79,7 @@ export class SearchPage extends HelperBase {
     }
   }
 
+  // --- Result Card Navigation ---
   /** Extracts the primary property/detail href from a result card */
   private async extractResultHref(resultCard: Locator): Promise<string | null> {
     const candidates: Locator[] = [
@@ -204,28 +118,27 @@ export class SearchPage extends HelperBase {
     let detailPage: Page | null = null;
     try {
       detailPage = await this.page.context().newPage();
-      await detailPage.goto(href, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      await detailPage.waitForTimeout(500).catch(() => {});
+      await detailPage.goto(href, { waitUntil: 'domcontentloaded', timeout: testdata.searchPage.timeouts.detailPageLoad });
+      await detailPage.waitForTimeout(testdata.searchPage.timeouts.pageSettlement).catch(() => { });
       return { detailPage, detailUrl: href };
     } catch (error) {
       this.logInfo(`❌ ${contextLabel}: failed to open detail page (${href}) → ${error}`);
-      if (detailPage) await detailPage.close().catch(() => {});
+      if (detailPage) await detailPage.close().catch(() => { });
       return { detailPage: null, detailUrl: href };
     }
   }
 
+  // --- Detail Page Validation Helpers ---
   /** Checks accommodation type inside product detail page (spec section or data layer) */
   private async detailPageMatchesAccommodation(detailPage: Page, accommodationType: string): Promise<boolean> {
     const matcher = new RegExp(this.escapeRegExp(accommodationType), 'i');
-    const specLocator = detailPage
-      .locator('.package__include-text, .package__include-title, .package__include')
-      .filter({ hasText: matcher });
+    const specLocator = this.getDetailPageSpecLocator(detailPage).filter({ hasText: matcher });
 
     if (await specLocator.count()) {
       return true;
     }
 
-    const dataLayerInput = detailPage.locator('#DataLayer').first();
+    const dataLayerInput = this.getDetailPageDataLayerLocator(detailPage);
     if (await dataLayerInput.count()) {
       const raw = await dataLayerInput.getAttribute('value');
       const parsed = this.parseDataLayerValue(raw);
@@ -241,15 +154,13 @@ export class SearchPage extends HelperBase {
   /** Checks board basis inside product detail page (spec section or data layer) */
   private async detailPageMatchesBoardBasis(detailPage: Page, boardBasis: string): Promise<boolean> {
     const matcher = new RegExp(this.escapeRegExp(boardBasis), 'i');
-    const specLocator = detailPage
-      .locator('.package__include-text, .package__include-title, .package__include')
-      .filter({ hasText: matcher });
+    const specLocator = this.getDetailPageSpecLocator(detailPage).filter({ hasText: matcher });
 
     if (await specLocator.count()) {
       return true;
     }
 
-    const dataLayerInput = detailPage.locator('#DataLayer').first();
+    const dataLayerInput = this.getDetailPageDataLayerLocator(detailPage);
     if (await dataLayerInput.count()) {
       const raw = await dataLayerInput.getAttribute('value');
       const parsed = this.parseDataLayerValue(raw);
@@ -264,11 +175,11 @@ export class SearchPage extends HelperBase {
 
   /** Extracts numeric rating (snowflakes) from a detail page via text or data layer */
   private async detailPageGetRating(detailPage: Page): Promise<number | null> {
-    const ratingLocator = detailPage.locator('[class*="rating"], .star-rating, [data-rating]').first();
+    const ratingLocator = this.getDetailPageRatingLocator(detailPage);
     if (await ratingLocator.count()) {
       const aria = await ratingLocator.getAttribute('aria-label').catch(() => '') || '';
       const text = aria || (await ratingLocator.textContent().catch(() => '') || '');
-      const match = text.match(/(\d+(?:\.\d+)?)\s*(?:out\s+of\s+)?5/i);
+      const match = text.match(this.PATTERN_ARIA_RATING);
       if (match) {
         const parsed = Number(match[1]);
         if (!Number.isNaN(parsed)) {
@@ -326,25 +237,13 @@ export class SearchPage extends HelperBase {
 
   /**
    * Gets the total number of search results found (from result summary text)
-   * Extracts number from "We have found X properties" or "Encontramos X imóveis" text
+   * Extracts number from "We have found X properties" text or pagination stats
    * @returns {Promise<number>} Total count of results found
    */
   async getResultsCount(): Promise<number> {
     try {
-      // Try Portuguese first: "Encontramos X imóveis em..."
-      const resultSummaryPT = this.page.locator('text=/Encontramos\\s+\\d+\\s+imóveis/').first();
-      if (await resultSummaryPT.count() > 0) {
-        const text = await resultSummaryPT.textContent();
-        if (text) {
-          const match = text.match(/Encontramos\s+(\d+)\s+imóveis/);
-          if (match && match[1]) {
-            return parseInt(match[1], 10);
-          }
-        }
-      }
-
       // Try English: "We have found X properties"
-      const resultSummaryEN = this.page.locator('text=/We\\s+have\\s+found\\s+\\d+\\s+properties?/').first();
+      const resultSummaryEN = this.page.locator(`text=${this.PATTERN_RESULTS_MESSAGE}`).first();
       if (await resultSummaryEN.count() > 0) {
         const text = await resultSummaryEN.textContent();
         if (text) {
@@ -359,12 +258,12 @@ export class SearchPage extends HelperBase {
       const stats = this.resultsCountText.first();
       if (await stats.count() > 0) {
         const statsText = (await stats.textContent())?.trim() || '';
-        let m = statsText.match(/of\s+(\d+)\s+results?/i);
+        let m = statsText.match(this.PATTERN_DISPLAYING_STATS);
         if (m && m[1]) {
           return parseInt(m[1], 10);
         }
       }
-      
+
       // Last resort: count displayed result items
       const fallbackCount = await this.searchResults.count();
       return fallbackCount;
@@ -379,14 +278,14 @@ export class SearchPage extends HelperBase {
   async clickFirstBookOnline(): Promise<void> {
     try {
       // Ensure results are visible before clicking the CTA
-      await this.searchResults.first().waitFor({ state: 'visible' }).catch(() => {});
+      await this.searchResults.first().waitFor({ state: 'visible' }).catch(() => { });
 
       // Click the first visible "Book Online" button
-      await this.firstBookOnlineBtn.scrollIntoViewIfNeeded().catch(() => {});
+      await this.firstBookOnlineBtn.scrollIntoViewIfNeeded().catch(() => { });
       await this.firstBookOnlineBtn.click();
 
       // Allow page to settle/navigate
-      await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+      await this.page.waitForLoadState('domcontentloaded').catch(() => { });
       this.logInfo('✓ Clicked first Book Online');
     } catch (error) {
       this.logInfo(`❌ Error clicking first Book Online: ${error}`);
@@ -446,8 +345,7 @@ export class SearchPage extends HelperBase {
         await targetOption.click({ force: true });
       });
       // Wait for page response after selection
-      await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-      await this.page.waitForTimeout(500).catch(() => {});
+      await this.page.waitForLoadState('domcontentloaded').catch(() => { });
       const count = await this.getResultsCount();
       this.logInfo(`✓ ${nights} nights → ${count} results`);
     } catch (error) {
@@ -472,8 +370,7 @@ export class SearchPage extends HelperBase {
         // Try to select the requested value
         try {
           await adultsSelect.selectOption(adultsValue);
-          await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-          await this.page.waitForTimeout(500).catch(() => {});
+          await this.page.waitForLoadState('domcontentloaded').catch(() => { });
           this.logInfo(`✓ ${adultsValue} adults selected`);
         } catch (e) {
           // If exact value not available, use first valid option
@@ -518,8 +415,7 @@ export class SearchPage extends HelperBase {
 
         // Select the determined value
         await childrenSelect.selectOption(finalValue);
-        await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-        await this.page.waitForTimeout(500).catch(() => {});
+        await this.page.waitForLoadState('domcontentloaded').catch(() => { });
         const count = await this.getResultsCount();
         this.logInfo(`✓ Travelers: ${adultsValue} adults, ${finalValue} children → ${count} results`);
       } else {
@@ -532,8 +428,8 @@ export class SearchPage extends HelperBase {
   }
 
   async selectCountryFilter(countryCode: string): Promise<void> {
-    await this.filtersSidebar.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-    await this.filtersSidebar.scrollIntoViewIfNeeded().catch(() => {});
+    await this.filtersSidebar.waitFor({ state: 'visible' }).catch(() => { });
+    await this.filtersSidebar.scrollIntoViewIfNeeded().catch(() => { });
     let countryCheckbox = this.page.locator(`input#${countryCode}`);
 
     if (!(await countryCheckbox.count())) {
@@ -557,7 +453,7 @@ export class SearchPage extends HelperBase {
       if (isChecked) {
         return;
       }
-    } catch {}
+    } catch { }
 
     // Click the checkbox
     try {
@@ -569,10 +465,9 @@ export class SearchPage extends HelperBase {
     try {
       await countryCheckbox.check({ force: true });
       // Wait for page to respond and update count
-      await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+      await this.page.waitForLoadState('domcontentloaded').catch(() => { });
       // Wait specifically for result count text to update
-      await this.page.locator('text=/Encontramos\\s+\\d+|We\\s+have\\s+found\\s+\\d+/').first().waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-      await this.page.waitForTimeout(500).catch(() => {});
+      await this.page.locator('text=/Encontramos\\s+\\d+|We\\s+have\\s+found\\s+\\d+/').first().waitFor({ state: 'visible' }).catch(() => { });
       const count = await this.getResultsCount();
       this.logInfo(`✓ ${countryCode} → ${count} results`);
     } catch {
@@ -584,9 +479,8 @@ export class SearchPage extends HelperBase {
           await parentLabel.click({ force: true });
           // Wait for page response
           try {
-            await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-            await this.page.waitForTimeout(500).catch(() => {});
-          } catch {}
+            await this.page.waitForLoadState('domcontentloaded').catch(() => { });
+          } catch { }
           const count = await this.getResultsCount();
           this.logInfo(`✓ ${countryCode} → ${count} results`);
         } catch (err) {
@@ -604,7 +498,7 @@ export class SearchPage extends HelperBase {
   /** Validates search results are displayed with soft assertion */
   async validateResultsCount(minCount?: number): Promise<void> {
     const count = await this.getResultsCount();
-    
+
     if (minCount && count < minCount) {
       this.logInfo(`⚠ Low: ${count} results (expected ${minCount}+)`);
     } else if (count > 0) {
@@ -861,18 +755,17 @@ export class SearchPage extends HelperBase {
     ];
 
     const success = await this.selectCheckboxByStrategies('rating', `${rating} snowflakes`, strategies, this.filtersSidebar);
-    
+
     if (!success) {
       throw new Error(`Failed to select ${rating}-snowflake rating filter`);
     }
-    
+
     this.logInfo(`✓ ${rating}-snowflake filter applied`);
-    
+
     // Wait for results count to update after filter applied
     try {
       await this.page.waitForLoadState('domcontentloaded');
-      await this.page.waitForTimeout(500);
-      
+
       const filteredCount = await this.getResultsCount();
       this.logInfo(`✓ Results filtered: ${filteredCount} properties with ${rating} snowflakes`);
     } catch (err) {
@@ -909,13 +802,13 @@ export class SearchPage extends HelperBase {
     ];
 
     const success = await this.selectCheckboxByStrategies('ski area', skiArea, strategies, this.filtersSidebar);
-    
+
     if (!success) {
       throw new Error(`Failed to select ${skiArea} ski area filter`);
     }
-    
+
     this.logInfo(`✓ ${skiArea} ski area filter applied`);
-    
+
     // Wait for results to filter
     try {
       await this.page.waitForFunction(
@@ -923,8 +816,7 @@ export class SearchPage extends HelperBase {
           // Look for "Displaying X - Y of Z results" text that changed from 4476
           const pageText = document.body.textContent || '';
           return !pageText.includes('4476');
-        },
-        { timeout: 8000 }
+        }
       ).catch(() => {
         this.logInfo(`  Note: Result filtering wait completed or timed out`);
       });
@@ -947,13 +839,13 @@ export class SearchPage extends HelperBase {
     ];
 
     const success = await this.selectCheckboxByStrategies('resort', resort, strategies, this.filtersSidebar);
-    
+
     if (!success) {
       throw new Error(`Failed to select ${resort} resort filter`);
     }
-    
+
     this.logInfo(`✓ ${resort} resort filter applied`);
-    
+
     // Wait for results to filter
     try {
       await this.page.waitForFunction(
@@ -961,8 +853,7 @@ export class SearchPage extends HelperBase {
           // Look for "Displaying X - Y of Z results" text that changed from 4476
           const pageText = document.body.textContent || '';
           return !pageText.includes('4476');
-        },
-        { timeout: 8000 }
+        }
       ).catch(() => {
         this.logInfo(`  Note: Result filtering wait completed or timed out`);
       });
@@ -1007,7 +898,7 @@ export class SearchPage extends HelperBase {
       } catch (error) {
         this.logInfo(`❌ Error validating accommodation on ${detailUrl}: ${error}`);
       } finally {
-        await detailPage.close().catch(() => {});
+        await detailPage.close().catch(() => { });
       }
 
       if (confirmed > 0) break;
@@ -1053,7 +944,7 @@ export class SearchPage extends HelperBase {
       } catch (error) {
         this.logInfo(`❌ Error validating board basis on ${detailUrl}: ${error}`);
       } finally {
-        await detailPage.close().catch(() => {});
+        await detailPage.close().catch(() => { });
       }
 
       if (confirmed > 0) break;
@@ -1085,7 +976,7 @@ export class SearchPage extends HelperBase {
     let incorrectCount = 0;
     const ratingCounts: { [key: number]: number } = {};
     const incorrectResults: string[] = [];
-    
+
     const trackRating = (value: number | null) => {
       if (value && value > 0) {
         ratingCounts[value] = (ratingCounts[value] || 0) + 1;
@@ -1105,27 +996,27 @@ export class SearchPage extends HelperBase {
         const fullText = await resultCards[i].textContent().catch(() => '') || '';
         const innerHTML = await resultCards[i].innerHTML().catch(() => '') || '';
         const searchText = fullText + ' ' + innerHTML;
-        
+
         // Extract rating from search text using multiple patterns
         let match = searchText.match(/(\d+(?:\.\d+)?)\s+out\s+of\s+5(?:\b|[\s\w])/i);
         if (match) {
           cardRating = Math.round(parseFloat(match[1]));
         }
-        
+
         if (cardRating === 0) {
           match = searchText.match(/(\d+(?:\.\d+)?)[.\s]*out[.\s]*of[.\s]*5/i);
           if (match) {
             cardRating = Math.round(parseFloat(match[1]));
           }
         }
-        
+
         if (cardRating === 0) {
           const snowflakeCount = (searchText.match(/★|✓\s*5|[5](?:\s+out|\s+snowflake)/gi) || []).length;
           if (snowflakeCount > 0) {
             cardRating = snowflakeCount;
           }
         }
-        
+
         if (cardRating === 0) {
           match = searchText.match(/(\d+(?:\.\d+)?)\s+snowflake/i);
           if (match) {
@@ -1178,7 +1069,7 @@ export class SearchPage extends HelperBase {
         `   Correct: ${correctCount}, Incorrect: ${incorrectCount}\n` +
         `   Wrong results: ${incorrectResults.join(', ')}\n` +
         `   This indicates the ${rating}-snowflake filter is not working properly.`;
-      
+
       this.logInfo(errorMsg);
       throw new Error(errorMsg);
     }
@@ -1186,7 +1077,7 @@ export class SearchPage extends HelperBase {
     if (correctCount === 0) {
       const errorMsg = `❌ NO RESULTS MATCH: None of the ${sampleSize} sampled results have ${rating} snowflakes.\n` +
         `   This may indicate: (1) filter not applied, (2) no properties available, or (3) wrong checkbox selected.`;
-      
+
       this.logInfo(errorMsg);
       throw new Error(errorMsg);
     }
@@ -1303,7 +1194,7 @@ export class SearchPage extends HelperBase {
         const fullText = await resultCards[i].textContent().catch(() => '');
         const innerHTML = await resultCards[i].innerHTML().catch(() => '');
         const searchText = fullText + ' ' + innerHTML;
-        
+
         // Check if any of the resorts for this ski area are found in the card
         const foundResort = resortList.find(resort => searchText?.includes(resort));
         if (foundResort) {
@@ -1340,7 +1231,7 @@ export class SearchPage extends HelperBase {
         const fullText = await resultCards[i].textContent().catch(() => '');
         const innerHTML = await resultCards[i].innerHTML().catch(() => '');
         const searchText = fullText + ' ' + innerHTML;
-        
+
         if (searchText?.includes(resort)) {
           foundMatch = true;
           this.logInfo(`✓ Card ${i + 1}: ${resort} ✓`);
@@ -1377,11 +1268,10 @@ export class SearchPage extends HelperBase {
           ].join(',')
         )
         .first();
-      
+
       if (await clearButton.count() > 0) {
         await clearButton.click();
-        await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-        await this.page.waitForTimeout(500).catch(() => {});
+        await this.page.waitForLoadState('domcontentloaded').catch(() => { });
         this.logInfo('✓ Cleared all filters');
       } else {
         this.logInfo('⚠ Clear all button not found - may need manual implementation');
@@ -1400,7 +1290,7 @@ export class SearchPage extends HelperBase {
       const clearButton = this.filtersSidebar
         .locator('[data-section="country"] button:has-text("clear"), [class*="country"] a:has-text("clear")')
         .first();
-      
+
       if (await clearButton.count() > 0) {
         await clearButton.click();
         this.logInfo('✓ Cleared country filters');
@@ -1443,7 +1333,7 @@ export class SearchPage extends HelperBase {
         this.logInfo(`⚠ ${code} error: ${error}`);
       }
     }
-    
+
     const resultsCount = await this.getResultsCount();
     return resultsCount;
   }
@@ -1465,7 +1355,7 @@ export class SearchPage extends HelperBase {
       const count = await this.getResultsCount();
       this.logInfo(`✓ ${type} → ${count} results`);
     }
-    
+
     const resultsCount = await this.getResultsCount();
     return resultsCount;
   }
@@ -1487,7 +1377,7 @@ export class SearchPage extends HelperBase {
       const count = await this.getResultsCount();
       this.logInfo(`✓ ${option} → ${count} results`);
     }
-    
+
     const resultsCount = await this.getResultsCount();
     return resultsCount;
   }
@@ -1509,7 +1399,7 @@ export class SearchPage extends HelperBase {
       const count = await this.getResultsCount();
       this.logInfo(`✓ ${area} → ${count} results`);
     }
-    
+
     const resultsCount = await this.getResultsCount();
     return resultsCount;
   }
@@ -1530,23 +1420,22 @@ export class SearchPage extends HelperBase {
         checkbox = this.filtersSidebar.locator(`input[type="checkbox"][value="${countryCode}" i], input[id*="${countryCode}" i]`).first();
       }
       const isChecked = await checkbox.isChecked().catch(() => false);
-      
+
       if (isChecked && await checkbox.count() > 0) {
-        await checkbox.scrollIntoViewIfNeeded().catch(() => {});
+        await checkbox.scrollIntoViewIfNeeded().catch(() => { });
         await checkbox.uncheck({ force: true });
         try {
-          await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+          await this.page.waitForLoadState('domcontentloaded').catch(() => { });
           await this.page.locator('text=/Encontramos\\s+\\d+|We\\s+have\\s+found\\s+\\d+/').first()
-            .waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-          await this.page.waitForTimeout(500).catch(() => {});
-        } catch {}
+            .waitFor({ state: 'visible' }).catch(() => { });
+        } catch { }
         const count = await this.getResultsCount();
         this.logInfo(`✓ Deselected ${countryCode} → ${count} results`);
       }
     } catch (error) {
       this.logInfo(`⚠ ${countryCode} error: ${error}`);
     }
-    
+
     const resultsCount = await this.getResultsCount();
     return resultsCount;
   }

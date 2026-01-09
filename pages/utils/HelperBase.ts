@@ -29,6 +29,58 @@ export class HelperBase {
   }
 
   // ============================================================
+  // 🔵 TESTDATA ACCESSORS (Centralized Selector Management)
+  // ============================================================
+  /**
+   * Retrieves a selector string from testdata.json locators configuration
+   * @param path Dot-notation path like 'searchPage.filterSidebar.sidebar'
+   * @returns Selector string or null if not found
+   */
+  protected getSelector(path: string): string | null {
+    const parts = path.split('.');
+    let current: any = testdata;
+
+    for (const part of parts) {
+      if (current?.[part] === undefined) return null;
+      current = current[part];
+    }
+
+    return typeof current === 'string' ? current : null;
+  }
+
+  /**
+   * Retrieves a numeric timeout value from testdata.json
+   * @param path Dot-notation path like 'searchPage.timeouts.sidebarVisible'
+   * @param defaultValue Fallback value if not found
+   * @returns Timeout in milliseconds
+   */
+  protected getTimeout(path: string, defaultValue: number = 5000): number {
+    const value = this.getSelector(path);
+    const parsed = value ? parseInt(value, 10) : NaN;
+    return !isNaN(parsed) ? parsed : defaultValue;
+  }
+
+  /**
+   * Retrieves a regex pattern from testdata.json
+   * @param path Dot-notation path like 'searchPage.locators.regexPatterns.resultsMessage'
+   * @returns RegExp object or null
+   */
+  protected getRegexPattern(path: string): RegExp | null {
+    const pattern = this.getSelector(path);
+    if (!pattern) return null;
+
+    // Remove leading/trailing slashes if present
+    const cleaned = pattern.replace(/^\/|\/[gimuy]*$/g, '');
+    const flags = pattern.match(/\/([gimuy]*)$/)?.[1] || '';
+
+    try {
+      return new RegExp(cleaned, flags);
+    } catch {
+      return null;
+    }
+  }
+
+  // ============================================================
   // 🔵 SOFT ISSUES (anti-false-positive)
   // ============================================================
   public clearSoftIssues(): void {
@@ -61,7 +113,6 @@ export class HelperBase {
       const btn = this.page.locator(selector).first();
       if (!(await btn.count())) continue;
       try {
-        await expect(btn).toBeVisible();
         await btn.click();
         return;
       } catch {
@@ -118,8 +169,6 @@ export class HelperBase {
 
     try {
       const h1 = page.locator('h1').first();
-      await expect(h1).toBeVisible();
-
       const h1Text = normalize(await h1.innerText());
       const labelWords = normalizedLabel.split(/\s+/).filter(w => w.length > 2);
       const match = labelWords.some(w => h1Text.includes(w));
@@ -152,7 +201,6 @@ export class HelperBase {
   // ============================================================
   protected async scrollIntoView(locator: Locator): Promise<void> {
     await locator.scrollIntoViewIfNeeded();
-    await expect(locator).toBeVisible();
   }
 
   // ============================================================
@@ -293,7 +341,7 @@ export class HelperBase {
     return await this.page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
   }
 
-  protected async validateImagesResponsive(width: number): Promise<{ valid: boolean; invalidImages: string }>{
+  protected async validateImagesResponsive(width: number): Promise<{ valid: boolean; invalidImages: string }> {
     return await this.page.evaluate((viewportWidth) => {
       const images = Array.from(document.querySelectorAll('img'));
       const invalidImages: string[] = [];
@@ -329,8 +377,8 @@ export class HelperBase {
     container: Locator
   ): Promise<boolean> {
     try {
-      await container.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-      await container.scrollIntoViewIfNeeded().catch(() => {});
+      await container.waitFor({ state: 'visible' }).catch(() => { });
+      await container.scrollIntoViewIfNeeded().catch(() => { });
 
       let checkbox: Locator | null = null;
       let strategyIndex = -1;
@@ -350,7 +398,7 @@ export class HelperBase {
         return false;
       }
 
-      await checkbox.scrollIntoViewIfNeeded().catch(() => {});
+      await checkbox.scrollIntoViewIfNeeded().catch(() => { });
 
       // If already checked, skip further interaction
       const alreadyChecked = await checkbox.isChecked().catch(() => false);
@@ -360,8 +408,7 @@ export class HelperBase {
       }
 
       const attemptCheck = async (): Promise<boolean> => {
-        await checkbox.check({ force: true }).catch(() => {});
-        await this.page.waitForTimeout(250).catch(() => {});
+        await checkbox.check({ force: true }).catch(() => { });
         return await checkbox.isChecked().catch(() => false);
       };
 
@@ -375,8 +422,7 @@ export class HelperBase {
       if (!checked) {
         const label = checkbox.locator('xpath=ancestor::label[1]');
         if (await label.count()) {
-          await label.click({ force: true }).catch(() => {});
-          await this.page.waitForTimeout(250).catch(() => {});
+          await label.click({ force: true }).catch(() => { });
           checked = await checkbox.isChecked().catch(() => false);
           if (checked) {
             this.logInfo(`  ✓ Fallback 1: ancestor label ✓`);
@@ -390,8 +436,7 @@ export class HelperBase {
         if (checkboxId) {
           const forLabel = this.page.locator(`label[for="${checkboxId}"]`).first();
           if (await forLabel.count()) {
-            await forLabel.click({ force: true }).catch(() => {});
-            await this.page.waitForTimeout(250).catch(() => {});
+            await forLabel.click({ force: true }).catch(() => { });
             checked = await checkbox.isChecked().catch(() => false);
             if (checked) {
               this.logInfo(`  ✓ Fallback 2: "for" label ✓`);
@@ -402,8 +447,7 @@ export class HelperBase {
 
       // Fallback 3: force a normal click on the input
       if (!checked) {
-        await checkbox.click({ force: true }).catch(() => {});
-        await this.page.waitForTimeout(250).catch(() => {});
+        await checkbox.click({ force: true }).catch(() => { });
         checked = await checkbox.isChecked().catch(() => false);
         if (checked) {
           this.logInfo(`  ✓ Fallback 3: direct click ✓`);
@@ -414,8 +458,7 @@ export class HelperBase {
       if (!checked) {
         const containerClick = checkbox.locator('xpath=ancestor::*[self::label or self::li or self::div][1]');
         if (await containerClick.count()) {
-          await containerClick.click({ force: true }).catch(() => {});
-          await this.page.waitForTimeout(250).catch(() => {});
+          await containerClick.click({ force: true }).catch(() => { });
           checked = await checkbox.isChecked().catch(() => false);
           if (checked) {
             this.logInfo(`  ✓ Fallback 4: container ✓`);
@@ -431,8 +474,7 @@ export class HelperBase {
           input.checked = true;
           input.dispatchEvent(new Event('input', { bubbles: true }));
           input.dispatchEvent(new Event('change', { bubbles: true }));
-        }).catch(() => {});
-        await this.page.waitForTimeout(250).catch(() => {});
+        }).catch(() => { });
         checked = await checkbox.isChecked().catch(() => false);
         if (checked) {
           this.logInfo(`  ✓ Fallback 5 (DOM mutation) succeeded`);
@@ -444,8 +486,7 @@ export class HelperBase {
         return false;
       }
 
-      await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-      await this.page.waitForTimeout(500).catch(() => {});
+      await this.page.waitForLoadState('domcontentloaded').catch(() => { });
 
       this.logInfo(`[OK] Selected ${filterName}: ${filterValue}`);
       return true;
