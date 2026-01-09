@@ -6,6 +6,10 @@ param(
 )
 
 Write-Host "Creating Pull Request automatically..." -ForegroundColor Cyan
+# Fetch latest changes
+Write-Host "Fetching latest changes from origin..." -ForegroundColor Yellow
+git fetch origin
+
 
 # Pegar branch atual
 $currentBranch = git branch --show-current
@@ -28,13 +32,13 @@ Write-Host ""
 Write-Host "Analyzing changes since last PR..." -ForegroundColor Cyan
 
 # Pegar commits desde develop
-$commits = git log $BaseBranch..$currentBranch --pretty=format:"%s" | Out-String
+$commits = git log origin/$BaseBranch..$currentBranch --pretty=format:"%s" | Out-String
 
 # Pegar arquivos modificados
-$filesChanged = git diff --name-only $BaseBranch..$currentBranch | Out-String
+$filesChanged = git diff --name-only origin/$BaseBranch..$currentBranch | Out-String
 
 # Pegar estatísticas
-$stats = git diff --stat $BaseBranch..$currentBranch | Select-Object -Last 1
+$stats = git diff --stat origin/$BaseBranch..$currentBranch | Select-Object -Last 1
 
 # Detectar tipo de mudança baseado nos commits
 $isBugFix = $commits -match "fix:"
