@@ -136,6 +136,24 @@ export class HelperBase {
     this.logInfo('Cookie banner not found or already closed');
   }
 
+  async scrollDown(pixels: number = 500): Promise<void> {
+    await this.page.evaluate((scrollAmount) => {
+      window.scrollBy(0, scrollAmount);
+    }, pixels);
+  }
+
+  async scrollToBottom(): Promise<void> {
+    await this.page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+  }
+
+  async scrollToTop(): Promise<void> {
+    await this.page.evaluate(() => {
+      window.scrollTo(0, 0);
+    });
+  }
+
   // ============================================================
   // 🔵 URL HELPERS
   // ============================================================
