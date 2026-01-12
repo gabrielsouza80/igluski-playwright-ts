@@ -1,218 +1,116 @@
-<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="50.08744900000002">
-<testsuite name="home.spec.ts" timestamp="2026-01-09T17:01:11.904Z" hostname="chromium" tests="6" failures="0" skipped="0" time="127.225" errors="0">
-<testcase name="Home Page › TC15 — Validate Main Titles on the Home Page" classname="home.spec.ts" time="11.704">
-<system-out>
-<![CDATA[
-=== TEST: TC15 — Validate Main Titles on the Home Page ===
-
-===== TEST STARTED: TC15 — Validate Main Titles on the Home Page =====
-
-- Validating title: "Welcome To The Home Of Ski Holidays"
-- Title text: "Welcome To The Home Of Ski Holidays"
----------------------------------------------------------------
-- Validating title: "Speak to the ski experts"
-- Title text: "Speak to the ski experts"
----------------------------------------------------------------
-- Validating title: "Find Your Skiing Holiday"
-- Title text: "Find Your Skiing Holiday"
----------------------------------------------------------------
-✓ TC15 completed successfully - validated 3 titles
-=== END: PASS ===
-]]>
-</system-out>
+<testsuites id="" name="" tests="28" failures="0" skipped="28" errors="0" time="15.715387999999999">
+<testsuite name="search.spec.ts" timestamp="2026-01-12T11:17:50.652Z" hostname="chromium" tests="28" failures="0" skipped="28" time="23.425" errors="0">
+<testcase name="Search and Filters — Ski Holidays › TC-001 — Validate minimum nights filter (2 nights)" classname="search.spec.ts" time="11.659">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page › TC16 — Validate Country Banners (Ski Resorts)" classname="home.spec.ts" time="28.831">
-<system-out>
-<![CDATA[
-=== TEST: TC16 — Validate Country Banners (Ski Resorts) ===
-
-===== TEST STARTED: TC16 — Validate Country Banners (Ski Resorts) =====
-
-- Total country banners visible: 8
----------------------------------------------------------------
-- Country: FRANCE         SKI resorts
-- URL: https://www.igluski.com/ski-resorts/france
----------------------------------------------------------------
-- Country: AUSTRIA         SKI resorts
-- URL: https://www.igluski.com/ski-resorts/austria
----------------------------------------------------------------
-- Country: ITALY         SKI resorts
-- URL: https://www.igluski.com/ski-resorts/italy
----------------------------------------------------------------
-- Country: ANDORRA         SKI resorts
-- URL: https://www.igluski.com/ski-resorts/andorra
----------------------------------------------------------------
-- Country: BULGARIA         SKI resorts
-- URL: /ski-resorts/bulgaria
----------------------------------------------------------------
-- Country: SWITZERLAND         SKI resorts
-- URL: /ski-resorts/switzerland
----------------------------------------------------------------
-- Country: CANADA         SKI resorts
-- URL: /ski-resorts/canada
----------------------------------------------------------------
-- Country: JAPAN         SKI resorts
-- URL: /ski-resorts/japan
----------------------------------------------------------------
-✓ TC16 completed successfully - validated 8 banners
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Search and Filters — Ski Holidays › TC-002 — Validate default nights filter (7 nights)" classname="search.spec.ts" time="11.766">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page › TC17 — Validate CTA Boxes (Call To Action)" classname="home.spec.ts" time="10.999">
-<system-out>
-<![CDATA[
-=== TEST: TC17 — Validate CTA Boxes (Call To Action) ===
-
-===== TEST STARTED: TC17 — Validate CTA Boxes (Call To Action) =====
-
-- Total CTA boxes detected: 0
----------------------------------------------------------------
-- Total CTA boxes detected: 0
----------------------------------------------------------------
-✓ TC17 completed successfully - validated 3 CTA boxes
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Search and Filters — Ski Holidays › TC-003 — Validate maximum nights filter (13 nights)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page › TC22 — Validate Carousel CTA Button" classname="home.spec.ts" time="20.652">
-<system-out>
-<![CDATA[
-=== TEST: TC22 — Validate Carousel CTA Button ===
-
-===== TEST STARTED: TC22 — Validate Carousel CTA Button =====
-
-- Total slides detected: 3
----------------------------------------------------------------
-✓ Slide 1: Has CTA button
-- CTA href: https://www.igluski.com/ski-holidays/new-year-sale
----------------------------------------------------------------
-- CTA href: https://www.igluski.com/ski-holidays/new-year-sale
-- Page title: "New Year - New Sale!"
----------------------------------------------------------------
-- Current slide CTA href: https://www.igluski.com/ski-holidays/new-year-sale
----------------------------------------------------------------
-✓ Slide 2: Has CTA button
-- CTA href: https://www.igluski.com/ski-holidays
----------------------------------------------------------------
-- CTA href: https://www.igluski.com/ski-holidays
-- Page title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
----------------------------------------------------------------
-- Current slide CTA href: https://www.igluski.com/ski-holidays
----------------------------------------------------------------
-✓ Slide 3: Has CTA button
-- CTA href: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
----------------------------------------------------------------
-- CTA href: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
-- Page title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
----------------------------------------------------------------
-
-
-==================== ✓ CAROUSEL VALIDATION SUMMARY ====================
-Total slides: 3
-Slides with CTA: 3
-Slides without CTA: 0
----------------------------------------------------------------
-Slide 1: https://www.igluski.com/ski-holidays/new-year-sale
-   └─ Page Title: "New Year - New Sale!"
-Slide 2: https://www.igluski.com/ski-holidays
-   └─ Page Title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
-Slide 3: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
-   └─ Page Title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
-=========================================================================
-
-✓ TC22 completed successfully
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Search and Filters — Ski Holidays › TC-004 — Validate open maximum nights filter (14+ nights)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page › TCXX — Validate Inline Links in Sections" classname="home.spec.ts" time="42.001">
-<system-out>
-<![CDATA[
-=== TEST: TCXX — Validate Inline Links in Sections ===
-
-===== TEST STARTED: TCXX — Validate Inline Links in Sections =====
-
-- Total links detected: 6
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-holidays
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-deals
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-holidays/ski-chalet-holidays
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-holidays/ski-hotels
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-holidays/ski-apartments
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/price-match
----------------------------------------------------------------
----------------------------------------------------------------
-- Total links detected: 10
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-deals
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-resorts
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-resorts/ski-areas
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-resorts/ski-areas/ski-holidays-north-america
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-resorts/japan
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-resorts/france
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-resorts/austria
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-resorts/canada
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-holidays/snowboard-holidays
----------------------------------------------------------------
----------------------------------------------------------------
-- URL: https://www.igluski.com/ski-holidays
----------------------------------------------------------------
----------------------------------------------------------------
-✓ Inline links validation completed successfully
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Search and Filters — Ski Holidays › TC-007 — Validate country with many properties (France)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page › TC26 — Validate Page Responsiveness (Mobile/Tablet)" classname="home.spec.ts" time="13.038">
-<system-out>
-<![CDATA[
-=== TEST: TC26 — Validate Page Responsiveness (Mobile/Tablet) ===
-
-===== TEST STARTED: TC26 — Validate Page Responsiveness (Mobile/Tablet) =====
-
-- Setting viewport to 375px
----------------------------------------------------------------
----------------------------------------------------------------
----------------------------------------------------------------
----------------------------------------------------------------
----------------------------------------------------------------
-- Setting viewport to 768px
----------------------------------------------------------------
----------------------------------------------------------------
----------------------------------------------------------------
----------------------------------------------------------------
----------------------------------------------------------------
-✓ TC26 completed successfully - validated 2 viewports
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Search and Filters — Ski Holidays › TC-008 — Validate country with few properties (USA)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-009 — Validate 7 nights + France combination" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-010 — Validate 14+ nights + USA combination" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-011 — Validate results per page change (10 → 20)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-012 — Validate pagination (next page)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-013 — Validate sorting (Iglu recommends → Price Low to High)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-014 — Extremes: 2 minimums and 2 maximums" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-015 — Validate minimum travelers (1 adult, 0 children)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-016 — Validate maximum travelers (30+ adults, 10 children)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-017 — Validate accommodation filter (Hotel)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-018 — Validate board basis filter (Self catered)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-019 — Validate rating filter (5 snowflakes)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-020 — Validate property feature filter (WiFi)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-021 — Validate ski area filter (The 3 Valleys)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-022 — Validate resort filter (Val d&apos;Isère)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-023 — Validate &quot;Clear all changes&quot; functionality" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-024 — Validate section &quot;clear&quot; button (Country)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-025 — Validate URL parameter synchronization" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-026 — Validate multi-country selection (France + Austria + Italy)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-027 — Validate individual country removal from multi-selection" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-028 — Validate multi-accommodation selection (Hotel + Chalet)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-029 — Validate multi-board basis selection (Self Catered + Bed &amp; Breakfast)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Search and Filters — Ski Holidays › TC-030 — Validate multi-ski area selection (The 3 Valleys + Paradiski)" classname="search.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
 </testsuite>
 </testsuites>

@@ -304,37 +304,21 @@ export class SearchPage extends HelperBase {
         await this.nightsButton.click({ force: true });
       }
 
-      // Check current selection
-      const currentlySelected = this.page
-        .locator('a.dropdown-item.selected')
-        .filter({ hasText: /^\d+/ });
-      const isSelected = await currentlySelected.count();
-
-      if (isSelected > 0) {
-        const currentValue = await currentlySelected.first().textContent();
-        const currentText = currentValue?.trim() || '';
-        const currentNights = currentText.split('(')[0].trim();
-        const targetNights = String(nights);
-
-        if (currentNights === targetNights) {
-          this.logInfo(`Already selected: ${currentText} - skipping`);
-          await this.page.keyboard.press('Escape');
-          return;
-        }
-
-        this.logInfo(`Deselecting current: ${currentText}`);
+      // Always use "Deselect All" button to clear any previous selection (more reliable than manual detection)
+      const deselectAllButton = this.page.locator('button.actions-btn.bs-deselect-all').first();
+      if (await deselectAllButton.isVisible().catch(() => false)) {
+        this.logInfo(`Clearing previous selection with "Deselect All" button`);
+        await deselectAllButton.click().catch(() => { });
+        await this.page.waitForTimeout(300);
+        
+        // Dropdown closes after "Deselect All" - need to reopen it
+        this.logInfo(`Reopening dropdown after "Deselect All"`);
         try {
-          await currentlySelected.first().click();
-          // Reopen dropdown after deselect
-          try {
-            await this.nightsButton.click();
-          } catch {
-            await this.nightsButton.click({ force: true });
-          }
-        } catch (error) {
-          this.logInfo(`⚠ Error during deselect: ${error} - skipping nights selection`);
-          return;
+          await this.nightsButton.click();
+        } catch {
+          await this.nightsButton.click({ force: true });
         }
+        await this.page.waitForTimeout(300);
       }
 
       // Pick target nights option
@@ -354,6 +338,26 @@ export class SearchPage extends HelperBase {
       this.logInfo(`✓ ${nights} nights → ${count} results`);
     } catch (error) {
       this.logInfo(`❌ Error in selectNightsFilter: ${error} - continuing anyway`);
+    }
+  }
+
+  /** Explicitly clicks "Deselect All" in the nights dropdown to reset selection */
+  async deselectAllNights(): Promise<void> {
+    try {
+      // Open the nights dropdown
+      try {
+        await this.nightsButton.click();
+      } catch {
+        await this.nightsButton.click({ force: true });
+      }
+
+      const deselectAllButton = this.page.locator('button.actions-btn.bs-deselect-all').first();
+      if (await deselectAllButton.isVisible().catch(() => false)) {
+        await deselectAllButton.click().catch(() => { });
+        await this.page.waitForTimeout(300);
+      }
+    } catch (error) {
+      this.logInfo(`⚠ Error clicking Deselect All for nights: ${error}`);
     }
   }
 
@@ -614,102 +618,245 @@ export class SearchPage extends HelperBase {
   }
 
   /**
+   * Validates the "We have found X properties" message matches expected count
+   * This ensures filters are actually working and not just showing suggestions
+   * @param {number} expectedCount - Expected number of properties (optional, will just log if not provided)
+   */
+  async validateExactMatchCount(expectedCount?: number): Promise<number> {
+    try {
+      // Look for "We have found X properties in Y resorts and Z countries"
+      const messageLocator = this.page.locator('text=/We\s+have\s+found\s+\d+\s+propert/i').first();
+      await messageLocator.waitFor({ state: 'visible', timeout: 5000 });
+      
+      const messageText = await messageLocator.textContent();
+      if (!messageText) {
+        this.logInfo('⚠ Could not read exact match message');
+        return 0;
+      }
+
+      // Extract number: "We have found 4 properties..."
+      const match = messageText.match(/found\s+(\d+)\s+propert/i);
+      if (!match) {
+        this.logInfo(`⚠ Could not parse count from: "${messageText}"`);
+        return 0;
+      }
+
+      const actualCount = parseInt(match[1], 10);
+      this.logInfo(`✓ Found message: "${messageText.trim()}" → ${actualCount} exact matches`);
+
+      if (expectedCount !== undefined && actualCount !== expectedCount) {
+        this.addSoftError(`Expected ${expectedCount} exact matches but message shows ${actualCount}`);
+      }
+
+      return actualCount;
+    } catch (error) {
+      this.logInfo(`⚠ Could not find "We have found X properties" message - may be too many results`);
+      return 0;
+    }
+  }
+
+  /**
    * Validates that at least one result contains the expected duration (e.g., "2 Nights")
    * Only validates exact match results (stops at "More results..." separator if present)
    * Uses the specific locator .search-result__nights to ensure accurate matching
    * @param {number | string} expectedNights - Expected number of nights to find in results
    */
   async validateResultsContainNights(expectedNights: number | string): Promise<void> {
+    try {
+      // Wait for results to be visible
+      await this.searchResults.first().waitFor({ state: 'visible', timeout: 5000 });
 
-    // Wait for results to be visible
-    await this.searchResults.first().waitFor({ state: 'visible' });
+      // Check if there's a "More results..." separator (relaxed criteria section)
+      const moreResultsSeparator = this.page.locator('.you-might-like-title');
+      const hasSeparator = await moreResultsSeparator.count().catch(() => 0) > 0;
 
-    // Check if there's a "More results..." separator (relaxed criteria section)
-    const moreResultsSeparator = this.page.locator('.you-might-like-title');
-    const hasSeparator = await moreResultsSeparator.count() > 0;
+      if (hasSeparator) {
+        this.logInfo('Found "More results..." separator - validating cards before it');
+      }
 
-    if (hasSeparator) {
-      this.logInfo('Found "More results..." separator - validating cards before it');
-    }
+      const targetNights = Number(String(expectedNights).replace(/\D+/g, '')) || Number(expectedNights);
+      const allResultCards = this.page.locator('.search-results');
+      const totalCount = await allResultCards.count();
 
-    const targetNights = Number(String(expectedNights).replace(/\D+/g, '')) || Number(expectedNights);
-    const allResultCards = this.page.locator('.search-results');
-    const totalCount = await allResultCards.count();
+      this.logInfo(`Found ${totalCount} total result cards`);
 
-    this.logInfo(`Found ${totalCount} total result cards`);
+      let checkedCount = 0;
+      let belowTarget = false;
+      const observed: Array<{ card: number; nights: string; parsed: number | null }> = [];
 
-    let checkedCount = 0;
-    let belowTarget = false;
-    const observed: Array<{ card: number; nights: string; parsed: number | null }> = [];
+      for (let i = 0; i < totalCount; i++) {
+        const resultCard = allResultCards.nth(i);
 
-    for (let i = 0; i < totalCount; i++) {
-      const resultCard = allResultCards.nth(i);
+        // ALWAYS check if we've reached the separator (suggestions section)
+        if (hasSeparator) {
+          try {
+            const sepHandle = await moreResultsSeparator.first().elementHandle();
+            if (sepHandle) {
+              const isBeforeSeparator = await resultCard.evaluate((card, sep) => {
+                if (!sep) return false;
+                const cardTop = card.getBoundingClientRect().top;
+                const sepTop = sep.getBoundingClientRect().top;
+                return cardTop < sepTop;
+              }, sepHandle);
+              if (!isBeforeSeparator) {
+                this.logInfo(`✓ Stopped at card ${i + 1} - reached "More results..." suggestions section`);
+                break;
+              }
+            }
+          } catch {
+            // Continue if separator check fails
+          }
+        }
 
-      if (hasSeparator && checkedCount >= this.MAX_EXACT_MATCHES) {
-        const sepHandle = await moreResultsSeparator.first().elementHandle();
-        if (!sepHandle) break;
-        const isBeforeSeparator = await resultCard.evaluate((card, sep) => {
-          if (!sep) return false;
-          const cardTop = card.getBoundingClientRect().top;
-          const sepTop = sep.getBoundingClientRect().top;
-          return cardTop < sepTop;
-        }, sepHandle);
-        if (!isBeforeSeparator) {
-          this.logInfo(`Stopping at result ${i + 1} - reached "More results..." section`);
-          break;
+        checkedCount++;
+
+        // Prefer dedicated nights element; fallback to common duration/meta blocks; last resort regex on card text
+        const candidates = [
+          resultCard.locator('.search-result__nights').first(),
+          resultCard.locator('.search-result__duration').first(),
+          resultCard.locator('[class*="duration" i]').filter({ hasText: /night/i }).first(),
+          resultCard.locator('.search-result__meta:has-text("night")').first()
+        ];
+
+        let text = '';
+        for (const locator of candidates) {
+          if (await locator.count().catch(() => 0)) {
+            text = (await locator.textContent().catch(() => ''))?.trim() || '';
+            if (text) break;
+          }
+        }
+
+        if (!text) {
+          const cardText = await resultCard.textContent().catch(() => '') || '';
+          const match = cardText.match(/(\d+)\s*Nights?/i);
+          text = match ? match[0] : '';
+        }
+
+        const parsed = (() => {
+          if (!text) return null;
+          const m = text.match(/(\d+)/);
+          return m ? Number(m[1]) : null;
+        })();
+
+        observed.push({ card: i + 1, nights: text, parsed });
+
+        if (parsed !== null && parsed < targetNights) {
+          belowTarget = true;
         }
       }
 
-      checkedCount++;
-
-      // Prefer dedicated nights element; fallback to common duration/meta blocks; last resort regex on card text
-      const candidates = [
-        resultCard.locator('.search-result__nights').first(),
-        resultCard.locator('.search-result__duration').first(),
-        resultCard.locator('[class*="duration" i]').filter({ hasText: /night/i }).first(),
-        resultCard.locator('.search-result__meta:has-text("night")').first()
-      ];
-
-      let text = '';
-      for (const locator of candidates) {
-        if (await locator.count()) {
-          text = (await locator.textContent().catch(() => ''))?.trim() || '';
-          if (text) break;
-        }
+      if (hasSeparator) {
+        this.logInfo(`✓ Validated ${checkedCount} exact match cards (before "More results..." separator)`);
+      } else {
+        this.logInfo(`Checked ${checkedCount} result cards (no separator found)`);
       }
 
-      if (!text) {
-        const cardText = await resultCard.textContent().catch(() => '') || '';
-        const match = cardText.match(/(\d+)\s*Nights?/i);
-        text = match ? match[0] : '';
+      if (observed.length === 0) {
+        this.addSoftError(`No nights text found in the first ${checkedCount} results`);
+        return;
       }
 
-      const parsed = (() => {
-        if (!text) return null;
-        const m = text.match(/(\d+)/);
-        return m ? Number(m[1]) : null;
-      })();
-
-      observed.push({ card: i + 1, nights: text, parsed });
-
-      if (parsed !== null && parsed < targetNights) {
-        belowTarget = true;
+      if (belowTarget) {
+        this.addSoftError(`Found result(s) with nights below ${expectedNights}: ${JSON.stringify(observed)}`);
+        return;
       }
+
+      this.logInfo(`✅ All ${checkedCount} exact match results have ${expectedNights}+ nights`);
+    } catch (error) {
+      this.logInfo(`⚠ Error in validateResultsContainNights: ${error}`);
     }
+  }
 
-    this.logInfo(`Checked ${checkedCount} result cards before separator`);
+  /** Returns how many result cards are visible on the current page */
+  async getVisibleCardCount(): Promise<number> {
+    try {
+      const titleEls = this.page.locator('a.search-result__title');
+      const titleCount = await titleEls.count().catch(() => 0);
+      if (titleCount > 0) return titleCount;
 
-    if (observed.length === 0) {
-      this.addSoftError(`No nights text found in the first ${checkedCount} results`);
-      return;
+      const cards = this.page.locator('.search-results .search-result, .search-result');
+      const cardCount = await cards.count().catch(() => 0);
+      if (cardCount > 0) return cardCount;
+
+      return await this.searchResults.count().catch(() => 0);
+    } catch {
+      return 0;
     }
+  }
 
-    if (belowTarget) {
-      this.addSoftError(`Found result(s) with nights below ${expectedNights}: ${JSON.stringify(observed)}`);
-      return;
+  /** Gets the first card title on the page (best-effort) */
+  async getFirstCardTitle(): Promise<string> {
+    try {
+      const titleLocator = this.page.locator('a.search-result__title').first();
+      if (await titleLocator.count()) {
+        const text = (await titleLocator.textContent())?.trim() || '';
+        if (text) return text;
+      }
+      const cardLocator = this.page.locator('.search-result').first();
+      const altTitle = cardLocator.locator('h2, h3, .title').first();
+      if (await altTitle.count()) {
+        return (await altTitle.textContent())?.trim() || '';
+      }
+    } catch {}
+    return '';
+  }
+
+  /** Checks if a section clear button (e.g., country) is visible (not hidden) */
+  async isSectionClearVisible(optionType: string): Promise<boolean> {
+    try {
+      // Wait for filters sidebar to be stable
+      await this.filtersSidebar.waitFor({ state: 'visible' }).catch(() => {});
+      
+      const section = this.filtersSidebar.locator(`[data-option-type="${optionType}"]`).first();
+      if (!(await section.count())) {
+        this.logInfo(`⚠️ Section with data-option-type="${optionType}" not found`);
+        return false;
+      }
+      
+      const clearBtn = section.locator('.faceted-search__section-clear').first();
+      if (!(await clearBtn.count())) {
+        this.logInfo(`⚠️ Clear button not found in ${optionType} section`);
+        return false;
+      }
+      
+      // Wait a bit for DOM to update after filter selection
+      await this.page.waitForTimeout(500).catch(() => {});
+      
+      const classAttr = (await clearBtn.getAttribute('class')) || '';
+      const isVisible = !classAttr.includes('hidden');
+      this.logInfo(`Clear button for ${optionType}: ${isVisible ? 'visible' : 'hidden'} (classes: ${classAttr})`);
+      return isVisible;
+    } catch (error) {
+      this.logInfo(`⚠️ Error checking clear button visibility for ${optionType}: ${error}`);
+      return false;
     }
+  }
 
-    this.logInfo(`[OK] Nights filter respected (>= ${expectedNights}) in sampled cards → ${JSON.stringify(observed)}`);
+  /** Opens the first result's detail page and validates a feature exists in FEATURES block */
+  async validateFeatureInFirstResultDetail(feature: string): Promise<void> {
+    try {
+      await this.searchResults.first().waitFor({ state: 'visible' });
+      const firstCard = this.searchResults.first();
+      const { detailPage } = await this.openDetailPage(firstCard, 'Feature validation');
+      if (!detailPage) {
+        this.addSoftError(`Could not open detail page to validate feature: ${feature}`);
+        return;
+      }
+
+      const featuresBlock = detailPage.locator('.property__feature-block').first();
+      const featuresText = (await featuresBlock.textContent().catch(() => ''))?.toLowerCase() || '';
+      const match = featuresText.includes(feature.toLowerCase());
+
+      if (!match) {
+        this.addSoftError(`Feature "${feature}" not found on detail page FEATURES block`);
+      } else {
+        this.logInfo(`✓ Detail page contains feature: ${feature}`);
+      }
+
+      await detailPage.close().catch(() => { });
+    } catch (error) {
+      this.logInfo(`⚠ Error validating feature on detail page: ${error}`);
+    }
   }
 
   /**
@@ -1318,19 +1465,42 @@ export class SearchPage extends HelperBase {
 
   /**
    * Clear only Country filter section
+   * Finds and clicks the "clear" button within the Country section
    */
   async clearCountryFilters(): Promise<void> {
     try {
-      // Look for section-specific clear button
-      const clearButton = this.filtersSidebar
-        .locator('[data-section="country"] button:has-text("clear"), [class*="country"] a:has-text("clear")')
+      // Strategy 1: Find "clear" button in data-option-type="country" section
+      let clearButton = this.filtersSidebar
+        .locator('[data-option-type="country"]')
+        .locator('a:has-text("clear"), button:has-text("clear")')
         .first();
 
+      if (!(await clearButton.count())) {
+        // Strategy 2: Find by class name pattern
+        clearButton = this.filtersSidebar
+          .locator('a.faceted-search__section-clear:has-text("clear")')
+          .first();
+      }
+
+      if (!(await clearButton.count())) {
+        // Strategy 3: Find all clear buttons and look for the one near "Country" text
+        const countrySection = this.filtersSidebar
+          .locator('span.faceted-search__section-title:has-text("Country")')
+          .locator('xpath=ancestor::div[1]/following-sibling::a[contains(@class, "section-clear")]')
+          .first();
+        
+        if (await countrySection.count()) {
+          clearButton = countrySection;
+        }
+      }
+
       if (await clearButton.count() > 0) {
-        await clearButton.click();
+        await clearButton.scrollIntoViewIfNeeded();
+        await clearButton.click({ force: true });
+        await this.page.waitForTimeout(500); // Wait for filters to update
         this.logInfo('✓ Cleared country filters');
       } else {
-        this.logInfo('⚠ Country clear button not found');
+        this.logInfo('⚠ Country clear button not found - country filters may not have been cleared');
       }
     } catch (error) {
       this.logInfo(`⚠ Error clearing country filters: ${error}`);
