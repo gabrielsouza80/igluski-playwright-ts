@@ -128,19 +128,19 @@ export class HelperBase {
       const btn = this.page.locator(selector).first();
       try {
         // Wait for button to be visible/enabled
-        await btn.waitFor({ state: 'attached', timeout: 3000 }).catch(() => {});
-        
+        await btn.waitFor({ state: 'attached', timeout: 3000 }).catch(() => { });
+
         const count = await btn.count().catch(() => 0);
         if (!count) continue;
 
         // Additional delay before clicking
         await this.page.waitForTimeout(300);
-        
+
         await btn.click();
-        
+
         // Wait after clicking to ensure page processes the action
         await this.page.waitForTimeout(500);
-        
+
         return;
       } catch (error) {
         // If page closed, log and return gracefully
@@ -266,13 +266,13 @@ export class HelperBase {
       }
       throw error;
     }
-    
+
     try {
       await this.page.waitForLoadState('networkidle');
     } catch {
       // networkidle may never occur; continue.
     }
-    
+
     await this.acceptCookies();
   }
 
