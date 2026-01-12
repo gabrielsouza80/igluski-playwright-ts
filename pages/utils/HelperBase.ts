@@ -106,6 +106,9 @@ export class HelperBase {
   async acceptCookies(): Promise<void> {
     if (!this.checkPageAlive('acceptCookies')) return;
 
+    // Add delay to avoid bot detection during cookie acceptance
+    await this.page.waitForTimeout(500);
+
     const selectors = [
       'button:has-text("Accept Cookies & Close")',
       'button:has-text("Accept")',
@@ -115,12 +118,28 @@ export class HelperBase {
       if (!this.checkPageAlive('acceptCookies iteration')) return;
       const btn = this.page.locator(selector).first();
       try {
-        const count = await btn.count();
+        // Wait for button to be visible/enabled
+        await btn.waitFor({ state: 'attached', timeout: 3000 }).catch(() => {});
+        
+        const count = await btn.count().catch(() => 0);
         if (!count) continue;
+
+        // Additional delay before clicking
+        await this.page.waitForTimeout(300);
+        
         await btn.click();
+        
+        // Wait after clicking to ensure page processes the action
+        await this.page.waitForTimeout(500);
+        
         return;
-      } catch {
-        // ignore - button not found or page closed
+      } catch (error) {
+        // If page closed, log and return gracefully
+        if (this.page.isClosed && this.page.isClosed()) {
+          this.logInfo('⚠ Page closed during cookie acceptance');
+          return;
+        }
+        // Otherwise ignore - button not found or other issue
       }
     }
 
@@ -211,12 +230,22 @@ export class HelperBase {
   // 🔵 NAVIGATION
   // ============================================================
   async navigateAndAcceptCookies(path: string = '/'): Promise<void> {
-    await this.page.goto(path, { waitUntil: 'load' });
+    try {
+      await this.page.goto(path, { waitUntil: 'load' });
+    } catch (error) {
+      this.logInfo(`⚠ Navigation error: ${error}`);
+      if (this.page.isClosed && this.page.isClosed()) {
+        return;
+      }
+      throw error;
+    }
+    
     try {
       await this.page.waitForLoadState('networkidle');
     } catch {
       // networkidle may never occur; continue.
     }
+    
     await this.acceptCookies();
   }
 

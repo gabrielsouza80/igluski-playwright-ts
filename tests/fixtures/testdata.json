@@ -348,7 +348,7 @@
                 ],
                 "min": 2,
                 "default": 7,
-                "max": 14,
+                "max": 13,
                 "maxOpen": "14+"
             },
             "travelers": {
