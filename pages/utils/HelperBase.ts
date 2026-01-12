@@ -48,6 +48,15 @@ export class HelperBase {
     return typeof current === 'string' ? current : null;
   }
 
+  async waitSpinnerToDisappear(timeout = 20000): Promise<void> {
+    const spinner = this.page.locator('.spinner.hide');
+    try {
+      await spinner.waitFor({ state: 'hidden', timeout });
+    } catch (e) {
+      console.log('Spinner did not disappear within the timeout period.');
+    }
+  }
+
   /**
    * Retrieves a numeric timeout value from testdata.json
    * @param path Dot-notation path like 'searchPage.timeouts.sidebarVisible'
