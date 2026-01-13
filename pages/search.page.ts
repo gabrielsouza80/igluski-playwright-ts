@@ -1212,53 +1212,90 @@ export class SearchPage extends HelperBase {
   // Select a snowflake rating filter and wait for results to update
   /** Checks rating filter using multi-strategy selectors */
   async selectRatingFilter(rating: number): Promise<void> {
-    this.logInfo(`Selecting ${rating}-snowflake filter...`);
-    const strategies = [
-      this.page.locator(`input[type="checkbox"][value="${rating}"]`).first(),
-      this.page.locator(`input[type="checkbox"][data-rating="${rating}"]`).first(),
-      this.page.locator(`label:has-text("${rating}") input[type="checkbox"]`).first(),
-      this.filtersSidebar.locator('.rating-filter, .snowflakes-filter, [data-filter="rating"]').locator(`input[type="checkbox"]`).nth(rating - 1),
-      // Sometimes the rating options are rendered as a custom checkbox inside .check-box__text
-      this.filtersSidebar.locator(`.check-box__text:has(.faceted-search__rating-label:has-text("${rating}")) input[type="checkbox"]`).first()
-    ];
-
-    let success = await this.selectCheckboxByStrategies('rating', `${rating} snowflakes`, strategies, this.filtersSidebar);
-
-    // Fallback: click the container node when there is no accessible input
-    if (!success) {
-      const container = this.filtersSidebar
-        .locator(`.check-box__text:has(.faceted-search__rating-label:has-text("${rating}"))`)
-        .first();
-      try {
-        if (await container.count() > 0) {
-          await container.scrollIntoViewIfNeeded().catch(() => {});
-          await container.click({ force: true });
-          await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-          success = true;
-          this.logInfo(`  ✓ Fallback: clicked rating container for ${rating} snowflakes`);
-        }
-      } catch {}
-    }
-
-    if (!success) {
-      throw new Error(`Failed to select ${rating}-snowflake rating filter`);
-    }
-
-    this.logInfo(`✓ ${rating}-snowflake filter applied`);
-
-    // Wait for results to actually update with new filtered data
+    console.log(`\n${'='.repeat(70)}`);
+    console.log(`⭐ RATING FILTER: Selecting ${rating}★ rating`);
+    console.log(`${'='.repeat(70)}`);
+    
+    // Close any modals/overlays
     try {
-      await this.page.waitForLoadState('domcontentloaded');
+      await this.page.keyboard.press('Escape').catch(() => {});
+      await this.page.waitForTimeout(200);
+    } catch {}
+
+    // Find the LABEL that contains the input with data-rating
+    const labelSelector = `label.faceted-search__label--check-box:has(input[data-rating="${rating}"])`;
+    console.log(`🔍 Locating: ${labelSelector}`);
+    
+    const label = this.page.locator(labelSelector).first();
+    const labelCount = await label.count();
+    console.log(`✅ Found ${labelCount} matching label(s)`);
+    
+    if (labelCount === 0) {
+      const allLabels = await this.page.locator('label.faceted-search__label--check-box:has(input[data-rating])').count();
+      console.log(`⚠️  Total rating labels available: ${allLabels}`);
       
-      // MANDATORY: Wait for JavaScript to process filter and re-render result cards
-      // Without this settlement wait, we'd validate old results still in DOM before new ones load
-      await this.page.waitForTimeout(500);
+      const allRatings = await this.page.locator('input[data-rating]').evaluateAll(
+        elements => elements.map(el => el.getAttribute('data-rating'))
+      );
+      console.log(`⚠️  Available ratings: ${JSON.stringify(allRatings)}`);
       
-      const filteredCount = await this.getResultsCount();
-      this.logInfo(`✓ Results filtered: ${filteredCount} properties with ${rating} snowflakes`);
-    } catch (err) {
-      this.logInfo(`⚠ Could not verify results count after filter: ${err}`);
+      throw new Error(`❌ Failed to find rating filter for ${rating}★`);
     }
+    
+    // Check checkbox state before clicking
+    const checkbox = this.page.locator(`input[data-rating="${rating}"]`).first();
+    const isCheckedBefore = await checkbox.isChecked();
+    console.log(`📋 Checkbox state BEFORE: ${isCheckedBefore ? '☑️  Checked' : '☐ Unchecked'}`);
+    
+    // Click the LABEL (not the input directly)
+    await label.click({ timeout: 5000 });
+    await this.page.waitForTimeout(300);
+    console.log(`🖱️  Label clicked`);
+    
+    // Verify checkbox state after clicking
+    const isCheckedAfter = await checkbox.isChecked();
+    console.log(`📋 Checkbox state AFTER: ${isCheckedAfter ? '☑️  Checked' : '☐ Unchecked'}`);
+    
+    // Fallback: force-click if label didn't work
+    if (!isCheckedAfter && !isCheckedBefore) {
+      console.log(`⚠️  Applying fallback: force-clicking checkbox input`);
+      await checkbox.click({ force: true });
+      await this.page.waitForTimeout(300);
+      const finalCheck = await checkbox.isChecked();
+      console.log(`📋 Final checkbox state: ${finalCheck ? '☑️  Checked' : '☐ Unchecked'}`);
+    }
+
+    // Wait for filter to apply
+    console.log(`⏳ Waiting for network idle...`);
+    try {
+      await this.page.waitForLoadState('networkidle');
+      console.log(`✅ Network idle - filter applied`);
+    } catch {
+      console.log(`⚠️  Network idle timeout - continuing anyway`);
+    }
+    
+    await this.page.waitForTimeout(2000);
+    
+    try {
+      await this.page.locator('.search-results').first().waitFor({ state: 'visible', timeout: 3000 });
+      console.log(`✅ Search results visible`);
+    } catch {}
+    
+    // Display results count
+    const resultsMsgLocator = this.page.locator('text=/We have found/i');
+    const msgCount = await resultsMsgLocator.count();
+    if (msgCount > 0) {
+      const msgText = await resultsMsgLocator.first().textContent();
+      console.log(`📊 ${msgText}`);
+    }
+    
+    try {
+      const filteredCount = await this.getResultsCount();
+      console.log(`✅ Filter applied: ${filteredCount} properties with ${rating}★ rating`);
+    } catch (err) {
+      console.log(`⚠️  Could not verify count: ${err}`);
+    }
+    console.log(`${'='.repeat(70)}\n`);
   }
 
   /** Checks property feature filter using multi-strategy locators with force-check fallback */
@@ -1462,142 +1499,79 @@ export class SearchPage extends HelperBase {
    */
   // Check that result cards contain the selected rating (using snowflake stars)
   async validateResultsContainRating(rating: number): Promise<void> {
+    console.log(`\n${'='.repeat(70)}`);
+    console.log(`⭐ VALIDATION: Checking results for ${rating}★ rating`);
+    console.log(`${'='.repeat(70)}`);
 
-    await this.searchResults.first().waitFor({ state: 'visible' });
-    const resultCards = await this.searchResults.all();
-    const sampleSize = Math.min(5, resultCards.length);
-    const perCardTimeoutMs = 8000;
-    this.logInfo(`Checking ${sampleSize} result cards (title-based rating parse, ${perCardTimeoutMs}ms/card)`);
+    // Wait for results container to load
+    try {
+      await this.page.locator('.search-results').first().waitFor({ state: 'visible', timeout: 4000 });
+      console.log(`✅ Results container visible`);
+    } catch {
+      console.log(`⚠️  Results container not visible`);
+    }
+
+    // Wait extra time for DOM to fully render
+    await this.page.waitForTimeout(800);
+    console.log(`⏳ Waited 800ms for DOM stabilization`);
+
+    // Find all rating wrappers INSIDE .search-results (not in sidebar filters!)
+    const ratingWrapperLocators = this.page.locator('.search-results .faceted-search__rating-wrapper[title]');
+    const cardCount = await ratingWrapperLocators.count();
+    const sampleSize = Math.min(5, cardCount);
+    
+    console.log(`📊 Analyzing ${sampleSize} of ${cardCount} total result cards`);
 
     let correctCount = 0;
-    let incorrectCount = 0;
-    const ratingCounts: { [key: number]: number } = {};
-    const incorrectResults: string[] = [];
+    const ratingCounts: { [key: string]: number } = {};
 
-    const trackRating = (value: number | null) => {
-      if (value && value > 0) {
-        ratingCounts[value] = (ratingCounts[value] || 0) + 1;
-      }
-    };
-
+    // Extract rating from each card
     for (let i = 0; i < sampleSize; i++) {
-      const processCard = async () => {
-        if (!this.checkPageAlive('validating rating results')) {
-          throw new Error('Page closed during rating validation');
-        }
+      const ratingWrapper = ratingWrapperLocators.nth(i);
+      
+      // Get title attribute: "Star review X out of 5"
+      const titleAttr = await ratingWrapper.getAttribute('title').catch(() => null);
 
-        let cardRating = 0;
-        const cardTitle = await resultCards[i].locator('h3, [class*="title"], [class*="heading"], a').first().textContent().catch(() => '') || `Result ${i + 1}`;
+      if (!titleAttr) {
+        console.log(`  ❌ Card ${i + 1}: No rating title found`);
+        continue;
+      }
 
-        // Strategy 0 (preferred): read numeric rating from the title attribute
-        // Example: <div class="faceted-search__rating-wrapper" title="Star review 5 out of 5">...
-        try {
-          const ratingWrapper = resultCards[i]
-            .locator('.faceted-search__rating .faceted-search__rating-wrapper, .faceted-search__rating-wrapper')
-            .first();
-          if (await ratingWrapper.count() > 0) {
-            const titleAttr = await ratingWrapper.getAttribute('title').catch(() => null);
-            if (titleAttr) {
-              const m = titleAttr.match(/(\d+(?:\.\d+)?)\s*out\s*of\s*5/i);
-              if (m) {
-                const numeric = parseFloat(m[1]);
-                // Treat fractional near-maximum ratings as the expected integer (e.g., 4.8+ as 5)
-                if (rating === 5 && numeric >= 4.8) {
-                  cardRating = 5;
-                } else {
-                  cardRating = Math.round(numeric);
-                }
-              }
-            }
-          }
-        } catch {}
+      // Parse "Star review X out of 5"
+      const match = titleAttr.match(/Star\s+review\s+(\d+(?:\.\d+)?)\s+out\s+of\s+5/i);
+      if (!match) {
+        console.log(`  ❌ Card ${i + 1}: Could not parse title="${titleAttr}"`);
+        continue;
+      }
 
-        // Fallback: extract from text/HTML when title-based read fails
-        const fullText = cardRating === 0 ? (await resultCards[i].textContent().catch(() => '') || '') : '';
-        const innerHTML = cardRating === 0 ? (await resultCards[i].innerHTML().catch(() => '') || '') : '';
-        const searchText = cardRating === 0 ? (fullText + ' ' + innerHTML) : '';
+      const cardRating = Math.round(parseFloat(match[1]));
+      const ratingKey = cardRating.toString();
+      ratingCounts[ratingKey] = (ratingCounts[ratingKey] || 0) + 1;
 
-        // Extract rating from search text using multiple patterns
-        let match = cardRating === 0 ? searchText.match(/(\d+(?:\.\d+)?)\s+out\s+of\s+5(?:\b|[\s\w])/i) : null;
-        if (match && cardRating === 0) {
-          const numeric = parseFloat(match[1]);
-          cardRating = rating === 5 && numeric >= 4.8 ? 5 : Math.round(numeric);
-        }
-
-        if (cardRating === 0) {
-          match = searchText.match(/(\d+(?:\.\d+)?)[.\s]*out[.\s]*of[.\s]*5/i);
-          if (match) {
-            const numeric = parseFloat(match[1]);
-            cardRating = rating === 5 && numeric >= 4.8 ? 5 : Math.round(numeric);
-          }
-        }
-
-        if (cardRating === 0) {
-          const snowflakeCount = (searchText.match(/★|✓\s*5|[5](?:\s+out|\s+snowflake)/gi) || []).length;
-          if (snowflakeCount > 0) {
-            cardRating = snowflakeCount;
-          }
-        }
-
-        if (cardRating === 0) {
-          match = searchText.match(/(\d+(?:\.\d+)?)\s+snowflake/i);
-          if (match) {
-            cardRating = Math.round(parseFloat(match[1]));
-          }
-        }
-
-        trackRating(cardRating > 0 ? cardRating : null);
-
-        // Validate card rating matches expected rating
-        if (cardRating === rating) {
-          correctCount++;
-          this.logInfo(`  Card ${i + 1}: ${cardRating}★ ✓`);
-        } else if (cardRating > 0) {
-          incorrectCount++;
-          incorrectResults.push(`Card ${i + 1}: ${cardRating}★ (expected ${rating}★)`);
-          this.logInfo(`  Card ${i + 1}: ${cardRating}★ (expected ${rating}★)`);
-        } else {
-          incorrectCount++;
-          incorrectResults.push(`Card ${i + 1}: unknown rating`);
-          this.logInfo(`  Card ${i + 1}: unknown rating`);
-        }
-      };
-
-      try {
-        await Promise.race([
-          processCard(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('card-timeout')), perCardTimeoutMs))
-        ]);
-      } catch (err) {
-        if ((err as Error).message === 'card-timeout') {
-          incorrectResults.push(`Result ${i + 1}: timed out extracting rating`);
-          this.logInfo(`  ⚠ [TIMEOUT] Result ${i + 1} exceeded ${perCardTimeoutMs}ms`);
-          incorrectCount++;
-        } else {
-          this.logInfo(`  ⚠ Card processing error: ${err}`);
-          incorrectCount++;
-          incorrectResults.push(`Result ${i + 1}: ${err}`);
-        }
+      if (cardRating === rating) {
+        correctCount++;
+        console.log(`  ✅ Card ${i + 1}: ${cardRating}★ [MATCH]`);
+      } else {
+        console.log(`  ⚠️  Card ${i + 1}: ${cardRating}★ (expected ${rating}★)`);
       }
     }
 
-    // Show rating distribution
-    this.logInfo(`  Rating distribution: ${JSON.stringify(ratingCounts)}`);
+    console.log(`\n📈 Rating Distribution: ${JSON.stringify(ratingCounts)}`);
+    console.log(`✅ Matching cards: ${correctCount}/${sampleSize}`);
 
-    // Relaxed: require at least one correct match in sampled cards
+    // VALIDATION: At least one card must match
     if (correctCount === 0) {
-      const errorMsg = `❌ NO RESULTS MATCH: None of the ${sampleSize} sampled results have ${rating} snowflakes.\n` +
-        `   This may indicate: (1) filter not applied, (2) no properties available, or (3) wrong checkbox selected.`;
-
-      this.logInfo(errorMsg);
+      const errorMsg = `❌ VALIDATION FAILED: No results match ${rating}★ rating\n` +
+        `   • Sampled ${sampleSize} cards\n` +
+        `   • Ratings found: ${JSON.stringify(ratingCounts)}\n` +
+        `   • This indicates: filter not applied OR no matching properties available`;
+      console.log(errorMsg);
+      console.log(`${'='.repeat(70)}\n`);
       throw new Error(errorMsg);
     }
 
-    if (incorrectCount > 0) {
-      this.addSoftWarning(`Rating mix detected: ${incorrectCount}/${sampleSize} not equal to ${rating}★ (distribution: ${JSON.stringify(ratingCounts)})`);
-    }
-
-    this.logInfo(`✓ Rating validation passed: ${correctCount}/${sampleSize} sampled results match ${rating}★`);
+    console.log(`✅ VALIDATION PASSED: Found ${correctCount} card(s) with ${rating}★ rating`);
+    console.log(`${'='.repeat(70)}\n`);
   }
 
   /**

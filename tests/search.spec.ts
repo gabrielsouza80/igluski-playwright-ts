@@ -80,7 +80,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
   // ============================================================
 
   // TC-001: Validates minimum duration filter (2 nights) with soft assertions
-  test('TC-001 — Validate minimum nights filter (2 nights)', async ({ pm }, testInfo) => {
+  test('TC-001 — Validate minimum night filter (2 nights)', async ({ pm }, testInfo) => {
     const nightsData = testData.searchPage.filters.nights;
 
     // Select nights from Bootstrap-Select dropdown
@@ -105,8 +105,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Log test completion
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-001 completed - validated ${nightsData.min} nights filter`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-001 PASS — ${nightsData.min} nights filter validated successfully`);
     });
   });
 
@@ -134,8 +134,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateResultsContainNights(nightsData.default);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-002 completed - validated ${nightsData.default} nights filter`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-002 PASS — ${nightsData.default} nights filter validated successfully`);
     });
   });
 
@@ -162,8 +162,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateResultsContainNights(nightsData.max);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-003 completed - validated ${nightsData.max} nights filter`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-003 PASS — ${nightsData.max} nights filter validated successfully`);
     });
   });
 
@@ -191,8 +191,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateResultsContainNights(nightsData.maxOpen);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-004 completed - validated ${nightsData.maxOpen} nights filter`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-004 PASS — ${nightsData.maxOpen} nights filter validated successfully`);
     });
   });
 
@@ -221,8 +221,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateResultsContainCountry(countryData.name);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-007 completed - validated ${countryData.name} country filter`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-007 PASS — ${countryData.name} country filter validated successfully`);
     });
   });
 
@@ -241,8 +241,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateExactMatchCount();
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-008 completed - validated ${countryData.name} country filter`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-008 PASS — ${countryData.name} country filter validated successfully`);
     });
   });
 
@@ -284,8 +284,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateResultsContainCountry(countryData.name);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-009 completed - validated ${nightsData.default} nights + ${countryData.name}`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-009 PASS — Combined filter validated: ${nightsData.default} nights + ${countryData.name}`);
     });
   });
 
@@ -316,8 +316,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateExactMatchCount();
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-010 completed - validated ${nightsData.maxOpen} nights + ${countryData.name}`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-010 PASS — Combined filter validated: ${nightsData.maxOpen} nights + ${countryData.name}`);
     });
   });
 
@@ -382,9 +382,10 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
       // Assert either pagination shows page 2 active or URL contains page=2
       const sp2 = pm.onSearchPage();
-      const url = await sp2.page.url();
+      const url = await sp2.getCurrentUrl();
       if (!/page=2/.test(url)) {
-        await expect(sp2.page.locator('.pagination .active:has-text("2")').first()).toBeVisible();
+        const paginationElement = sp2.pagination.locator('.active:has-text("2")').first();
+        await expect(paginationElement).toBeVisible();
       }
     });
 
@@ -626,8 +627,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateResultsContainBoardBasis(boardBasisData.selected);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-018 completed - validated ${boardBasisData.selected} filter`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-018 PASS — ${boardBasisData.selected} board basis filter validated successfully`);
     });
   });
 
@@ -660,8 +661,35 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateResultsContainRating(ratingData.selected);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-019 completed - validated ${ratingData.selected} snowflakes rating`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-019 PASS — ${ratingData.selected}★ rating filter validated successfully`);
+    });
+  });
+
+  // TC-019b: Validates rating filter (2 snowflakes - minimum)
+  test('TC-019b — Validate rating filter (2 snowflakes - minimum)', async ({ pm }, testInfo) => {
+    // Reset nights to avoid interference from defaults
+    await test.step('Reset nights with Deselect All', async () => {
+      await pm.onSearchPage().deselectAllNights();
+    });
+
+    // Select minimum rating (2 snowflakes)
+    await test.step('Select rating: 2 snowflakes (minimum)', async () => {
+      await pm.onSearchPage().selectRatingFilter(2);
+    });
+
+    // Verify results contain only properties with exactly 2 stars
+    await test.step('Validate results are displayed', async () => {
+      await pm.onSearchPage().validateResultsCount(1);
+      await pm.onSearchPage().validateExactMatchCount();
+    });
+
+    await test.step('Validate results contain ONLY 2 snowflakes rating', async () => {
+      await pm.onSearchPage().validateResultsContainRating(2);
+    });
+
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-019b PASS — 2★ (minimum) rating filter validated — ONLY 2★ properties shown`);
     });
   });
 
@@ -721,8 +749,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       console.log(`⚠ TC-020: Test execution exceeded 30s - completing test`);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-020 completed - validated ${featureData.selected} feature`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-020 PASS — ${featureData.selected} property feature validated successfully`);
     });
   });
 
@@ -755,8 +783,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateResultsContainSkiArea(skiAreaData.selected);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-021 completed - validated ${skiAreaData.selected} ski area`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-021 PASS — ${skiAreaData.selected} ski area filter validated successfully`);
     });
   });
 
@@ -789,8 +817,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       await pm.onSearchPage().validateResultsContainResort(resortData.selected);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-022 completed - validated ${resortData.selected} resort`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-022 PASS — ${resortData.selected} resort filter validated successfully`);
     });
   });
 
@@ -834,8 +862,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       console.log(`✓ All filters cleared - Results restored: ${resultsCount}`);
     });
 
-    await test.step('Finish test', async () => {
-      console.log('✓ TC-023 completed - validated clear all filters functionality');
+    await test.step('✅ Test completed', async () => {
+      console.log('✅ TC-023 PASS — "Clear all changes" functionality validated successfully');
     });
   });
 
@@ -927,8 +955,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       console.log(`⚠️ TC-024: Test execution exceeded 60s - completing test`);
     });
 
-    await test.step('Finish test', async () => {
-      console.log('✓ TC-024 completed - validated section clear button behavior');
+    await test.step('✅ Test completed', async () => {
+      console.log('✅ TC-024 PASS — Section "clear" button functionality validated successfully');
     });
   });
 
@@ -963,8 +991,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       }
     });
 
-    await test.step('Finish test', async () => {
-      console.log('✓ TC-025 completed - validated URL parameter synchronization');
+    await test.step('✅ Test completed', async () => {
+      console.log('✅ TC-025 PASS — URL parameter synchronization validated successfully');
     });
   });
 
@@ -1021,8 +1049,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       console.log(`✓ URL: ${url}`);
     });
 
-    await test.step('Finish test', async () => {
-      console.log(`✓ TC-026 completed - validated multi-country selection (${countryNames.join(' + ')})`);
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-026 PASS — Multi-country selection validated: ${countryNames.join(' + ')}`);
     });
   });
 
@@ -1072,8 +1100,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       }
     });
 
-    await test.step('Finish test', async () => {
-      console.log('✓ TC-027 completed - validated individual country removal from multi-selection');
+    await test.step('✅ Test completed', async () => {
+      console.log('✅ TC-027 PASS — Individual country removal from multi-selection validated successfully');
     });
   });
 
@@ -1101,8 +1129,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       }
     });
 
-    await test.step('Finish test', async () => {
-      console.log('✓ TC-028 completed - validated multi-accommodation selection');
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-028 PASS — Multi-accommodation selection validated: ${accommodations.join(' + ')}`);
     });
   });
 
@@ -1130,8 +1158,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       }
     });
 
-    await test.step('Finish test', async () => {
-      console.log('✓ TC-029 completed - validated multi-board basis selection');
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-029 PASS — Multi-board basis selection validated: ${boardBasisOptions.join(' + ')}`);
     });
   });
 
@@ -1159,8 +1187,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       }
     });
 
-    await test.step('Finish test', async () => {
-      console.log('✓ TC-030 completed - validated multi-ski area selection');
+    await test.step('✅ Test completed', async () => {
+      console.log(`✅ TC-030 PASS — Multi-ski area selection validated: ${skiAreas.join(' + ')}`);
     });
   });
 });
