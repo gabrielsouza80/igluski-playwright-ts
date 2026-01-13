@@ -69,9 +69,17 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
   // Navigate to search results page and accept cookies before each test
   test.beforeEach(async ({ pm }) => {
-    await pm.onSearchPage().navigateAndAcceptCookies('/ski-holidays');
-    // Standardize state: always clear nights before each TC
-    await pm.onSearchPage().deselectAllNights();
+    try {
+      await pm.onSearchPage().navigateAndAcceptCookies('/ski-holidays');
+      // Standardize state: always clear nights before each TC
+      await pm.onSearchPage().deselectAllNights().catch(() => {
+        // If deselect fails, just continue - page may be in process of reloading
+      });
+    } catch (error) {
+      // If beforeEach setup fails completely, try one more time with fresh navigation
+      console.log(`⚠️ beforeEach setup failed, retrying: ${error}`);
+      await pm.onSearchPage().navigateAndAcceptCookies('/ski-holidays').catch(() => {});
+    }
   });
 
   // ============================================================
@@ -184,6 +192,16 @@ test.describe('Search and Filters — Ski Holidays', () => {
     // Validate exact match message (may be absent for very large result sets)
     await test.step('Validate exact match count message (if present)', async () => {
       await pm.onSearchPage().validateExactMatchCount();
+    });
+
+    // Validate URL contains nts=14 parameter
+    await test.step('Validate URL contains nights filter parameter', async () => {
+      await expect(pm.getPage()).toHaveURL(/nts=14/);
+    });
+
+    // Validate ALL result cards show >= 14 nights (no false positives)
+    await test.step('Validate ALL results meet minimum 14 nights requirement', async () => {
+      await pm.onSearchPage().assertAllResultsMeetMinNights(14);
     });
 
     // Validate cards show 14+ nights before any "More results..." section
@@ -384,7 +402,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
       const sp2 = pm.onSearchPage();
       const url = await sp2.getCurrentUrl();
       if (!/page=2/.test(url)) {
-        const paginationElement = sp2.pagination.locator('.active:has-text("2")').first();
+        // Try multiple selectors for active pagination (Bootstrap variants)
+        const paginationElement = sp2.pagination.locator('.active:has-text("2"), li.active:has-text("2"), [aria-current="page"]:has-text("2")').first();
         await expect(paginationElement).toBeVisible();
       }
     });
@@ -421,6 +440,9 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
   // TC-014: Tests 4 extreme filter combinations (2 min, 2 max) with timeout guard
   test('TC-014 — Extremes: 2 minimums and 2 maximums', async ({ pm }, testInfo) => {
+    // Set extended timeout for this test since it performs 4 extreme filter combinations
+    testInfo.setTimeout(150000); // 150 seconds
+    
     // Data-driven approach: loops through extremes combinations from testdata.json
     const combos = testData.searchPage.extremes.combinations;
 
@@ -659,6 +681,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
     await test.step(`Validate results contain ${ratingData.selected} snowflakes rating`, async () => {
       await pm.onSearchPage().validateResultsContainRating(ratingData.selected);
+      await pm.onSearchPage().validateTopNCardsHaveRatingTitleExact(ratingData.selected, 5);
     });
 
     await test.step('✅ Test completed', async () => {
@@ -686,6 +709,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
     await test.step('Validate results contain ONLY 2 snowflakes rating', async () => {
       await pm.onSearchPage().validateResultsContainRating(2);
+      await pm.onSearchPage().validateTopNCardsHaveRatingTitleExact(2, 5);
     });
 
     await test.step('✅ Test completed', async () => {

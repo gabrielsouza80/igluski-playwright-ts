@@ -123,6 +123,11 @@ export class PageManager {
         return this.componentsPage;
     }
 
+    // Public getter to expose the Playwright Page safely
+    public getPage(): Page {
+        return this.page;
+    }
+
     // Retorna singleton lazy de Actions
     get actions(): Actions {
         if (!this._actions) this._actions = new Actions(this.page);

@@ -285,7 +285,7 @@ export class HelperBase {
       .replace(/[❌✗✖]/g, '[FAIL]')
       .replace(/[⚠]/g, '[WARN]')
       .replace(/[ℹ]/g, '[INFO]')
-      .replace(/🔎/g, '[INFO]')
+      .replace(/[🔎⭐⏳📊📋🖱️↻]/g, '[INFO]')
       .replace(/[•]/g, '-')
       .replace(/[→]/g, '->')
       .replace(/[—–]/g, '-')
@@ -294,31 +294,42 @@ export class HelperBase {
   }
 
   protected logSection(title: string): void {
+    if (this.logLevel !== 'verbose') return;
     console.log(`\n==================== ${String(title).toUpperCase()} ====================`);
   }
 
   protected logInfo(message: string): void {
     const msg = this.sanitizeLogMessage(message);
-    if (this.logLevel === 'minimal' && msg.startsWith('[OK]')) return;
+    if (this.logLevel === 'minimal') return;
     console.log(`- ${msg}`);
   }
 
   protected logSubInfo(message: string): void {
     const msg = this.sanitizeLogMessage(message);
-    if (this.logLevel === 'minimal' && msg.startsWith('[OK]')) return;
+    if (this.logLevel === 'minimal') return;
     console.log(`  - ${msg}`);
   }
 
   protected logDivider(): void {
+    if (this.logLevel !== 'verbose') return;
     console.log('---------------------------------------------------------------');
   }
 
+  private __lastWarnMsg: string | null = null;
+  private __lastWarnTime = 0;
   protected logWarn(message: string): void {
-    console.log(`[WARN] ${this.sanitizeLogMessage(message)}`);
+    const msg = this.sanitizeLogMessage(message);
+    // Collapse duplicate warnings within 1 second
+    const now = Date.now();
+    if (this.__lastWarnMsg === msg && now - this.__lastWarnTime < 1000) return;
+    this.__lastWarnMsg = msg;
+    this.__lastWarnTime = now;
+    console.log(`[WARN] ${msg}`);
   }
 
   protected logError(message: string): void {
-    console.log(`[ERROR] ${this.sanitizeLogMessage(message)}`);
+    const msg = this.sanitizeLogMessage(message);
+    console.log(`[ERROR] ${msg}`);
   }
 
   // ============================================================

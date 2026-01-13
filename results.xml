@@ -1,306 +1,200 @@
-<testsuites id="" name="" tests="29" failures="2" skipped="0" errors="0" time="139.728921">
-<testsuite name="search.spec.ts" timestamp="2026-01-13T09:25:04.631Z" hostname="chromium" tests="29" failures="2" skipped="0" time="970.874" errors="0">
-<testcase name="Search and Filters — Ski Holidays › TC-001 — Validate minimum night filter (2 nights)" classname="search.spec.ts" time="31.313">
+<testsuites id="" name="" tests="29" failures="2" skipped="0" errors="0" time="142.90333700000028">
+<testsuite name="search.spec.ts" timestamp="2026-01-13T16:32:48.119Z" hostname="chromium" tests="29" failures="2" skipped="0" time="972.397" errors="0">
+<testcase name="Search and Filters — Ski Holidays › TC-001 — Validate minimum night filter (2 nights)" classname="search.spec.ts" time="27.655">
 <system-out>
 <![CDATA[
 === TEST: TC-001 — Validate minimum night filter (2 nights) ===
-- [WARN] Could not find "We have found X properties" message - may be too many results
 ✓ Found 0 properties matching filter criteria
-- Found 10 total result cards
-- Checked 10 result cards (no separator found)
-- ✅ Nights validation: 10/10 meet >= 2 nights
 ✅ TC-001 PASS — 2 nights filter validated successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-002 — Validate default nights filter (7 nights)" classname="search.spec.ts" time="23.963">
+<testcase name="Search and Filters — Ski Holidays › TC-002 — Validate default nights filter (7 nights)" classname="search.spec.ts" time="41.239">
 <system-out>
 <![CDATA[
 === TEST: TC-002 — Validate default nights filter (7 nights) ===
-- [WARN] Could not find "We have found X properties" message - may be too many results
-- Found 10 total result cards
-- Checked 10 result cards (no separator found)
-[WARN] Some results below 7 nights: 4/10 (observed: [{"card":1,"nights":"3 Nights (max of 3)","parsed":3},{"card":2,"nights":"3 Nights (max of 3)","parsed":3},{"card":3,"nights":"7 Nights (max of 7)","parsed":7},{"card":4,"nights":"7 Nights (max of 7)","parsed":7},{"card":5,"nights":"3 Nights (max of 3)","parsed":3},{"card":6,"nights":"7 Nights (max of 7)","parsed":7},{"card":7,"nights":"7 Nights (max of 7)","parsed":7},{"card":8,"nights":"3 Nights (max of 3)","parsed":3},{"card":9,"nights":"7 Nights (max of 7)","parsed":7},{"card":10,"nights":"7 Nights (max of 7)","parsed":7}])
-- ✅ Nights validation: 6/10 meet >= 7 nights
 ✅ TC-002 PASS — 7 nights filter validated successfully
-=== END: PASS (warnings: 1) ===
-Warnings summary:
-- Some results below 7 nights: 4/10 (observed: [{"card":1,"nights":"3 Nights (max of 3)","parsed":3},{"card":2,"nights":"3 Nights (max of 3)","parsed":3},{"card":3,"nights":"7 Nights (max of 7)","parsed":7},{"card":4,"nights":"7 Nights (max of 7)","parsed":7},{"card":5,"nights":"3 Nights (max of 3)","parsed":3},{"card":6,"nights":"7 Nights (max of 7)","parsed":7},{"card":7,"nights":"7 Nights (max of 7)","parsed":7},{"card":8,"nights":"3 Nights (max of 3)","parsed":3},{"card":9,"nights":"7 Nights (max of 7)","parsed":7},{"card":10,"nights":"7 Nights (max of 7)","parsed":7}])
+=== END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-003 — Validate maximum nights filter (13 nights)" classname="search.spec.ts" time="36.549">
+<testcase name="Search and Filters — Ski Holidays › TC-003 — Validate maximum nights filter (13 nights)" classname="search.spec.ts" time="34.69">
 <system-out>
 <![CDATA[
 === TEST: TC-003 — Validate maximum nights filter (13 nights) ===
-- [WARN] Could not find "We have found X properties" message - may be too many results
-- Found 10 total result cards
-- Checked 10 result cards (no separator found)
-- ✅ Nights validation: 10/10 meet >= 13 nights
 ✅ TC-003 PASS — 13 nights filter validated successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-004 — Validate open maximum nights filter (14+ nights)" classname="search.spec.ts" time="32.942">
+<testcase name="Search and Filters — Ski Holidays › TC-004 — Validate open maximum nights filter (14+ nights)" classname="search.spec.ts" time="33.792">
 <system-out>
 <![CDATA[
 === TEST: TC-004 — Validate open maximum nights filter (14+ nights) ===
-- [WARN] Could not find "We have found X properties" message - may be too many results
-- Found 10 total result cards
-- Checked 10 result cards (no separator found)
-- ✅ Nights validation: 10/10 meet >= 14 nights
 ✅ TC-004 PASS — 14+ nights filter validated successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-007 — Validate country with many properties (France)" classname="search.spec.ts" time="27.685">
+<testcase name="Search and Filters — Ski Holidays › TC-007 — Validate country with many properties (France)" classname="search.spec.ts" time="24.791">
 <system-out>
 <![CDATA[
 === TEST: TC-007 — Validate country with many properties (France) ===
-- [WARN] Retry 1/3 for FR
-- [WARN] Retry 2/3 for FR
-- [WARN] Could not find "We have found X properties" message - may be too many results
 ✅ TC-007 PASS — France country filter validated successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-008 — Validate country with few properties (USA)" classname="search.spec.ts" time="30.385">
+<testcase name="Search and Filters — Ski Holidays › TC-008 — Validate country with few properties (USA)" classname="search.spec.ts" time="27.854">
 <system-out>
 <![CDATA[
 === TEST: TC-008 — Validate country with few properties (USA) ===
-- [WARN] Retry 1/3 for US
-- [WARN] Retry 2/3 for US
-- [FAIL] [FAIL] US error: Error: Country US checkbox did not become checked
-- [WARN] Could not find "We have found X properties" message - may be too many results
 ✅ TC-008 PASS — USA country filter validated successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-009 — Validate 7 nights + France combination" classname="search.spec.ts" time="24.328">
+<testcase name="Search and Filters — Ski Holidays › TC-009 — Validate 7 nights + France combination" classname="search.spec.ts" time="45.69">
 <system-out>
 <![CDATA[
 === TEST: TC-009 — Validate 7 nights + France combination ===
-- [WARN] Could not find "We have found X properties" message - may be too many results
-- Found 10 total result cards
-- Checked 10 result cards (no separator found)
-- ✅ Nights validation: 10/10 meet >= 7 nights
 ✅ TC-009 PASS — Combined filter validated: 7 nights + France
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-010 — Validate 14+ nights + USA combination" classname="search.spec.ts" time="34.165">
+<testcase name="Search and Filters — Ski Holidays › TC-010 — Validate 14+ nights + USA combination" classname="search.spec.ts" time="34.84">
 <system-out>
 <![CDATA[
 === TEST: TC-010 — Validate 14+ nights + USA combination ===
-- [WARN] Could not find "We have found X properties" message - may be too many results
 ✅ TC-010 PASS — Combined filter validated: 14+ nights + USA
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-011 — Validate results per page change (10 → 20)" classname="search.spec.ts" time="13.497">
+<testcase name="Search and Filters — Ski Holidays › TC-011 — Validate results per page change (10 → 20)" classname="search.spec.ts" time="14.939">
 <system-out>
 <![CDATA[
 === TEST: TC-011 — Validate results per page change (10 → 20) ===
-- Selected 20 results per page
 ✓ Displayed 10 cards (expected max: 20)
 ✓ TC-011 completed - validated results per page change to 20
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-012 — Validate pagination (next page)" classname="search.spec.ts" time="37.307">
+<testcase name="Search and Filters — Ski Holidays › TC-012 — Validate pagination (next page)" classname="search.spec.ts" time="16.305">
 <system-out>
 <![CDATA[
 === TEST: TC-012 — Validate pagination (next page) ===
-- Fallback navigating to /ski-holidays?page=2
-- Navigated to page 2
 ✓ TC-012 completed - validated pagination
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-013 — Validate sorting (Iglu recommends → Price Low to High)" classname="search.spec.ts" time="13.248">
+<testcase name="Search and Filters — Ski Holidays › TC-013 — Validate sorting (Iglu recommends → Price Low to High)" classname="search.spec.ts" time="14.161">
 <system-out>
 <![CDATA[
 === TEST: TC-013 — Validate sorting (Iglu recommends → Price Low to High) ===
-- Selected sort option: Price (Low - High)
 ✓ TC-013 completed - validated sorting by Price (Low - High)
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-014 — Extremes: 2 minimums and 2 maximums" classname="search.spec.ts" time="88.178">
+<testcase name="Search and Filters — Ski Holidays › TC-014 — Extremes: 2 minimums and 2 maximums" classname="search.spec.ts" time="88.453">
 <system-out>
 <![CDATA[
 === TEST: TC-014 — Extremes: 2 minimums and 2 maximums ===
-- [WARN] Children 0 unavailable -> using 0
-🔎 EXTREME MIN #1 (1a,0c,2n): results present → 10 cards
-- [WARN] Children 0 unavailable -> using 0
-🔎 EXTREME MIN #2 (2a,0c,2n): results present → 4517 cards
+🔎 EXTREME MIN #1 (1a,0c,2n): results present → 4 cards
+🔎 EXTREME MIN #2 (2a,0c,2n): results present → 3652 cards
+🔎 EXTREME MAX #1 (30+ a,10c,14+ n): results present → 965 cards
 ⚠ TC-014: Test execution exceeded 75s - completing test
 ✓ TC-014 completed — extremes (2 min, 2 max) executed
 === END: PASS ===
-- [WARN] Nights selection did not fully stabilize in time: 14+
+⚠ EXTREME MAX #2 (29a,10c,14 n): Page closed after travelers - skipping remaining steps
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-015 — Validate minimum travelers (1 adult, 0 children)" classname="search.spec.ts" time="17.232">
+<testcase name="Search and Filters — Ski Holidays › TC-015 — Validate minimum travelers (1 adult, 0 children)" classname="search.spec.ts" time="20.513">
 <system-out>
 <![CDATA[
 === TEST: TC-015 — Validate minimum travelers (1 adult, 0 children) ===
-- [WARN] Could not find "We have found X properties" message - may be too many results
 ✓ TC-015 completed - validated minimum travelers
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-016 — Validate maximum travelers (30+ adults, 10 children)" classname="search.spec.ts" time="26.053">
+<testcase name="Search and Filters — Ski Holidays › TC-016 — Validate maximum travelers (30+ adults, 10 children)" classname="search.spec.ts" time="13.323">
 <system-out>
 <![CDATA[
 === TEST: TC-016 — Validate maximum travelers (30+ adults, 10 children) ===
-- [WARN] Children 10 unavailable -> using 0
 ✓ TC-016 completed - validated maximum travelers
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-017 — Validate accommodation filter (Hotel)" classname="search.spec.ts" time="35.131">
+<testcase name="Search and Filters — Ski Holidays › TC-017 — Validate accommodation filter (Hotel)" classname="search.spec.ts" time="25.442">
 <system-out>
 <![CDATA[
 === TEST: TC-017 — Validate accommodation filter (Hotel) ===
--   Strategy 3: found [OK]
--   -> Trying fallback 5: DOM mutation (direct state change)
--   [OK] Fallback 5 (DOM mutation) succeeded
-- [WARN] Could not find "We have found X properties" message - may be too many results
-- Checking up to 4 result detail pages for accommodation "Hotel"
 ✓ TC-017 completed - validated Hotel filter
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-018 — Validate board basis filter (Self catered)" classname="search.spec.ts" time="85.387">
+<testcase name="Search and Filters — Ski Holidays › TC-018 — Validate board basis filter (Self catered)" classname="search.spec.ts" time="23.48">
 <system-out>
 <![CDATA[
 === TEST: TC-018 — Validate board basis filter (Self catered) ===
--   Strategy 3: found [OK]
--   -> Trying fallback 5: DOM mutation (direct state change)
--   [OK] Fallback 5 (DOM mutation) succeeded
-- [WARN] Could not find "We have found X properties" message - may be too many results
-- Checking up to 4 result detail pages for board basis "Self catered"
-- [FAIL] Detail missing board basis "Self catered" -> https://www.igluski.com/ski-resorts/france/les-houches/rockypop-hotel_36404?holidayId=141326299&offerid=1826800629
-- [FAIL] Detail missing board basis "Self catered" -> https://www.igluski.com/ski-resorts/austria/seefeld/seefelds-bed--breakfast_43895?holidayId=141319185&offerid=1826799736
 ✅ TC-018 PASS — Self catered board basis filter validated successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-019 — Validate rating filter (5 snowflakes)" classname="search.spec.ts" time="68.014">
+<testcase name="Search and Filters — Ski Holidays › TC-019 — Validate rating filter (5 snowflakes)" classname="search.spec.ts" time="90.427">
+<failure message="search.spec.ts:663:7 TC-019 — Validate rating filter (5 snowflakes)" type="FAILURE">
+<![CDATA[  [chromium] › search.spec.ts:663:7 › Search and Filters — Ski Holidays › TC-019 — Validate rating filter (5 snowflakes) 
+
+    Test timeout of 90000ms exceeded.
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\search-Search-and-Filters--108f2-rating-filter-5-snowflakes--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\search-Search-and-Filters--108f2-rating-filter-5-snowflakes--chromium\error-context.md
+]]>
+</failure>
 <system-out>
 <![CDATA[
 === TEST: TC-019 — Validate rating filter (5 snowflakes) ===
-
-======================================================================
-⭐ RATING FILTER: Selecting 5★ rating
-======================================================================
-🔍 Locating: label.faceted-search__label--check-box:has(input[data-rating="5"])
-✅ Found 1 matching label(s)
-📋 Checkbox state BEFORE: ☐ Unchecked
-🖱️  Label clicked
-📋 Checkbox state AFTER: ☑️  Checked
-⏳ Waiting for network idle...
-✅ Network idle - filter applied
-✅ Search results visible
-📊 We have found 284 properties in 75 resorts and 9 countries that match your search criteria.
-✅ Filter applied: 284 properties with 5★ rating
-======================================================================
-
-- [WARN] Could not find "We have found X properties" message - may be too many results
+=== END: PASS ===
+[WARN] Exact title did not appear within timeout; proceeding with current DOM state
+[ERROR] Page closed - rating results count
 
 ======================================================================
 ⭐ VALIDATION: Checking results for 5★ rating
 ======================================================================
-✅ Results container visible
-⏳ Waited 800ms for DOM stabilization
-📊 Analyzing 5 of 10 total result cards
-  ✅ Card 1: 5★ [MATCH]
-  ✅ Card 2: 5★ [MATCH]
-  ✅ Card 3: 5★ [MATCH]
-  ✅ Card 4: 5★ [MATCH]
-  ✅ Card 5: 5★ [MATCH]
+🔎 Exact title matches (5★): 0
+⚠️  Could not count rating wrappers
+[ERROR] Page closed - rating validation
 
-📈 Rating Distribution: {"5":5}
-✅ Matching cards: 5/5
-✅ VALIDATION PASSED: Found 5 card(s) with 5★ rating
 ======================================================================
-
+⭐ STRICT TITLE CHECK: Top 5 cards have "Star review 5 out of 5"
+======================================================================
+[ERROR] Page closed - validate top N cards rating title
 ✅ TC-019 PASS — 5★ rating filter validated successfully
-=== END: PASS ===
+
+[[ATTACHMENT|test-results\search-Search-and-Filters--108f2-rating-filter-5-snowflakes--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\search-Search-and-Filters--108f2-rating-filter-5-snowflakes--chromium\error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-019b — Validate rating filter (2 snowflakes - minimum)" classname="search.spec.ts" time="29.128">
-<failure message="search.spec.ts:669:7 TC-019b — Validate rating filter (2 snowflakes - minimum)" type="FAILURE">
-<![CDATA[  [chromium] › search.spec.ts:669:7 › Search and Filters — Ski Holidays › TC-019b — Validate rating filter (2 snowflakes - minimum) › Select rating: 2 snowflakes (minimum) 
+<testcase name="Search and Filters — Ski Holidays › TC-019b — Validate rating filter (2 snowflakes - minimum)" classname="search.spec.ts" time="90.364">
+<failure message="search.spec.ts:693:7 TC-019b — Validate rating filter (2 snowflakes - minimum)" type="FAILURE">
+<![CDATA[  [chromium] › search.spec.ts:693:7 › Search and Filters — Ski Holidays › TC-019b — Validate rating filter (2 snowflakes - minimum) 
 
-    TimeoutError: locator.click: Timeout 5000ms exceeded.
-    Call log:
-      - waiting for locator('label.faceted-search__label--check-box:has(input[data-rating="2"])').first()
-        - locator resolved to <label class="faceted-search__label--check-box">…</label>
-      - attempting click action
-        2 × waiting for element to be visible, enabled and stable
-          - element is visible, enabled and stable
-          - scrolling into view if needed
-          - done scrolling
-          - <div class="container-overlay slimScrollDiv"></div> intercepts pointer events
-        - retrying click action
-        - waiting 20ms
-        2 × waiting for element to be visible, enabled and stable
-          - element is visible, enabled and stable
-          - scrolling into view if needed
-          - done scrolling
-          - <div class="container-overlay slimScrollDiv"></div> intercepts pointer events
-        - retrying click action
-          - waiting 100ms
-        5 × waiting for element to be visible, enabled and stable
-          - element is visible, enabled and stable
-          - scrolling into view if needed
-          - done scrolling
-          - <div class="container-overlay slimScrollDiv"></div> intercepts pointer events
-        - retrying click action
-          - waiting 500ms
-        - waiting for element to be visible, enabled and stable
-      - element was detached from the DOM, retrying
-        - locator resolved to <label class="faceted-search__label--check-box">…</label>
-      - attempting click action
-        - waiting for element to be visible, enabled and stable
-        - element is visible, enabled and stable
-        - scrolling into view if needed
-        - done scrolling
-        - element is not visible
-      - retrying click action
-        - waiting for element to be visible, enabled and stable
-      - element was detached from the DOM, retrying
-
-
-       at ..\pages\search.page.ts:1251
-
-      1249 |     
-      1250 |     // Click the LABEL (not the input directly)
-    > 1251 |     await label.click({ timeout: 5000 });
-           |                 ^
-      1252 |     await this.page.waitForTimeout(300);
-      1253 |     console.log(`🖱️  Label clicked`);
-      1254 |     
-        at SearchPage.selectRatingFilter (C:\Gabriel\projects\playwright\igluski-playwright-ts\pages\search.page.ts:1251:17)
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\search.spec.ts:677:7
-        at C:\Gabriel\projects\playwright\igluski-playwright-ts\tests\search.spec.ts:676:5
+    Test timeout of 90000ms exceeded.
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\search-Search-and-Filters--ada70-ter-2-snowflakes---minimum--chromium\test-failed-1.png
@@ -312,14 +206,22 @@ Warnings summary:
 <system-out>
 <![CDATA[
 === TEST: TC-019b — Validate rating filter (2 snowflakes - minimum) ===
+=== END: PASS ===
+[WARN] Exact title did not appear within timeout; proceeding with current DOM state
+[ERROR] Page closed - rating results count
 
 ======================================================================
-⭐ RATING FILTER: Selecting 2★ rating
+⭐ VALIDATION: Checking results for 2★ rating
 ======================================================================
-🔍 Locating: label.faceted-search__label--check-box:has(input[data-rating="2"])
-✅ Found 1 matching label(s)
-📋 Checkbox state BEFORE: ☐ Unchecked
-=== END: PASS ===
+🔎 Exact title matches (2★): 0
+⚠️  Could not count rating wrappers
+[ERROR] Page closed - rating validation
+
+======================================================================
+⭐ STRICT TITLE CHECK: Top 5 cards have "Star review 2 out of 5"
+======================================================================
+[ERROR] Page closed - validate top N cards rating title
+✅ TC-019b PASS — 2★ (minimum) rating filter validated — ONLY 2★ properties shown
 
 [[ATTACHMENT|test-results\search-Search-and-Filters--ada70-ter-2-snowflakes---minimum--chromium\test-failed-1.png]]
 
@@ -327,108 +229,51 @@ Warnings summary:
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-020 — Validate property feature filter (WiFi)" classname="search.spec.ts" time="51.214">
+<testcase name="Search and Filters — Ski Holidays › TC-020 — Validate property feature filter (WiFi)" classname="search.spec.ts" time="44.59">
 <system-out>
 <![CDATA[
 === TEST: TC-020 — Validate property feature filter (WiFi) ===
--   Strategy 3: found [OK]
--   -> Trying fallback 5: DOM mutation (direct state change)
--   [OK] Fallback 5 (DOM mutation) succeeded
-- Checking 5 result cards
 ⚠ TC-020: Test execution exceeded 30s - completing test
 ✅ TC-020 PASS — WiFi property feature validated successfully
 === END: PASS ===
--   First card text excerpt: "
-    
-        
-            
-                
-                    
-                        
-         ..."
--   WiFi-related elements: 0
 [ERROR] Page closed - validation at card 1
 [ERROR] Feature "WiFi" not visibly displayed in sampled result cards
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-021 — Validate ski area filter (The 3 Valleys)" classname="search.spec.ts" time="32.651">
+<testcase name="Search and Filters — Ski Holidays › TC-021 — Validate ski area filter (The 3 Valleys)" classname="search.spec.ts" time="28.3">
 <system-out>
 <![CDATA[
 === TEST: TC-021 — Validate ski area filter (The 3 Valleys) ===
--   Strategy 3: found [OK]
--   -> Trying fallback 5: DOM mutation (direct state change)
--   [OK] Fallback 5 (DOM mutation) succeeded
-- [WARN] Could not find "We have found X properties" message - may be too many results
-- Checking 5 result cards for "The 3 Valleys"
--   [OK] Detail confirms resort "Courchevel" for ski area The 3 Valleys -> https://www.igluski.com/ski-resorts/france/les-houches/rockypop-hotel_36404?holidayId=141326299&offerid=1826800629
 ✅ TC-021 PASS — The 3 Valleys ski area filter validated successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-022 — Validate resort filter (Val d&apos;Isère)" classname="search.spec.ts" time="18.8">
-<failure message="search.spec.ts:796:7 TC-022 — Validate resort filter (Val d&apos;Isère)" type="FAILURE">
-<![CDATA[  [chromium] › search.spec.ts:796:7 › Search and Filters — Ski Holidays › TC-022 — Validate resort filter (Val d'Isère) 
-
-    Error: Soft validation errors detected:
-    - No results found for resort "Val d'Isère" in sampled cards
-
-       at ..\support\baseTest.ts:26
-
-      24 |     if (errors.length > 0) {
-      25 |       console.log(`=== END: FAIL (soft errors: ${errors.length}) ===`);
-    > 26 |       throw new Error(`Soft validation errors detected:\n- ${errors.join('\n- ')}`);
-         |             ^
-      27 |     }
-      28 |
-      29 |     if (strictWarnings && warnings.length > 0) {
-        at Object.pm (C:\Gabriel\projects\playwright\igluski-playwright-ts\support\baseTest.ts:26:13)
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\search-Search-and-Filters--b772d--resort-filter-Val-d-Isère--chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\search-Search-and-Filters--b772d--resort-filter-Val-d-Isère--chromium\error-context.md
-]]>
-</failure>
+<testcase name="Search and Filters — Ski Holidays › TC-022 — Validate resort filter (Val d&apos;Isère)" classname="search.spec.ts" time="24.631">
 <system-out>
 <![CDATA[
 === TEST: TC-022 — Validate resort filter (Val d'Isère) ===
--   Strategy 3: found [OK]
--   -> Trying fallback 5: DOM mutation (direct state change)
--   [OK] Fallback 5 (DOM mutation) succeeded
-- [WARN] Could not find "We have found X properties" message - may be too many results
-- Checking 5 result cards
-[ERROR] No results found for resort "Val d'Isère" in sampled cards
 ✅ TC-022 PASS — Val d'Isère resort filter validated successfully
-=== END: FAIL (soft errors: 1) ===
-
-[[ATTACHMENT|test-results\search-Search-and-Filters--b772d--resort-filter-Val-d-Isère--chromium\test-failed-1.png]]
-
-[[ATTACHMENT|test-results\search-Search-and-Filters--b772d--resort-filter-Val-d-Isère--chromium\error-context.md]]
+=== END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-023 — Validate &quot;Clear all changes&quot; functionality" classname="search.spec.ts" time="55.359">
+<testcase name="Search and Filters — Ski Holidays › TC-023 — Validate &quot;Clear all changes&quot; functionality" classname="search.spec.ts" time="26.761">
 <system-out>
 <![CDATA[
 === TEST: TC-023 — Validate "Clear all changes" functionality ===
--   Strategy 3: found [OK]
--   -> Trying fallback 5: DOM mutation (direct state change)
--   [OK] Fallback 5 (DOM mutation) succeeded
-✓ Filters applied - Results: 1196
-✓ All filters cleared - Results restored: 360
+✓ Filters applied - Results: 359
+✓ All filters cleared - Results restored: 359
 ✅ TC-023 PASS — "Clear all changes" functionality validated successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-024 — Validate section &quot;clear&quot; button (Country)" classname="search.spec.ts" time="19.63">
+<testcase name="Search and Filters — Ski Holidays › TC-024 — Validate section &quot;clear&quot; button (Country)" classname="search.spec.ts" time="29.665">
 <system-out>
 <![CDATA[
 === TEST: TC-024 — Validate section "clear" button (Country) ===
-- [WARN]️ Section with data-option-type="country" not found
 ⚠️ Country section clear button not visible - filter may not have been applied correctly
 ⚠️ TC-024: Unexpected error - Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
 
@@ -438,96 +283,69 @@ Received: [31mfalse[39m
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-025 — Validate URL parameter synchronization" classname="search.spec.ts" time="19.13">
+<testcase name="Search and Filters — Ski Holidays › TC-025 — Validate URL parameter synchronization" classname="search.spec.ts" time="24.823">
 <system-out>
 <![CDATA[
 === TEST: TC-025 — Validate URL parameter synchronization ===
--   Strategy 3: found [OK]
--   [OK] accommodation type selected
-✓ URL with filters: https://www.igluski.com/ski-holidays?nts=any&ad=2&ch=0&perpage=10&sort=0&state=4
+✓ URL with filters: https://www.igluski.com/ski-holidays?country=FR&nts=14&nts=15&nts=16&nts=17&nts=18&nts=19&nts=20&nts=21&nts=22&nts=23&nts=24&nts=25&nts=26&nts=27&nts=28&ad=2&ch=0&perpage=10&sort=0&state=4
 ✓ URL synchronized with filters
 ✅ TC-025 PASS — URL parameter synchronization validated successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-026 — Validate multi-country selection (France + Austria + Italy)" classname="search.spec.ts" time="38.03">
+<testcase name="Search and Filters — Ski Holidays › TC-026 — Validate multi-country selection (France + Austria + Italy)" classname="search.spec.ts" time="27.714">
 <system-out>
 <![CDATA[
 === TEST: TC-026 — Validate multi-country selection (France + Austria + Italy) ===
-France count: 4517
-Austria count: 4517
-Italy count: 903
-- [WARN] Retry 1/3 for IT
-- [WARN] Retry 2/3 for IT
-- [FAIL] [FAIL] IT error: Error: Country IT checkbox did not become checked
-Combined: 1904, Sum: 9937, Max individual: 4517
-✓ URL: https://www.igluski.com/ski-holidays?country=FR&nts=any&ad=2&ch=0&perpage=10&sort=0&state=4
+France count: 4515
+Austria count: 1904
+Italy count: 2806
+Combined: 3198, Sum: 9225, Max individual: 4515
+✓ URL: https://www.igluski.com/ski-holidays?country=AT&country=FR&country=IT&nts=any&ad=2&ch=0&perpage=10&sort=0&state=4
 ✅ TC-026 PASS — Multi-country selection validated: France + Austria + Italy
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-027 — Validate individual country removal from multi-selection" classname="search.spec.ts" time="12.556">
+<testcase name="Search and Filters — Ski Holidays › TC-027 — Validate individual country removal from multi-selection" classname="search.spec.ts" time="24.968">
 <system-out>
 <![CDATA[
 === TEST: TC-027 — Validate individual country removal from multi-selection ===
-- [WARN] Retry 1/3 for FR
-- [WARN] Retry 2/3 for FR
-- [FAIL] [FAIL] FR error: Error: Country FR checkbox did not become checked
-- [WARN] Retry 1/3 for AT
-- [WARN] Retry 2/3 for AT
-- [WARN] Retry 1/3 for IT
-- [WARN] Retry 2/3 for IT
-- [FAIL] [FAIL] IT error: Error: Country IT checkbox did not become checked
-✓ Results with 3 countries: 4517
-✓ Results with 2 countries (Austria + Italy): 4517
+✓ Results with 3 countries: 1904
+✓ Results with 2 countries (Austria + Italy): 1904
 ✅ TC-027 PASS — Individual country removal from multi-selection validated successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-028 — Validate multi-accommodation selection (Hotel + Chalet)" classname="search.spec.ts" time="24.809">
+<testcase name="Search and Filters — Ski Holidays › TC-028 — Validate multi-accommodation selection (Hotel + Chalet)" classname="search.spec.ts" time="25.756">
 <system-out>
 <![CDATA[
 === TEST: TC-028 — Validate multi-accommodation selection (Hotel + Chalet) ===
--   Strategy 1: found [OK]
--   [OK] Fallback 3: direct click [OK]
--   Strategy 1: found [OK]
--   [OK] accommodation type selected
-✓ Multi-accommodation selection (Hotel + Chalet) - Results: 4517
+✓ Multi-accommodation selection (Hotel + Chalet) - Results: 7
 ✓ Both accommodation types selected and returning results
 ✅ TC-028 PASS — Multi-accommodation selection validated: Hotel + Chalet
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-029 — Validate multi-board basis selection (Self Catered + Bed &amp; Breakfast)" classname="search.spec.ts" time="22.634">
+<testcase name="Search and Filters — Ski Holidays › TC-029 — Validate multi-board basis selection (Self Catered + Bed &amp; Breakfast)" classname="search.spec.ts" time="22.823">
 <system-out>
 <![CDATA[
 === TEST: TC-029 — Validate multi-board basis selection (Self Catered + Bed & Breakfast) ===
--   Strategy 1: found [OK]
--   [OK] Fallback 4: container [OK]
--   Strategy 1: found [OK]
--   -> Trying fallback 5: DOM mutation (direct state change)
--   [OK] Fallback 5 (DOM mutation) succeeded
-✓ Multi-board basis selection (Self catered + Bed & Breakfast) - Results: 4517
+✓ Multi-board basis selection (Self catered + Bed & Breakfast) - Results: 4515
 ✓ Both board basis options selected and returning results
 ✅ TC-029 PASS — Multi-board basis selection validated: Self catered + Bed & Breakfast
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-030 — Validate multi-ski area selection (The 3 Valleys + Paradiski)" classname="search.spec.ts" time="21.556">
+<testcase name="Search and Filters — Ski Holidays › TC-030 — Validate multi-ski area selection (The 3 Valleys + Paradiski)" classname="search.spec.ts" time="24.408">
 <system-out>
 <![CDATA[
 === TEST: TC-030 — Validate multi-ski area selection (The 3 Valleys + Paradiski) ===
--   Strategy 1: found [OK]
--   [OK] Fallback 4: container [OK]
--   Strategy 1: found [OK]
--   -> Trying fallback 5: DOM mutation (direct state change)
--   [OK] Fallback 5 (DOM mutation) succeeded
-✓ Multi-ski area selection (The 3 Valleys + Paradiski) - Results: 4517
+✓ Multi-ski area selection (The 3 Valleys + Paradiski) - Results: 658
 ✓ Both ski areas selected and returning results
 ✅ TC-030 PASS — Multi-ski area selection validated: The 3 Valleys + Paradiski
 === END: PASS ===

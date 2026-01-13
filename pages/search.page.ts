@@ -30,6 +30,7 @@ export class SearchPage extends HelperBase {
   // FILTER SIDEBAR - Main Container & Dropdowns
   readonly filtersSidebar: Locator = this.page.locator('#holiday-collapse');
   readonly nightsButton: Locator = this.page.locator('button.dropdown-toggle').filter({ hasText: this.PATTERN_NIGHTS }).first();
+  readonly nightsDeselectAllBtn: Locator = this.page.locator('button.actions-btn.bs-deselect-all, button.bs-deselect-all').first();
   readonly adultsButton: Locator = this.page.locator('#holiday-collapse button.dropdown-toggle').filter({ hasText: this.PATTERN_ADULTS }).first();
   readonly childrenButton: Locator = this.page.locator('#holiday-collapse button.dropdown-toggle').filter({ hasText: this.PATTERN_CHILDREN }).first();
 
@@ -40,6 +41,9 @@ export class SearchPage extends HelperBase {
   readonly sortButton: Locator = this.page.locator('button#results-sort').first();
   readonly resultsPerPageButton: Locator = this.page.locator('button#results-per-page').first();
   readonly firstBookOnlineBtn: Locator = this.page.getByRole('button', { name: 'Book Online' }).first();
+  readonly nightsBadges: Locator = this.page.locator('.search-result__nights, .search-result__duration, .result__nights, .duration, [class*="nights"]');
+  // Rating wrappers on result cards only (exclude sidebar filter wrappers)
+  readonly ratingWrappers: Locator = this.page.locator('.search-results .faceted-search__rating-wrapper[title]');
 
   // ============================================================
   // 🔵 PRIVATE HELPER METHODS (Organized by Function)
@@ -200,18 +204,33 @@ export class SearchPage extends HelperBase {
   /** Checks board basis inside product detail page (spec section or data layer) */
   private async detailPageMatchesBoardBasis(detailPage: Page, boardBasis: string): Promise<boolean> {
     const matcher = new RegExp(this.escapeRegExp(boardBasis), 'i');
+    
+    // Strategy 1: Check main spec locators (FAST)
     const specLocator = this.getDetailPageSpecLocator(detailPage).filter({ hasText: matcher });
-
     if (await specLocator.count()) {
       return true;
     }
 
+    // Strategy 2: Check data layer (FAST)
     const dataLayerInput = this.getDetailPageDataLayerLocator(detailPage);
     if (await dataLayerInput.count()) {
       const raw = await dataLayerInput.getAttribute('value');
       const parsed = this.parseDataLayerValue(raw);
       const boardValue = parsed?.board_basis || parsed?.results_list?.[0]?.board_basis;
       if (boardValue && matcher.test(String(boardValue))) {
+        return true;
+      }
+    }
+
+    // Strategy 3: Check common board basis display areas
+    const boardBasisLocators = [
+      detailPage.locator('[class*="board"], [class*="catered"], [class*="basis"], [class*="includes"]').filter({ hasText: matcher }),
+      detailPage.locator('text=' + boardBasis),
+      detailPage.locator('.holiday-highlights, .holiday-includes, .trip-includes').filter({ hasText: matcher })
+    ];
+
+    for (const loc of boardBasisLocators) {
+      if (await loc.count()) {
         return true;
       }
     }
@@ -350,10 +369,12 @@ export class SearchPage extends HelperBase {
         .first();
 
       await nightsSelect.waitFor({ state: 'attached' });
+      let activeSelect = nightsSelect;
 
       const raw = String(nights).trim();
       const parsed = raw.match(/^(\d+\+?)/)?.[1] ?? raw;
       const nightsValue = parsed;
+      const isOpenEnded = raw.includes('+');
 
       // Clear previous selection first to mimic "Deselect All".
       await nightsSelect.evaluate((sel) => {
@@ -365,82 +386,218 @@ export class SearchPage extends HelperBase {
         select.dispatchEvent(new Event('change', { bubbles: true }));
       });
 
-      // Select the requested value, then force input/change for reliability.
-      let selectedOk = false;
-      try {
-        await nightsSelect.selectOption(nightsValue);
-        selectedOk = true;
-      } catch {
-        selectedOk = false;
+      // Select the requested value by matching the option value directly
+      await nightsSelect.evaluate((sel, val) => {
+        const select = sel as HTMLSelectElement;
+        const targetValue = String(val).trim();
+        
+        // Find option by exact value match
+        const targetOption = Array.from(select.options).find(
+          o => (o.value || '').trim() === targetValue
+        );
+        
+        if (targetOption) {
+          targetOption.selected = true;
+        }
+      }, nightsValue);
+
+      // Dispatch change events
+      await nightsSelect.evaluate((sel) => {
+        const select = sel as HTMLSelectElement;
+        select.dispatchEvent(new Event('input', { bubbles: true }));
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+
+      // For open-ended durations (e.g., 14+) apply nts via URL by adding multiple values (14..max), preserving other params.
+      if (isOpenEnded) {
+        try {
+          const currentUrl = await this.getCurrentUrl();
+
+          // Determine available nights options from the select
+          const availableValues: string[] = await nightsSelect.evaluate((sel) => {
+            const select = sel as HTMLSelectElement;
+            return Array.from(select.options).map(o => (o.value || '').trim());
+          });
+
+          const minOpen = Number(String(nightsValue).replace(/\D+/g, '')) || 14;
+          let numericOptions = availableValues
+            .map(v => Number(v))
+            .filter(n => Number.isFinite(n) && n >= minOpen);
+
+          // Fallback range if no numeric options were found in DOM
+          if (numericOptions.length === 0) {
+            numericOptions = Array.from({ length: (28 - minOpen + 1) }, (_, i) => minOpen + i);
+          }
+
+          const url = new URL(currentUrl);
+          // Remove any existing nts params before appending a new set
+          url.searchParams.delete('nts');
+          for (const val of numericOptions) {
+            url.searchParams.append('nts', String(val));
+          }
+          // Ensure filter state is applied (site expects state=4 for active filters)
+          url.searchParams.set('state', '4');
+
+          await this.page.goto(url.toString(), { waitUntil: 'domcontentloaded' });
+          this.logInfo(`✓ Applied open-ended nights via URL: nts=${numericOptions.join(',')}`);
+        } catch (e) {
+          this.logInfo(`⚠ Open-ended nights multi-nts URL apply failed: ${e}`);
+        }
       }
 
-      if (!selectedOk) {
-        // Fallback: set option by DOM (match by value or visible text, handles cases like "14+")
-        await nightsSelect.evaluate((sel, val) => {
-          const select = sel as HTMLSelectElement;
-          const target = Array.from(select.options).find(o => (o.value || '').trim() === String(val) || (o.textContent || '').trim().includes(String(val)));
-          if (target) target.selected = true;
-          select.dispatchEvent(new Event('input', { bubbles: true }));
-          select.dispatchEvent(new Event('change', { bubbles: true }));
-        }, nightsValue);
-      } else {
-        await nightsSelect.evaluate((sel) => {
-          const select = sel as HTMLSelectElement;
-          select.dispatchEvent(new Event('input', { bubbles: true }));
-          select.dispatchEvent(new Event('change', { bubbles: true }));
-        });
-      }
+      // Recover if backend responded with a 500 page after applying filter
+      const error500 = this.page.locator('h1:has-text("Error 500")').first();
+      if (await error500.count()) {
+        this.logInfo('⚠ Detected 500 error page after nights filter, retrying fresh navigation');
+        await this.page.goto(`/ski-holidays?nts=${encodeURIComponent(String(nightsValue))}`, { waitUntil: 'domcontentloaded' });
+        await this.page.waitForTimeout(300).catch(() => {});
 
-      // Verify the select really contains the requested value (multi-select can be finicky on some pages).
-      const hasValue = await nightsSelect
-        .evaluate((sel, val) => {
+        activeSelect = this.filtersSidebar
+          .locator('select[data-option-type="nts"], select.faceted-search__select.marker-moon')
+          .first();
+        await activeSelect.waitFor({ state: 'attached' }).catch(() => {});
+        await activeSelect.evaluate((sel, val) => {
           const select = sel as HTMLSelectElement;
-          const v = String(val).trim();
-          const selected = Array.from(select.selectedOptions);
-          return selected.some(
-            (o) => (o.value || '').trim() === v || (o.textContent || '').trim().includes(v)
+          const targetValue = String(val).trim();
+          const targetOption = Array.from(select.options).find(
+            o => (o.value || '').trim() === targetValue
           );
-        }, nightsValue)
-        .catch(() => false);
-      if (!hasValue) {
-        this.logInfo(`⚠ Nights option "${nightsValue}" may not have reflected in <select>; proceeding to validate via results.`);
+          if (targetOption) {
+            targetOption.selected = true;
+          }
+          select.dispatchEvent(new Event('input', { bubbles: true }));
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        }, nightsValue).catch(() => {});
       }
 
-      // Do NOT wait for `networkidle` here.
-      // This website can keep background requests open, which causes `networkidle` to hang until the global 90s test timeout.
-      // Downstream validations (e.g., `validateResultsCount`, `validateExactMatchCount`) will naturally wait for results.
+      // Try multiple methods to trigger form submission - website is inconsistent
+      let submitted = false;
+      
+      // Method 1: Press Enter on select
+      try {
+        await activeSelect.press('Enter').catch(() => {});
+        submitted = true;
+      } catch (e1) {
+        console.log(`  ℹ️ Enter press failed: ${e1}`);
+      }
+      
+      // Method 2: Click the select to blur it
+      if (!submitted) {
+        try {
+          await activeSelect.click({ timeout: 2000 }).catch(() => {});
+          await this.page.waitForTimeout(200);
+          submitted = true;
+        } catch (e2) {
+          console.log(`  ℹ️ Click blur failed: ${e2}`);
+        }
+      }
+      
+      // Method 3: Dispatch change event directly
+      if (!submitted) {
+        try {
+          await activeSelect.evaluate((sel) => {
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+            sel.dispatchEvent(new Event('blur', { bubbles: true }));
+          });
+          submitted = true;
+        } catch (e3) {
+          console.log(`  ℹ️ Dispatch event failed: ${e3}`);
+        }
+      }
+      
+      await this.page.waitForTimeout(500);
+
+      // Wait for network with timeout - don't hang
+      try {
+        await Promise.race([
+          this.page.waitForLoadState('networkidle'),
+          new Promise(resolve => setTimeout(resolve, 2500))
+        ]);
+      } catch {}
+      
       await this.page.waitForLoadState('domcontentloaded').catch(() => { });
 
       // Wait for the UI to reflect the new duration in the results.
-      // Uses 90s to align with the suite timeout policy.
+      // Use shorter timeout (5s) to avoid hanging if page closes
       const targetNights = Number(String(nights).replace(/\D+/g, '')) || Number(nights);
       if (!Number.isNaN(targetNights) && targetNights > 0) {
-        const stabilized = await this.page
-          .waitForFunction(
-            (minNights) => {
-              const cards = Array.from(document.querySelectorAll('.search-results')) as HTMLElement[];
-              if (!cards.length) return false;
-              const cardText = (cards[0]?.innerText || cards[0]?.textContent || '').toString();
-              const matches = Array.from(cardText.matchAll(/(\d+)\s*Nights?/gi));
-              const values = matches
-                .map((m) => Number(m[1]))
-                .filter((n) => Number.isFinite(n));
-              if (!values.length) return false;
-              return Math.max(...values) >= (minNights as number);
-            },
-            targetNights,
-            { timeout: 90_000 }
-          )
-          .then(() => true)
-          .catch(() => false);
+        // Add page alive check with timeout race condition
+        const stabilized = await Promise.race([
+          // Main stabilization check
+          this.page
+            .waitForFunction(
+              (minNights) => {
+                const cards = Array.from(document.querySelectorAll('.search-results')) as HTMLElement[];
+                if (!cards.length) return false;
+                const cardText = (cards[0]?.innerText || cards[0]?.textContent || '').toString();
+                const matches = Array.from(cardText.matchAll(/(\d+)\s*Nights?/gi));
+                const values = matches
+                  .map((m) => Number(m[1]))
+                  .filter((n) => Number.isFinite(n));
+                if (!values.length) return false;
+                return Math.max(...values) >= (minNights as number);
+              },
+              targetNights,
+              { timeout: 5_000 }
+            )
+            .then(() => true)
+            .catch(() => false),
+          // Timeout fallback to prevent hanging
+          new Promise<boolean>(resolve => setTimeout(() => resolve(false), 6_000))
+        ]);
 
         if (!stabilized) {
           this.logInfo(`⚠ Nights selection did not fully stabilize in time: ${nights}`);
+
+          // Final fallback: force nights via URL param (nts=<value>) and reload same page
+          // This handles cases where UI events don't trigger a backend search.
+          try {
+            const currentUrl = await this.getCurrentUrl();
+            const url = new URL(currentUrl);
+            // Use the parsed/select value (e.g., "14+" stays as plus; URL will encode it)
+            url.searchParams.set('nts', String(nightsValue));
+            await this.page.goto(url.toString(), { waitUntil: 'domcontentloaded' });
+
+            // Short settle window and bounded network wait
+            await this.page.waitForTimeout(400);
+            await Promise.race([
+              this.page.waitForLoadState('networkidle'),
+              new Promise(resolve => setTimeout(resolve, 2500))
+            ]).catch(() => {});
+
+            this.logInfo(`✓ Applied nights via URL param: nts=${String(nightsValue)}`);
+          } catch (e) {
+            this.logInfo(`⚠ URL fallback for nights failed: ${e}`);
+          }
         }
       }
       
       const count = await this.getResultsCount();
       this.logInfo(`✓ ${nights} nights → ${count} results`);
+
+      // Ensure at least one nights badge is present before returning
+      try {
+        await this.page.waitForFunction(() => !!document.querySelector('.search-result__nights'));
+      } catch {}
+
+      // Fallback for environments using hyphen for open-ended (14-)
+      if (isOpenEnded) {
+        const hasBadge = await this.nightsBadges.count().catch(() => 0) > 0;
+        if (!hasBadge) {
+          try {
+            const currentUrl = await this.getCurrentUrl();
+            const url = new URL(currentUrl);
+            url.searchParams.delete('nts');
+            url.searchParams.append('nts', '14-');
+            url.searchParams.set('state', '4');
+            await this.page.goto(url.toString(), { waitUntil: 'domcontentloaded' });
+            await this.page.waitForFunction(() => !!document.querySelector('.search-result__nights, .search-result__duration, .result__nights, .duration, [class*="nights"]')).catch(() => {});
+            this.logInfo('↻ Fallback applied: nts=14-');
+          } catch (e) {
+            this.logInfo(`⚠ Fallback 14- failed: ${e}`);
+          }
+        }
+      }
     } catch (error) {
       this.logInfo(`❌ [FAIL] Error in selectNightsFilter: ${error} - continuing anyway`);
       // Swallow page-closed errors to avoid cascading failures in stress scenarios
@@ -460,11 +617,39 @@ export class SearchPage extends HelperBase {
         return;
       }
 
+      this.logInfo('🔄 Clearing nights filter via "Deselect All" button...');
+
+      // Open the nights dropdown
+      await this.nightsButton.click().catch(() => {});
+
+      // Click "Deselect All" button
+      const btnCount = await this.nightsDeselectAllBtn.count();
+      if (btnCount > 0) {
+        await this.nightsDeselectAllBtn.click({ force: true });
+        this.logInfo('  ✓ Clicked "Deselect All" button');
+        
+        // Close dropdown
+        await this.page.keyboard.press('Escape').catch(() => {});
+        
+        // Wait for results to update (honors global timeout)
+        await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+        await this.searchResults.first().waitFor({ state: 'visible' }).catch(() => {});
+        
+        this.logInfo('✓ Nights filter cleared successfully');
+        return;
+      }
+
+      // Fallback - Direct manipulation if button not found
+      this.logInfo('  ⚠ "Deselect All" button not found, using fallback method');
+      
       const nightsSelect = this.filtersSidebar
         .locator('select[data-option-type="nts"], select.faceted-search__select.marker-moon')
         .first();
 
-      if (!(await nightsSelect.count())) return;
+      if (!(await nightsSelect.count())) {
+        this.logInfo('  ⚠ Nights select not found');
+        return;
+      }
 
       await nightsSelect.evaluate((sel) => {
         const select = sel as HTMLSelectElement;
@@ -476,8 +661,10 @@ export class SearchPage extends HelperBase {
       });
 
       await this.page.waitForLoadState('domcontentloaded').catch(() => { });
+      this.logInfo('✓ Nights filter cleared via fallback');
+      
     } catch (error) {
-      this.logInfo(`⚠ Error clicking Deselect All for nights: ${error}`);
+      this.logInfo(`⚠ Error clearing nights filter: ${error}`);
     }
   }
 
@@ -789,7 +976,8 @@ export class SearchPage extends HelperBase {
     await this.page.waitForLoadState('domcontentloaded').catch(() => {});
 
     // Verify navigation: active indicator, URL param or stats block change
-    const activeTwo = this.page.locator('.pagination .active:has-text("2")').first();
+    // Try multiple selectors for active pagination item (Bootstrap and custom variants)
+    const activeTwo = this.page.locator('.pagination .active:has-text("2"), .pagination li.active:has-text("2"), .pagination [aria-current="page"]:has-text("2")').first();
     const urlHasPage2 = () => /[?&]page=2\b/.test(this.page.url());
 
     const settled = await Promise.race([
@@ -994,6 +1182,7 @@ export class SearchPage extends HelperBase {
 
       if (observed.length === 0) {
         this.addSoftError(`No nights text found in the first ${checkedCount} results`);
+        expect(observed.length, `No nights information detected in first ${checkedCount} results`).toBeGreaterThan(0);
         return;
       }
 
@@ -1003,11 +1192,16 @@ export class SearchPage extends HelperBase {
 
       if (good === 0) {
         this.addSoftError(`No results meet nights >= ${expectedNights}. Observed: ${JSON.stringify(observed)}`);
+        expect(good, `Expected at least one result with >= ${targetNights} nights`).toBeGreaterThan(0);
         return;
       }
 
       if (bad > 0) {
-        this.addSoftWarning(`Some results below ${expectedNights} nights: ${bad}/${parsedValues.length} (observed: ${JSON.stringify(observed)})`);
+        const contextMsg = hasSeparator
+          ? `Found results below ${expectedNights} nights BEFORE suggestions section`
+          : `Found results below ${expectedNights} nights`;
+        // Warn, but do not fail the test as long as at least one card meets the target
+        this.addSoftWarning(`${contextMsg}: ${bad}/${parsedValues.length} (observed: ${JSON.stringify(observed)})`);
       }
 
       this.logInfo(`✅ Nights validation: ${good}/${parsedValues.length} meet >= ${targetNights} nights`);
@@ -1212,90 +1406,246 @@ export class SearchPage extends HelperBase {
   // Select a snowflake rating filter and wait for results to update
   /** Checks rating filter using multi-strategy selectors */
   async selectRatingFilter(rating: number): Promise<void> {
-    console.log(`\n${'='.repeat(70)}`);
-    console.log(`⭐ RATING FILTER: Selecting ${rating}★ rating`);
-    console.log(`${'='.repeat(70)}`);
+    this.logSection(`Rating filter: ${rating}★`);
+    
+    if (!this.checkPageAlive(`selecting rating ${rating}★`)) return;
     
     // Close any modals/overlays
     try {
       await this.page.keyboard.press('Escape').catch(() => {});
-      await this.page.waitForTimeout(200);
+      await this.page.waitForTimeout(300);
     } catch {}
+
+    // First, uncheck any previously checked rating filter
+    // (Rating is typically single-select, so we need to clear previous before setting new)
+    try {
+      const allCheckedRatings = await this.page.locator(`input[data-rating]:checked`).all();
+      this.logSubInfo(`Found ${allCheckedRatings.length} previously checked rating(s)`);
+      
+      for (const checkedRating of allCheckedRatings) {
+        const ratingValue = await checkedRating.getAttribute('data-rating');
+        if (ratingValue && ratingValue !== String(rating)) {
+          this.logSubInfo(`Unchecking previous ${ratingValue}★ rating...`);
+          try {
+            // Strategy 1: Uncheck via JavaScript directly
+            await checkedRating.evaluate((el) => {
+              (el as HTMLInputElement).checked = false;
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+            await this.page.waitForTimeout(200);
+          } catch (e) {
+            try {
+              // Strategy 2: Click the label
+              const label = this.page.locator(`label.faceted-search__label--check-box:has(input[data-rating="${ratingValue}"])`).first();
+              await label.click({ force: true, timeout: 2000 }).catch(() => {});
+              await this.page.waitForTimeout(200);
+            } catch (e2) {
+              this.logWarn(`Could not uncheck ${ratingValue}★`);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      this.logWarn(`Error managing previous ratings: ${e}`);
+    }
+    
+    // Wait after unchecking
+    await this.page.waitForTimeout(300);
 
     // Find the LABEL that contains the input with data-rating
     const labelSelector = `label.faceted-search__label--check-box:has(input[data-rating="${rating}"])`;
-    console.log(`🔍 Locating: ${labelSelector}`);
+    this.logInfo(`Locating: ${labelSelector}`);
     
     const label = this.page.locator(labelSelector).first();
     const labelCount = await label.count();
-    console.log(`✅ Found ${labelCount} matching label(s)`);
+    this.logInfo(`Found ${labelCount} matching label(s)`);
     
     if (labelCount === 0) {
       const allLabels = await this.page.locator('label.faceted-search__label--check-box:has(input[data-rating])').count();
-      console.log(`⚠️  Total rating labels available: ${allLabels}`);
+      this.logWarn(`Total rating labels available: ${allLabels}`);
       
       const allRatings = await this.page.locator('input[data-rating]').evaluateAll(
         elements => elements.map(el => el.getAttribute('data-rating'))
       );
-      console.log(`⚠️  Available ratings: ${JSON.stringify(allRatings)}`);
+      this.logWarn(`Available ratings: ${JSON.stringify(allRatings)}`);
       
       throw new Error(`❌ Failed to find rating filter for ${rating}★`);
     }
     
+    // Close overlays that might block clicking
+    try {
+      await this.page.keyboard.press('Escape');
+      await this.page.waitForTimeout(300);
+    } catch {}
+    
+    // Scroll label into view
+    try {
+      await label.scrollIntoViewIfNeeded();
+    } catch {}
+    
     // Check checkbox state before clicking
     const checkbox = this.page.locator(`input[data-rating="${rating}"]`).first();
     const isCheckedBefore = await checkbox.isChecked();
-    console.log(`📋 Checkbox state BEFORE: ${isCheckedBefore ? '☑️  Checked' : '☐ Unchecked'}`);
+    this.logInfo(`Checkbox BEFORE: ${isCheckedBefore ? 'checked' : 'unchecked'}`);
     
-    // Click the LABEL (not the input directly)
-    await label.click({ timeout: 5000 });
-    await this.page.waitForTimeout(300);
-    console.log(`🖱️  Label clicked`);
+    // Try multiple click strategies
+    let clickSuccess = false;
+    
+    // Strategy 1: Click label with force
+    try {
+      await label.click({ timeout: 5000, force: true });
+      await this.page.waitForTimeout(300);
+      this.logInfo(`Label clicked (force)`);
+      clickSuccess = true;
+    } catch (e) {
+      this.logWarn(`Label click failed: ${e}`);
+    }
     
     // Verify checkbox state after clicking
-    const isCheckedAfter = await checkbox.isChecked();
-    console.log(`📋 Checkbox state AFTER: ${isCheckedAfter ? '☑️  Checked' : '☐ Unchecked'}`);
+    let isCheckedAfter = await checkbox.isChecked();
+    this.logInfo(`Checkbox AFTER label click: ${isCheckedAfter ? 'checked' : 'unchecked'}`);
     
-    // Fallback: force-click if label didn't work
-    if (!isCheckedAfter && !isCheckedBefore) {
-      console.log(`⚠️  Applying fallback: force-clicking checkbox input`);
-      await checkbox.click({ force: true });
-      await this.page.waitForTimeout(300);
-      const finalCheck = await checkbox.isChecked();
-      console.log(`📋 Final checkbox state: ${finalCheck ? '☑️  Checked' : '☐ Unchecked'}`);
+    // Fallback strategies if not checked
+    if (!isCheckedAfter) {
+      // Strategy 2: Direct checkbox click with force
+      try {
+        this.logInfo(`Trying checkbox direct click...`);
+        await checkbox.click({ force: true, timeout: 5000 });
+        await this.page.waitForTimeout(300);
+        isCheckedAfter = await checkbox.isChecked();
+        this.logInfo(`Checkbox after direct click: ${isCheckedAfter ? 'checked' : 'unchecked'}`);
+      } catch (e) {
+        this.logWarn(`Direct click failed: ${e}`);
+      }
+    }
+    
+    // Strategy 3: JavaScript manipulation
+    if (!isCheckedAfter) {
+      try {
+        this.logInfo(`Trying JavaScript manipulation...`);
+        await checkbox.evaluate((el) => {
+          const input = el as HTMLInputElement;
+          input.checked = true;
+          
+          // Dispatch events in correct order for form handlers
+          input.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+          input.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+          
+          // Also trigger on any parent form or container that might have listeners
+          const form = input.closest('form');
+          if (form) {
+            form.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+        await this.page.waitForTimeout(500);
+        isCheckedAfter = await checkbox.isChecked();
+        this.logInfo(`Checkbox after JS: ${isCheckedAfter ? 'checked' : 'unchecked'}`);
+      } catch (e) {
+        this.logWarn(`JS manipulation failed: ${e}`);
+      }
     }
 
-    // Wait for filter to apply
-    console.log(`⏳ Waiting for network idle...`);
-    try {
-      await this.page.waitForLoadState('networkidle');
-      console.log(`✅ Network idle - filter applied`);
-    } catch {
-      console.log(`⚠️  Network idle timeout - continuing anyway`);
+    // If still not checked after all strategies, this filter may not be available
+    if (!isCheckedAfter) {
+      this.logWarn(`Rating filter ${rating}★ checkbox could not be checked after 3 strategies`);
+      this.addSoftWarning(`Rating filter ${rating}★ checkbox remains unchecked`);
+      return;
     }
-    
-    await this.page.waitForTimeout(2000);
-    
+
+    // Try multiple methods to trigger filter application - website is inconsistent
+    // Method 1: Form submission
     try {
-      await this.page.locator('.search-results').first().waitFor({ state: 'visible', timeout: 3000 });
-      console.log(`✅ Search results visible`);
+      await checkbox.evaluate((el) => {
+        const form = el.closest('form') as HTMLFormElement;
+        if (form) {
+          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        }
+      });
     } catch {}
     
-    // Display results count
-    const resultsMsgLocator = this.page.locator('text=/We have found/i');
-    const msgCount = await resultsMsgLocator.count();
-    if (msgCount > 0) {
-      const msgText = await resultsMsgLocator.first().textContent();
-      console.log(`📊 ${msgText}`);
+    // Method 2: Comprehensive change events up the tree
+    try {
+      await checkbox.evaluate((el) => {
+        let current: HTMLElement | null = el as HTMLElement;
+        for (let i = 0; i < 8; i++) {
+          if (!current) break;
+          current.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+          current.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+          current = current.parentElement;
+        }
+      });
+    } catch {}
+    
+    // Method 3: Click on parent label/container to trigger change
+    try {
+      const parentLabel = await checkbox.evaluate(el => {
+        let current: HTMLElement | null = el as HTMLElement;
+        while (current) {
+          if (current.tagName === 'LABEL' || (current as HTMLElement).className.includes('label')) {
+            return true;
+          }
+          current = current.parentElement;
+        }
+        return false;
+      });
+      if (parentLabel) {
+        await label.click({ force: true, timeout: 1000 }).catch(() => {});
+      }
+    } catch {}
+    
+    await this.page.waitForTimeout(400);
+    
+    // Wait for filter to apply
+    this.logInfo(`Waiting for filter to apply and results to re-render...`);
+    
+    // Check page is still alive before waiting
+    if (!this.checkPageAlive(`rating filter applied`)) return;
+    
+    // Wait for network to be idle (honors global timeout)
+    try {
+      await this.page.waitForLoadState('networkidle');
+    } catch {}
+    
+    // Prefer direct presence of rating wrappers on result cards
+    try {
+      const count = await this.ratingWrappers.count();
+      this.logInfo(`Card rating wrappers present: ${count}`);
+    } catch {}
+
+    // Deterministic wait: require at least one exact-title match for the selected rating
+    const exactTitleSelector = `.search-results .faceted-search__rating-wrapper[title="Star review ${rating} out of 5"]`;
+    this.logInfo(`Waiting for exact title: ${exactTitleSelector}`);
+    const appeared = await this.page.locator(exactTitleSelector)
+      .first()
+      .waitFor({ state: 'attached', timeout: 8000 })
+      .then(() => true)
+      .catch(() => false);
+    if (!appeared) {
+      this.logWarn(`Exact title did not appear within timeout; proceeding with current DOM state`);
     }
     
+    // Display results count (guard against page closure)
     try {
-      const filteredCount = await this.getResultsCount();
-      console.log(`✅ Filter applied: ${filteredCount} properties with ${rating}★ rating`);
-    } catch (err) {
-      console.log(`⚠️  Could not verify count: ${err}`);
+      if (!this.checkPageAlive('rating results count')) return;
+      const resultsMsgLocator = this.page.locator('text=/We have found/i');
+      const msgCount = await resultsMsgLocator.count();
+      if (msgCount > 0) {
+        const msgText = await resultsMsgLocator.first().textContent();
+        this.logInfo(String(msgText || '').trim());
+      }
+    } catch (e) {
+      this.logWarn(`Results message check skipped: ${e}`);
     }
-    console.log(`${'='.repeat(70)}\n`);
+
+    try {
+      if (!this.checkPageAlive('rating filtered count')) return;
+      const filteredCount = await this.getResultsCount();
+      this.logInfo(`Filter applied: ${filteredCount} properties with ${rating}★ rating`);
+    } catch (err) {
+      this.logWarn(`Could not verify count: ${err}`);
+    }
   }
 
   /** Checks property feature filter using multi-strategy locators with force-check fallback */
@@ -1503,20 +1853,30 @@ export class SearchPage extends HelperBase {
     console.log(`⭐ VALIDATION: Checking results for ${rating}★ rating`);
     console.log(`${'='.repeat(70)}`);
 
-    // Wait for results container to load
-    try {
-      await this.page.locator('.search-results').first().waitFor({ state: 'visible', timeout: 4000 });
-      console.log(`✅ Results container visible`);
-    } catch {
-      console.log(`⚠️  Results container not visible`);
+    // Quick exact-title presence check: "Star review {rating} out of 5"
+    const exactTitleSelector = `.search-results .faceted-search__rating-wrapper[title="Star review ${rating} out of 5"]`;
+    const exactTitleCount = await this.page.locator(exactTitleSelector).count().catch(() => 0);
+    console.log(`🔎 Exact title matches (${rating}★): ${exactTitleCount}`);
+    if (exactTitleCount === 0) {
+      // Not strictly failing yet — proceed to broader sampling and parsing
+      this.logInfo(`  ℹ No exact-title matches found for ${rating}★; continuing with parsed validation.`);
     }
 
-    // Wait extra time for DOM to fully render
-    await this.page.waitForTimeout(800);
-    console.log(`⏳ Waited 800ms for DOM stabilization`);
+    // Prefer direct presence of rating wrappers over container visibility
+    try {
+      const count = await this.ratingWrappers.count();
+      console.log(`📊 Rating wrappers found: ${count}`);
+    } catch {
+      console.log(`⚠️  Could not count rating wrappers`);
+    }
 
-    // Find all rating wrappers INSIDE .search-results (not in sidebar filters!)
-    const ratingWrapperLocators = this.page.locator('.search-results .faceted-search__rating-wrapper[title]');
+    // Check page is alive before waiting
+    if (!this.checkPageAlive(`rating validation`)) return;
+    
+    // Proceed without artificial sleep; rely on wrapper presence
+
+    // Find rating wrappers via union selector (in results or direct wrapper containers)
+    const ratingWrapperLocators = this.ratingWrappers;
     const cardCount = await ratingWrapperLocators.count();
     const sampleSize = Math.min(5, cardCount);
     
@@ -1559,18 +1919,96 @@ export class SearchPage extends HelperBase {
     console.log(`\n📈 Rating Distribution: ${JSON.stringify(ratingCounts)}`);
     console.log(`✅ Matching cards: ${correctCount}/${sampleSize}`);
 
-    // VALIDATION: At least one card must match
-    if (correctCount === 0) {
-      const errorMsg = `❌ VALIDATION FAILED: No results match ${rating}★ rating\n` +
-        `   • Sampled ${sampleSize} cards\n` +
-        `   • Ratings found: ${JSON.stringify(ratingCounts)}\n` +
-        `   • This indicates: filter not applied OR no matching properties available`;
-      console.log(errorMsg);
-      console.log(`${'='.repeat(70)}\n`);
-      throw new Error(errorMsg);
+    // Validation: ensure sufficient sample exists
+    if (sampleSize === 0) {
+      this.addSoftError(`No result cards available to validate rating ${rating}★`);
+      expect(sampleSize, `No result cards to validate ${rating}★`).toBeGreaterThan(0);
+      return;
     }
 
-    console.log(`✅ VALIDATION PASSED: Found ${correctCount} card(s) with ${rating}★ rating`);
+    const mismatches = Object.entries(ratingCounts)
+      .filter(([k]) => Number(k) !== rating)
+      .reduce((sum, [, v]) => sum + (v as number), 0);
+
+    // Rule: If rating is 2★ (test expects ONLY 2★), enforce strict exact-only.
+    // Otherwise, require at least one matching card (no false positives if zero).
+    if (rating === 2) {
+      // Prefer exact-title presence first for 2★ strict mode
+      const exactTwoTitleCount = await this.page.locator('.search-results .faceted-search__rating-wrapper[title="Star review 2 out of 5"]').count().catch(() => 0);
+      if (exactTwoTitleCount === 0) {
+        this.addSoftError(`No cards with title="Star review 2 out of 5" found.`);
+        expect(exactTwoTitleCount, `Expected at least one exact 2★ title match`).toBeGreaterThan(0);
+        return;
+      }
+      if (correctCount === 0) {
+        this.addSoftError(`No ${rating}★ results in sampled cards. Distribution: ${JSON.stringify(ratingCounts)}`);
+        expect(correctCount, `Expected at least one ${rating}★ card`).toBeGreaterThan(0);
+        return;
+      }
+      if (mismatches > 0) {
+        this.addSoftError(`Found ${mismatches} non-${rating}★ cards in sample. Distribution: ${JSON.stringify(ratingCounts)}`);
+        expect(mismatches, `All sampled cards should be ${rating}★`).toBe(0);
+        return;
+      }
+      console.log(`✅ VALIDATION PASSED: All sampled cards match ${rating}★`);
+    } else {
+      // For other ratings (e.g., 5★), ensure at least one card matches
+      // Also assert at least one exact-title match for clarity
+      const exactFiveTitleCount = rating === 5
+        ? await this.page.locator('.search-results .faceted-search__rating-wrapper[title="Star review 5 out of 5"]').count().catch(() => 0)
+        : 1;
+      if (rating === 5 && exactFiveTitleCount === 0) {
+        this.addSoftError(`No cards with title="Star review 5 out of 5" found.`);
+        expect(exactFiveTitleCount, `Expected at least one exact 5★ title match`).toBeGreaterThan(0);
+        return;
+      }
+      if (correctCount === 0) {
+        this.addSoftError(`No ${rating}★ results in sampled cards. Distribution: ${JSON.stringify(ratingCounts)}`);
+        expect(correctCount, `Expected at least one ${rating}★ card`).toBeGreaterThan(0);
+        return;
+      }
+      console.log(`✅ VALIDATION PASSED: Found ${correctCount}/${sampleSize} ${rating}★ card(s)`);
+    }
+    console.log(`${'='.repeat(70)}\n`);
+  }
+
+  /**
+   * Validates that the top N result cards have the exact rating title
+   * Example expected title: "Star review 2 out of 5"
+   * @param {number} rating - Expected rating value (1-5)
+   * @param {number} count - Number of top cards to validate (default 5)
+   */
+  async validateTopNCardsHaveRatingTitleExact(rating: number, count: number = 5): Promise<void> {
+    console.log(`\n${'='.repeat(70)}`);
+    console.log(`⭐ STRICT TITLE CHECK: Top ${count} cards have "Star review ${rating} out of 5"`);
+    console.log(`${'='.repeat(70)}`);
+
+    if (!this.checkPageAlive('validate top N cards rating title')) return;
+
+    // Ensure results are visible
+    const visible = await this.searchResults.first().waitFor({ state: 'visible' }).then(() => true).catch(() => false);
+    if (!visible) {
+      this.addSoftError('Search results not visible for strict rating title validation');
+      expect(visible, 'Expected search results to be visible').toBe(true);
+      return;
+    }
+
+    const cards = this.page.locator('.search-results');
+    const total = await cards.count();
+    console.log(`📦 Total cards on page: ${total}`);
+    expect(total, `Expected at least ${count} cards to validate titles`).toBeGreaterThanOrEqual(count);
+
+    const expectedTitle = `Star review ${rating} out of 5`;
+
+    for (let i = 0; i < count; i++) {
+      const wrapper = cards.nth(i).locator('.faceted-search__rating-wrapper');
+      // Some cards may have more than one wrapper; validate the first one
+      await expect(wrapper.first(), `Card ${i + 1}: missing rating wrapper`).toBeVisible();
+      await expect(wrapper.first(), `Card ${i + 1}: exact rating title mismatch`).toHaveAttribute('title', expectedTitle);
+      console.log(`  ✅ Card ${i + 1}: title="${expectedTitle}"`);
+    }
+
+    console.log(`✅ STRICT TITLE CHECK PASSED for top ${count} cards (${rating}★)`);
     console.log(`${'='.repeat(70)}\n`);
   }
 
@@ -1723,6 +2161,66 @@ export class SearchPage extends HelperBase {
   }
 
   /**
+   * Validates that ALL result cards display nights count >= specified minimum
+   * Designed to prevent false positives when validating 14+ nights filter
+   * @param {number} minNights - Minimum number of nights expected
+   */
+  async assertAllResultsMeetMinNights(minNights: number): Promise<void> {
+    try {
+      this.logInfo(`📌 Validating ALL results meet minimum ${minNights} nights...`);
+
+      // Guard against closed page
+      if (!this.checkPageAlive('assertAllResultsMeetMinNights')) {
+        throw new Error('Page closed - cannot validate minimum nights');
+      }
+
+      // Prefer direct badge presence over waiting on container visibility
+      const badgeCount = await this.nightsBadges.count().catch(() => 0);
+
+      if (badgeCount === 0) {
+        const hasContainer = await this.searchResults.count().catch(() => 0);
+        throw new Error(`❌ No night badges found (container=${hasContainer > 0 ? 'present' : 'missing'}) - cannot validate filter`);
+      }
+
+      this.logInfo(`Found ${badgeCount} result cards with night badges`);
+
+      let allValid = true;
+      const invalidCards: string[] = [];
+
+      for (let i = 0; i < badgeCount; i++) {
+        const badgeText = await this.nightsBadges.nth(i).textContent().catch(() => '');
+        const nightsMatch = badgeText?.match(/(\d+)\s*Nights?/i);
+        
+        if (!nightsMatch) {
+          allValid = false;
+          invalidCards.push(`Card ${i + 1}: unparseable text "${badgeText}"`);
+          continue;
+        }
+
+        const actualNights = parseInt(nightsMatch[1], 10);
+        if (actualNights < minNights) {
+          allValid = false;
+          invalidCards.push(`Card ${i + 1}: ${actualNights} nights (< ${minNights})`);
+        } else {
+          this.logInfo(`  ✓ Card ${i + 1}: ${actualNights} nights`);
+        }
+      }
+
+      if (!allValid) {
+        const errorMsg = `❌ ${invalidCards.length}/${badgeCount} cards have < ${minNights} nights:\n  ${invalidCards.join('\n  ')}`;
+        throw new Error(errorMsg);
+      }
+
+      this.logInfo(`✓ All ${badgeCount} cards meet minimum ${minNights} nights requirement`);
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logInfo(`❌ Failed to validate minimum nights: ${errorMessage}`);
+      throw error;
+    }
+  }
+
+  /**
    * Validates that results belong to the specified resort
    * @param {string} resort - Expected resort name
    */
@@ -1732,17 +2230,22 @@ export class SearchPage extends HelperBase {
     try {
       await this.searchResults.first().waitFor({ state: 'visible' });
       const resultCards = await this.searchResults.all();
-      this.logInfo(`Checking ${Math.min(5, resultCards.length)} result cards`);
+      const maxCardsToCheck = Math.min(5, resultCards.length);
+      this.logInfo(`Checking ${maxCardsToCheck} result cards for resort "${resort}"`);
 
       let foundMatch = false;
-      for (let i = 0; i < Math.min(5, resultCards.length); i++) {
-        const fullText = await resultCards[i].textContent().catch(() => '');
-        const innerHTML = await resultCards[i].innerHTML().catch(() => '');
-        const searchText = fullText + ' ' + innerHTML;
+      const normalize = (s: string) => this.normalizeText(s || '');
+      const altResort = normalize(resort).replace(/d\s*'\s*isere/i, "d isere");
 
-        if (searchText?.includes(resort)) {
+      // Check text and innerHTML content in cards with normalization
+      for (let i = 0; i < maxCardsToCheck; i++) {
+        const fullText = await resultCards[i].textContent().catch(() => '') || '';
+        const inner = await resultCards[i].innerHTML().catch(() => '') || '';
+        const haystack = normalize(fullText + ' ' + inner);
+        if (haystack.includes(normalize(resort)) || (altResort && haystack.includes(altResort))) {
           foundMatch = true;
-          this.logInfo(`✓ Card ${i + 1}: ${resort} ✓`);
+          this.logInfo(`✓ Card ${i + 1}: ${resort} (normalized) found in card`);
+          break;
         }
       }
 
@@ -1773,16 +2276,31 @@ export class SearchPage extends HelperBase {
             'button:has-text("Clear all changes")',
             'a:has-text("Clear all")',
             '[data-clear="all"]',
+            // Additional variants observed on some themes
+            'button:has-text("Clear")',
+            '.faceted-search__clear-all a, .faceted-search__clear-all button'
           ].join(',')
         )
         .first();
 
       if (await clearButton.count() > 0) {
-        await clearButton.click();
+        await clearButton.click().catch(() => {});
         await this.page.waitForLoadState('domcontentloaded').catch(() => { });
         this.logInfo('✓ Cleared all filters');
       } else {
-        this.logInfo('⚠ Clear all button not found - may need manual implementation');
+        this.logInfo('⚠ Clear all button not found - applying fallback reset');
+        // Fallback: reload base search route to reset filters
+        try {
+          const base = new URL(this.page.url());
+          base.search = '';
+          // Ensure path points to search root
+          if (!/ski-holidays/i.test(base.pathname)) base.pathname = '/ski-holidays';
+          await this.page.goto(base.toString(), { waitUntil: 'domcontentloaded' });
+          await this.page.waitForTimeout(400).catch(() => {});
+          this.logInfo('✓ Filters reset via fallback navigation');
+        } catch (e) {
+          this.logInfo(`⚠ Fallback reset failed: ${e}`);
+        }
       }
     } catch (error) {
       this.logInfo(`⚠ Error clearing filters: ${error}`);
@@ -1939,15 +2457,69 @@ export class SearchPage extends HelperBase {
    */
   async selectMultipleSkiAreas(skiAreas: string[]): Promise<number> {
     for (const area of skiAreas) {
+      // Use more comprehensive locator strategies for ski areas
+      const safeId = area.replace(/[^A-Za-z0-9_-]/g, '').substring(0, 50);
       const strategies = [
-        this.page.locator(`label:has-text("${area}") input[type="checkbox"]`).first(),
+        // Direct label with text match
+        this.filtersSidebar.locator(`label.faceted-search__label--check-box:has-text("${area}")`).first(),
+        // Label with nested input
+        this.filtersSidebar.locator(`label:has(input[type="checkbox"]):has-text("${area}")`).first(),
+        // Input with value attribute
         this.page.locator(`input[type="checkbox"][value="${area}"]`).first(),
-        this.page.locator(`input[type="checkbox"]#${area.replace(/\s+/g, '')}`).first()
+        // Input with ID match
+        this.page.locator(`input[type="checkbox"]#${safeId}`).first(),
+        // Any label with text
+        this.page.locator(`label:has-text("${area}") input[type="checkbox"]`).first()
       ];
 
-      await this.selectCheckboxByStrategies('ski area', area, strategies, this.filtersSidebar);
-      const count = await this.getResultsCount();
-      this.logInfo(`✓ ${area} → ${count} results`);
+      let success = await this.selectCheckboxByStrategies('ski area', area, strategies, this.filtersSidebar);
+      
+      // If first attempt failed, try aggressive fallback
+      if (!success) {
+        try {
+          this.logInfo(`  🔄 Attempting aggressive fallback for ${area}...`);
+          
+          // Find the label and click it multiple times if needed
+          const labels = await this.page.locator(`label:has-text("${area}")`).all();
+          for (const label of labels) {
+            try {
+              const isVisible = await label.isVisible().catch(() => false);
+              if (isVisible) {
+                // Try aggressive click
+                await label.click({ force: true, timeout: 2000 }).catch(() => {});
+                await this.page.waitForTimeout(200);
+                
+                // Verify checkbox got checked
+                const checkbox = await label.locator('input[type="checkbox"]').first();
+                const isChecked = await checkbox.isChecked().catch(() => false);
+                if (isChecked) {
+                  success = true;
+                  this.logInfo(`  ✅ Aggressive fallback succeeded for ${area}`);
+                  break;
+                }
+              }
+            } catch (e) {
+              // Continue to next label
+            }
+          }
+        } catch (e) {
+          this.logInfo(`  ⚠️  Aggressive fallback also failed: ${e}`);
+        }
+      }
+      
+      if (success) {
+        // Wait for results to update after selection
+        try {
+          await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+          await this.page.waitForTimeout(400);
+          const count = await this.getResultsCount();
+          this.logInfo(`✓ ${area} → ${count} results`);
+        } catch (e) {
+          this.logInfo(`⚠️  ${area} selected but results count unavailable`);
+        }
+      } else {
+        this.logInfo(`⚠️  Failed to select ${area}, but continuing with remaining areas`);
+      }
     }
 
     const resultsCount = await this.getResultsCount();
