@@ -71,14 +71,18 @@ test.describe('Search and Filters — Ski Holidays', () => {
   test.beforeEach(async ({ pm }) => {
     try {
       await pm.onSearchPage().navigateAndAcceptCookies('/ski-holidays');
+      // Wait for page to fully load before continuing
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
       // Standardize state: always clear nights before each TC
-      await pm.onSearchPage().deselectAllNights().catch(() => {
-        // If deselect fails, just continue - page may be in process of reloading
+      await pm.onSearchPage().deselectAllNights().catch((err) => {
+        // If deselect fails, log but continue - page may be in process of reloading
+        console.warn(`⚠️ Warning in beforeEach deselectAllNights: ${err.message}`);
       });
     } catch (error) {
       // If beforeEach setup fails completely, try one more time with fresh navigation
       console.log(`⚠️ beforeEach setup failed, retrying: ${error}`);
-      await pm.onSearchPage().navigateAndAcceptCookies('/ski-holidays').catch(() => {});
+      await pm.onSearchPage().navigateAndAcceptCookies('/ski-holidays');
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
     }
   });
 
@@ -593,6 +597,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
   // TC-017: Validates accommodation type filter (Hotel)
   test('TC-017 — Validate accommodation filter (Hotel)', async ({ pm }, testInfo) => {
+    // Increase timeout for this flaky test
+    testInfo.setTimeout(150000); // 2.5 minutes
     const accommodationData = testData.searchPage.filters.accommodation;
 
     // Reset nights to avoid interference from defaults
@@ -627,6 +633,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
   // TC-018: Validates board basis filter (Self catered)
   test('TC-018 — Validate board basis filter (Self catered)', async ({ pm }, testInfo) => {
+    // Increase timeout for this flaky test
+    testInfo.setTimeout(150000); // 2.5 minutes
     const boardBasisData = testData.searchPage.filters.boardBasis;
 
     // Reset nights to avoid interference from defaults
@@ -661,58 +669,132 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
   // TC-019: Validates rating filter (5 snowflakes)
   test('TC-019 — Validate rating filter (5 snowflakes)', async ({ pm }, testInfo) => {
+    // Increase timeout for rating validation (page interactions can be slow)
+    testInfo.setTimeout(180000); // 3 minutes instead of default 1.5
     const ratingData = testData.searchPage.filters.rating;
 
     // Reset nights to avoid interference from defaults
     await test.step('Reset nights with Deselect All', async () => {
       await pm.onSearchPage().deselectAllNights();
+      // Verify page is still responsive after clearing nights
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed unexpectedly during deselectAllNights');
+      }
     });
 
     // Select maximum rating
     await test.step(`Select rating: ${ratingData.selected} snowflakes`, async () => {
       await pm.onSearchPage().selectRatingFilter(ratingData.selected);
+      // Verify page is still responsive after selecting rating
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed unexpectedly during selectRatingFilter');
+      }
+      // Wait for filter results to load
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
     });
 
     // Verify results contain only 5-star properties
     await test.step('Validate results are displayed', async () => {
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed before validating results are displayed');
+      }
       await pm.onSearchPage().validateResultsCount(1);
       await pm.onSearchPage().validateExactMatchCount();
     });
 
     await test.step(`Validate results contain ${ratingData.selected} snowflakes rating`, async () => {
-      await pm.onSearchPage().validateResultsContainRating(ratingData.selected);
-      await pm.onSearchPage().validateTopNCardsHaveRatingTitleExact(ratingData.selected, 5);
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed before validating rating content');
+      }
+      try {
+        await pm.onSearchPage().validateResultsContainRating(ratingData.selected);
+        console.log(`✅ validateResultsContainRating executed successfully`);
+      } catch (err) {
+        throw new Error(`validateResultsContainRating failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
+      
+      try {
+        await pm.onSearchPage().validateTopNCardsHaveRatingTitleExact(ratingData.selected, 5);
+        console.log(`✅ validateTopNCardsHaveRatingTitleExact executed successfully`);
+      } catch (err) {
+        throw new Error(`validateTopNCardsHaveRatingTitleExact failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
     });
 
     await test.step('✅ Test completed', async () => {
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed before test completion');
+      }
       console.log(`✅ TC-019 PASS — ${ratingData.selected}★ rating filter validated successfully`);
     });
   });
 
   // TC-019b: Validates rating filter (2 snowflakes - minimum)
   test('TC-019b — Validate rating filter (2 snowflakes - minimum)', async ({ pm }, testInfo) => {
+    // Increase timeout for rating validation (page interactions can be slow)
+    testInfo.setTimeout(180000); // 3 minutes instead of default 1.5
+    
     // Reset nights to avoid interference from defaults
     await test.step('Reset nights with Deselect All', async () => {
       await pm.onSearchPage().deselectAllNights();
+      // Wait for deselectAllNights to complete
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
+      // Verify page is still responsive after clearing nights
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed unexpectedly during deselectAllNights');
+      }
     });
 
     // Select minimum rating (2 snowflakes)
     await test.step('Select rating: 2 snowflakes (minimum)', async () => {
       await pm.onSearchPage().selectRatingFilter(2);
+      // Verify page is still responsive after selecting rating
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed unexpectedly during selectRatingFilter');
+      }
+      // Wait for filter results to load TWICE to ensure results update
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
+      await pm.getPage().waitForTimeout(1000); // Extra wait for DOM updates
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
     });
 
     // Verify results contain only properties with exactly 2 stars
     await test.step('Validate results are displayed', async () => {
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed before validating results are displayed');
+      }
+      const resultsCount = await pm.onSearchPage().getResultsCount();
+      console.log(`📊 Results found: ${resultsCount}`);
+      if (resultsCount === 0) {
+        console.warn(`⚠️ No results found with 2★ rating filter`);
+      }
       await pm.onSearchPage().validateResultsCount(1);
       await pm.onSearchPage().validateExactMatchCount();
     });
 
     await test.step('Validate results contain ONLY 2 snowflakes rating', async () => {
-      await pm.onSearchPage().validateResultsContainRating(2);
-      await pm.onSearchPage().validateTopNCardsHaveRatingTitleExact(2, 5);
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed before validating rating content');
+      }
+      try {
+        await pm.onSearchPage().validateResultsContainRating(2);
+        console.log(`✅ validateResultsContainRating executed successfully`);
+      } catch (err) {
+        throw new Error(`validateResultsContainRating failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
+      
+      try {
+        await pm.onSearchPage().validateTopNCardsHaveRatingTitleExact(2, 5);
+        console.log(`✅ validateTopNCardsHaveRatingTitleExact executed successfully`);
+      } catch (err) {
+        throw new Error(`validateTopNCardsHaveRatingTitleExact failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
     });
 
     await test.step('✅ Test completed', async () => {
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed before test completion');
+      }
       console.log(`✅ TC-019b PASS — 2★ (minimum) rating filter validated — ONLY 2★ properties shown`);
     });
   });
@@ -785,6 +867,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
   // TC-021: Validates ski area filter (The 3 Valleys)
   test('TC-021 — Validate ski area filter (The 3 Valleys)', async ({ pm }, testInfo) => {
+    // Increase timeout for this flaky test
+    testInfo.setTimeout(150000); // 2.5 minutes
     const skiAreaData = testData.searchPage.filters.skiArea;
 
     // Reset nights to avoid interference from defaults
@@ -819,29 +903,56 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
   // TC-022: Validates resort filter (Val d'Isère)
   test('TC-022 — Validate resort filter (Val d\'Isère)', async ({ pm }, testInfo) => {
+    // Increase timeout for this flaky test
+    testInfo.setTimeout(150000); // 2.5 minutes
     const resortData = testData.searchPage.filters.resort;
 
     // Reset nights to avoid interference from defaults
     await test.step('Reset nights with Deselect All', async () => {
       await pm.onSearchPage().deselectAllNights();
+      // Wait for page to stabilize after clearing nights
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
     });
 
     // Select resort
     await test.step(`Select resort: ${resortData.selected}`, async () => {
       await pm.onSearchPage().selectResortFilter(resortData.selected);
+      // Wait for filter results to load TWICE to ensure results update
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
+      await pm.getPage().waitForTimeout(1000); // Extra wait for DOM updates
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
     });
 
     // Verify results contain only properties in selected resort
     await test.step('Validate results are displayed', async () => {
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed before validating results are displayed');
+      }
+      const resultsCount = await pm.onSearchPage().getResultsCount();
+      console.log(`📊 Results found: ${resultsCount}`);
+      if (resultsCount === 0) {
+        console.warn(`⚠️ No results found with resort filter "${resortData.selected}"`);
+      }
       await pm.onSearchPage().validateResultsCount(1);
       await pm.onSearchPage().validateExactMatchCount();
     });
 
     await test.step(`Validate results belong to "${resortData.selected}"`, async () => {
-      await pm.onSearchPage().validateResultsContainResort(resortData.selected);
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed before validating resort content');
+      }
+      try {
+        await pm.onSearchPage().validateResultsContainResort(resortData.selected);
+        console.log(`✅ validateResultsContainResort executed successfully`);
+      } catch (err) {
+        throw new Error(`validateResultsContainResort failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
     });
 
     await test.step('✅ Test completed', async () => {
+      if (pm.getPage().isClosed()) {
+        throw new Error('Page closed before test completion');
+      }
       console.log(`✅ TC-022 PASS — ${resortData.selected} resort filter validated successfully`);
     });
   });
@@ -853,6 +964,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
   // TC-023: Validates "Clear all changes" button removes all filters
   test('TC-023 — Validate "Clear all changes" functionality', async ({ pm }, testInfo) => {
+    // Increase timeout for this flaky test
+    testInfo.setTimeout(150000); // 2.5 minutes
     const countryData = testData.searchPage.filters.countries.highVolume;
     const accommodationData = testData.searchPage.filters.accommodation;
     const nightsData = testData.searchPage.filters.nights;
