@@ -25,6 +25,12 @@ export class HomePage extends HelperBase {
   readonly acceptCookiesBtnRecommended = this.page.locator('#accept-recommended-btn-handler');
 
   // ============================
+  // SLEEKNOTE LOCATORS
+  // ============================
+  readonly sleeknotePopup = this.page.locator('sleeknote-top, [class*="sleeknote"]').first();
+  readonly sleeknoteCloseButton = this.page.locator('sleeknote-top button[aria-label*="close" i], sleeknote-top .close, [class*="sleeknote"] button[aria-label*="close" i]').first();
+
+  // ============================
   // SEARCH LOCATORS
   // ============================
   readonly propertiesSearchInput = this.page.locator('input[placeholder*="property" i]');
@@ -399,6 +405,10 @@ export class HomePage extends HelperBase {
 
     // Open link in new page (tab) to avoid leaving the carousel
     const newPage = await this.page.context().newPage();
+    
+    // Block Sleeknote in the new page
+    await this.blockSleeknoteInPage(newPage);
+    
     await newPage.goto(href, { waitUntil: 'domcontentloaded' });
 
     // Validate navigation
@@ -428,17 +438,25 @@ export class HomePage extends HelperBase {
     await this.validateCarouselCtaNavigation();
   }
 
-  async clickCarouselNextButton(currentIndex?: number, totalSlides?: number): Promise<void> {
+  async clickCarouselNextButton(currentIndex?: number, totalSlides?: number, forceMobile: boolean = false): Promise<void> {
     const nextIndex = currentIndex !== undefined && totalSlides ? currentIndex + 1 : null;
     const slideName = nextIndex !== null ? `Slide ${nextIndex + 1}/${totalSlides}` : "Carousel";
 
+    // Handle Sleeknote popup for mobile (if forceMobile is true)
+    if (forceMobile) {
+      await this.handleSleeknotePopup();
+    }
 
     // Get current active slide href to detect when slide changes
     const currentHref = await this.carouselCta.getAttribute('href');
     this.logInfo(`Current slide CTA href: ${currentHref}`);
 
-    // Click next button
-    await this.carouselNextButton.click();
+    // Click next button (force click for mobile to bypass overlays)
+    if (forceMobile) {
+      await this.carouselNextButton.click({ force: true });
+    } else {
+      await this.carouselNextButton.click();
+    }
     this.logInfo("✓ Clicked Next button");
 
     // Wait for slide to change (CTA href should be different)
@@ -859,5 +877,99 @@ export class HomePage extends HelperBase {
 
   async validateResponsiveness(width: number): Promise<void> {
     await this.validateResponsivenessAtWidth(width);
+  }
+
+  // ============================================================
+  // 🔵 SLEEKNOTE POPUP HANDLER
+  // ============================================================
+  async blockSleeknoteInPage(page: Page): Promise<void> {
+    // Block Sleeknote requests
+    await page.route('**/*sleeknote*/**', (route: any) => route.abort());
+    await page.route('**/*.sleeknote.*', (route: any) => route.abort());
+    
+    // Add CSS and MutationObserver after navigation
+    await page.addInitScript(() => {
+      // Block via CSS
+      const style = document.createElement('style');
+      style.textContent = `
+        [class*="sleeknote"],
+        sleeknote-top,
+        sleeknote-bottom,
+        sleeknote-left,
+        sleeknote-right {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
+      `;
+      
+      if (document.head) {
+        document.head.appendChild(style);
+      } else {
+        document.addEventListener('DOMContentLoaded', () => {
+          document.head.appendChild(style);
+        });
+      }
+      
+      // Monitor and remove Sleeknote elements
+      const observer = new MutationObserver(() => {
+        const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
+        sleeknoteElements.forEach((el: Element) => el.remove());
+      });
+      
+      if (document.body) {
+        observer.observe(document.body, { childList: true, subtree: true });
+      } else {
+        document.addEventListener('DOMContentLoaded', () => {
+          observer.observe(document.body, { childList: true, subtree: true });
+        });
+      }
+    });
+  }
+
+  async handleSleeknotePopup(): Promise<void> {
+    try {
+      // Check if Sleeknote popup is visible (with short timeout)
+      const isVisible = await this.sleeknotePopup.isVisible({ timeout: 2000 });
+      
+      if (isVisible) {
+        this.logInfo("Sleeknote popup detected, attempting to dismiss...");
+        
+        // Try multiple strategies to dismiss the popup
+        // Strategy 1: Try Escape key
+        await this.page.keyboard.press('Escape');
+        await this.page.waitForTimeout(300);
+        
+        // Strategy 2: Try to close button
+        try {
+          const closeButtonVisible = await this.sleeknoteCloseButton.isVisible({ timeout: 500 });
+          if (closeButtonVisible) {
+            await this.sleeknoteCloseButton.click({ force: true });
+            await this.page.waitForTimeout(300);
+          }
+        } catch {
+          // Close button not found, continue
+        }
+        
+        // Strategy 3: Remove the element via JavaScript (last resort)
+        await this.page.evaluate(() => {
+          const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
+          sleeknoteElements.forEach(el => el.remove());
+        });
+        
+        this.logInfo("✓ Sleeknote popup handled successfully");
+        await this.page.waitForTimeout(500);
+      }
+    } catch (error) {
+      // Sleeknote not present - try to remove it anyway via JavaScript
+      await this.page.evaluate(() => {
+        const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
+        sleeknoteElements.forEach(el => el.remove());
+      }).catch(() => {
+        // Ignore if no elements found
+      });
+      this.logInfo("No Sleeknote popup detected (or already handled)");
+    }
   }
 }

@@ -1,247 +1,35 @@
-<testsuites id="" name="" tests="11" failures="2" skipped="0" errors="0" time="222.3553359999992">
-<testsuite name="components.spec.ts" timestamp="2026-01-14T14:20:37.210Z" hostname="chromium" tests="11" failures="2" skipped="0" time="425.919" errors="0">
-<testcase name="Components Page › TC1 — Validate Logo Navigation" classname="components.spec.ts" time="6.32">
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="251.74240700000001">
+<testsuite name="home.mobile.spec.ts" timestamp="2026-01-14T16:11:50.280Z" hostname="Mobile Chrome" tests="1" failures="0" skipped="0" time="249.862" errors="0">
+<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="249.862">
 <system-out>
 <![CDATA[
-=== TEST: TC1 — Validate Logo Navigation ===
+=== TEST: TC22-MOBILE — Validate Carousel CTA Button (Mobile) ===
 
-===== TEST STARTED: TC1 — Validate Logo Navigation =====
+===== TEST STARTED: TC22-MOBILE — Validate Carousel CTA Button (Mobile) =====
 
-VALIDATION PASSED: Header logo clicked and redirected to Home Page
-✓ TC1 completed successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC2 — Header Navigation + Submenu Validation" classname="components.spec.ts" time="219.88">
-<failure message="components.spec.ts:65:9 TC2 — Header Navigation + Submenu Validation" type="FAILURE">
-<![CDATA[  [chromium] › components.spec.ts:65:9 › Components Page › TC2 — Header Navigation + Submenu Validation 
+✓ Slide 1: Has CTA button
+✓ Slide 2: Has CTA button
+✓ Slide 3: Has CTA button
+✓ Slide 4: Has CTA button
 
-    Error: Soft validation errors detected:
-    - Title does NOT contain expected label: "Search"
-    - Title does NOT contain expected label: "B&B hotels"
-    - Title does NOT contain expected label: "Hotels"
-    - Title does NOT contain expected label: "All other countries"
-    - Title does NOT contain expected label: "Tignes-Val d'Isère"
-    - Title does NOT contain expected label: "Alberg"
 
-       at ..\support\baseTest.ts:26
+==================== ✓ CAROUSEL VALIDATION SUMMARY (MOBILE) ====================
+Total slides: 4
+Slides with CTA: 4
+Slides without CTA: 0
+---------------------------------------------------------------
+Slide 1: https://www.igluski.com/ski-holidays
+   └─ Page Title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
+Slide 2: https://www.igluski.com/ski-holidays/new-year-sale
+   └─ Page Title: "New Year - New Sale!"
+Slide 3: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+   └─ Page Title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
+Slide 4: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+   └─ Page Title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
+=========================================================================
 
-      24 |     if (errors.length > 0) {
-      25 |       console.log(`=== END: FAIL (soft errors: ${errors.length}) ===`);
-    > 26 |       throw new Error(`Soft validation errors detected:\n- ${errors.join('\n- ')}`);
-         |             ^
-      27 |     }
-      28 |
-      29 |     if (strictWarnings && warnings.length > 0) {
-        at Object.pm (C:\Projects\playwright-typescript\igluski-playwright-ts\support\baseTest.ts:26:13)
-
-    attachment #1: TC2 — Errors Summary (text/plain) ───────────────────────────────────────────────
-    Title does NOT contain expected label: "Search"
-    Title does NOT contain expected label: "B&B hotels"
-    Title does NOT contain expected label: "Hotels"
-    Title does NOT contain expected label: "All other countries"
-    Title does NOT contain expected label: "Tignes-Val d'Isère"
-    Title does NOT contain expected...
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-=== TEST: TC2 — Header Navigation + Submenu Validation ===
-
-===== TEST STARTED: TC2 — Header Navigation + Submenu Validation =====
-
-VALIDATION PASSED: Header navigation items visibility validated
-[ERROR] Title does NOT contain expected label: "Search"
-VALIDATION PASSED: Main menu navigation validated successfully
-[ERROR] Title does NOT contain expected label: "B&B hotels"
-[ERROR] Title does NOT contain expected label: "Hotels"
-[ERROR] Title does NOT contain expected label: "All other countries"
-[ERROR] Title does NOT contain expected label: "Tignes-Val d'Isère"
-[ERROR] Title does NOT contain expected label: "Alberg"
-VALIDATION PASSED: Submenu navigation validated successfully
-
-==================== TC2 — SUMMARY OF ERRORS ====================
-Title does NOT contain expected label: "Search"
-Title does NOT contain expected label: "B&B hotels"
-Title does NOT contain expected label: "Hotels"
-Title does NOT contain expected label: "All other countries"
-Title does NOT contain expected label: "Tignes-Val d'Isère"
-Title does NOT contain expected label: "Alberg"
-=================================================================
-
-=== END: FAIL (soft errors: 6) ===
-
-[[ATTACHMENT|test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\test-failed-1.png]]
-
-[[ATTACHMENT|test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC3 — Validate Contact Information in the Header" classname="components.spec.ts" time="5.819">
-<system-out>
-<![CDATA[
-=== TEST: TC3 — Validate Contact Information in the Header ===
-
-===== TEST STARTED: TC3 — Validate Contact Information in the Header =====
-
-VALIDATION PASSED: Header phone number validated
-VALIDATION PASSED: Contact Us link validated
-VALIDATION PASSED: Contact Us redirection validated
-✓ TC3 completed successfully - validated contact: "Phone"
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC4 — Validate &quot;Recently Viewed&quot; Button" classname="components.spec.ts" time="8.092">
-<system-out>
-<![CDATA[
-=== TEST: TC4 — Validate "Recently Viewed" Button ===
-
-===== TEST STARTED: TC4 — Validate "Recently Viewed" Button =====
-
-VALIDATION PASSED: Recently Viewed button text validated
-VALIDATION PASSED: Recently Viewed panel validated
-✓ TC4 completed successfully - "Recently Viewed"
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC5 — Validate Access to the Customer Portal" classname="components.spec.ts" time="12.766">
-<system-out>
-<![CDATA[
-=== TEST: TC5 — Validate Access to the Customer Portal ===
-
-===== TEST STARTED: TC5 — Validate Access to the Customer Portal =====
-
-VALIDATION PASSED: Customer Portal button text validated
-VALIDATION PASSED: AJAX content loaded successfully
-VALIDATION PASSED: Customer Portal required fields validated (3 fields)
-✓ TC5 completed successfully - expected fields: Email, Password, Sign in
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC6 — Validate Ratings &amp; Reviews in the Header" classname="components.spec.ts" time="10.105">
-<system-out>
-<![CDATA[
-=== TEST: TC6 — Validate Ratings & Reviews in the Header ===
-
-===== TEST STARTED: TC6 — Validate Ratings & Reviews in the Header =====
-
-VALIDATION PASSED: Ratings & Reviews link text validated
-VALIDATION PASSED: Redirected to Reviews page successfully
-VALIDATION PASSED: Reviews page title validated
-✓ TC6 completed successfully - "Ratings & Reviews" → https://www.igluski.com/customer-reviews
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC18 — Validate Contact Section (Phone, Email, Newsletter)" classname="components.spec.ts" time="90.256">
-<failure message="components.spec.ts:285:9 TC18 — Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
-<![CDATA[  [chromium] › components.spec.ts:285:9 › Components Page › TC18 — Validate Contact Section (Phone, Email, Newsletter) 
-
-    Test timeout of 90000ms exceeded.
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-=== TEST: TC18 — Validate Contact Section (Phone, Email, Newsletter) ===
-
-===== TEST STARTED: TC18 — Validate Contact Section (Phone, Email, Newsletter) =====
-
-=== END: PASS ===
-[ERROR] Page closed - contact phone validation
-VALIDATION PASSED: Contact phone block validated
-[ERROR] Page closed - contact email validation
-VALIDATION PASSED: Contact email block validated
-[ERROR] Page closed - contact newsletter validation
-VALIDATION PASSED: Contact newsletter block validated
-✓ TC18 completed successfully
-
-[[ATTACHMENT|test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\test-failed-1.png]]
-
-[[ATTACHMENT|test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC20 — Validate Footer Links" classname="components.spec.ts" time="56.353">
-<system-out>
-<![CDATA[
-=== TEST: TC20 — Validate Footer Links ===
-
-===== TEST STARTED: TC20 — Validate Footer Links =====
-
-VALIDATION PASSED: All 41 footer items visibility validated
-VALIDATION PASSED: All 41 footer items text validated
-VALIDATION PASSED: All 41 footer items URL format validated
-VALIDATION PASSED: All 41 footer links navigation validated
-
-==================== FOOTER DATA VALIDATION SUMMARY ====================
-Footer Configuration:
-  • Holiday ID Search Button: "Search"
-  • Input Placeholder: "Enter your holiday ID"
-  • Description: "Holiday ID search form configuration in footer"
-  • Total footer items found: 41
-=================================================================
-
-✓ TC20 completed successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC28 — Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="components.spec.ts" time="6.366">
-<system-out>
-<![CDATA[
-=== TEST: TC28 — Validate "Search by Holiday ID" Button in Footer ===
-
-===== TEST STARTED: TC28 — Validate "Search by Holiday ID" Button in Footer =====
-
-VALIDATION PASSED: Holiday ID Search validated - Button: "Search"
-✓ TC28 completed successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer" classname="components.spec.ts" time="5.072">
-<system-out>
-<![CDATA[
-=== TEST: TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer ===
-
-===== TEST STARTED: TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer =====
-
-VALIDATION PASSED: Trust seals visibility validated (4 seals)
-VALIDATION PASSED: Trust seals clickable links validated (4 seals)
-VALIDATION PASSED: Trust seals URL format validated (4 seals)
-✓ TC-F21 completed successfully - validated 4 trust seals
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer" classname="components.spec.ts" time="4.89">
-<system-out>
-<![CDATA[
-=== TEST: TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer ===
-
-===== TEST STARTED: TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer =====
-
-VALIDATION PASSED: Social media icons visibility validated (3 icons)
-VALIDATION PASSED: Social media icons links validated (3 icons)
-VALIDATION PASSED: Social media URL format validated (3 icons)
-✓ TC-F22 completed successfully - validated 3 social media icons
+VALIDATION PASSED: All 4 carousel slides validated with CTA verification (Mobile)
+✓ TC22-MOBILE completed successfully
 === END: PASS ===
 ]]>
 </system-out>
