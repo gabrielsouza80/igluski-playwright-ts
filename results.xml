@@ -1,374 +1,247 @@
-<testsuites id="" name="" tests="29" failures="0" skipped="0" errors="0" time="173.927274">
-<testsuite name="search.spec.ts" timestamp="2026-01-14T09:22:21.973Z" hostname="chromium" tests="29" failures="0" skipped="0" time="1155.347" errors="0">
-<testcase name="Search and Filters — Ski Holidays › TC-001 — Validate minimum night filter (2 nights)" classname="search.spec.ts" time="55.915">
+<testsuites id="" name="" tests="11" failures="2" skipped="0" errors="0" time="222.3553359999992">
+<testsuite name="components.spec.ts" timestamp="2026-01-14T14:20:37.210Z" hostname="chromium" tests="11" failures="2" skipped="0" time="425.919" errors="0">
+<testcase name="Components Page › TC1 — Validate Logo Navigation" classname="components.spec.ts" time="6.32">
 <system-out>
 <![CDATA[
-=== TEST: TC-001 — Validate minimum night filter (2 nights) ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✓ Found 0 properties matching filter criteria
-✅ TC-001 PASS — 2 nights filter validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-002 — Validate default nights filter (7 nights)" classname="search.spec.ts" time="58.525">
-<system-out>
-<![CDATA[
-=== TEST: TC-002 — Validate default nights filter (7 nights) ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✅ TC-002 PASS — 7 nights filter validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-003 — Validate maximum nights filter (13 nights)" classname="search.spec.ts" time="78.339">
-<system-out>
-<![CDATA[
-=== TEST: TC-003 — Validate maximum nights filter (13 nights) ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✅ TC-003 PASS — 13 nights filter validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-004 — Validate open maximum nights filter (14+ nights)" classname="search.spec.ts" time="60.073">
-<system-out>
-<![CDATA[
-=== TEST: TC-004 — Validate open maximum nights filter (14+ nights) ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✅ TC-004 PASS — 14+ nights filter validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-007 — Validate country with many properties (France)" classname="search.spec.ts" time="56.161">
-<system-out>
-<![CDATA[
-=== TEST: TC-007 — Validate country with many properties (France) ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✅ TC-007 PASS — France country filter validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-008 — Validate country with few properties (USA)" classname="search.spec.ts" time="57.4">
-<system-out>
-<![CDATA[
-=== TEST: TC-008 — Validate country with few properties (USA) ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✅ TC-008 PASS — USA country filter validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-009 — Validate 7 nights + France combination" classname="search.spec.ts" time="62.923">
-<system-out>
-<![CDATA[
-=== TEST: TC-009 — Validate 7 nights + France combination ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✅ TC-009 PASS — Combined filter validated: 7 nights + France
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-010 — Validate 14+ nights + USA combination" classname="search.spec.ts" time="80.985">
-<system-out>
-<![CDATA[
-=== TEST: TC-010 — Validate 14+ nights + USA combination ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✅ TC-010 PASS — Combined filter validated: 14+ nights + USA
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-011 — Validate results per page change (10 → 20)" classname="search.spec.ts" time="15.166">
-<system-out>
-<![CDATA[
-=== TEST: TC-011 — Validate results per page change (10 → 20) ===
-✓ Displayed 10 cards (expected max: 20)
-✓ TC-011 completed - validated results per page change to 20
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-012 — Validate pagination (next page)" classname="search.spec.ts" time="15.151">
-<system-out>
-<![CDATA[
-=== TEST: TC-012 — Validate pagination (next page) ===
-✓ TC-012 completed - validated pagination
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-013 — Validate sorting (Iglu recommends → Price Low to High)" classname="search.spec.ts" time="19.286">
-<system-out>
-<![CDATA[
-=== TEST: TC-013 — Validate sorting (Iglu recommends → Price Low to High) ===
-✓ TC-013 completed - validated sorting by Price (Low - High)
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-014 — Extremes: 2 minimums and 2 maximums" classname="search.spec.ts" time="82.667">
-<system-out>
-<![CDATA[
-=== TEST: TC-014 — Extremes: 2 minimums and 2 maximums ===
-🔎 EXTREME MIN #1 (1a,0c,2n): results present → 4 cards
-🔎 EXTREME MIN #2 (2a,0c,2n): results present → 10 cards
-🔎 EXTREME MAX #1 (30+ a,10c,14+ n): results present → 726 cards
-⚠ TC-014: Test execution exceeded 75s - completing test
-✓ TC-014 completed — extremes (2 min, 2 max) executed
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-015 — Validate minimum travelers (1 adult, 0 children)" classname="search.spec.ts" time="63.154">
-<system-out>
-<![CDATA[
-=== TEST: TC-015 — Validate minimum travelers (1 adult, 0 children) ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✓ TC-015 completed - validated minimum travelers
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-016 — Validate maximum travelers (30+ adults, 10 children)" classname="search.spec.ts" time="10.697">
-<system-out>
-<![CDATA[
-=== TEST: TC-016 — Validate maximum travelers (30+ adults, 10 children) ===
-✓ TC-016 completed - validated maximum travelers
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-017 — Validate accommodation filter (Hotel)" classname="search.spec.ts" time="27.312">
-<system-out>
-<![CDATA[
-=== TEST: TC-017 — Validate accommodation filter (Hotel) ===
-✓ TC-017 completed - validated Hotel filter
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-018 — Validate board basis filter (Self catered)" classname="search.spec.ts" time="31.716">
-<system-out>
-<![CDATA[
-=== TEST: TC-018 — Validate board basis filter (Self catered) ===
-✅ TC-018 PASS — Self catered board basis filter validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-019 — Validate rating filter (5 snowflakes)" classname="search.spec.ts" time="35.596">
-<system-out>
-<![CDATA[
-=== TEST: TC-019 — Validate rating filter (5 snowflakes) ===
-[WARN] Exact title did not appear within timeout; proceeding with current DOM state
+=== TEST: TC1 — Validate Logo Navigation ===
 
-======================================================================
-⭐ VALIDATION: Checking results for 5★ rating
-======================================================================
-🔎 Exact title matches (5★): 10
-📊 Rating wrappers found: 10
-📊 Analyzing 5 of 10 total result cards
-  ✅ Card 1: 5★ [MATCH]
-  ✅ Card 2: 5★ [MATCH]
-  ✅ Card 3: 5★ [MATCH]
-  ✅ Card 4: 5★ [MATCH]
-  ✅ Card 5: 5★ [MATCH]
+===== TEST STARTED: TC1 — Validate Logo Navigation =====
 
-📈 Rating Distribution: {"5":5}
-✅ Matching cards: 5/5
-✅ VALIDATION PASSED: Found 5/5 5★ card(s)
-======================================================================
+VALIDATION PASSED: Header logo clicked and redirected to Home Page
+✓ TC1 completed successfully
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Components Page › TC2 — Header Navigation + Submenu Validation" classname="components.spec.ts" time="219.88">
+<failure message="components.spec.ts:65:9 TC2 — Header Navigation + Submenu Validation" type="FAILURE">
+<![CDATA[  [chromium] › components.spec.ts:65:9 › Components Page › TC2 — Header Navigation + Submenu Validation 
 
-✅ validateResultsContainRating executed successfully
+    Error: Soft validation errors detected:
+    - Title does NOT contain expected label: "Search"
+    - Title does NOT contain expected label: "B&B hotels"
+    - Title does NOT contain expected label: "Hotels"
+    - Title does NOT contain expected label: "All other countries"
+    - Title does NOT contain expected label: "Tignes-Val d'Isère"
+    - Title does NOT contain expected label: "Alberg"
 
-======================================================================
-⭐ STRICT TITLE CHECK: Top 5 cards have "Star review 5 out of 5"
-======================================================================
-📦 Total cards on page: 10
-  ✅ Card 1: title="Star review 5 out of 5"
-  ✅ Card 2: title="Star review 5 out of 5"
-  ✅ Card 3: title="Star review 5 out of 5"
-  ✅ Card 4: title="Star review 5 out of 5"
-  ✅ Card 5: title="Star review 5 out of 5"
-✅ STRICT TITLE CHECK PASSED for top 5 cards (5★)
-======================================================================
+       at ..\support\baseTest.ts:26
 
-✅ validateTopNCardsHaveRatingTitleExact executed successfully
-✅ TC-019 PASS — 5★ rating filter validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-019b — Validate rating filter (2 snowflakes - minimum)" classname="search.spec.ts" time="31.686">
-<system-out>
-<![CDATA[
-=== TEST: TC-019b — Validate rating filter (2 snowflakes - minimum) ===
-📊 Results found: 509
+      24 |     if (errors.length > 0) {
+      25 |       console.log(`=== END: FAIL (soft errors: ${errors.length}) ===`);
+    > 26 |       throw new Error(`Soft validation errors detected:\n- ${errors.join('\n- ')}`);
+         |             ^
+      27 |     }
+      28 |
+      29 |     if (strictWarnings && warnings.length > 0) {
+        at Object.pm (C:\Projects\playwright-typescript\igluski-playwright-ts\support\baseTest.ts:26:13)
 
-======================================================================
-⭐ VALIDATION: Checking results for 2★ rating
-======================================================================
-🔎 Exact title matches (2★): 10
-📊 Rating wrappers found: 10
-📊 Analyzing 5 of 10 total result cards
-  ✅ Card 1: 2★ [MATCH]
-  ✅ Card 2: 2★ [MATCH]
-  ✅ Card 3: 2★ [MATCH]
-  ✅ Card 4: 2★ [MATCH]
-  ✅ Card 5: 2★ [MATCH]
+    attachment #1: TC2 — Errors Summary (text/plain) ───────────────────────────────────────────────
+    Title does NOT contain expected label: "Search"
+    Title does NOT contain expected label: "B&B hotels"
+    Title does NOT contain expected label: "Hotels"
+    Title does NOT contain expected label: "All other countries"
+    Title does NOT contain expected label: "Tignes-Val d'Isère"
+    Title does NOT contain expected...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 
-📈 Rating Distribution: {"2":5}
-✅ Matching cards: 5/5
-✅ VALIDATION PASSED: All sampled cards match 2★
-======================================================================
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 
-✅ validateResultsContainRating executed successfully
+    Error Context: ..\test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+=== TEST: TC2 — Header Navigation + Submenu Validation ===
 
-======================================================================
-⭐ STRICT TITLE CHECK: Top 5 cards have "Star review 2 out of 5"
-======================================================================
-📦 Total cards on page: 10
-  ✅ Card 1: title="Star review 2 out of 5"
-  ✅ Card 2: title="Star review 2 out of 5"
-  ✅ Card 3: title="Star review 2 out of 5"
-  ✅ Card 4: title="Star review 2 out of 5"
-  ✅ Card 5: title="Star review 2 out of 5"
-✅ STRICT TITLE CHECK PASSED for top 5 cards (2★)
-======================================================================
+===== TEST STARTED: TC2 — Header Navigation + Submenu Validation =====
 
-✅ validateTopNCardsHaveRatingTitleExact executed successfully
-✅ TC-019b PASS — 2★ (minimum) rating filter validated — ONLY 2★ properties shown
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-020 — Validate property feature filter (WiFi)" classname="search.spec.ts" time="37.94">
-<system-out>
-<![CDATA[
-=== TEST: TC-020 — Validate property feature filter (WiFi) ===
-⚠ TC-020: Test execution exceeded 30s - completing test
-✅ TC-020 PASS — WiFi property feature validated successfully
-=== END: PASS ===
-[ERROR] Page closed - validation at card 1
-[ERROR] Feature "WiFi" not visibly displayed in sampled result cards
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-021 — Validate ski area filter (The 3 Valleys)" classname="search.spec.ts" time="19.181">
-<system-out>
-<![CDATA[
-=== TEST: TC-021 — Validate ski area filter (The 3 Valleys) ===
-✅ TC-021 PASS — The 3 Valleys ski area filter validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-022 — Validate resort filter (Val d&apos;Isère)" classname="search.spec.ts" time="59.577">
-<system-out>
-<![CDATA[
-=== TEST: TC-022 — Validate resort filter (Val d'Isère) ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-📊 Results found: 145
-✅ validateResultsContainResort executed successfully
-✅ TC-022 PASS — Val d'Isère resort filter validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-023 — Validate &quot;Clear all changes&quot; functionality" classname="search.spec.ts" time="60.73">
-<system-out>
-<![CDATA[
-=== TEST: TC-023 — Validate "Clear all changes" functionality ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✓ Filters applied - Results: 359
-✓ All filters cleared - Results restored: 359
-✅ TC-023 PASS — "Clear all changes" functionality validated successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-024 — Validate section &quot;clear&quot; button (Country)" classname="search.spec.ts" time="10.723">
-<system-out>
-<![CDATA[
-=== TEST: TC-024 — Validate section "clear" button (Country) ===
-⚠️ Country section clear button not visible - filter may not have been applied correctly
-⚠️ TC-024: Unexpected error - Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+VALIDATION PASSED: Header navigation items visibility validated
+[ERROR] Title does NOT contain expected label: "Search"
+VALIDATION PASSED: Main menu navigation validated successfully
+[ERROR] Title does NOT contain expected label: "B&B hotels"
+[ERROR] Title does NOT contain expected label: "Hotels"
+[ERROR] Title does NOT contain expected label: "All other countries"
+[ERROR] Title does NOT contain expected label: "Tignes-Val d'Isère"
+[ERROR] Title does NOT contain expected label: "Alberg"
+VALIDATION PASSED: Submenu navigation validated successfully
 
-Received: [31mfalse[39m
-✅ TC-024 PASS — Section "clear" button functionality validated successfully
+==================== TC2 — SUMMARY OF ERRORS ====================
+Title does NOT contain expected label: "Search"
+Title does NOT contain expected label: "B&B hotels"
+Title does NOT contain expected label: "Hotels"
+Title does NOT contain expected label: "All other countries"
+Title does NOT contain expected label: "Tignes-Val d'Isère"
+Title does NOT contain expected label: "Alberg"
+=================================================================
+
+=== END: FAIL (soft errors: 6) ===
+
+[[ATTACHMENT|test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Components Page › TC3 — Validate Contact Information in the Header" classname="components.spec.ts" time="5.819">
+<system-out>
+<![CDATA[
+=== TEST: TC3 — Validate Contact Information in the Header ===
+
+===== TEST STARTED: TC3 — Validate Contact Information in the Header =====
+
+VALIDATION PASSED: Header phone number validated
+VALIDATION PASSED: Contact Us link validated
+VALIDATION PASSED: Contact Us redirection validated
+✓ TC3 completed successfully - validated contact: "Phone"
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-025 — Validate URL parameter synchronization" classname="search.spec.ts" time="17.111">
+<testcase name="Components Page › TC4 — Validate &quot;Recently Viewed&quot; Button" classname="components.spec.ts" time="8.092">
 <system-out>
 <![CDATA[
-=== TEST: TC-025 — Validate URL parameter synchronization ===
-✓ URL with filters: https://www.igluski.com/ski-holidays?country=FR&property=chh&nts=14&nts=15&nts=16&nts=17&nts=18&nts=19&nts=20&nts=21&nts=22&nts=23&nts=24&nts=25&nts=26&nts=27&nts=28&ad=1&ch=0&perpage=10&sort=0&state=4
-✓ URL synchronized with filters
-✅ TC-025 PASS — URL parameter synchronization validated successfully
+=== TEST: TC4 — Validate "Recently Viewed" Button ===
+
+===== TEST STARTED: TC4 — Validate "Recently Viewed" Button =====
+
+VALIDATION PASSED: Recently Viewed button text validated
+VALIDATION PASSED: Recently Viewed panel validated
+✓ TC4 completed successfully - "Recently Viewed"
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-026 — Validate multi-country selection (France + Austria + Italy)" classname="search.spec.ts" time="23.742">
+<testcase name="Components Page › TC5 — Validate Access to the Customer Portal" classname="components.spec.ts" time="12.766">
 <system-out>
 <![CDATA[
-=== TEST: TC-026 — Validate multi-country selection (France + Austria + Italy) ===
-France count: 4517
-Austria count: 1904
-Italy count: 2807
-Combined: 3199, Sum: 9228, Max individual: 4517
-✓ URL: https://www.igluski.com/ski-holidays?country=AT&country=FR&country=IT&nts=any&ad=2&ch=0&perpage=10&sort=0&state=4
-✅ TC-026 PASS — Multi-country selection validated: France + Austria + Italy
+=== TEST: TC5 — Validate Access to the Customer Portal ===
+
+===== TEST STARTED: TC5 — Validate Access to the Customer Portal =====
+
+VALIDATION PASSED: Customer Portal button text validated
+VALIDATION PASSED: AJAX content loaded successfully
+VALIDATION PASSED: Customer Portal required fields validated (3 fields)
+✓ TC5 completed successfully - expected fields: Email, Password, Sign in
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-027 — Validate individual country removal from multi-selection" classname="search.spec.ts" time="11.067">
+<testcase name="Components Page › TC6 — Validate Ratings &amp; Reviews in the Header" classname="components.spec.ts" time="10.105">
 <system-out>
 <![CDATA[
-=== TEST: TC-027 — Validate individual country removal from multi-selection ===
-✓ Results with 3 countries: 4517
-✓ Results with 2 countries (Austria + Italy): 4517
-✅ TC-027 PASS — Individual country removal from multi-selection validated successfully
+=== TEST: TC6 — Validate Ratings & Reviews in the Header ===
+
+===== TEST STARTED: TC6 — Validate Ratings & Reviews in the Header =====
+
+VALIDATION PASSED: Ratings & Reviews link text validated
+VALIDATION PASSED: Redirected to Reviews page successfully
+VALIDATION PASSED: Reviews page title validated
+✓ TC6 completed successfully - "Ratings & Reviews" → https://www.igluski.com/customer-reviews
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-028 — Validate multi-accommodation selection (Hotel + Chalet)" classname="search.spec.ts" time="10.851">
+<testcase name="Components Page › TC18 — Validate Contact Section (Phone, Email, Newsletter)" classname="components.spec.ts" time="90.256">
+<failure message="components.spec.ts:285:9 TC18 — Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
+<![CDATA[  [chromium] › components.spec.ts:285:9 › Components Page › TC18 — Validate Contact Section (Phone, Email, Newsletter) 
+
+    Test timeout of 90000ms exceeded.
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\error-context.md
+]]>
+</failure>
 <system-out>
 <![CDATA[
-=== TEST: TC-028 — Validate multi-accommodation selection (Hotel + Chalet) ===
-✓ Multi-accommodation selection (Hotel + Chalet) - Results: 4517
-✓ Both accommodation types selected and returning results
-✅ TC-028 PASS — Multi-accommodation selection validated: Hotel + Chalet
+=== TEST: TC18 — Validate Contact Section (Phone, Email, Newsletter) ===
+
+===== TEST STARTED: TC18 — Validate Contact Section (Phone, Email, Newsletter) =====
+
+=== END: PASS ===
+[ERROR] Page closed - contact phone validation
+VALIDATION PASSED: Contact phone block validated
+[ERROR] Page closed - contact email validation
+VALIDATION PASSED: Contact email block validated
+[ERROR] Page closed - contact newsletter validation
+VALIDATION PASSED: Contact newsletter block validated
+✓ TC18 completed successfully
+
+[[ATTACHMENT|test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Components Page › TC20 — Validate Footer Links" classname="components.spec.ts" time="56.353">
+<system-out>
+<![CDATA[
+=== TEST: TC20 — Validate Footer Links ===
+
+===== TEST STARTED: TC20 — Validate Footer Links =====
+
+VALIDATION PASSED: All 41 footer items visibility validated
+VALIDATION PASSED: All 41 footer items text validated
+VALIDATION PASSED: All 41 footer items URL format validated
+VALIDATION PASSED: All 41 footer links navigation validated
+
+==================== FOOTER DATA VALIDATION SUMMARY ====================
+Footer Configuration:
+  • Holiday ID Search Button: "Search"
+  • Input Placeholder: "Enter your holiday ID"
+  • Description: "Holiday ID search form configuration in footer"
+  • Total footer items found: 41
+=================================================================
+
+✓ TC20 completed successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-029 — Validate multi-board basis selection (Self Catered + Bed &amp; Breakfast)" classname="search.spec.ts" time="48.998">
+<testcase name="Components Page › TC28 — Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="components.spec.ts" time="6.366">
 <system-out>
 <![CDATA[
-=== TEST: TC-029 — Validate multi-board basis selection (Self Catered + Bed & Breakfast) ===
-⚠️ beforeEach setup failed, retrying: TimeoutError: page.waitForLoadState: Timeout 30000ms exceeded.
-✓ Multi-board basis selection (Self catered + Bed & Breakfast) - Results: 4517
-✓ Both board basis options selected and returning results
-✅ TC-029 PASS — Multi-board basis selection validated: Self catered + Bed & Breakfast
+=== TEST: TC28 — Validate "Search by Holiday ID" Button in Footer ===
+
+===== TEST STARTED: TC28 — Validate "Search by Holiday ID" Button in Footer =====
+
+VALIDATION PASSED: Holiday ID Search validated - Button: "Search"
+✓ TC28 completed successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Search and Filters — Ski Holidays › TC-030 — Validate multi-ski area selection (The 3 Valleys + Paradiski)" classname="search.spec.ts" time="12.675">
+<testcase name="Components Page › TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer" classname="components.spec.ts" time="5.072">
 <system-out>
 <![CDATA[
-=== TEST: TC-030 — Validate multi-ski area selection (The 3 Valleys + Paradiski) ===
-✓ Multi-ski area selection (The 3 Valleys + Paradiski) - Results: 4517
-✓ Both ski areas selected and returning results
-✅ TC-030 PASS — Multi-ski area selection validated: The 3 Valleys + Paradiski
+=== TEST: TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer ===
+
+===== TEST STARTED: TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer =====
+
+VALIDATION PASSED: Trust seals visibility validated (4 seals)
+VALIDATION PASSED: Trust seals clickable links validated (4 seals)
+VALIDATION PASSED: Trust seals URL format validated (4 seals)
+✓ TC-F21 completed successfully - validated 4 trust seals
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Components Page › TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer" classname="components.spec.ts" time="4.89">
+<system-out>
+<![CDATA[
+=== TEST: TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer ===
+
+===== TEST STARTED: TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer =====
+
+VALIDATION PASSED: Social media icons visibility validated (3 icons)
+VALIDATION PASSED: Social media icons links validated (3 icons)
+VALIDATION PASSED: Social media URL format validated (3 icons)
+✓ TC-F22 completed successfully - validated 3 social media icons
 === END: PASS ===
 ]]>
 </system-out>

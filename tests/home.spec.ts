@@ -33,6 +33,7 @@ test.describe('Home Page', () => {
       for (const title of expectedTitles) {
         await pm.onHomePage().validateSingleTitle(title);
       }
+      console.log(`VALIDATION PASSED: All ${expectedTitles.length} home page titles validated successfully`);
     });
 
     // STEP 3 — Finish test
@@ -61,6 +62,7 @@ test.describe('Home Page', () => {
       for (let i = 0; i < bannerCount; i++) {
         await pm.onHomePage().validateSingleCountryBannerRedirection(i);
       }
+      console.log(`VALIDATION PASSED: All ${bannerCount} country banners validated with correct redirections`);
     });
 
     // STEP 2 — Finish test
@@ -88,6 +90,7 @@ test.describe('Home Page', () => {
     // STEP 2 — Validate each CTA box
     await test.step('Validate CTA titles and redirections', async () => {
       await pm.onHomePage().validateCtaBoxesList(ctaBoxesData.data);
+      console.log(`VALIDATION PASSED: All ${ctaBoxesData.data.length} CTA boxes titles and redirections validated successfully`);
     });
 
     // STEP 3 — Finish test
@@ -181,6 +184,7 @@ test.describe('Home Page', () => {
           }
         });
         console.log('=========================================================================\n');
+        console.log(`VALIDATION PASSED: All ${totalSlides} carousel slides validated with CTA verification`);
       });
     });
 
@@ -206,11 +210,13 @@ test.describe('Home Page', () => {
     // STEP 1 — Validate Speak to Experts section
     await test.step('Validate inline links inside the "Speak to Experts" section', async () => {
       await pm.onHomePage().validateSpeakToExpertsLinksList();
+      console.log('VALIDATION PASSED: Speak to Experts section inline links validated');
     });
 
     // STEP 2 — Validate Find Your Skiing Holiday section
     await test.step('Validate inline links inside the "Find Your Skiing Holiday" section', async () => {
       await pm.onHomePage().validateFindYourSkiingHolidayLinksList();
+      console.log('VALIDATION PASSED: Find Your Skiing Holiday section inline links validated');
     });
 
     // STEP 3 — Finish test
@@ -234,11 +240,13 @@ test.describe('Home Page', () => {
     // STEP 1 — Validate at 375px (mobile)
     await test.step(`Validate layout and responsiveness at ${viewports[0].width}px (${viewports[0].name})`, async () => {
       await pm.onHomePage().validateResponsivenessAtWidth(viewports[0].width);
+      console.log(`VALIDATION PASSED: Page layout validated at ${viewports[0].width}px (${viewports[0].name})`);
     });
 
     // STEP 2 — Validate at 768px (tablet)
     await test.step(`Validate layout and responsiveness at ${viewports[1].width}px (${viewports[1].name})`, async () => {
       await pm.onHomePage().validateResponsivenessAtWidth(viewports[1].width);
+      console.log(`VALIDATION PASSED: Page layout validated at ${viewports[1].width}px (${viewports[1].name})`);
     });
 
     // STEP 3 — Finish test

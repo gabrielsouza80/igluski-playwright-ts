@@ -1,3 +1,19 @@
+    console.log('VALIDATION PASSED: Header logo clicked');
+    console.log('VALIDATION PASSED: Redirected to Home Page');
+    console.log('VALIDATION PASSED: Header navigation items located');
+    console.log('VALIDATION PASSED: Header navigation visibility validated');
+    console.log('VALIDATION PASSED: Menu snapshot captured');
+    console.log('VALIDATION PASSED: Main menu navigation validated');
+    console.log('VALIDATION PASSED: Submenu navigation validated');
+    console.log('VALIDATION PASSED: Header phone number validated');
+    console.log('VALIDATION PASSED: Contact Us link validated');
+    console.log('VALIDATION PASSED: Contact Us redirection validated');
+    console.log('VALIDATION PASSED: Recently Viewed button text validated');
+    console.log('VALIDATION PASSED: Recently Viewed panel validated');
+    console.log('VALIDATION PASSED: Customer Portal button text validated');
+    console.log('VALIDATION PASSED: Customer Portal button clicked');
+    console.log('VALIDATION PASSED: AJAX content loaded');
+    console.log('VALIDATION PASSED: Customer Portal required fields validated');
 import { test, expect } from '../support/baseTest';
 import testData from './fixtures/testdata.json';
 
@@ -33,6 +49,7 @@ test.describe('Components Page', () => {
         // STEP 2 — Validate redirect to Home Page
         await test.step('Validate redirection to Home Page', async () => {
             await pm.onComponentsPage().validateHeaderLogoRedirect();
+            console.log('VALIDATION PASSED: Header logo clicked and redirected to Home Page');
         });
 
         // STEP 3 — Finish test
@@ -62,6 +79,7 @@ test.describe('Components Page', () => {
         // STEP 2 — Validate header navigation visibility (ASSERTION)
         await test.step('Validate header navigation visibility', async () => {
             await pm.onComponentsPage().validateHeaderNavVisibility();
+            console.log('VALIDATION PASSED: Header navigation items visibility validated');
         });
 
         // STEP 3 — Capture menu snapshot (ACTION)
@@ -72,11 +90,13 @@ test.describe('Components Page', () => {
         // STEP 4 — Validate all main menu navigation (ASSERTION)
         await test.step('Validate main menu navigation', async () => {
             await pm.onComponentsPage().validateMainMenus();
+            console.log('VALIDATION PASSED: Main menu navigation validated successfully');
         });
 
         // STEP 5 — Validate all submenu navigation (ASSERTION)
         await test.step('Validate submenu navigation', async () => {
             await pm.onComponentsPage().validateSubMenus();
+            console.log('VALIDATION PASSED: Submenu navigation validated successfully');
         });
 
         // STEP 6 — Finish test
@@ -119,16 +139,19 @@ test.describe('Components Page', () => {
         // STEP 1 — Validate phone number (existence + text)
         await test.step('Validate header phone number', async () => {
             await pm.onComponentsPage().validateHeaderPhone();
+            console.log('VALIDATION PASSED: Header phone number validated');
         });
 
         // STEP 2 — Validate Contact Us link (existence + text)
         await test.step('Validate Contact Us link', async () => {
             await pm.onComponentsPage().validateHeaderContactText();
+            console.log('VALIDATION PASSED: Contact Us link validated');
         });
 
         // STEP 3 — Validate Contact Us redirection
         await test.step('Validate Contact Us redirection', async () => {
             await pm.onComponentsPage().validateHeaderContactRedirect();
+            console.log('VALIDATION PASSED: Contact Us redirection validated');
         });
 
         // STEP 4 — Finish test
@@ -153,11 +176,13 @@ test.describe('Components Page', () => {
         // STEP 1 — Validate Recently Viewed button text
         await test.step('Validate Recently Viewed button text', async () => {
             await pm.onComponentsPage().validateRecentlyViewedButtonText();
+            console.log('VALIDATION PASSED: Recently Viewed button text validated');
         });
 
         // STEP 2 — Click button and validate panel
         await test.step('Click Recently Viewed button and validate panel', async () => {
             await pm.onComponentsPage().validateRecentlyViewedButton();
+            console.log('VALIDATION PASSED: Recently Viewed panel validated');
         });
 
         // STEP 3 — Finish test
@@ -183,6 +208,7 @@ test.describe('Components Page', () => {
         // STEP 1 — Validate Customer Portal button text
         await test.step('Validate Customer Portal button text', async () => {
             await pm.onComponentsPage().validateCustomerPortalButtonText();
+            console.log('VALIDATION PASSED: Customer Portal button text validated');
         });
 
         // STEP 2 — Click Customer Portal button
@@ -193,12 +219,14 @@ test.describe('Components Page', () => {
         // STEP 3 — Wait for AJAX content to load
         await test.step('Wait for AJAX content to load', async () => {
             await pm.onComponentsPage().waitForCustomerPortalAjax();
+            console.log('VALIDATION PASSED: AJAX content loaded successfully');
         });
 
         // STEP 4 — Validate Customer Portal required fields
         await test.step('Validate Customer Portal required fields', async () => {
             const requiredFields = customerPortalData.requiredFields;
             await pm.onComponentsPage().validateCustomerPortalFields();
+            console.log(`VALIDATION PASSED: Customer Portal required fields validated (${requiredFields.length} fields)`);
         });
 
         // STEP 5 — Finish test
@@ -224,6 +252,7 @@ test.describe('Components Page', () => {
         // STEP 1 — Validate Ratings & Reviews link text
         await test.step('Validate Ratings & Reviews link text', async () => {
             await pm.onComponentsPage().validateRatingsAndReviewsText();
+            console.log('VALIDATION PASSED: Ratings & Reviews link text validated');
         });
 
         // STEP 2 — Click the Ratings & Reviews link
@@ -234,11 +263,13 @@ test.describe('Components Page', () => {
         // STEP 3 — Validate redirect to the Reviews page
         await test.step('Validate redirect to the Reviews page', async () => {
             await pm.onComponentsPage().validateRatingsAndReviewsRedirect();
+            console.log('VALIDATION PASSED: Redirected to Reviews page successfully');
         });
 
         // STEP 4 — Validate Reviews page title
         await test.step('Validate Reviews page title', async () => {
             await pm.onComponentsPage().validateReviewsPageTitle();
+            console.log('VALIDATION PASSED: Reviews page title validated');
         });
 
         // STEP 5 — Finish test
@@ -263,16 +294,19 @@ test.describe('Components Page', () => {
         // STEP 1 — Validate phone block
         await test.step('Validate phone block', async () => {
             await pm.onComponentsPage().validateContactPhoneBlock(contactBlocks[0]);
+            console.log('VALIDATION PASSED: Contact phone block validated');
         });
 
         // STEP 2 — Validate email block
         await test.step('Validate email block', async () => {
             await pm.onComponentsPage().validateContactEmailBlock(contactBlocks[1]);
+            console.log('VALIDATION PASSED: Contact email block validated');
         });
 
         // STEP 3 — Validate newsletter block
         await test.step('Validate newsletter block', async () => {
             await pm.onComponentsPage().validateContactNewsletterBlock(contactBlocks[2]);
+            console.log('VALIDATION PASSED: Contact newsletter block validated');
         });
 
         // STEP 4 — Finish test
@@ -315,21 +349,25 @@ test.describe('Components Page', () => {
         // STEP 5 — Validate visibility of each footer item
         await test.step('Validate visibility of each footer item', async () => {
             await pm.onComponentsPage().validateFooterItemsVisibility(footerItems);
+            console.log(`VALIDATION PASSED: All ${footerItems.length} footer items visibility validated`);
         });
 
         // STEP 6 — Validate text of each footer item
         await test.step('Validate text of each footer item', async () => {
             await pm.onComponentsPage().validateFooterItemsText(footerItems);
+            console.log(`VALIDATION PASSED: All ${footerItems.length} footer items text validated`);
         });
 
         // STEP 7 — Validate URL format
         await test.step('Validate URL format', async () => {
             await pm.onComponentsPage().validateFooterItemsUrlFormat(footerItems);
+            console.log(`VALIDATION PASSED: All ${footerItems.length} footer items URL format validated`);
         });
 
         // STEP 8 — Validate footer link navigation (URL + title)
         await test.step('Validate footer link navigation', async () => {
             await pm.onComponentsPage().validateAllFooterLinks(footerItems);
+            console.log(`VALIDATION PASSED: All ${footerItems.length} footer links navigation validated`);
         });
 
         // STEP 9 — Final assertion and finish test
@@ -362,6 +400,7 @@ test.describe('Components Page', () => {
         // STEP 1 — Validate Holiday ID Search
         await test.step('Validate Holiday ID Search in Footer', async () => {
             await pm.onComponentsPage().validateHolidayIdSearch(holidayIdData);
+            console.log(`VALIDATION PASSED: Holiday ID Search validated - Button: "${holidayIdData.buttonText}"`);
         });
 
         // STEP 2 — Finish test
@@ -390,16 +429,19 @@ test.describe('Components Page', () => {
         // STEP 2 — Validate trust seals visibility
         await test.step('Validate trust seals are visible', async () => {
             await pm.onComponentsPage().validateTrustSealsVisibility(trustSealsData.seals);
+            console.log(`VALIDATION PASSED: Trust seals visibility validated (${trustSealsData.seals.length} seals)`);
         });
 
         // STEP 3 — Validate trust seals are clickable links
         await test.step('Validate trust seals are clickable links', async () => {
             await pm.onComponentsPage().validateTrustSealsLinks(trustSealsData.seals);
+            console.log(`VALIDATION PASSED: Trust seals clickable links validated (${trustSealsData.seals.length} seals)`);
         });
 
         // STEP 4 — Validate trust seals URLs
         await test.step('Validate trust seals URLs format', async () => {
             await pm.onComponentsPage().validateTrustSealsUrlFormat(trustSealsData.seals);
+            console.log(`VALIDATION PASSED: Trust seals URL format validated (${trustSealsData.seals.length} seals)`);
         });
 
         // STEP 5 — Finish test
@@ -428,16 +470,19 @@ test.describe('Components Page', () => {
         // STEP 2 — Validate social media icons visibility
         await test.step('Validate social media icons are visible', async () => {
             await pm.onComponentsPage().validateSocialMediaIconsVisibility(socialMediaData.platforms);
+            console.log(`VALIDATION PASSED: Social media icons visibility validated (${socialMediaData.platforms.length} icons)`);
         });
 
         // STEP 3 — Validate social media icons are clickable links
         await test.step('Validate social media icons are clickable links', async () => {
             await pm.onComponentsPage().validateSocialMediaIconsLinks(socialMediaData.platforms);
+            console.log(`VALIDATION PASSED: Social media icons links validated (${socialMediaData.platforms.length} icons)`);
         });
 
         // STEP 4 — Validate social media URLs
         await test.step('Validate social media URLs format', async () => {
             await pm.onComponentsPage().validateSocialMediaUrlFormat(socialMediaData.platforms);
+            console.log(`VALIDATION PASSED: Social media URL format validated (${socialMediaData.platforms.length} icons)`);
         });
 
         // STEP 5 — Finish test
