@@ -20,11 +20,6 @@ test.describe('Home Page', () => {
   // This test validates the main titles displayed on the Home Page.
   test('TC15 — Validate Main Titles on the Home Page', async ({ pm }, testInfo) => {
 
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
-
     // STEP 1 — Define expected Home Page titles
     const expectedTitles = testData.homePage.titles.data;
 
@@ -33,11 +28,11 @@ test.describe('Home Page', () => {
       for (const title of expectedTitles) {
         await pm.onHomePage().validateSingleTitle(title);
       }
-      console.log(`VALIDATION PASSED: All ${expectedTitles.length} home page titles validated successfully`);
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
+      console.log(`VALIDATION PASSED: All ${expectedTitles.length} home page titles validated successfully`);
       console.log(`✓ TC15 completed successfully - validated ${expectedTitles.length} titles`);
     });
   });
@@ -50,11 +45,6 @@ test.describe('Home Page', () => {
 
     const bannerData = testData.homePage.countryBanners;
 
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
-
     // STEP 1 — Count and validate all country banners
     let bannerCount = 0;
     await test.step(`Validate all country banners (${bannerData.data.join(', ')})`, async () => {
@@ -62,11 +52,11 @@ test.describe('Home Page', () => {
       for (let i = 0; i < bannerCount; i++) {
         await pm.onHomePage().validateSingleCountryBannerRedirection(i);
       }
-      console.log(`VALIDATION PASSED: All ${bannerCount} country banners validated with correct redirections`);
     });
 
     // STEP 2 — Finish test
     await test.step('Finish test', async () => {
+      console.log(`VALIDATION PASSED: All ${bannerCount} country banners validated with correct redirections`);
       console.log(`✓ TC16 completed successfully - validated ${bannerCount} banners`);
     });
   });
@@ -79,22 +69,17 @@ test.describe('Home Page', () => {
 
     const ctaBoxesData = testData.homePage.ctaBoxes;
 
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
-
     // STEP 1 — Fetch CTA boxes list (optional, only for logging)
     await pm.onHomePage().getCtaBoxesList();
 
     // STEP 2 — Validate each CTA box
     await test.step('Validate CTA titles and redirections', async () => {
       await pm.onHomePage().validateCtaBoxesList(ctaBoxesData.data);
-      console.log(`VALIDATION PASSED: All ${ctaBoxesData.data.length} CTA boxes titles and redirections validated successfully`);
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
+      console.log(`VALIDATION PASSED: All ${ctaBoxesData.data.length} CTA boxes titles and redirections validated successfully`);
       console.log(`✓ TC17 completed successfully - validated ${ctaBoxesData.data.length} CTA boxes`);
     });
   });
@@ -104,11 +89,6 @@ test.describe('Home Page', () => {
   // ============================================================
   // This test validates the CTA button for each carousel slide.
   test('TC22 — Validate Carousel CTA Button', async ({ pm }, testInfo) => {
-
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
 
     // STEP 1 — Count carousel slides
     let totalSlides: number = 0;
@@ -202,25 +182,20 @@ test.describe('Home Page', () => {
   // 2) Find Your Skiing Holiday
   test('TCXX — Validate Inline Links in Sections', async ({ pm }, testInfo) => {
 
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
-
     // STEP 1 — Validate Speak to Experts section
     await test.step('Validate inline links inside the "Speak to Experts" section', async () => {
       await pm.onHomePage().validateSpeakToExpertsLinksList();
-      console.log('VALIDATION PASSED: Speak to Experts section inline links validated');
     });
 
     // STEP 2 — Validate Find Your Skiing Holiday section
     await test.step('Validate inline links inside the "Find Your Skiing Holiday" section', async () => {
       await pm.onHomePage().validateFindYourSkiingHolidayLinksList();
-      console.log('VALIDATION PASSED: Find Your Skiing Holiday section inline links validated');
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
+      console.log('VALIDATION PASSED: Speak to Experts section inline links validated');
+      console.log('VALIDATION PASSED: Find Your Skiing Holiday section inline links validated');
       console.log('✓ Inline links validation completed successfully');
     });
   });

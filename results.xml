@@ -1,35 +1,35 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="251.74240700000001">
-<testsuite name="home.mobile.spec.ts" timestamp="2026-01-14T16:11:50.280Z" hostname="Mobile Chrome" tests="1" failures="0" skipped="0" time="249.862" errors="0">
-<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="249.862">
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="0" time="54.745112">
+<testsuite name="home.spec.ts" timestamp="2026-01-14T18:32:45.844Z" hostname="chromium" tests="1" failures="0" skipped="0" time="12.799" errors="0">
+<testcase name="Home Page › TC15 — Validate Main Titles on the Home Page" classname="home.spec.ts" time="12.799">
 <system-out>
 <![CDATA[
-=== TEST: TC22-MOBILE — Validate Carousel CTA Button (Mobile) ===
-
-===== TEST STARTED: TC22-MOBILE — Validate Carousel CTA Button (Mobile) =====
-
-✓ Slide 1: Has CTA button
-✓ Slide 2: Has CTA button
-✓ Slide 3: Has CTA button
-✓ Slide 4: Has CTA button
-
-
-==================== ✓ CAROUSEL VALIDATION SUMMARY (MOBILE) ====================
-Total slides: 4
-Slides with CTA: 4
-Slides without CTA: 0
----------------------------------------------------------------
-Slide 1: https://www.igluski.com/ski-holidays
-   └─ Page Title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
-Slide 2: https://www.igluski.com/ski-holidays/new-year-sale
-   └─ Page Title: "New Year - New Sale!"
-Slide 3: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
-   └─ Page Title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
-Slide 4: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
-   └─ Page Title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
-=========================================================================
-
-VALIDATION PASSED: All 4 carousel slides validated with CTA verification (Mobile)
-✓ TC22-MOBILE completed successfully
+=== TEST: TC15 — Validate Main Titles on the Home Page ===
+VALIDATION PASSED: All 3 home page titles validated successfully
+✓ TC15 completed successfully - validated 3 titles
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="home.spec.ts" timestamp="2026-01-14T18:32:45.844Z" hostname="firefox" tests="1" failures="0" skipped="0" time="10.146" errors="0">
+<testcase name="Home Page › TC15 — Validate Main Titles on the Home Page" classname="home.spec.ts" time="10.146">
+<system-out>
+<![CDATA[
+=== TEST: TC15 — Validate Main Titles on the Home Page ===
+VALIDATION PASSED: All 3 home page titles validated successfully
+✓ TC15 completed successfully - validated 3 titles
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="home.spec.ts" timestamp="2026-01-14T18:32:45.844Z" hostname="webkit" tests="1" failures="0" skipped="0" time="12.384" errors="0">
+<testcase name="Home Page › TC15 — Validate Main Titles on the Home Page" classname="home.spec.ts" time="12.384">
+<system-out>
+<![CDATA[
+=== TEST: TC15 — Validate Main Titles on the Home Page ===
+VALIDATION PASSED: All 3 home page titles validated successfully
+✓ TC15 completed successfully - validated 3 titles
 === END: PASS ===
 ]]>
 </system-out>

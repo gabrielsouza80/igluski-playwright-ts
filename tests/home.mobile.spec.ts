@@ -64,11 +64,6 @@ test.describe('Home Page Mobile', () => {
   // This test validates the main titles displayed on the Home Page in mobile view.
   test('TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)', async ({ pm }, testInfo) => {
 
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
-
     // STEP 1 — Define expected Home Page titles
     const expectedTitles = testData.homePage.titles.data;
 
@@ -77,11 +72,11 @@ test.describe('Home Page Mobile', () => {
       for (const title of expectedTitles) {
         await pm.onHomePage().validateSingleTitle(title);
       }
-      console.log(`VALIDATION PASSED: All ${expectedTitles.length} home page titles validated successfully (Mobile)`);
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
+      console.log(`VALIDATION PASSED: All ${expectedTitles.length} home page titles validated successfully (Mobile)`);
       console.log(`✓ TC15-MOBILE completed successfully - validated ${expectedTitles.length} titles`);
     });
   });
@@ -94,11 +89,6 @@ test.describe('Home Page Mobile', () => {
 
     const bannerData = testData.homePage.countryBanners;
 
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
-
     // STEP 1 — Count and validate all country banners
     let bannerCount = 0;
     await test.step(`Validate all country banners (${bannerData.data.join(', ')})`, async () => {
@@ -106,11 +96,11 @@ test.describe('Home Page Mobile', () => {
       for (let i = 0; i < bannerCount; i++) {
         await pm.onHomePage().validateSingleCountryBannerRedirection(i);
       }
-      console.log(`VALIDATION PASSED: All ${bannerCount} country banners validated with correct redirections (Mobile)`);
     });
 
     // STEP 2 — Finish test
     await test.step('Finish test', async () => {
+      console.log(`VALIDATION PASSED: All ${bannerCount} country banners validated with correct redirections (Mobile)`);
       console.log(`✓ TC16-MOBILE completed successfully - validated ${bannerCount} banners`);
     });
   });
@@ -123,22 +113,17 @@ test.describe('Home Page Mobile', () => {
 
     const ctaBoxesData = testData.homePage.ctaBoxes;
 
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
-
     // STEP 1 — Fetch CTA boxes list (optional, only for logging)
     await pm.onHomePage().getCtaBoxesList();
 
     // STEP 2 — Validate each CTA box
     await test.step('Validate CTA titles and redirections', async () => {
       await pm.onHomePage().validateCtaBoxesList(ctaBoxesData.data);
-      console.log(`VALIDATION PASSED: All ${ctaBoxesData.data.length} CTA boxes titles and redirections validated successfully (Mobile)`);
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
+      console.log(`VALIDATION PASSED: All ${ctaBoxesData.data.length} CTA boxes titles and redirections validated successfully (Mobile)`);
       console.log(`✓ TC17-MOBILE completed successfully - validated ${ctaBoxesData.data.length} CTA boxes`);
     });
   });
@@ -148,11 +133,6 @@ test.describe('Home Page Mobile', () => {
   // ============================================================
   // This test validates the CTA button for each carousel slide in mobile view.
   test('TC22-MOBILE — Validate Carousel CTA Button (Mobile)', async ({ pm }, testInfo) => {
-
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
 
     // STEP 1 — Count carousel slides
     let totalSlides: number = 0;
@@ -246,25 +226,20 @@ test.describe('Home Page Mobile', () => {
   // 2) Find Your Skiing Holiday
   test('TCXX-MOBILE — Validate Inline Links in Sections (Mobile)', async ({ pm }, testInfo) => {
 
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
-
     // STEP 1 — Validate Speak to Experts section
     await test.step('Validate inline links inside the "Speak to Experts" section', async () => {
       await pm.onHomePage().validateSpeakToExpertsLinksList();
-      console.log('VALIDATION PASSED: Speak to Experts section inline links validated (Mobile)');
     });
 
     // STEP 2 — Validate Find Your Skiing Holiday section
     await test.step('Validate inline links inside the "Find Your Skiing Holiday" section', async () => {
       await pm.onHomePage().validateFindYourSkiingHolidayLinksList();
-      console.log('VALIDATION PASSED: Find Your Skiing Holiday section inline links validated (Mobile)');
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
+      console.log('VALIDATION PASSED: Speak to Experts section inline links validated (Mobile)');
+      console.log('VALIDATION PASSED: Find Your Skiing Holiday section inline links validated (Mobile)');
       console.log('✓ Inline links validation completed successfully (Mobile)');
     });
   });
@@ -275,19 +250,14 @@ test.describe('Home Page Mobile', () => {
   // This test validates that the page renders correctly in mobile viewport (375px)
   test('TC26-MOBILE — Validate Mobile Layout Consistency', async ({ pm }, testInfo) => {
 
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
-
     // STEP 1 — Validate mobile layout at 375px
     await test.step('Validate layout and responsiveness at 375px (Mobile)', async () => {
       await pm.onHomePage().validateResponsivenessAtWidth(375);
-      console.log('VALIDATION PASSED: Page layout validated at 375px (Mobile)');
     });
 
     // STEP 2 — Finish test
     await test.step('Finish test', async () => {
+      console.log('VALIDATION PASSED: Page layout validated at 375px (Mobile)');
       console.log('✓ TC26-MOBILE completed successfully - mobile layout validated');
     });
   });
