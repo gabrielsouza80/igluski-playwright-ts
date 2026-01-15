@@ -1,170 +1,54 @@
-<testsuites id="" name="" tests="12" failures="0" skipped="0" errors="0" time="55.694246">
-<testsuite name="home.mobile.spec.ts" timestamp="2026-01-15T14:47:11.486Z" hostname="Mobile Chrome" tests="6" failures="0" skipped="0" time="125.676" errors="0">
-<testcase name="Home Page Mobile › TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)" classname="home.mobile.spec.ts" time="12.995">
-<system-out>
-<![CDATA[
-=== TEST: TC15-MOBILE — Validate Main Titles on the Home Page (Mobile) ===
-VALIDATION PASSED: All 3 home page titles validated successfully (Mobile)
-✓ TC15-MOBILE completed successfully - validated 3 titles
-=== END: PASS ===
-]]>
-</system-out>
+<testsuites id="" name="" tests="12" failures="0" skipped="12" errors="0" time="0.295567">
+<testsuite name="home.mobile.spec.ts" timestamp="2026-01-15T15:01:00.986Z" hostname="Mobile Chrome" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="Home Page Mobile › TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page Mobile › TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)" classname="home.mobile.spec.ts" time="26.62">
-<system-out>
-<![CDATA[
-=== TEST: TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile) ===
-VALIDATION PASSED: All 8 country banners validated with correct redirections (Mobile)
-✓ TC16-MOBILE completed successfully - validated 8 banners
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Home Page Mobile › TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page Mobile › TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)" classname="home.mobile.spec.ts" time="11.478">
-<system-out>
-<![CDATA[
-=== TEST: TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile) ===
-VALIDATION PASSED: All 3 CTA boxes titles and redirections validated successfully (Mobile)
-✓ TC17-MOBILE completed successfully - validated 3 CTA boxes
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Home Page Mobile › TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="24.515">
-<system-out>
-<![CDATA[
-=== TEST: TC22-MOBILE — Validate Carousel CTA Button (Mobile) ===
-✓ Slide 1: Has CTA button
-✓ Slide 2: Has CTA button
-✓ Slide 3: Has CTA button
-✓ Slide 4: Has CTA button
-
-
-==================== ✓ CAROUSEL VALIDATION SUMMARY (MOBILE) ====================
-Total slides: 4
-Slides with CTA: 4
-Slides without CTA: 0
----------------------------------------------------------------
-Slide 1: https://www.igluski.com/ski-holidays/next-season-ski-holidays
-   └─ Page Title: "2027 Ski Holidays | Secure Your Ski Holiday"
-Slide 2: https://www.igluski.com/ski-holidays
-   └─ Page Title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
-Slide 3: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
-   └─ Page Title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
-Slide 4: https://www.igluski.com/ski-holidays/new-year-sale
-   └─ Page Title: "New Year - New Sale!"
-=========================================================================
-
-VALIDATION PASSED: All 4 carousel slides validated with CTA verification (Mobile)
-✓ TC22-MOBILE completed successfully
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page Mobile › TCXX-MOBILE — Validate Inline Links in Sections (Mobile)" classname="home.mobile.spec.ts" time="36.26">
-<system-out>
-<![CDATA[
-=== TEST: TCXX-MOBILE — Validate Inline Links in Sections (Mobile) ===
-VALIDATION PASSED: Speak to Experts section inline links validated (Mobile)
-VALIDATION PASSED: Find Your Skiing Holiday section inline links validated (Mobile)
-✓ Inline links validation completed successfully (Mobile)
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Home Page Mobile › TCXX-MOBILE — Validate Inline Links in Sections (Mobile)" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page Mobile › TC26-MOBILE — Validate Mobile Layout Consistency" classname="home.mobile.spec.ts" time="13.808">
-<system-out>
-<![CDATA[
-=== TEST: TC26-MOBILE — Validate Mobile Layout Consistency ===
-VALIDATION PASSED: Page layout validated at 812px (Mobile Landscape)
-✓ TC26-MOBILE completed successfully - mobile landscape layout validated
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Home Page Mobile › TC26-MOBILE — Validate Mobile Layout Consistency" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
 </testsuite>
-<testsuite name="home.mobile.spec.ts" timestamp="2026-01-15T14:47:11.486Z" hostname="Mobile Safari" tests="6" failures="0" skipped="0" time="144.894" errors="0">
-<testcase name="Home Page Mobile › TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)" classname="home.mobile.spec.ts" time="18.102">
-<system-out>
-<![CDATA[
-=== TEST: TC15-MOBILE — Validate Main Titles on the Home Page (Mobile) ===
-VALIDATION PASSED: All 3 home page titles validated successfully (Mobile)
-✓ TC15-MOBILE completed successfully - validated 3 titles
-=== END: PASS ===
-]]>
-</system-out>
+<testsuite name="home.mobile.spec.ts" timestamp="2026-01-15T15:01:00.986Z" hostname="Mobile Safari" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="Home Page Mobile › TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page Mobile › TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)" classname="home.mobile.spec.ts" time="31.349">
-<system-out>
-<![CDATA[
-=== TEST: TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile) ===
-VALIDATION PASSED: All 8 country banners validated with correct redirections (Mobile)
-✓ TC16-MOBILE completed successfully - validated 8 banners
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Home Page Mobile › TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page Mobile › TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)" classname="home.mobile.spec.ts" time="11.83">
-<system-out>
-<![CDATA[
-=== TEST: TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile) ===
-VALIDATION PASSED: All 3 CTA boxes titles and redirections validated successfully (Mobile)
-✓ TC17-MOBILE completed successfully - validated 3 CTA boxes
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Home Page Mobile › TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="27.784">
-<system-out>
-<![CDATA[
-=== TEST: TC22-MOBILE — Validate Carousel CTA Button (Mobile) ===
-✓ Slide 1: Has CTA button
-✓ Slide 2: Has CTA button
-✓ Slide 3: Has CTA button
-✓ Slide 4: Has CTA button
-
-
-==================== ✓ CAROUSEL VALIDATION SUMMARY (MOBILE) ====================
-Total slides: 4
-Slides with CTA: 4
-Slides without CTA: 0
----------------------------------------------------------------
-Slide 1: https://www.igluski.com/ski-holidays/next-season-ski-holidays
-   └─ Page Title: "2027 Ski Holidays | Secure Your Ski Holiday"
-Slide 2: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
-   └─ Page Title: "Last Minute Ski Holidays 2026/2027 | Cheap Last Minute Deals"
-Slide 3: https://www.igluski.com/ski-holidays/new-year-sale
-   └─ Page Title: "New Year - New Sale!"
-Slide 4: https://www.igluski.com/ski-holidays/next-season-ski-holidays
-   └─ Page Title: "2027 Ski Holidays | Secure Your Ski Holiday"
-=========================================================================
-
-VALIDATION PASSED: All 4 carousel slides validated with CTA verification (Mobile)
-✓ TC22-MOBILE completed successfully
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page Mobile › TCXX-MOBILE — Validate Inline Links in Sections (Mobile)" classname="home.mobile.spec.ts" time="37.54">
-<system-out>
-<![CDATA[
-=== TEST: TCXX-MOBILE — Validate Inline Links in Sections (Mobile) ===
-VALIDATION PASSED: Speak to Experts section inline links validated (Mobile)
-VALIDATION PASSED: Find Your Skiing Holiday section inline links validated (Mobile)
-✓ Inline links validation completed successfully (Mobile)
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Home Page Mobile › TCXX-MOBILE — Validate Inline Links in Sections (Mobile)" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
-<testcase name="Home Page Mobile › TC26-MOBILE — Validate Mobile Layout Consistency" classname="home.mobile.spec.ts" time="18.289">
-<system-out>
-<![CDATA[
-=== TEST: TC26-MOBILE — Validate Mobile Layout Consistency ===
-VALIDATION PASSED: Page layout validated at 812px (Mobile Landscape)
-✓ TC26-MOBILE completed successfully - mobile landscape layout validated
-=== END: PASS ===
-]]>
-</system-out>
+<testcase name="Home Page Mobile › TC26-MOBILE — Validate Mobile Layout Consistency" classname="home.mobile.spec.ts" time="0">
+<skipped>
+</skipped>
 </testcase>
 </testsuite>
 </testsuites>

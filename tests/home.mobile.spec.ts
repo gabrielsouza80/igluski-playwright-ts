@@ -40,7 +40,7 @@ test.describe('Home Page Mobile', () => {
   // BEFORE EACH - Configure mobile viewport and navigate
   test.beforeEach(async ({ pm }) => {
     const page = pm.getPage();
-    
+
     // Block Sleeknote requests
     await page.route('**/*sleeknote*/**', route => route.abort());
     await page.route('**/*.sleeknote.*', route => route.abort());

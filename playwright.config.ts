@@ -51,13 +51,19 @@ export default defineConfig({
     },
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-      testMatch: /.*\.mobile\.spec\.ts/,
+      use: { 
+        ...devices['Pixel 5'],
+        viewport: { width: 375, height: 812 },
+      },
+      testMatch: /.*\.mobile\.spec\.ts$/,
     },
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-      testMatch: /.*\.mobile\.spec\.ts/,
+      use: { 
+        ...devices['iPhone 12'],
+        viewport: { width: 375, height: 812 },
+      },
+      testMatch: /.*\.mobile\.spec\.ts$/,
     },
   ],
 
