@@ -1,0 +1,683 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - generic [ref=e7]:
+          - button "Recently Viewed" [ref=e8] [cursor=pointer]:  Recently Viewed
+          - text: 
+      - listitem [ref=e9]:
+        - link "Customer portal icon Customer portal" [ref=e10] [cursor=pointer]:
+          - /url: https://customerportal.igluski.com/?_its=eJwljkuOwyAQRO9SaywBbhvMDbLIZi5g8Wk0SA6WMJlNFJ995GRZpXp69cJfSXAIUVsp4zJkJaeBbOLBe5OGrEcafZ5MDCMEju47w6Ft_VRmtrTMiujcfE2nXpWSdllTaRz7auIoLdHEpIy2C0mpQ2YZFCs1S7YQ8L23Ep697BXuhbQ_fKlwgEDjzK1x-6b462vl7ZbgPg6Bo8X7nq4rXx0-1Q_nC3gLHKXzNZ80vf8BooRDVg
+          - img "Customer portal icon" [ref=e11]
+          - text: Customer portal
+    - generic [ref=e13]:
+      - link "Iglu Ski logo" [ref=e14] [cursor=pointer]:
+        - /url: /
+        - img "Iglu Ski logo" [ref=e15]
+      - text:  
+      - button "Search icon" [ref=e17] [cursor=pointer]:
+        - img "Search icon" [ref=e18]
+      - link " 020 3993 4157" [ref=e22] [cursor=pointer]:
+        - /url: tel:+442039934157
+      - button "mobile menu icon" [ref=e23] [cursor=pointer]:
+        - img "mobile menu icon" [ref=e24]
+    - generic [ref=e25]:
+      - button [ref=e26] [cursor=pointer]:
+        - img [ref=e27]
+      - list [ref=e28]:
+        - listitem [ref=e29]:
+          - link "Find a ski holiday" [ref=e30] [cursor=pointer]:
+            - /url: /ski-holidays
+        - listitem [ref=e31]:
+          - link "January Sale!" [ref=e32] [cursor=pointer]:
+            - /url: https://www.igluski.com/ski-holidays/new-year-sale
+        - listitem [ref=e33]:
+          - link "2027 ski holidays" [ref=e34] [cursor=pointer]:
+            - /url: https://www.igluski.com/ski-holidays/next-season-ski-holidays
+        - listitem [ref=e35]:
+          - link "Last minute ski holidays" [ref=e36] [cursor=pointer]:
+            - /url: https://www.igluski.com/ski-holidays/last-minute-ski-holidays
+        - listitem [ref=e37]:
+          - link "Ski holidays by date" [ref=e38] [cursor=pointer]:
+            - /url: /search-by-month-or-peak-date
+        - listitem [ref=e39]:
+          - link "Ski deals and cheap holidays" [ref=e40] [cursor=pointer]:
+            - /url: /ski-deals
+        - listitem [ref=e41]:
+          - link "Ski hotels" [ref=e42] [cursor=pointer]:
+            - /url: /ski-holidays/ski-hotels
+        - listitem [ref=e43]:
+          - link "Ski chalet holidays" [ref=e44] [cursor=pointer]:
+            - /url: /ski-holidays/ski-chalet-holidays
+        - listitem [ref=e45]:
+          - link "Self catered ski holidays" [ref=e46] [cursor=pointer]:
+            - /url: /ski-holidays/self-catered-ski-deals
+        - listitem [ref=e47]:
+          - link "Accommodation only" [ref=e48] [cursor=pointer]:
+            - /url: /ski-holidays/ski-accommodation-only
+        - listitem [ref=e49]:
+          - link "All inclusive ski holidays" [ref=e50] [cursor=pointer]:
+            - /url: /ski-holidays/all-inclusive-ski-deals
+        - listitem [ref=e51]:
+          - link "Family ski holidays" [ref=e52] [cursor=pointer]:
+            - /url: /ski-holidays/family-ski-holidays
+        - listitem [ref=e53]:
+          - link "Group ski holidays" [ref=e54] [cursor=pointer]:
+            - /url: /ski-holidays/group-ski-holidays
+        - listitem [ref=e55]:
+          - link "Tailor-made ski holidays" [ref=e56] [cursor=pointer]:
+            - /url: /ski-holidays/tailor-made-ski-holidays
+        - listitem [ref=e57]:
+          - link "Ski resorts" [ref=e58] [cursor=pointer]:
+            - /url: /ski-resorts
+        - listitem [ref=e59]:
+          - link "Blog" [ref=e60] [cursor=pointer]:
+            - /url: /blog
+        - listitem [ref=e61]:
+          - link "Deals to your inbox" [ref=e62] [cursor=pointer]:
+            - /url: /signup
+        - listitem [ref=e63]:
+          - link "Contact Us / Enquire" [ref=e64] [cursor=pointer]:
+            - /url: /enquire
+    - text:     
+    - paragraph [ref=e66]: Book online or with our award-winning agents
+    - generic [ref=e70]:
+      - button "Search Ski Destination, resort, country Search" [ref=e76] [cursor=pointer]:
+        - generic [ref=e77]: Search Ski Destination, resort, country
+        - generic [ref=e78]: Search
+      - text: 
+  - generic [ref=e80]:
+    - generic [ref=e81]:
+      - list [ref=e82]:
+        - listitem [ref=e83]:
+          - link "Home" [ref=e84] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e85]: / Ski Holidays
+      - heading "Find Your 2026/27 Ski Holiday & Accommodation" [level=1] [ref=e86]
+      - contentinfo [ref=e88]:
+        - paragraph [ref=e89]:
+          - text: We make it easy to find and book the perfect ski holiday. Whether you want the convenience of an
+          - link "all-inclusive ski holiday" [ref=e90] [cursor=pointer]:
+            - /url: https://www.igluski.com/ski-holidays/all-inclusive-ski-deals
+          - text: or the flexibility of an
+          - link "accommodation-only deal" [ref=e91] [cursor=pointer]:
+            - /url: https://www.igluski.com/ski-holidays/ski-accommodation-only
+          - text: ", Iglu Ski offers the largest collection of ski holiday packages and accommodation options available in one place."
+          - text: Book online or with one of our ski specialists, who are on hand to provide expert advice and recommendations. Just
+          - link "give them a call" [ref=e92] [cursor=pointer]:
+            - /url: https://www.igluski.com/enquire
+          - text: and tell them what you're looking for. Found a better price elsewhere? We'll do our best to beat it!
+    - button "Read more..." [ref=e94] [cursor=pointer]
+    - generic [ref=e95]:
+      - paragraph [ref=e96]: The properties shown can sleep at least 2 adults.
+      - paragraph [ref=e97]: We have found 4 properties in 1 resort and 1 country that match your search criteria.
+      - generic [ref=e98]:
+        - button " Refine" [ref=e100] [cursor=pointer]:
+          - generic [ref=e101]: 
+          - text: Refine
+        - generic [ref=e102]:
+          - generic [ref=e104]:
+            - generic [ref=e106]: Displaying 1 - 10 of 30 results
+            - navigation [ref=e108]:
+              - list [ref=e109]:
+                - listitem:
+                  - link "1" [ref=e110]:
+                    - /url: "#"
+                - listitem:
+                  - link "2" [ref=e111] [cursor=pointer]:
+                    - /url: /ski-holidays?page=2
+                - listitem:
+                  - link "3" [ref=e112] [cursor=pointer]:
+                    - /url: /ski-holidays?page=3
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - text: Results per page
+              - button "10" [expanded] [ref=e116] [cursor=pointer]: "10"
+            - generic [ref=e119]:
+              - text: "Sort by:"
+              - button "Iglu recommends" [expanded] [ref=e121] [cursor=pointer]: Iglu recommends
+      - generic [ref=e123]:
+        - generic [ref=e124]:
+          - generic [ref=e125] [cursor=pointer]: 
+          - generic [ref=e127]:
+            - button "Clear all changes" [ref=e128] [cursor=pointer]
+            - generic [ref=e129]:
+              - generic [ref=e130] [cursor=pointer]:
+                - text: Refine holiday details
+                - generic [ref=e131]: 
+                - text: +
+              - generic [ref=e133]:
+                - generic [ref=e134]:
+                  - textbox [ref=e135]: Departure date
+                  - text: 
+                - generic [ref=e136]:
+                  - listbox "Any" [ref=e137]:
+                    - option "Duration" [disabled] [ref=e138]
+                    - option "2" [selected] [ref=e139]
+                    - option "3" [ref=e140]
+                    - option "4" [ref=e141]
+                    - option "5" [ref=e142]
+                    - option "6" [ref=e143]
+                    - option "7" [ref=e144]
+                    - option "8" [ref=e145]
+                    - option "9" [ref=e146]
+                    - option "10" [ref=e147]
+                    - option "11" [ref=e148]
+                    - option "12" [ref=e149]
+                    - option "13" [ref=e150]
+                    - option "14+" [ref=e151]
+                  - combobox "2 nights" [ref=e152] [cursor=pointer]:
+                    - text: 
+                    - generic [ref=e155]: 2 nights
+                - generic [ref=e157]:
+                  - combobox [ref=e158]:
+                    - option [selected]
+                    - option "Any London airport"
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                    - option
+                  - combobox "From (4)" [ref=e159] [cursor=pointer]:
+                    - text: 
+                    - generic [ref=e162]: From (4)
+                - generic:
+                  - generic:
+                    - checkbox "Show Whole Chalet Available Only (0)"
+                    - generic: Show Whole Chalet Available Only (0)
+                - generic:
+                  - generic:
+                    - checkbox "Show Accommodation Only (0)"
+                    - generic: Show Accommodation Only (0)
+                - generic [ref=e165]:
+                  - checkbox "Show Flight Packages (4)" [ref=e166]
+                  - generic [ref=e168] [cursor=pointer]: Show Flight Packages (4)
+                - generic [ref=e169]:
+                  - generic [ref=e170]:
+                    - combobox [ref=e171]:
+                      - option "Adults" [disabled]
+                      - option "any"
+                      - option "1"
+                      - option "2" [selected]
+                      - option "3"
+                      - option "4"
+                      - option "5"
+                      - option "6"
+                      - option "7"
+                      - option "8"
+                      - option "9"
+                      - option "10"
+                      - option "11"
+                      - option "12"
+                      - option "13"
+                      - option "14"
+                      - option "15"
+                      - option "16"
+                      - option "17"
+                      - option "18"
+                      - option "19"
+                      - option "20"
+                      - option "21"
+                      - option "22"
+                      - option "23"
+                      - option "24"
+                      - option "25"
+                      - option "26"
+                      - option "27"
+                      - option "28"
+                      - option "30+"
+                    - combobox "2 Adults" [ref=e172] [cursor=pointer]:
+                      - generic [ref=e175]: 2 Adults
+                  - generic [ref=e177]:
+                    - combobox [ref=e178]:
+                      - option "Children < 11" [disabled]
+                      - option "any"
+                      - option "0" [selected]
+                      - option "1"
+                      - option "2"
+                      - option "3"
+                      - option "4"
+                      - option "5"
+                      - option "6"
+                      - option "7"
+                      - option "8"
+                      - option "9"
+                    - combobox "0 Children" [ref=e179] [cursor=pointer]:
+                      - generic [ref=e182]: 0 Children
+                - generic [ref=e184]:
+                  - generic [ref=e185]: Price pp
+                  - generic [ref=e190]:
+                    - generic [ref=e191]: £ 1pp
+                    - generic [ref=e192]: £ 2,609pp
+                - generic [ref=e194]:
+                  - generic [ref=e195]: Property size (sleeps)
+                  - generic [ref=e200]:
+                    - generic [ref=e201]: "1"
+                    - generic [ref=e202]: 25+
+                  - generic [ref=e204]:
+                    - generic [ref=e205]: 
+                    - text: No properties of this size matching your current criteria.
+            - generic [ref=e207] [cursor=pointer]:
+              - text: Refine resort details 
+              - generic [ref=e208]: +
+            - generic [ref=e209]:
+              - generic [ref=e210] [cursor=pointer]:
+                - text: Refine Property Details 
+                - generic [ref=e211]: +
+              - text:   
+            - generic [ref=e213] [cursor=pointer]:
+              - text: Promotions 
+              - generic [ref=e214]: +
+          - button "Apply " [ref=e217] [cursor=pointer]:
+            - text: Apply
+            - generic [ref=e218]: 
+        - generic [ref=e219]:
+          - generic [ref=e220]:
+            - link "Property Image Hotel Tunturi (Santa's Lapland) Saariselka, Finland 30 November 2026 2 Nights Half board Flights From London Gatwick Airport" [ref=e222] [cursor=pointer]:
+              - /url: /ski-resorts/finland/saariselka/hotel-tunturi-santa-s-lapland_36834?holidayId=115429915
+              - generic [ref=e223]:
+                - img "Property Image" [ref=e226]
+                - generic [ref=e227]:
+                  - heading "Hotel Tunturi (Santa's Lapland)" [level=3] [ref=e228]
+                  - generic "Star review 4 out of 5" [ref=e230]
+                  - generic [ref=e233]: Saariselka, Finland
+                  - generic [ref=e234]: 30 November 2026
+                  - generic [ref=e235]: 2 Nights
+                  - generic [ref=e236]: Half board
+                  - generic [ref=e237]: Flights From London Gatwick Airport
+              - generic: 
+            - generic [ref=e238]:
+              - generic [ref=e239]:
+                - generic [ref=e240]: £1489pp
+                - generic [ref=e241]: Based on 2 people sharing
+              - generic [ref=e242]:
+                - button "View/Edit Details" [ref=e243] [cursor=pointer]:
+                  - text: View/Edit Details
+                  - generic [ref=e244]: 
+                - button "Enquire Now" [ref=e245] [cursor=pointer]:
+                  - text: Enquire Now
+                  - generic [ref=e246]: 
+            - text:  
+          - generic [ref=e247]:
+            - link "Property Image Hotel Riekonlinna (Santa's Lapland) Saariselka, Finland 30 November 2026 2 Nights Half board Flights From Leeds Bradford Airport" [ref=e249] [cursor=pointer]:
+              - /url: /ski-resorts/finland/saariselka/hotel-riekonlinna-santa-s-lapland_36835?holidayId=115429142
+              - generic [ref=e250]:
+                - img "Property Image" [ref=e253]
+                - generic [ref=e254]:
+                  - heading "Hotel Riekonlinna (Santa's Lapland)" [level=3] [ref=e255]
+                  - generic "Star review 4 out of 5" [ref=e257]
+                  - generic [ref=e260]: Saariselka, Finland
+                  - generic [ref=e261]: 30 November 2026
+                  - generic [ref=e262]: 2 Nights
+                  - generic [ref=e263]: Half board
+                  - generic [ref=e264]: Flights From Leeds Bradford Airport
+              - generic: 
+            - generic [ref=e265]:
+              - generic [ref=e266]:
+                - generic [ref=e267]: £1529pp
+                - generic [ref=e268]: Based on 2 people sharing
+              - generic [ref=e269]:
+                - button "View/Edit Details" [ref=e270] [cursor=pointer]:
+                  - text: View/Edit Details
+                  - generic [ref=e271]: 
+                - button "Enquire Now" [ref=e272] [cursor=pointer]:
+                  - text: Enquire Now
+                  - generic [ref=e273]: 
+            - text:  
+          - generic [ref=e274]:
+            - link "Property Image Hotel Holiday Club Saariselka, Finland 30 November 2026 2 Nights Half board Flights From Leeds Bradford Airport" [ref=e276] [cursor=pointer]:
+              - /url: /ski-resorts/finland/saariselka/hotel-holiday-club_36833?holidayId=115429412
+              - generic [ref=e277]:
+                - img "Property Image" [ref=e280]
+                - generic [ref=e281]:
+                  - heading "Hotel Holiday Club" [level=3] [ref=e282]
+                  - generic "Star review 4 out of 5" [ref=e284]
+                  - generic [ref=e287]: Saariselka, Finland
+                  - generic [ref=e288]: 30 November 2026
+                  - generic [ref=e289]: 2 Nights
+                  - generic [ref=e290]: Half board
+                  - generic [ref=e291]: Flights From Leeds Bradford Airport
+            - generic [ref=e292]:
+              - generic [ref=e293]:
+                - generic [ref=e294]: £1539pp
+                - generic [ref=e295]: Based on 2 people sharing
+              - generic [ref=e296]:
+                - button "View/Edit Details" [ref=e297] [cursor=pointer]:
+                  - text: View/Edit Details
+                  - generic [ref=e298]: 
+                - button "Enquire Now" [ref=e299] [cursor=pointer]:
+                  - text: Enquire Now
+                  - generic [ref=e300]: 
+            - text:  
+          - generic [ref=e301]:
+            - link "Property Image Star Arctic Hotel (Santa's Lapland)  Saariselka, Finland 30 November 2026 2 Nights Half board Flights From London Gatwick Airport" [ref=e303] [cursor=pointer]:
+              - /url: /ski-resorts/finland/saariselka/star-arctic-hotel-santa-s-lapland_36837?holidayId=115430144
+              - generic [ref=e304]:
+                - img "Property Image" [ref=e307]
+                - generic [ref=e308]:
+                  - heading "Star Arctic Hotel (Santa's Lapland)" [level=3] [ref=e309]
+                  - generic [ref=e310]:
+                    - generic "Star review 4 out of 5" [ref=e311]
+                    - generic [ref=e315]: 
+                  - generic [ref=e316]: Saariselka, Finland
+                  - generic [ref=e317]: 30 November 2026
+                  - generic [ref=e318]: 2 Nights
+                  - generic [ref=e319]: Half board
+                  - generic [ref=e320]: Flights From London Gatwick Airport
+              - generic: 
+            - generic [ref=e321]:
+              - generic [ref=e322]:
+                - generic [ref=e323]: £1709pp
+                - generic [ref=e324]: Based on 2 people sharing
+              - generic [ref=e325]:
+                - button "View/Edit Details" [ref=e326] [cursor=pointer]:
+                  - text: View/Edit Details
+                  - generic [ref=e327]: 
+                - button "Enquire Now" [ref=e328] [cursor=pointer]:
+                  - text: Enquire Now
+                  - generic [ref=e329]: 
+            - text:  
+          - generic [ref=e330]:
+            - generic [ref=e331]: More results...
+            - generic [ref=e332]: We work with every major ski holiday supplier, and alongside the results matching your exact search, we’ve found some brilliant alternative options by slightly adjusting your criteria.
+          - generic [ref=e333]:
+            - link "Property Image Hotel Wieshof Rauris, Austria 24 January 2026 7 Nights Bed & Breakfast Flights From Belfast International" [ref=e335] [cursor=pointer]:
+              - /url: /ski-resorts/austria/rauris/hotel-wieshof_39268?holidayId=135903859&offerid=1829435287
+              - generic [ref=e336]:
+                - img "Property Image" [ref=e339]
+                - generic [ref=e340]:
+                  - heading "Hotel Wieshof" [level=3] [ref=e341]
+                  - generic "Star review 3 out of 5" [ref=e343]
+                  - generic [ref=e346]: Rauris, Austria
+                  - generic [ref=e347]: 24 January 2026
+                  - generic [ref=e348]: 7 Nights
+                  - generic [ref=e349]: Bed & Breakfast
+                  - generic [ref=e350]: Flights From Belfast International
+              - generic: 
+            - generic [ref=e351]:
+              - generic [ref=e353]: "Special Offer: Great value packages!"
+              - generic [ref=e354]:
+                - generic [ref=e355]: £445pp
+                - generic [ref=e356]: Based on 2 people sharing
+              - generic [ref=e357]:
+                - button "View/Edit Details" [ref=e358] [cursor=pointer]:
+                  - text: View/Edit Details
+                  - generic [ref=e359]: 
+                - button "Book Online" [ref=e360] [cursor=pointer]:
+                  - text: Book Online
+                  - generic [ref=e361]: 
+            - text:  
+          - generic [ref=e362]:
+            - link "Property Image Residence Villa Frejus Bardonecchia, Italy 15 March 2026 7 Nights Self catered Flights From Belfast International" [ref=e364] [cursor=pointer]:
+              - /url: /ski-resorts/italy/bardonecchia/residence-villa-frejus_38647?holidayId=136262463&offerid=1827063363
+              - generic [ref=e365]:
+                - img "Property Image" [ref=e368]
+                - generic [ref=e369]:
+                  - heading "Residence Villa Frejus" [level=3] [ref=e370]
+                  - generic "Star review 3 out of 5" [ref=e372]
+                  - generic [ref=e375]: Bardonecchia, Italy
+                  - generic [ref=e376]: 15 March 2026
+                  - generic [ref=e377]: 7 Nights
+                  - generic [ref=e378]: Self catered
+                  - generic [ref=e379]: Flights From Belfast International
+              - generic: 
+            - generic [ref=e380]:
+              - generic [ref=e382]: "Special Offer: Ski holidays for £750 pp or less!"
+              - generic [ref=e383]:
+                - generic [ref=e384]: £446pp
+                - generic [ref=e385]: Based on 2 people sharing
+              - generic [ref=e386]:
+                - button "View/Edit Details" [ref=e387] [cursor=pointer]:
+                  - text: View/Edit Details
+                  - generic [ref=e388]: 
+                - button "Book Online" [ref=e389] [cursor=pointer]:
+                  - text: Book Online
+                  - generic [ref=e390]: 
+            - text:  
+          - generic [ref=e391]:
+            - link "Property Image Residence Le Grand Panorama I Valloire/Valmeinier, France 21 March 2026 7 Nights Self catered Flights From Glasgow Airport" [ref=e393] [cursor=pointer]:
+              - /url: /ski-resorts/france/valloire-valmeinier/residence-le-grand-panorama-i_37398?holidayId=141886434&offerid=1828866345
+              - generic [ref=e394]:
+                - img "Property Image" [ref=e397]
+                - generic [ref=e398]:
+                  - heading "Residence Le Grand Panorama I" [level=3] [ref=e399]
+                  - generic "Star review 3 out of 5" [ref=e401]
+                  - generic [ref=e404]: Valloire/Valmeinier, France
+                  - generic [ref=e405]: 21 March 2026
+                  - generic [ref=e406]: 7 Nights
+                  - generic [ref=e407]: Self catered
+                  - generic [ref=e408]: Flights From Glasgow Airport
+              - generic: 
+            - generic [ref=e409]:
+              - generic [ref=e411]: "Special Offer: Ski holidays for £750 pp or less!"
+              - generic [ref=e412]:
+                - generic [ref=e413]: £458pp
+                - generic [ref=e414]: Based on 2 people sharing
+              - generic [ref=e415]:
+                - button "View/Edit Details" [ref=e416] [cursor=pointer]:
+                  - text: View/Edit Details
+                  - generic [ref=e417]: 
+                - button "Book Online" [ref=e418] [cursor=pointer]:
+                  - text: Book Online
+                  - generic [ref=e419]: 
+            - text:  
+          - generic [ref=e420]:
+            - link "Property Image Residence Rosa Delle Dolomiti Pinzolo, Italy 14 March 2026 7 Nights Self catered Flights From London Stansted Airport" [ref=e422] [cursor=pointer]:
+              - /url: /ski-resorts/italy/pinzolo/residence-rosa-delle-dolomiti_38835?holidayId=125034524&offerid=1825976953
+              - generic [ref=e423]:
+                - img "Property Image" [ref=e426]
+                - generic [ref=e427]:
+                  - heading "Residence Rosa Delle Dolomiti" [level=3] [ref=e428]
+                  - generic "Star review 3 out of 5" [ref=e430]
+                  - generic [ref=e433]: Pinzolo, Italy
+                  - generic [ref=e434]: 14 March 2026
+                  - generic [ref=e435]: 7 Nights
+                  - generic [ref=e436]: Self catered
+                  - generic [ref=e437]: Flights From London Stansted Airport
+              - generic:  
+            - generic [ref=e438]:
+              - generic [ref=e440]: "Special Offer: Ski holidays for £750 pp or less!"
+              - generic [ref=e441]:
+                - generic [ref=e442]: £461pp
+                - generic [ref=e443]: Based on 2 people sharing
+              - generic [ref=e444]:
+                - button "View/Edit Details" [ref=e445] [cursor=pointer]:
+                  - text: View/Edit Details
+                  - generic [ref=e446]: 
+                - button "Book Online" [ref=e447] [cursor=pointer]:
+                  - text: Book Online
+                  - generic [ref=e448]: 
+            - text:  
+          - generic [ref=e449]:
+            - link "Property Image Hotel Garni La Palu Pinzolo, Italy 14 March 2026 7 Nights Bed & Breakfast Flights From London Stansted Airport" [ref=e451] [cursor=pointer]:
+              - /url: /ski-resorts/italy/pinzolo/hotel-garni-la-palu_43906?holidayId=124711617&offerid=1825976037
+              - generic [ref=e452]:
+                - img "Property Image" [ref=e455]
+                - generic [ref=e456]:
+                  - heading "Hotel Garni La Palu" [level=3] [ref=e457]
+                  - generic "Star review 3 out of 5" [ref=e459]
+                  - generic [ref=e462]: Pinzolo, Italy
+                  - generic [ref=e463]: 14 March 2026
+                  - generic [ref=e464]: 7 Nights
+                  - generic [ref=e465]: Bed & Breakfast
+                  - generic [ref=e466]: Flights From London Stansted Airport
+            - generic [ref=e467]:
+              - generic [ref=e469]: "Special Offer: Ski holidays for £750 pp or less!"
+              - generic [ref=e470]:
+                - generic [ref=e471]: £468pp
+                - generic [ref=e472]: Based on 2 people sharing
+              - generic [ref=e473]:
+                - button "View/Edit Details" [ref=e474] [cursor=pointer]:
+                  - text: View/Edit Details
+                  - generic [ref=e475]: 
+                - button "Book Online" [ref=e476] [cursor=pointer]:
+                  - text: Book Online
+                  - generic [ref=e477]: 
+            - text:  
+          - generic [ref=e478]:
+            - link "Property Image Pension Konrad Söll, Austria 14 March 2026 7 Nights Bed & Breakfast Flights From Birmingham Airport" [ref=e480] [cursor=pointer]:
+              - /url: /ski-resorts/austria/soll/pension-konrad_33232?holidayId=124711742&offerid=1825997101
+              - generic [ref=e481]:
+                - img "Property Image" [ref=e484]
+                - generic [ref=e485]:
+                  - heading "Pension Konrad" [level=3] [ref=e486]
+                  - generic "Star review 3 out of 5" [ref=e488]
+                  - generic [ref=e491]: Söll, Austria
+                  - generic [ref=e492]: 14 March 2026
+                  - generic [ref=e493]: 7 Nights
+                  - generic [ref=e494]: Bed & Breakfast
+                  - generic [ref=e495]: Flights From Birmingham Airport
+            - generic [ref=e496]:
+              - generic [ref=e498]: "Special Offer: Ski holidays for £750 pp or less!"
+              - generic [ref=e499]:
+                - generic [ref=e500]: £486pp
+                - generic [ref=e501]: Based on 2 people sharing
+              - generic [ref=e502]:
+                - button "View/Edit Details" [ref=e503] [cursor=pointer]:
+                  - text: View/Edit Details
+                  - generic [ref=e504]: 
+                - button "Book Online" [ref=e505] [cursor=pointer]:
+                  - text: Book Online
+                  - generic [ref=e506]: 
+            - text:  
+          - generic [ref=e508]:
+            - generic [ref=e510]:
+              - navigation [ref=e512]:
+                - list [ref=e513]:
+                  - listitem:
+                    - link "1" [ref=e514]:
+                      - /url: "#"
+                  - listitem:
+                    - link "2" [ref=e515] [cursor=pointer]:
+                      - /url: /ski-holidays?page=2
+                  - listitem:
+                    - link "3" [ref=e516] [cursor=pointer]:
+                      - /url: /ski-holidays?page=3
+              - generic [ref=e518]: Displaying 1 - 10 of 30 results
+            - generic [ref=e519]:
+              - generic [ref=e520]:
+                - text: Results per page
+                - button "10" [expanded] [ref=e522] [cursor=pointer]: "10"
+              - generic [ref=e525]:
+                - text: "Sort by:"
+                - button "Iglu recommends" [expanded] [ref=e527] [cursor=pointer]: Iglu recommends
+  - contentinfo [ref=e529]:
+    - generic [ref=e530]:
+      - generic [ref=e533]:
+        - generic [ref=e535]:
+          - generic [ref=e537]: 
+          - generic [ref=e538]: Speak to a ski expert
+          - link "020 3993 4157" [ref=e540] [cursor=pointer]:
+            - /url: tel:+442039934157
+        - generic [ref=e542]:
+          - generic [ref=e544]: 
+          - generic [ref=e545]: Email about a ski holiday
+          - generic [ref=e546] [cursor=pointer]:
+            - text: Enquire
+            - generic [ref=e548]: 
+        - generic [ref=e550]:
+          - generic [ref=e552]: 
+          - generic [ref=e553]: Subscribe to our newsletter
+          - generic [ref=e554] [cursor=pointer]:
+            - text: Sign up
+            - generic [ref=e556]: 
+      - generic [ref=e558]:
+        - generic [ref=e560]:
+          - heading "Popular Countries" [level=4] [ref=e561]
+          - generic [ref=e562]: 
+        - generic [ref=e564]:
+          - heading "Popular Ski Resorts" [level=4] [ref=e565]
+          - generic [ref=e566]: 
+        - generic [ref=e568]:
+          - heading "Popular Accom Types" [level=4] [ref=e569]
+          - generic [ref=e570]: 
+        - generic [ref=e572]:
+          - heading "Popular Ski Holidays" [level=4] [ref=e573]
+          - generic [ref=e574]: 
+      - generic [ref=e577]:
+        - generic [ref=e578]:
+          - generic [ref=e579]:
+            - img "ATOL logo" [ref=e581]
+            - link "ABTA logo" [ref=e583] [cursor=pointer]:
+              - /url: https://abta.com/find-a-member/results?term=j0332#results
+              - img "ABTA logo" [ref=e584]
+            - img "IATA logo" [ref=e586]
+          - 'link "Rating: 4.7 stars 6410 reviews Feefo logo" [ref=e588] [cursor=pointer]':
+            - /url: /customer-reviews
+            - 'img "Rating: 4.7 stars" [ref=e589]'
+            - generic [ref=e590]: 6410 reviews
+            - img "Feefo logo" [ref=e591]
+        - generic [ref=e592]:
+          - heading "Customer Service" [level=4] [ref=e593]
+          - list [ref=e594]:
+            - listitem [ref=e595]:
+              - link "Cookie & Privacy Policy" [ref=e596] [cursor=pointer]:
+                - /url: /privacy-policy
+            - listitem [ref=e597]:
+              - link "Terms & Conditions" [ref=e598] [cursor=pointer]:
+                - /url: /terms-and-conditions
+            - listitem [ref=e599]:
+              - link "Contact Us" [ref=e600] [cursor=pointer]:
+                - /url: /contact-us
+            - listitem [ref=e601]:
+              - link "Frequently Asked Questions" [ref=e602] [cursor=pointer]:
+                - /url: /guides/faqs/frequently-asked-questions
+            - listitem [ref=e603]:
+              - link "Travel Advice from the Foreign Office" [ref=e604] [cursor=pointer]:
+                - /url: https://www.gov.uk/foreign-travel-advice
+        - generic [ref=e605]:
+          - heading "About Iglu" [level=4] [ref=e606]
+          - list [ref=e607]:
+            - listitem [ref=e608]:
+              - link "Iglu.com" [ref=e609] [cursor=pointer]:
+                - /url: https://www.iglu.com
+            - listitem [ref=e610]:
+              - link "About us" [ref=e611] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e612]:
+              - link "Working at Iglu Ski" [ref=e613] [cursor=pointer]:
+                - /url: https://careers.iglu.com/departments/ski
+            - listitem [ref=e614]:
+              - link "Meet the Team" [ref=e615] [cursor=pointer]:
+                - /url: /meet-the-team
+            - listitem [ref=e616]:
+              - link "Lapland Holidays" [ref=e617] [cursor=pointer]:
+                - /url: /lapland-holidays
+            - listitem [ref=e618]:
+              - link "Site Map" [ref=e619] [cursor=pointer]:
+                - /url: /sitemap
+        - generic [ref=e621]:
+          - link "Facebook logo" [ref=e622] [cursor=pointer]:
+            - /url: https://www.facebook.com/igluskiholidays
+            - generic [ref=e623]: 
+          - link "Instagram logo" [ref=e624] [cursor=pointer]:
+            - /url: https://www.instagram.com/igluski/
+            - generic [ref=e625]: 
+          - link "X logo" [ref=e626] [cursor=pointer]:
+            - /url: https://twitter.com/igluski
+            - generic [ref=e627]: 
+      - generic [ref=e628]:
+        - button "Search by Holiday ID" [ref=e629] [cursor=pointer]
+        - text: 
+  - button "Cookies Settings" [ref=e630] [cursor=pointer]
+  - button "Feedback" [ref=e631] [cursor=pointer]:
+    - generic [ref=e632]: Feedback
+```

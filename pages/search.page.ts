@@ -1039,6 +1039,14 @@ export class SearchPage extends HelperBase {
     try {
       // Look for "We have found X properties in Y resorts and Z countries"
       const messageLocator = this.page.locator('text=/We\s+have\s+found\s+\d+\s+propert/i').first();
+      
+      // Scroll the message into view if needed (helpful for mobile)
+      try {
+        await messageLocator.scrollIntoViewIfNeeded();
+      } catch (e) {
+        // Ignore scroll errors, message might be visible
+      }
+      
       await messageLocator.waitFor({ state: 'visible', timeout: 5000 });
       
       const messageText = await messageLocator.textContent();
@@ -2560,6 +2568,129 @@ export class SearchPage extends HelperBase {
 
     const resultsCount = await this.getResultsCount();
     return resultsCount;
+  }
+
+  // ============================================================
+  // 🔵 MOBILE-SPECIFIC HELPER METHODS
+  // ============================================================
+  
+  /**
+   * Alias for changeResultsPerPage - more intuitive name for tests
+   */
+  async selectResultsPerPage(count: string | number): Promise<void> {
+    await this.changeResultsPerPage(Number(count));
+  }
+
+  /**
+   * Counts the number of result cards currently displayed on the page
+   */
+  async countResultCards(): Promise<number> {
+    const resultCards = this.page.locator('.search-result, .faceted-search__result, [class*="result-card"]');
+    await resultCards.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    return await resultCards.count();
+  }
+
+  /**
+   * Validates that all results have ratings equal to or greater than the specified minimum
+   * @param minRating - Minimum rating expected (e.g., 5 for 5 snowflakes)
+   * @param tolerance - Tolerance for rating comparison (default 0.5)
+   */
+  async validateRatingsInResults(minRating: number, tolerance: number = 0.5): Promise<void> {
+    this.logSection(`Validating ratings >= ${minRating}★`);
+    
+    // Wait for rating elements to be visible
+    await this.ratingWrappers.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    
+    const count = await this.ratingWrappers.count();
+    
+    if (count === 0) {
+      throw new Error('❌ No rating elements found in search results');
+    }
+
+    this.logInfo(`Found ${count} properties with rating indicators`);
+    
+    let validatedCount = 0;
+    const failures: string[] = [];
+
+    for (let i = 0; i < count; i++) {
+      const ratingWrapper = this.ratingWrappers.nth(i);
+      
+      // Get the title attribute which contains rating info: "Star review X out of 5"
+      const titleAttr = await ratingWrapper.getAttribute('title');
+      
+      if (titleAttr) {
+        // Extract rating from title using the pattern (e.g., "Star review 5 out of 5")
+        const match = titleAttr.match(this.PATTERN_ARIA_RATING);
+        
+        if (match) {
+          const rating = parseFloat(match[1]);
+          
+          if (rating < minRating - tolerance) {
+            failures.push(`Result ${i + 1} has rating ${rating}, expected >= ${minRating}`);
+          } else {
+            validatedCount++;
+          }
+        } else {
+          this.logWarn(`Could not parse rating from: "${titleAttr}"`);
+        }
+      }
+    }
+
+    if (failures.length > 0) {
+      this.logError(`Rating validation failures:`);
+      failures.forEach(failure => this.logError(`  • ${failure}`));
+      throw new Error(`❌ ${failures.length} of ${count} results failed rating validation`);
+    }
+
+    this.logInfo(`✓ All ${validatedCount} results have ratings >= ${minRating}★`);
+  }
+
+  // ================================================================
+  // Helper: Count only filtered results (before "More results..." section)
+  // ================================================================
+  async countFilteredResultCards(): Promise<number> {
+    try {
+      // Check if "More results..." section exists on the page
+      const moreResultsSection = this.page.locator('.you-might-like');
+      const moreResultsExists = await moreResultsSection.count() > 0;
+
+      if (moreResultsExists) {
+        // If "More results..." section exists, count only cards BEFORE it
+        // Get the first "you-might-like" element
+        const youMightLikeBoundary = await moreResultsSection.first().boundingBox();
+        
+        if (youMightLikeBoundary) {
+          // Get all search result cards
+          const allCards = this.page.locator('.search-results');
+          const allCardsCount = await allCards.count();
+          
+          let filteredCount = 0;
+          
+          // Count cards that appear BEFORE the "More results..." section
+          for (let i = 0; i < allCardsCount; i++) {
+            const card = allCards.nth(i);
+            const cardBox = await card.boundingBox();
+            
+            if (cardBox && cardBox.y < youMightLikeBoundary.y) {
+              filteredCount++;
+            } else {
+              break; // Stop counting once we reach "More results..." section
+            }
+          }
+          
+          this.logInfo(`📊 Found ${filteredCount} filtered result cards (before "More results..." section)`);
+          return filteredCount;
+        }
+      }
+
+      // Fallback: If no "More results..." section, count all cards
+      const totalCards = await this.page.locator('.search-results').count();
+      this.logInfo(`📊 Found ${totalCards} result cards on page`);
+      return totalCards;
+    } catch (error) {
+      this.logError(`Error counting filtered result cards: ${error}`);
+      return 0;
+    }
   }
 }
 

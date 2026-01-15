@@ -1,54 +1,75 @@
-<testsuites id="" name="" tests="12" failures="0" skipped="12" errors="0" time="0.295567">
-<testsuite name="home.mobile.spec.ts" timestamp="2026-01-15T15:01:00.986Z" hostname="Mobile Chrome" tests="6" failures="0" skipped="6" time="0" errors="0">
-<testcase name="Home Page Mobile › TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Home Page Mobile › TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Home Page Mobile › TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Home Page Mobile › TCXX-MOBILE — Validate Inline Links in Sections (Mobile)" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Home Page Mobile › TC26-MOBILE — Validate Mobile Layout Consistency" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="home.mobile.spec.ts" timestamp="2026-01-15T15:01:00.986Z" hostname="Mobile Safari" tests="6" failures="0" skipped="6" time="0" errors="0">
-<testcase name="Home Page Mobile › TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Home Page Mobile › TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Home Page Mobile › TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Home Page Mobile › TCXX-MOBILE — Validate Inline Links in Sections (Mobile)" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Home Page Mobile › TC26-MOBILE — Validate Mobile Layout Consistency" classname="home.mobile.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="37.287979">
+<testsuite name="search.mobile.spec.ts" timestamp="2026-01-15T16:55:31.629Z" hostname="Mobile Chrome" tests="1" failures="1" skipped="0" time="33.846" errors="0">
+<testcase name="Search and Filters — Ski Holidays (Mobile) › TC-001-MOBILE — Validate minimum night filter (2 nights)" classname="search.mobile.spec.ts" time="33.846">
+<failure message="search.mobile.spec.ts:69:7 TC-001-MOBILE — Validate minimum night filter (2 nights)" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › search.mobile.spec.ts:69:7 › Search and Filters — Ski Holidays (Mobile) › TC-001-MOBILE — Validate minimum night filter (2 nights) › Validate results are displayed 
+
+    Error: ❌ VALIDATION FAILED: No search results visible on page
+
+      86 |       const resultsVisible = await pm.getPage().locator('.search-result, .faceted-search__result').first().isVisible({ timeout: 10000 }).catch(() => false);
+      87 |       if (!resultsVisible) {
+    > 88 |         throw new Error('❌ VALIDATION FAILED: No search results visible on page');
+         |               ^
+      89 |       }
+      90 |       
+      91 |       const resultsCount = await pm.getPage().locator('.search-result, .faceted-search__result').count();
+        at C:\Projects\playwright-typescript\igluski-playwright-ts\tests\search.mobile.spec.ts:88:15
+        at C:\Projects\playwright-typescript\igluski-playwright-ts\tests\search.mobile.spec.ts:84:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: ❌ VALIDATION FAILED: No search results visible on page
+
+      86 |       const resultsVisible = await pm.getPage().locator('.search-result, .faceted-search__result').first().isVisible({ timeout: 10000 }).catch(() => false);
+      87 |       if (!resultsVisible) {
+    > 88 |         throw new Error('❌ VALIDATION FAILED: No search results visible on page');
+         |               ^
+      89 |       }
+      90 |       
+      91 |       const resultsCount = await pm.getPage().locator('.search-result, .faceted-search__result').count();
+        at C:\Projects\playwright-typescript\igluski-playwright-ts\tests\search.mobile.spec.ts:88:15
+        at C:\Projects\playwright-typescript\igluski-playwright-ts\tests\search.mobile.spec.ts:84:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome-retry1\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome-retry1\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+=== TEST: TC-001-MOBILE — Validate minimum night filter (2 nights) ===
+=== END: PASS ===
+
+[[ATTACHMENT|test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome\error-context.md]]
+
+=== TEST: TC-001-MOBILE — Validate minimum night filter (2 nights) ===
+=== END: PASS ===
+
+[[ATTACHMENT|test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome-retry1\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome-retry1\error-context.md]]
+
+[[ATTACHMENT|test-results\search.mobile-Search-and-F-bc61f-imum-night-filter-2-nights--Mobile-Chrome-retry1\trace.zip]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
 </testsuites>
