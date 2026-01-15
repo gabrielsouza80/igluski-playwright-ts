@@ -12,7 +12,7 @@ test.describe('Home Page Mobile', () => {
     // Block Sleeknote requests before page load
     await pm.getPage().route('**/*sleeknote*/**', route => route.abort());
     await pm.getPage().route('**/*.sleeknote.*', route => route.abort());
-    
+
     // Set mobile viewport (iPhone 12 Pro dimensions)
     await test.step('✓ Set mobile viewport (375x812)', async () => {
       await pm.getPage().setViewportSize({ width: 375, height: 812 });
@@ -20,7 +20,7 @@ test.describe('Home Page Mobile', () => {
 
     await test.step('✓ Navigate to the homepage and handle cookie banner', async () => {
       await pm.onHomePage().navigateAndAcceptCookies();
-      
+
       // Add aggressive blocking with MutationObserver
       await pm.getPage().evaluate(() => {
         // Block via CSS
@@ -38,13 +38,13 @@ test.describe('Home Page Mobile', () => {
           }
         `;
         document.head.appendChild(style);
-        
+
         // Monitor and remove Sleeknote elements dynamically
         const observer = new MutationObserver(() => {
           const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
           sleeknoteElements.forEach(el => el.remove());
         });
-        
+
         observer.observe(document.body, {
           childList: true,
           subtree: true
@@ -148,7 +148,7 @@ test.describe('Home Page Mobile', () => {
       for (let slideIndex = 0; slideIndex < totalSlides; slideIndex++) {
         await test.step(`Validating slide ${slideIndex + 1}/${totalSlides}`, async () => {
           const slideNumber = slideIndex + 1;
-          
+
           // STEP 2.1 — Check if slide has CTA button
           let hasCTA = false;
           await test.step('Check if CTA button exists', async () => {
@@ -247,18 +247,23 @@ test.describe('Home Page Mobile', () => {
   // ============================================================
   // 🔵 TC26-MOBILE — Validate Mobile Layout Consistency
   // ============================================================
-  // This test validates that the page renders correctly in mobile viewport (375px)
+  // This test validates that the page renders correctly in mobile landscape mode (812x375)
   test('TC26-MOBILE — Validate Mobile Layout Consistency', async ({ pm }, testInfo) => {
 
-    // STEP 1 — Validate mobile layout at 375px
-    await test.step('Validate layout and responsiveness at 375px (Mobile)', async () => {
-      await pm.onHomePage().validateResponsivenessAtWidth(375);
+    // STEP 1 — Set mobile landscape viewport (deitado)
+    await test.step('Set mobile landscape viewport (812x375)', async () => {
+      await pm.getPage().setViewportSize({ width: 812, height: 375 });
     });
 
-    // STEP 2 — Finish test
+    // STEP 2 — Validate mobile layout at 812px (landscape)
+    await test.step('Validate layout and responsiveness at 812px (Mobile Landscape)', async () => {
+      await pm.onHomePage().validateResponsivenessAtWidth(812);
+    });
+
+    // STEP 3 — Finish test
     await test.step('Finish test', async () => {
-      console.log('VALIDATION PASSED: Page layout validated at 375px (Mobile)');
-      console.log('✓ TC26-MOBILE completed successfully - mobile layout validated');
+      console.log('VALIDATION PASSED: Page layout validated at 812px (Mobile Landscape)');
+      console.log('✓ TC26-MOBILE completed successfully - mobile landscape layout validated');
     });
   });
 

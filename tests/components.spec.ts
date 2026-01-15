@@ -36,11 +36,6 @@ test.describe('Components Page', () => {
     // This test validates the header logo navigation flow.
     test('TC1 — Validate Logo Navigation', async ({ pm }, testInfo) => {
 
-        // STEP 0 — Start test
-        await test.step('Start test', async () => {
-            pm.onHomePage().logTestStart(testInfo.title);
-        });
-
         // STEP 1 — Click the header logo
         await test.step('Click the header logo', async () => {
             await pm.onComponentsPage().clickHeaderLogo();
@@ -49,11 +44,11 @@ test.describe('Components Page', () => {
         // STEP 2 — Validate redirect to Home Page
         await test.step('Validate redirection to Home Page', async () => {
             await pm.onComponentsPage().validateHeaderLogoRedirect();
-            console.log('VALIDATION PASSED: Header logo clicked and redirected to Home Page');
         });
 
         // STEP 3 — Finish test
         await test.step('Finish test', async () => {
+            console.log('VALIDATION PASSED: Header logo clicked and redirected to Home Page');
             console.log('✓ TC1 completed successfully');
         });
     });
@@ -66,11 +61,6 @@ test.describe('Components Page', () => {
 
         test.setTimeout(300_000); // Extended timeout due to heavy navigation
 
-        // STEP 0 — Start test
-        await test.step('Start test', async () => {
-            pm.onHomePage().logTestStart(testInfo.title);
-        });
-
         // STEP 1 — Locate header navigation items (ACTION)
         await test.step('Locate header navigation items', async () => {
             await pm.onComponentsPage().locateHeaderNavItems();
@@ -79,7 +69,6 @@ test.describe('Components Page', () => {
         // STEP 2 — Validate header navigation visibility (ASSERTION)
         await test.step('Validate header navigation visibility', async () => {
             await pm.onComponentsPage().validateHeaderNavVisibility();
-            console.log('VALIDATION PASSED: Header navigation items visibility validated');
         });
 
         // STEP 3 — Capture menu snapshot (ACTION)
@@ -90,17 +79,19 @@ test.describe('Components Page', () => {
         // STEP 4 — Validate all main menu navigation (ASSERTION)
         await test.step('Validate main menu navigation', async () => {
             await pm.onComponentsPage().validateMainMenus();
-            console.log('VALIDATION PASSED: Main menu navigation validated successfully');
         });
 
         // STEP 5 — Validate all submenu navigation (ASSERTION)
         await test.step('Validate submenu navigation', async () => {
             await pm.onComponentsPage().validateSubMenus();
-            console.log('VALIDATION PASSED: Submenu navigation validated successfully');
         });
 
         // STEP 6 — Finish test
         await test.step('Finish test', async () => {
+            console.log('VALIDATION PASSED: Header navigation items visibility validated');
+            console.log('VALIDATION PASSED: Main menu navigation validated successfully');
+            console.log('VALIDATION PASSED: Submenu navigation validated successfully');
+            
             await pm.onComponentsPage().closeNavigationPage();
 
             if (pm.onComponentsPage().testCaseErrors.length > 0) {
@@ -139,23 +130,23 @@ test.describe('Components Page', () => {
         // STEP 1 — Validate phone number (existence + text)
         await test.step('Validate header phone number', async () => {
             await pm.onComponentsPage().validateHeaderPhone();
-            console.log('VALIDATION PASSED: Header phone number validated');
         });
 
         // STEP 2 — Validate Contact Us link (existence + text)
         await test.step('Validate Contact Us link', async () => {
             await pm.onComponentsPage().validateHeaderContactText();
-            console.log('VALIDATION PASSED: Contact Us link validated');
         });
 
         // STEP 3 — Validate Contact Us redirection
         await test.step('Validate Contact Us redirection', async () => {
             await pm.onComponentsPage().validateHeaderContactRedirect();
-            console.log('VALIDATION PASSED: Contact Us redirection validated');
         });
 
         // STEP 4 — Finish test
         await test.step('Finish test', async () => {
+            console.log('VALIDATION PASSED: Header phone number validated');
+            console.log('VALIDATION PASSED: Contact Us link validated');
+            console.log('VALIDATION PASSED: Contact Us redirection validated');
             console.log(`✓ TC3 completed successfully - validated contact: "${contactTexts.phoneTitle}"`);
         });
     });
@@ -168,25 +159,20 @@ test.describe('Components Page', () => {
 
         const recentlyViewedData = testData.components.header.recentlyViewed;
 
-        // STEP 0 — Start test
-        await test.step('Start test', async () => {
-            pm.onHomePage().logTestStart(testInfo.title);
-        });
-
         // STEP 1 — Validate Recently Viewed button text
         await test.step('Validate Recently Viewed button text', async () => {
             await pm.onComponentsPage().validateRecentlyViewedButtonText();
-            console.log('VALIDATION PASSED: Recently Viewed button text validated');
         });
 
         // STEP 2 — Click button and validate panel
         await test.step('Click Recently Viewed button and validate panel', async () => {
             await pm.onComponentsPage().validateRecentlyViewedButton();
-            console.log('VALIDATION PASSED: Recently Viewed panel validated');
         });
 
         // STEP 3 — Finish test
         await test.step('Finish test', async () => {
+            console.log('VALIDATION PASSED: Recently Viewed button text validated');
+            console.log('VALIDATION PASSED: Recently Viewed panel validated');
             console.log(`✓ TC4 completed successfully - "${recentlyViewedData.buttonText}"`);
         });
     });
@@ -200,15 +186,9 @@ test.describe('Components Page', () => {
 
         const customerPortalData = testData.components.header.customerPortal;
 
-        // STEP 0 — Start test
-        await test.step('Start test', async () => {
-            pm.onHomePage().logTestStart(testInfo.title);
-        });
-
         // STEP 1 — Validate Customer Portal button text
         await test.step('Validate Customer Portal button text', async () => {
             await pm.onComponentsPage().validateCustomerPortalButtonText();
-            console.log('VALIDATION PASSED: Customer Portal button text validated');
         });
 
         // STEP 2 — Click Customer Portal button
@@ -219,18 +199,19 @@ test.describe('Components Page', () => {
         // STEP 3 — Wait for AJAX content to load
         await test.step('Wait for AJAX content to load', async () => {
             await pm.onComponentsPage().waitForCustomerPortalAjax();
-            console.log('VALIDATION PASSED: AJAX content loaded successfully');
         });
 
         // STEP 4 — Validate Customer Portal required fields
         await test.step('Validate Customer Portal required fields', async () => {
             const requiredFields = customerPortalData.requiredFields;
             await pm.onComponentsPage().validateCustomerPortalFields();
-            console.log(`VALIDATION PASSED: Customer Portal required fields validated (${requiredFields.length} fields)`);
         });
 
         // STEP 5 — Finish test
         await test.step('Finish test', async () => {
+            console.log('VALIDATION PASSED: Customer Portal button text validated');
+            console.log('VALIDATION PASSED: AJAX content loaded successfully');
+            console.log(`VALIDATION PASSED: Customer Portal required fields validated (${customerPortalData.requiredFields.length} fields)`);
             console.log(`✓ TC5 completed successfully - expected fields: ${customerPortalData.requiredFields.join(', ')}`);
         });
     });
@@ -244,15 +225,9 @@ test.describe('Components Page', () => {
         const reviewsLinkData = testData.components.header.reviewsLink;
         const reviewsPageUrl = testData.urls.reviewsPage;
 
-        // STEP 0 — Start test
-        await test.step('Start test', async () => {
-            pm.onHomePage().logTestStart(testInfo.title);
-        });
-
         // STEP 1 — Validate Ratings & Reviews link text
         await test.step('Validate Ratings & Reviews link text', async () => {
             await pm.onComponentsPage().validateRatingsAndReviewsText();
-            console.log('VALIDATION PASSED: Ratings & Reviews link text validated');
         });
 
         // STEP 2 — Click the Ratings & Reviews link
@@ -263,17 +238,18 @@ test.describe('Components Page', () => {
         // STEP 3 — Validate redirect to the Reviews page
         await test.step('Validate redirect to the Reviews page', async () => {
             await pm.onComponentsPage().validateRatingsAndReviewsRedirect();
-            console.log('VALIDATION PASSED: Redirected to Reviews page successfully');
         });
 
         // STEP 4 — Validate Reviews page title
         await test.step('Validate Reviews page title', async () => {
             await pm.onComponentsPage().validateReviewsPageTitle();
-            console.log('VALIDATION PASSED: Reviews page title validated');
         });
 
         // STEP 5 — Finish test
         await test.step('Finish test', async () => {
+            console.log('VALIDATION PASSED: Ratings & Reviews link text validated');
+            console.log('VALIDATION PASSED: Redirected to Reviews page successfully');
+            console.log('VALIDATION PASSED: Reviews page title validated');
             console.log(`✓ TC6 completed successfully - "${reviewsLinkData.text}" → ${reviewsPageUrl}`);
         });
     });
@@ -286,31 +262,26 @@ test.describe('Components Page', () => {
 
         const contactBlocks = testData.components.contact.blocks;
 
-        // STEP 0 — Start test
-        await test.step('Start test', async () => {
-            pm.onHomePage().logTestStart(testInfo.title);
-        });
-
         // STEP 1 — Validate phone block
         await test.step('Validate phone block', async () => {
             await pm.onComponentsPage().validateContactPhoneBlock(contactBlocks[0]);
-            console.log('VALIDATION PASSED: Contact phone block validated');
         });
 
         // STEP 2 — Validate email block
         await test.step('Validate email block', async () => {
             await pm.onComponentsPage().validateContactEmailBlock(contactBlocks[1]);
-            console.log('VALIDATION PASSED: Contact email block validated');
         });
 
         // STEP 3 — Validate newsletter block
         await test.step('Validate newsletter block', async () => {
             await pm.onComponentsPage().validateContactNewsletterBlock(contactBlocks[2]);
-            console.log('VALIDATION PASSED: Contact newsletter block validated');
         });
 
         // STEP 4 — Finish test
         await test.step('Finish test', async () => {
+            console.log('VALIDATION PASSED: Contact phone block validated');
+            console.log('VALIDATION PASSED: Contact email block validated');
+            console.log('VALIDATION PASSED: Contact newsletter block validated');
             console.log('✓ TC18 completed successfully');
         });
     });
@@ -322,11 +293,6 @@ test.describe('Components Page', () => {
         test.setTimeout(300_000); // Extended timeout due to heavy navigation
 
         const footerData = testData.components.footer.holidayIdSearch;
-
-        // STEP 0 — Start test
-        await test.step('Start test', async () => {
-            pm.onHomePage().logTestStart(testInfo.title);
-        });
 
         // STEP 1 — Scroll to footer
         await test.step('Scroll to footer', async () => {
@@ -416,11 +382,6 @@ test.describe('Components Page', () => {
 
         const trustSealsData = testData.components.footer.trustSeals;
 
-        // STEP 0 — Start test
-        await test.step('Start test', async () => {
-            pm.onHomePage().logTestStart(testInfo.title);
-        });
-
         // STEP 1 — Scroll to footer
         await test.step('Scroll to footer', async () => {
             await pm.onComponentsPage().footerContainer.scrollIntoViewIfNeeded();
@@ -429,23 +390,23 @@ test.describe('Components Page', () => {
         // STEP 2 — Validate trust seals visibility
         await test.step('Validate trust seals are visible', async () => {
             await pm.onComponentsPage().validateTrustSealsVisibility(trustSealsData.seals);
-            console.log(`VALIDATION PASSED: Trust seals visibility validated (${trustSealsData.seals.length} seals)`);
         });
 
         // STEP 3 — Validate trust seals are clickable links
         await test.step('Validate trust seals are clickable links', async () => {
             await pm.onComponentsPage().validateTrustSealsLinks(trustSealsData.seals);
-            console.log(`VALIDATION PASSED: Trust seals clickable links validated (${trustSealsData.seals.length} seals)`);
         });
 
         // STEP 4 — Validate trust seals URLs
         await test.step('Validate trust seals URLs format', async () => {
             await pm.onComponentsPage().validateTrustSealsUrlFormat(trustSealsData.seals);
-            console.log(`VALIDATION PASSED: Trust seals URL format validated (${trustSealsData.seals.length} seals)`);
         });
 
         // STEP 5 — Finish test
         await test.step('Finish test', async () => {
+            console.log(`VALIDATION PASSED: Trust seals visibility validated (${trustSealsData.seals.length} seals)`);
+            console.log(`VALIDATION PASSED: Trust seals clickable links validated (${trustSealsData.seals.length} seals)`);
+            console.log(`VALIDATION PASSED: Trust seals URL format validated (${trustSealsData.seals.length} seals)`);
             console.log(`✓ TC-F21 completed successfully - validated ${trustSealsData.seals.length} trust seals`);
         });
     });
@@ -457,11 +418,6 @@ test.describe('Components Page', () => {
 
         const socialMediaData = testData.components.footer.socialMedia;
 
-        // STEP 0 — Start test
-        await test.step('Start test', async () => {
-            pm.onHomePage().logTestStart(testInfo.title);
-        });
-
         // STEP 1 — Scroll to footer
         await test.step('Scroll to footer', async () => {
             await pm.onComponentsPage().footerContainer.scrollIntoViewIfNeeded();
@@ -470,23 +426,23 @@ test.describe('Components Page', () => {
         // STEP 2 — Validate social media icons visibility
         await test.step('Validate social media icons are visible', async () => {
             await pm.onComponentsPage().validateSocialMediaIconsVisibility(socialMediaData.platforms);
-            console.log(`VALIDATION PASSED: Social media icons visibility validated (${socialMediaData.platforms.length} icons)`);
         });
 
         // STEP 3 — Validate social media icons are clickable links
         await test.step('Validate social media icons are clickable links', async () => {
             await pm.onComponentsPage().validateSocialMediaIconsLinks(socialMediaData.platforms);
-            console.log(`VALIDATION PASSED: Social media icons links validated (${socialMediaData.platforms.length} icons)`);
         });
 
         // STEP 4 — Validate social media URLs
         await test.step('Validate social media URLs format', async () => {
             await pm.onComponentsPage().validateSocialMediaUrlFormat(socialMediaData.platforms);
-            console.log(`VALIDATION PASSED: Social media URL format validated (${socialMediaData.platforms.length} icons)`);
         });
 
         // STEP 5 — Finish test
         await test.step('Finish test', async () => {
+            console.log(`VALIDATION PASSED: Social media icons visibility validated (${socialMediaData.platforms.length} icons)`);
+            console.log(`VALIDATION PASSED: Social media icons links validated (${socialMediaData.platforms.length} icons)`);
+            console.log(`VALIDATION PASSED: Social media URL format validated (${socialMediaData.platforms.length} icons)`);
             console.log(`✓ TC-F22 completed successfully - validated ${socialMediaData.platforms.length} social media icons`);
         });
     });

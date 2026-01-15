@@ -102,7 +102,9 @@ export class HomePage extends HelperBase {
   async validateSingleCarouselSlide(index: number, total: number): Promise<void> {
 
 
-    // Click CTA inside the active slide
+    // Scroll to CTA and click
+    await this.carouselCta.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
     await this.carouselCta.click();
     this.logInfo("✓ CTA clicked");
 
@@ -171,6 +173,11 @@ export class HomePage extends HelperBase {
     this.logInfo(`Normalized: ${normalized}`);
     this.logInfo(`URL: ${url}`);
     this.logDivider();
+
+    // Scroll to CTA box to ensure visibility
+    const ctaBox = this.ctaBoxes.nth(index);
+    await ctaBox.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
 
     // Open URL and validate pattern
     await this.openAndValidateUrl(url, expectedPattern);
@@ -335,6 +342,10 @@ export class HomePage extends HelperBase {
     // Locate the title using Playwright's native text selector
     const titleLocator = this.page.getByText(expected, { exact: false });
 
+    // Scroll to title to ensure visibility
+    await titleLocator.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
+
     // Get text to confirm it exists
     const text = await titleLocator.textContent();
     this.logInfo(`Title text: "${text}"`);
@@ -359,6 +370,9 @@ export class HomePage extends HelperBase {
   async validateCarouselCtaVisibility(slideIndex?: number): Promise<void> {
     const slideName = slideIndex !== undefined ? `Slide ${slideIndex + 1}` : "Carousel";
 
+    // Scroll to carousel to ensure visibility
+    await this.carouselCta.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
 
     // Capture CTA href for validation and logging
     const href = await this.carouselCta.getAttribute("href");
@@ -380,7 +394,9 @@ export class HomePage extends HelperBase {
       throw new Error("❌ CTA button has no href attribute");
     }
 
-    // Click CTA
+    // Scroll to CTA and click
+    await this.carouselCta.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
     await this.carouselCta.click();
     this.logInfo("✓ CTA clicked");
 
@@ -450,6 +466,10 @@ export class HomePage extends HelperBase {
     // Get current active slide href to detect when slide changes
     const currentHref = await this.carouselCta.getAttribute('href');
     this.logInfo(`Current slide CTA href: ${currentHref}`);
+
+    // Scroll to next button to ensure it's visible
+    await this.carouselNextButton.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
 
     // Click next button (force click for mobile to bypass overlays)
     if (forceMobile) {
@@ -549,6 +569,10 @@ export class HomePage extends HelperBase {
 
     // Get banner link
     const bannerLink = this.countryBannerBoxes.nth(index);
+
+    // Scroll to banner to ensure visibility
+    await bannerLink.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
 
     // Extract href and country name
     const href = await bannerLink.getAttribute('href');
