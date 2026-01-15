@@ -5,54 +5,55 @@ import testData from './fixtures/testdata.json';
 // Test Suite: Home Page Mobile
 // ================================================================
 
+// Helper function to block Sleeknote
+async function blockSleeknote(page: any) {
+  await page.evaluate(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      [class*="sleeknote"],
+      sleeknote-top,
+      sleeknote-bottom,
+      sleeknote-left,
+      sleeknote-right {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    const observer = new MutationObserver(() => {
+      const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
+      sleeknoteElements.forEach(el => el.remove());
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  });
+}
+
 test.describe('Home Page Mobile', () => {
 
   // BEFORE EACH - Configure mobile viewport and navigate
   test.beforeEach(async ({ pm }) => {
-    // Block Sleeknote requests before page load
-    await pm.getPage().route('**/*sleeknote*/**', route => route.abort());
-    await pm.getPage().route('**/*.sleeknote.*', route => route.abort());
+    const page = pm.getPage();
+    
+    // Block Sleeknote requests
+    await page.route('**/*sleeknote*/**', route => route.abort());
+    await page.route('**/*.sleeknote.*', route => route.abort());
 
-    // Set mobile viewport (iPhone 12 Pro dimensions)
     await test.step('✓ Set mobile viewport (375x812)', async () => {
-      await pm.getPage().setViewportSize({ width: 375, height: 812 });
+      await page.setViewportSize({ width: 375, height: 812 });
     });
 
     await test.step('✓ Navigate to the homepage and handle cookie banner', async () => {
       await pm.onHomePage().navigateAndAcceptCookies();
-
-      // Add aggressive blocking with MutationObserver
-      await pm.getPage().evaluate(() => {
-        // Block via CSS
-        const style = document.createElement('style');
-        style.textContent = `
-          [class*="sleeknote"],
-          sleeknote-top,
-          sleeknote-bottom,
-          sleeknote-left,
-          sleeknote-right {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-          }
-        `;
-        document.head.appendChild(style);
-
-        // Monitor and remove Sleeknote elements dynamically
-        const observer = new MutationObserver(() => {
-          const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
-          sleeknoteElements.forEach(el => el.remove());
-        });
-
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true
-        });
-      });
+      await blockSleeknote(page);
     });
 
-    // Handle Sleeknote popup if present (mobile-specific)
     await test.step('✓ Handle Sleeknote popup if present', async () => {
       await pm.onHomePage().handleSleeknotePopup();
     });

@@ -339,19 +339,23 @@ export class HomePage extends HelperBase {
 
     this.logInfo(`Validating title: "${expected}"`);
 
-    // Locate the title using Playwright's native text selector
-    const titleLocator = this.page.getByText(expected, { exact: false });
+    // Locate the title - must be h1, h2, or h3
+    const titleLocator = this.page.locator('h1, h2, h3').filter({ hasText: expected });
 
     // Scroll to title to ensure visibility
-    await titleLocator.scrollIntoViewIfNeeded();
+    await titleLocator.first().scrollIntoViewIfNeeded();
     await this.page.waitForTimeout(300);
 
     // Get text to confirm it exists
-    const text = await titleLocator.textContent();
+    const text = await titleLocator.first().textContent();
     this.logInfo(`Title text: "${text}"`);
 
-    // VALIDATION — Must be visible
-    await expect(titleLocator).toBeVisible();
+    // Get tag name to confirm it's a heading
+    const tagName = await titleLocator.first().evaluate(el => el.tagName.toLowerCase());
+    this.logInfo(`Title tag: <${tagName}>`);
+
+    // VALIDATION — Must be visible and be a heading
+    await expect(titleLocator.first()).toBeVisible();
     this.logInfo(`✓ Title found and visible: "${expected}"`);
 
     this.logDivider();
@@ -471,12 +475,9 @@ export class HomePage extends HelperBase {
     await this.carouselNextButton.scrollIntoViewIfNeeded();
     await this.page.waitForTimeout(300);
 
-    // Click next button (force click for mobile to bypass overlays)
-    if (forceMobile) {
-      await this.carouselNextButton.click({ force: true });
-    } else {
-      await this.carouselNextButton.click();
-    }
+    // Click next button (without force to ensure it's actually clickable)
+    // Note: forceMobile handler already cleared any overlays
+    await this.carouselNextButton.click();
     this.logInfo("✓ Clicked Next button");
 
     // Wait for slide to change (CTA href should be different)
