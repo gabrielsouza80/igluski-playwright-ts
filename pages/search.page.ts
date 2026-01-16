@@ -609,6 +609,445 @@ export class SearchPage extends HelperBase {
     }
   }
 
+  // ================================================================
+  // Mobile: Select nights filter - wrapper that adds mobile-specific delays
+  // ================================================================
+  async selectNightsFilterMobile(nights: number | string): Promise<void> {
+    try {
+      this.logInfo(`🔷 MOBILE: Starting nights selection for ${nights} nights...`);
+      
+      // Use the existing selectNightsFilter method - it's already robust
+      await this.selectNightsFilter(nights);
+      
+      // Add extra delay after filter selection for mobile viewport loading
+      await this.page.waitForTimeout(2000);
+      
+      // Close filter panel - click Apply button if visible, otherwise click X
+      const applyBtn = this.page.locator('.btn.btn-primary.refine-apply').first();
+      const closeBtn = this.page.locator('a.refine-cross, .refine-cross').first();
+      
+      const applyExists = await applyBtn.isVisible({ timeout: 1000 }).catch(() => false);
+      
+      if (applyExists) {
+        this.logInfo(`📍 Closing filter panel with Apply button`);
+        try {
+          // Try to click Apply button
+          await applyBtn.click({ force: true, timeout: 5000 });
+        } catch (clickError) {
+          // If Apply button fails (e.g., outside viewport), fallback to X button
+          const errorMsg = clickError instanceof Error ? clickError.message : String(clickError);
+          this.logWarn(`⚠️ Apply button click failed: ${errorMsg}, falling back to X button`);
+          await closeBtn.scrollIntoViewIfNeeded({ timeout: 3000 }).catch(() => {});
+          await this.page.waitForTimeout(500);
+          await closeBtn.click({ force: true, timeout: 5000 });
+        }
+      } else {
+        this.logInfo(`📍 Closing filter panel with X button`);
+        // Use JavaScript click for X button since it might be outside viewport
+        await closeBtn.evaluate((el: HTMLElement) => {
+          el.click();
+        }).catch(() => {
+          this.logWarn(`⚠️ Could not click X button with JavaScript`);
+        });
+      }
+      
+      await this.page.waitForTimeout(1500); // Wait for results to load after closing
+      
+      const count = await this.getResultsCount();
+      this.logInfo(`✅ MOBILE: ${nights} nights filter applied → ${count} results`);
+      
+    } catch (error) {
+      this.logError(`❌ MOBILE: Error in selectNightsFilterMobile: ${error}`);
+      throw error;
+    }
+  }
+
+  // ================================================================
+  // Mobile: Select country filter - expands accordion, selects country
+  // ================================================================
+  async selectCountryFilterMobile(countryCode: string): Promise<void> {
+    try {
+      this.logInfo(`🔷 MOBILE: Starting country selection for ${countryCode}...`);
+      
+      // Check if page is still alive
+      if (await this.isPageClosed()) {
+        throw new Error('Page closed before starting country filter');
+      }
+      
+      // STEP 1: CLICK the accordion header to expand "Refine resort details"
+      this.logInfo(`📂 STEP 1: Clicking accordion header "Refine resort details"...`);
+      
+      const accordionHeader = this.page.locator('span.faceted-search__title[data-target="#resort-collapse"]');
+      await accordionHeader.first().waitFor({ state: 'visible', timeout: 5000 });
+      
+      // Scroll accordion into view before clicking
+      this.logInfo(`   📍 Scrolling accordion into view...`);
+      await accordionHeader.first().evaluate((el) => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+      await this.page.waitForTimeout(800);
+      
+      // Click it directly with JavaScript
+      this.logInfo(`   👆 Clicking accordion with JavaScript...`);
+      await accordionHeader.first().evaluate((el: HTMLElement) => {
+        el.click();
+      });
+      this.logInfo(`   ✅ Accordion clicked! Opening...`);
+      
+      // Wait to SEE the accordion opening animation
+      this.logInfo(`   ⏳ Waiting for accordion to fully expand...`);
+      await this.page.waitForTimeout(2000);
+      
+      // Ensure accordion is fully expanded
+      const resortCollapse = this.page.locator('#resort-collapse');
+      await resortCollapse.waitFor({ state: 'attached', timeout: 5000 });
+      this.logInfo(`   ✅ Accordion fully expanded!`);
+      await this.page.waitForTimeout(1000);
+      
+      // STEP 2: Select the country checkbox directly
+      this.logInfo(`📍 STEP 2: Selecting country ${countryCode}...`);
+      
+      if (await this.isPageClosed()) {
+        throw new Error('Page closed before country selection');
+      }
+      
+      const countryCheckbox = this.page.locator(`input.faceted-search__input--check-box#${countryCode}`);
+      const checkboxCount = await countryCheckbox.count();
+      
+      if (checkboxCount === 0) {
+        throw new Error(`Country checkbox for ${countryCode} not found`);
+      }
+      
+      this.logInfo(`   Found country checkbox: #${countryCode}`);
+      
+      // Scroll the resort list container to make France visible
+      this.logInfo(`   📜 Scrolling resort list to show ${countryCode}...`);
+      const resortList = this.page.locator('ul.faceted-search__list.resort-scroll').first();
+      
+      await resortList.evaluate((el, code) => {
+        console.log(`🔍 Looking for checkbox #${code} in resort list...`);
+        const checkbox = el.querySelector(`#${code}`) as HTMLInputElement;
+        if (checkbox) {
+          const rect = checkbox.getBoundingClientRect();
+          console.log(`✅ Found #${code}! Position: top=${rect.top}, visible=${rect.top >= 0 && rect.top < window.innerHeight}`);
+          
+          // Scroll the list container itself
+          el.scrollTop = checkbox.offsetTop - el.clientHeight / 2;
+          console.log(`✅ Scrolled list! New scroll position: ${el.scrollTop}`);
+        } else {
+          console.log(`❌ Checkbox #${code} not found in list!`);
+        }
+      }, countryCode);
+      
+      this.logInfo(`   ⏳ Waiting for scroll to settle...`);
+      await this.page.waitForTimeout(1500);
+      
+      this.logInfo(`   👆 Clicking ${countryCode} checkbox...`);
+      // Click using JavaScript directly
+      await countryCheckbox.first().evaluate((el: HTMLInputElement) => {
+        console.log(`✅ Clicking checkbox, checked: ${el.checked} → will be: ${!el.checked}`);
+        el.click();
+        console.log(`✅ Clicked! New state: ${el.checked}`);
+      });
+      
+      await this.page.waitForTimeout(500);
+      this.logInfo(`   ✅ Country ${countryCode} selected`);
+      
+      await this.page.waitForTimeout(500);
+      
+      // STEP 3: Close the filter panel
+      this.logInfo(`📍 STEP 3: Closing filter panel...`);
+      
+      if (await this.isPageClosed()) {
+        throw new Error('Page closed before closing panel');
+      }
+      
+      const applyBtn = this.page.locator('.btn.btn-primary.refine-apply').first();
+      const closeBtn = this.page.locator('a.refine-cross, .refine-cross').first();
+      
+      const applyExists = await applyBtn.isVisible({ timeout: 1000 }).catch(() => false);
+      
+      if (applyExists) {
+        this.logInfo(`   Closing with Apply button`);
+        try {
+          // Use JavaScript click to avoid viewport issues
+          await applyBtn.evaluate((el: HTMLElement) => {
+            el.click();
+          });
+        } catch (e) {
+          this.logWarn(`   Apply button click failed, trying X button`);
+          if (!await this.isPageClosed()) {
+            // Use JavaScript click for close button too
+            await closeBtn.evaluate((el: HTMLElement) => {
+              el.click();
+            });
+          }
+        }
+      } else {
+        this.logInfo(`   Closing with X button`);
+        if (!await this.isPageClosed()) {
+          // Use JavaScript click for close button
+          await closeBtn.evaluate((el: HTMLElement) => {
+            el.click();
+          });
+        }
+      }
+      
+      // Wait for results to load
+      await this.page.waitForTimeout(2000);
+      this.logInfo(`✅ MOBILE: Country ${countryCode} filter applied successfully`);
+      
+    } catch (error) {
+      this.logError(`❌ MOBILE: Error in selectCountryFilterMobile: ${error}`);
+      throw error;
+    }
+  }
+
+  // ================================================================
+  // Mobile: Select accommodation type filter (Hotel, Chalet, etc)
+  // ================================================================
+  async selectAccommodationTypeMobile(accommodationType: string): Promise<void> {
+    try {
+      this.logInfo(`🔷 MOBILE: Starting accommodation type selection for ${accommodationType}...`);
+      
+      // Check if page is still alive
+      if (await this.isPageClosed()) {
+        throw new Error('Page closed before starting accommodation type filter');
+      }
+      
+      // STEP 1: Click the accordion header to expand "Refine Property Details"
+      this.logInfo(`📂 STEP 1: Clicking accordion header "Refine Property Details"...`);
+      
+      const accordionHeader = this.page.locator('span.faceted-search__title[data-target="#property-collapse"]');
+      await accordionHeader.first().waitFor({ state: 'visible', timeout: 5000 });
+      
+      // Scroll accordion into view before clicking
+      this.logInfo(`   📍 Scrolling accordion into view...`);
+      await accordionHeader.first().evaluate((el) => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+      await this.page.waitForTimeout(800);
+      
+      // Click it directly with JavaScript
+      this.logInfo(`   👆 Clicking accordion with JavaScript...`);
+      await accordionHeader.first().evaluate((el: HTMLElement) => {
+        el.click();
+      });
+      this.logInfo(`   ✅ Accordion clicked! Opening...`);
+      
+      // Wait to SEE the accordion opening animation
+      this.logInfo(`   ⏳ Waiting for accordion to fully expand...`);
+      await this.page.waitForTimeout(2000);
+      
+      // STEP 2: Select the accommodation type checkbox
+      this.logInfo(`📍 STEP 2: Selecting accommodation type ${accommodationType}...`);
+      
+      if (await this.isPageClosed()) {
+        throw new Error('Page closed before accommodation type selection');
+      }
+      
+      // Map accommodation types to their name attributes
+      const typeMap: { [key: string]: string } = {
+        'Chalet': 'cha',
+        'Chalet Hotel': 'chh',
+        'Hotel': 'hot',
+        'Apartment': 'apa',
+        'Self Catered Chalet': 'scc',
+        'Holiday Rental': 'ren'
+      };
+      
+      const typeName = typeMap[accommodationType];
+      if (!typeName) {
+        throw new Error(`Unknown accommodation type: ${accommodationType}`);
+      }
+      
+      const typeCheckbox = this.page.locator(`input.faceted-search__input--check-box[name="${typeName}"]`);
+      const checkboxCount = await typeCheckbox.count();
+      
+      if (checkboxCount === 0) {
+        throw new Error(`Accommodation type checkbox for ${accommodationType} not found`);
+      }
+      
+      this.logInfo(`   Found accommodation checkbox: ${accommodationType}`);
+      
+      // Click using JavaScript directly
+      this.logInfo(`   👆 Clicking ${accommodationType} checkbox...`);
+      await typeCheckbox.first().evaluate((el: HTMLInputElement) => {
+        console.log(`✅ Clicking accommodation checkbox, checked: ${el.checked} → will be: ${!el.checked}`);
+        el.click();
+        console.log(`✅ Clicked! New state: ${el.checked}`);
+      });
+      
+      await this.page.waitForTimeout(500);
+      this.logInfo(`   ✅ Accommodation type ${accommodationType} selected`);
+      
+      await this.page.waitForTimeout(500);
+      
+      // STEP 3: Close the filter panel
+      this.logInfo(`📍 STEP 3: Closing filter panel...`);
+      
+      if (await this.isPageClosed()) {
+        throw new Error('Page closed before closing panel');
+      }
+      
+      const applyBtn = this.page.locator('.btn.btn-primary.refine-apply').first();
+      const closeBtn = this.page.locator('a.refine-cross, .refine-cross').first();
+      
+      const applyExists = await applyBtn.isVisible({ timeout: 1000 }).catch(() => false);
+      
+      if (applyExists) {
+        this.logInfo(`   Closing with Apply button`);
+        try {
+          // Use JavaScript click to avoid viewport issues
+          await applyBtn.evaluate((el: HTMLElement) => {
+            el.click();
+          });
+        } catch (e) {
+          this.logWarn(`   Apply button click failed, trying X button`);
+          if (!await this.isPageClosed()) {
+            // Use JavaScript click for close button too
+            await closeBtn.evaluate((el: HTMLElement) => {
+              el.click();
+            });
+          }
+        }
+      } else {
+        this.logInfo(`   Closing with X button`);
+        if (!await this.isPageClosed()) {
+          // Use JavaScript click for close button
+          await closeBtn.evaluate((el: HTMLElement) => {
+            el.click();
+          }).catch(() => {
+            this.logWarn(`⚠️ Could not click X button with JavaScript`);
+          });
+        }
+      }
+      
+      // Wait for results to load
+      await this.page.waitForTimeout(2000);
+      this.logInfo(`✅ MOBILE: Accommodation type ${accommodationType} filter applied successfully`);
+      
+    } catch (error) {
+      this.logError(`❌ MOBILE: Error in selectAccommodationTypeMobile: ${error}`);
+      throw error;
+    }
+  }
+
+  // ================================================================
+  // Mobile: Select rating filter (snowflakes)
+  // ================================================================
+  async selectRatingMobile(rating: number): Promise<void> {
+    try {
+      this.logInfo(`🔷 MOBILE: Starting rating selection for ${rating} snowflakes...`);
+      
+      // Check if page is still alive
+      if (await this.isPageClosed()) {
+        throw new Error('Page closed before starting rating filter');
+      }
+      
+      // STEP 1: Click the accordion header to expand "Refine Property Details"
+      this.logInfo(`📂 STEP 1: Clicking accordion header "Refine Property Details"...`);
+      
+      const accordionHeader = this.page.locator('span.faceted-search__title[data-target="#property-collapse"]');
+      await accordionHeader.first().waitFor({ state: 'visible', timeout: 5000 });
+      
+      // Scroll accordion into view before clicking
+      this.logInfo(`   📍 Scrolling accordion into view...`);
+      await accordionHeader.first().evaluate((el) => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+      await this.page.waitForTimeout(800);
+      
+      // Click it directly with JavaScript
+      this.logInfo(`   👆 Clicking accordion with JavaScript...`);
+      await accordionHeader.first().evaluate((el: HTMLElement) => {
+        el.click();
+      });
+      this.logInfo(`   ✅ Accordion clicked! Opening...`);
+      
+      // Wait to SEE the accordion opening animation
+      this.logInfo(`   ⏳ Waiting for accordion to fully expand...`);
+      await this.page.waitForTimeout(2000);
+      
+      // STEP 2: Select the rating checkbox
+      this.logInfo(`📍 STEP 2: Selecting rating ${rating} snowflakes...`);
+      
+      if (await this.isPageClosed()) {
+        throw new Error('Page closed before rating selection');
+      }
+      
+      const ratingCheckbox = this.page.locator(`input.faceted-search__input--check-box[data-rating="${rating}"]`);
+      const checkboxCount = await ratingCheckbox.count();
+      
+      if (checkboxCount === 0) {
+        throw new Error(`Rating checkbox for ${rating} snowflakes not found`);
+      }
+      
+      this.logInfo(`   Found rating checkbox: ${rating} snowflakes`);
+      
+      // Click using JavaScript directly
+      this.logInfo(`   👆 Clicking ${rating} snowflakes checkbox...`);
+      await ratingCheckbox.first().evaluate((el: HTMLInputElement) => {
+        console.log(`✅ Clicking rating checkbox, checked: ${el.checked} → will be: ${!el.checked}`);
+        el.click();
+        console.log(`✅ Clicked! New state: ${el.checked}`);
+      });
+      
+      await this.page.waitForTimeout(500);
+      this.logInfo(`   ✅ Rating ${rating} snowflakes selected`);
+      
+      await this.page.waitForTimeout(500);
+      
+      // STEP 3: Close the filter panel
+      this.logInfo(`📍 STEP 3: Closing filter panel...`);
+      
+      if (await this.isPageClosed()) {
+        throw new Error('Page closed before closing panel');
+      }
+      
+      const applyBtn = this.page.locator('.btn.btn-primary.refine-apply').first();
+      const closeBtn = this.page.locator('a.refine-cross, .refine-cross').first();
+      
+      const applyExists = await applyBtn.isVisible({ timeout: 1000 }).catch(() => false);
+      
+      if (applyExists) {
+        this.logInfo(`   Closing with Apply button`);
+        try {
+          // Use JavaScript click to avoid viewport issues
+          await applyBtn.evaluate((el: HTMLElement) => {
+            el.click();
+          });
+        } catch (e) {
+          this.logWarn(`   Apply button click failed, trying X button`);
+          if (!await this.isPageClosed()) {
+            // Use JavaScript click for close button too
+            await closeBtn.evaluate((el: HTMLElement) => {
+              el.click();
+            });
+          }
+        }
+      } else {
+        this.logInfo(`   Closing with X button`);
+        if (!await this.isPageClosed()) {
+          // Use JavaScript click for close button
+          await closeBtn.evaluate((el: HTMLElement) => {
+            el.click();
+          }).catch(() => {
+            this.logWarn(`⚠️ Could not click X button with JavaScript`);
+          });
+        }
+      }
+      
+      // Wait for results to load
+      await this.page.waitForTimeout(2000);
+      this.logInfo(`✅ MOBILE: Rating ${rating} snowflakes filter applied successfully`);
+      
+    } catch (error) {
+      this.logError(`❌ MOBILE: Error in selectRatingMobile: ${error}`);
+      throw error;
+    }
+  }
+
   /** Explicitly clicks "Deselect All" in the nights dropdown to reset selection */
   async deselectAllNights(): Promise<void> {
     try {
@@ -1037,8 +1476,16 @@ export class SearchPage extends HelperBase {
    */
   async validateExactMatchCount(expectedCount?: number): Promise<number> {
     try {
+      // Wait for page to finish loading (network idle)
+      await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+      
+      // Scroll top of results into view first
+      const resultsDiv = this.page.locator('#results').first();
+      await resultsDiv.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
+      await this.page.waitForTimeout(500);
+      
       // Look for "We have found X properties in Y resorts and Z countries"
-      const messageLocator = this.page.locator('text=/We\s+have\s+found\s+\d+\s+propert/i').first();
+      const messageLocator = this.page.locator('text=/We\\s+have\\s+found\\s+\\d+\\s+propert/i').first();
       
       // Scroll the message into view if needed (helpful for mobile)
       try {
@@ -1047,7 +1494,24 @@ export class SearchPage extends HelperBase {
         // Ignore scroll errors, message might be visible
       }
       
-      await messageLocator.waitFor({ state: 'visible', timeout: 5000 });
+      // Try to wait for the message to appear
+      try {
+        await messageLocator.waitFor({ state: 'visible', timeout: 5000 });
+      } catch (e) {
+        this.logInfo(`⚠️ "We have found X" message not found, checking HTML...`);
+        
+        // Fallback: Look for the message in the page content
+        const allText = await this.page.textContent('body');
+        const msgMatch = allText?.match(/We\s+have\s+found\s+(\d+)\s+propert/i);
+        if (msgMatch) {
+          const count = parseInt(msgMatch[1], 10);
+          this.logInfo(`✓ Found message via text content: "${msgMatch[0].trim()}" → ${count} exact matches`);
+          return count;
+        }
+        
+        this.logInfo(`⚠ Could not find "We have found X properties" message`);
+        return 0;
+      }
       
       const messageText = await messageLocator.textContent();
       if (!messageText) {
@@ -2650,19 +3114,35 @@ export class SearchPage extends HelperBase {
   // ================================================================
   async countFilteredResultCards(): Promise<number> {
     try {
+      // Wait for page to finish loading (network idle)
+      await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+      
+      // Scroll results into view first to ensure all elements are loaded
+      const firstCard = this.page.locator('.search-results').first();
+      await firstCard.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
+      await this.page.waitForTimeout(1000);
+      
       // Check if "More results..." section exists on the page
       const moreResultsSection = this.page.locator('.you-might-like');
-      const moreResultsExists = await moreResultsSection.count() > 0;
+      
+      // Wait for section with timeout, if not found use fallback
+      const moreResultsExists = await moreResultsSection.first().isVisible({ timeout: 2000 }).catch(() => false);
+      
+      this.logInfo(`📍 .you-might-like boundary exists: ${moreResultsExists}`);
 
       if (moreResultsExists) {
         // If "More results..." section exists, count only cards BEFORE it
-        // Get the first "you-might-like" element
+        // Get bounding box to determine boundary position
         const youMightLikeBoundary = await moreResultsSection.first().boundingBox();
+        
+        this.logInfo(`📍 Boundary Y position: ${youMightLikeBoundary?.y}`);
         
         if (youMightLikeBoundary) {
           // Get all search result cards
           const allCards = this.page.locator('.search-results');
           const allCardsCount = await allCards.count();
+          
+          this.logInfo(`📍 Total cards found: ${allCardsCount}`);
           
           let filteredCount = 0;
           
@@ -2673,7 +3153,9 @@ export class SearchPage extends HelperBase {
             
             if (cardBox && cardBox.y < youMightLikeBoundary.y) {
               filteredCount++;
+              this.logInfo(`📍 Card ${i}: Y=${cardBox.y} < ${youMightLikeBoundary.y} ✓`);
             } else {
+              this.logInfo(`📍 Card ${i}: Y=${cardBox?.y} >= ${youMightLikeBoundary.y} STOP`);
               break; // Stop counting once we reach "More results..." section
             }
           }
@@ -2685,7 +3167,7 @@ export class SearchPage extends HelperBase {
 
       // Fallback: If no "More results..." section, count all cards
       const totalCards = await this.page.locator('.search-results').count();
-      this.logInfo(`📊 Found ${totalCards} result cards on page`);
+      this.logInfo(`📊 Found ${totalCards} result cards on page (fallback - no boundary)`);
       return totalCards;
     } catch (error) {
       this.logError(`Error counting filtered result cards: ${error}`);

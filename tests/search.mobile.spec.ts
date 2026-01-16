@@ -35,6 +35,34 @@ async function blockSleeknote(page: any) {
   });
 }
 
+// Helper to close the mobile filter panel (Refine) after selecting filters
+async function closeFilterPanel(page: any) {
+  try {
+    // Try Apply button first (mobile viewports hide this with hidden-md hidden-lg)
+    const applyBtn = page.locator('.btn.btn-primary.refine-apply:visible').first();
+    const applyVisible = await applyBtn.isVisible({ timeout: 1000 }).catch(() => false);
+    
+    if (applyVisible) {
+      await applyBtn.click({ force: true, timeout: 5000 });
+      await page.waitForTimeout(800);
+      return;
+    }
+    
+    // Fallback: Use X button
+    const closeBtn = page.locator('.refine-cross').first();
+    const closeVisible = await closeBtn.isVisible({ timeout: 1000 }).catch(() => false);
+    
+    if (closeVisible) {
+      // Scroll to X if needed
+      await closeBtn.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
+      await closeBtn.click({ force: true, timeout: 5000 });
+      await page.waitForTimeout(800);
+    }
+  } catch (err) {
+    console.log(`⚠️ Could not close filter panel: ${err}`);
+  }
+}
+
 test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
   // BEFORE EACH - Configure mobile viewport and navigate to search page
@@ -80,24 +108,18 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
   // 🔵 TC-001-MOBILE — Validate minimum night filter (2 nights)
   // ============================================================
   test('TC-001-MOBILE — Validate minimum night filter (2 nights)', async ({ pm }, testInfo) => {
+    test.setTimeout(120000); // 2 minutes for mobile tests
     const nightsData = testData.searchPage.filters.nights;
 
-    // STEP 1 — Select nights filter
+    // STEP 1 — Select nights filter using mobile step-by-step method
     await test.step(`Select ${nightsData.min} nights filter`, async () => {
-      // Scroll to filter for mobile visibility
-      const nightsSelect = pm.getPage().locator('select[data-option-type="nts"]').first();
-      await nightsSelect.scrollIntoViewIfNeeded();
-      await pm.getPage().waitForTimeout(300);
-      
-      await pm.onSearchPage().selectNightsFilter(nightsData.min);
+      await pm.onSearchPage().selectNightsFilterMobile(nightsData.min);
     });
 
     // STEP 2 — Validate results
     let exactMatches = 0;
     await test.step('Validate results are displayed', async () => {
       // Mobile-specific: Validate search results using correct selectors from HTML
-      console.log('🔍 Validating search results matching the filter criteria...');
-      
       // Count filtered results (before "More results..." section)
       const filteredCount = await pm.onSearchPage().countFilteredResultCards();
       
@@ -123,16 +145,12 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
   // 🔵 TC-002-MOBILE — Validate default nights filter (7 nights)
   // ============================================================
   test('TC-002-MOBILE — Validate default nights filter (7 nights)', async ({ pm }, testInfo) => {
+    test.setTimeout(120000); // 2 minutes for mobile tests
     const nightsData = testData.searchPage.filters.nights;
 
-    // STEP 1 — Select nights filter
+    // STEP 1 — Select nights filter using mobile step-by-step method
     await test.step(`Select ${nightsData.default} nights filter`, async () => {
-      // Scroll to filter for mobile visibility
-      const nightsSelect = pm.getPage().locator('select[data-option-type="nts"]').first();
-      await nightsSelect.scrollIntoViewIfNeeded();
-      await pm.getPage().waitForTimeout(300);
-      
-      await pm.onSearchPage().selectNightsFilter(nightsData.default);
+      await pm.onSearchPage().selectNightsFilterMobile(nightsData.default);
     });
 
     // STEP 2 — Validate results
@@ -156,6 +174,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
       console.log('VALIDATION PASSED: Results are displayed (Mobile)');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log(`VALIDATION PASSED: Results contain "${nightsData.default} Nights" (Mobile)`);
       console.log(`✅ TC-002-MOBILE PASS — ${nightsData.default} nights filter validated successfully`);
     });
@@ -165,16 +184,12 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
   // 🔵 TC-003-MOBILE — Validate maximum nights filter (13 nights)
   // ============================================================
   test('TC-003-MOBILE — Validate maximum nights filter (13 nights)', async ({ pm }, testInfo) => {
+    test.setTimeout(120000); // 2 minutes for mobile tests
     const nightsData = testData.searchPage.filters.nights;
 
-    // STEP 1 — Select nights filter
+    // STEP 1 — Select nights filter using mobile step-by-step method
     await test.step(`Select ${nightsData.max} nights filter`, async () => {
-      // Scroll to filter for mobile visibility
-      const nightsSelect = pm.getPage().locator('select[data-option-type="nts"]').first();
-      await nightsSelect.scrollIntoViewIfNeeded();
-      await pm.getPage().waitForTimeout(300);
-      
-      await pm.onSearchPage().selectNightsFilter(nightsData.max);
+      await pm.onSearchPage().selectNightsFilterMobile(nightsData.max);
     });
 
     // STEP 2 — Validate results
@@ -198,6 +213,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
       console.log('VALIDATION PASSED: Results are displayed (Mobile)');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log(`VALIDATION PASSED: Results contain "${nightsData.max} Nights" (Mobile)`);
       console.log(`✅ TC-003-MOBILE PASS — ${nightsData.max} nights filter validated successfully`);
     });
@@ -207,16 +223,19 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
   // 🔵 TC-007-MOBILE — Validate country filter (France)
   // ============================================================
   test('TC-007-MOBILE — Validate country with many properties (France)', async ({ pm }, testInfo) => {
+    test.setTimeout(120000); // 2 minutes for mobile tests
+    const countryCode = 'FR';
     const country = 'France';
 
-    // STEP 1 — Select country filter
+    // STEP 1 — Select country filter using mobile-specific method
     await test.step(`Select country: ${country}`, async () => {
       // Scroll to filters sidebar for mobile visibility
       const filtersSidebar = pm.getPage().locator('#holiday-collapse');
       await filtersSidebar.scrollIntoViewIfNeeded();
       await pm.getPage().waitForTimeout(300);
       
-      await pm.onSearchPage().selectCountryFilter(country);
+      // Use mobile-specific country filter that expands accordion and closes panel
+      await pm.onSearchPage().selectCountryFilterMobile(countryCode);
     });
 
     // STEP 2 — Validate results
@@ -254,7 +273,9 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
   // 🔵 TC-009-MOBILE — Validate 7 nights + France combination
   // ============================================================
   test('TC-009-MOBILE — Validate 7 nights + France combination', async ({ pm }, testInfo) => {
+    test.setTimeout(120000); // 2 minutes for mobile tests
     const nights = testData.searchPage.filters.nights.default;
+    const countryCode = 'FR';
     const country = 'France';
 
     // STEP 1 — Apply filters
@@ -264,8 +285,11 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
       await nightsSelect.scrollIntoViewIfNeeded();
       await pm.getPage().waitForTimeout(300);
       
-      await pm.onSearchPage().selectNightsFilter(nights);
-      await pm.onSearchPage().selectCountryFilter(country);
+      // Select nights using mobile method
+      await pm.onSearchPage().selectNightsFilterMobile(nights);
+      
+      // Then select country using mobile method (which expands accordion and closes panel)
+      await pm.onSearchPage().selectCountryFilterMobile(countryCode);
     });
 
     // STEP 2 — Validate results
@@ -323,19 +347,29 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
       console.log(`Initial results displayed: ${initialCount}`);
     });
 
-    // STEP 2 — Change results per page
+    // STEP 2 — Close Refine panel (to avoid overlay blocking)
+    await test.step('Close Refine panel', async () => {
+      console.log('Closing Refine panel to avoid overlay blocking...');
+      const page = pm.getPage();
+      
+      // Ensure filter panel is closed before interacting with results-per-page button
+      await closeFilterPanel(page);
+      await page.waitForTimeout(800);
+    });
+
+    // STEP 3 — Change results per page
     await test.step('Change results per page to 20', async () => {
       await pm.onSearchPage().selectResultsPerPage('20');
     });
 
-    // STEP 3 — Count new results
+    // STEP 4 — Count new results
     let newCount = 0;
     await test.step('Count new results (20 per page)', async () => {
       newCount = await pm.onSearchPage().countResultCards();
       console.log(`New results displayed: ${newCount}`);
     });
 
-    // STEP 4 — Finish test
+    // STEP 5 — Finish test
     await test.step('Finish test', async () => {
       console.log(`VALIDATION PASSED: Results increased from ${initialCount} to ${newCount} (Mobile)`);
       console.log(`✅ TC-011-MOBILE PASS — Results per page change validated successfully`);
@@ -351,12 +385,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
     // STEP 1 — Select accommodation filter
     await test.step(`Select accommodation: ${accommodation}`, async () => {
-      // Scroll to filters sidebar for mobile visibility
-      const filtersSidebar = pm.getPage().locator('#holiday-collapse');
-      await filtersSidebar.scrollIntoViewIfNeeded();
-      await pm.getPage().waitForTimeout(500);
-      
-      await pm.onSearchPage().selectAccommodationFilter(accommodation);
+      await pm.onSearchPage().selectAccommodationTypeMobile(accommodation);
     });
 
     // STEP 2 — Validate results
@@ -383,12 +412,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
     // STEP 1 — Select rating filter
     await test.step(`Select rating: ${rating} snowflakes`, async () => {
-      // Scroll to filters sidebar for mobile visibility
-      const filtersSidebar = pm.getPage().locator('#holiday-collapse');
-      await filtersSidebar.scrollIntoViewIfNeeded();
-      await pm.getPage().waitForTimeout(500);
-      
-      await pm.onSearchPage().selectRatingFilter(rating);
+      await pm.onSearchPage().selectRatingMobile(rating);
     });
 
     // STEP 2 — Validate results
