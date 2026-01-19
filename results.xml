@@ -1,247 +1,177 @@
-<testsuites id="" name="" tests="11" failures="2" skipped="0" errors="0" time="222.3553359999992">
-<testsuite name="components.spec.ts" timestamp="2026-01-14T14:20:37.210Z" hostname="chromium" tests="11" failures="2" skipped="0" time="425.919" errors="0">
-<testcase name="Components Page › TC1 — Validate Logo Navigation" classname="components.spec.ts" time="6.32">
+<testsuites id="" name="" tests="12" failures="0" skipped="0" errors="0" time="143.10659900000002">
+<testsuite name="home.mobile.spec.ts" timestamp="2026-01-19T11:06:30.790Z" hostname="Mobile Chrome" tests="6" failures="0" skipped="0" time="274.912" errors="0">
+<testcase name="Home Page Mobile › TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)" classname="home.mobile.spec.ts" time="37.873">
 <system-out>
 <![CDATA[
-=== TEST: TC1 — Validate Logo Navigation ===
-
-===== TEST STARTED: TC1 — Validate Logo Navigation =====
-
-VALIDATION PASSED: Header logo clicked and redirected to Home Page
-✓ TC1 completed successfully
+=== TEST: TC15-MOBILE — Validate Main Titles on the Home Page (Mobile) ===
+VALIDATION PASSED: All 3 home page titles validated successfully (Mobile)
+✓ TC15-MOBILE completed successfully - validated 3 titles
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Components Page › TC2 — Header Navigation + Submenu Validation" classname="components.spec.ts" time="219.88">
-<failure message="components.spec.ts:65:9 TC2 — Header Navigation + Submenu Validation" type="FAILURE">
-<![CDATA[  [chromium] › components.spec.ts:65:9 › Components Page › TC2 — Header Navigation + Submenu Validation 
-
-    Error: Soft validation errors detected:
-    - Title does NOT contain expected label: "Search"
-    - Title does NOT contain expected label: "B&B hotels"
-    - Title does NOT contain expected label: "Hotels"
-    - Title does NOT contain expected label: "All other countries"
-    - Title does NOT contain expected label: "Tignes-Val d'Isère"
-    - Title does NOT contain expected label: "Alberg"
-
-       at ..\support\baseTest.ts:26
-
-      24 |     if (errors.length > 0) {
-      25 |       console.log(`=== END: FAIL (soft errors: ${errors.length}) ===`);
-    > 26 |       throw new Error(`Soft validation errors detected:\n- ${errors.join('\n- ')}`);
-         |             ^
-      27 |     }
-      28 |
-      29 |     if (strictWarnings && warnings.length > 0) {
-        at Object.pm (C:\Projects\playwright-typescript\igluski-playwright-ts\support\baseTest.ts:26:13)
-
-    attachment #1: TC2 — Errors Summary (text/plain) ───────────────────────────────────────────────
-    Title does NOT contain expected label: "Search"
-    Title does NOT contain expected label: "B&B hotels"
-    Title does NOT contain expected label: "Hotels"
-    Title does NOT contain expected label: "All other countries"
-    Title does NOT contain expected label: "Tignes-Val d'Isère"
-    Title does NOT contain expected...
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\error-context.md
-]]>
-</failure>
+<testcase name="Home Page Mobile › TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)" classname="home.mobile.spec.ts" time="49.85">
 <system-out>
 <![CDATA[
-=== TEST: TC2 — Header Navigation + Submenu Validation ===
-
-===== TEST STARTED: TC2 — Header Navigation + Submenu Validation =====
-
-VALIDATION PASSED: Header navigation items visibility validated
-[ERROR] Title does NOT contain expected label: "Search"
-VALIDATION PASSED: Main menu navigation validated successfully
-[ERROR] Title does NOT contain expected label: "B&B hotels"
-[ERROR] Title does NOT contain expected label: "Hotels"
-[ERROR] Title does NOT contain expected label: "All other countries"
-[ERROR] Title does NOT contain expected label: "Tignes-Val d'Isère"
-[ERROR] Title does NOT contain expected label: "Alberg"
-VALIDATION PASSED: Submenu navigation validated successfully
-
-==================== TC2 — SUMMARY OF ERRORS ====================
-Title does NOT contain expected label: "Search"
-Title does NOT contain expected label: "B&B hotels"
-Title does NOT contain expected label: "Hotels"
-Title does NOT contain expected label: "All other countries"
-Title does NOT contain expected label: "Tignes-Val d'Isère"
-Title does NOT contain expected label: "Alberg"
-=================================================================
-
-=== END: FAIL (soft errors: 6) ===
-
-[[ATTACHMENT|test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\test-failed-1.png]]
-
-[[ATTACHMENT|test-results\components-Components-Page-d20a5-vigation-Submenu-Validation-chromium\error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC3 — Validate Contact Information in the Header" classname="components.spec.ts" time="5.819">
-<system-out>
-<![CDATA[
-=== TEST: TC3 — Validate Contact Information in the Header ===
-
-===== TEST STARTED: TC3 — Validate Contact Information in the Header =====
-
-VALIDATION PASSED: Header phone number validated
-VALIDATION PASSED: Contact Us link validated
-VALIDATION PASSED: Contact Us redirection validated
-✓ TC3 completed successfully - validated contact: "Phone"
+=== TEST: TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile) ===
+VALIDATION PASSED: All 8 country banners validated with correct redirections (Mobile)
+✓ TC16-MOBILE completed successfully - validated 8 banners
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Components Page › TC4 — Validate &quot;Recently Viewed&quot; Button" classname="components.spec.ts" time="8.092">
+<testcase name="Home Page Mobile › TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)" classname="home.mobile.spec.ts" time="12.044">
 <system-out>
 <![CDATA[
-=== TEST: TC4 — Validate "Recently Viewed" Button ===
-
-===== TEST STARTED: TC4 — Validate "Recently Viewed" Button =====
-
-VALIDATION PASSED: Recently Viewed button text validated
-VALIDATION PASSED: Recently Viewed panel validated
-✓ TC4 completed successfully - "Recently Viewed"
+=== TEST: TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile) ===
+VALIDATION PASSED: All 3 CTA boxes titles and redirections validated successfully (Mobile)
+✓ TC17-MOBILE completed successfully - validated 3 CTA boxes
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Components Page › TC5 — Validate Access to the Customer Portal" classname="components.spec.ts" time="12.766">
+<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="29.61">
 <system-out>
 <![CDATA[
-=== TEST: TC5 — Validate Access to the Customer Portal ===
+=== TEST: TC22-MOBILE — Validate Carousel CTA Button (Mobile) ===
+✓ Slide 1: Has CTA button
+✓ Slide 2: Has CTA button
+✓ Slide 3: Has CTA button
+✓ Slide 4: Has CTA button
 
-===== TEST STARTED: TC5 — Validate Access to the Customer Portal =====
 
-VALIDATION PASSED: Customer Portal button text validated
-VALIDATION PASSED: AJAX content loaded successfully
-VALIDATION PASSED: Customer Portal required fields validated (3 fields)
-✓ TC5 completed successfully - expected fields: Email, Password, Sign in
+==================== ✓ CAROUSEL VALIDATION SUMMARY (MOBILE) ====================
+Total slides: 4
+Slides with CTA: 4
+Slides without CTA: 0
+---------------------------------------------------------------
+Slide 1: https://forms.gle/VbTuCiWDovvUCtSCA
+   └─ Page Title: "Club Med Launch 2026/27"
+Slide 2: https://www.igluski.com/ski-holidays/next-season-ski-holidays
+   └─ Page Title: "2027 Ski Holidays | Secure Your Ski Holiday"
+Slide 3: https://www.igluski.com/ski-holidays
+   └─ Page Title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
+Slide 4: https://www.igluski.com/ski-holidays/new-year-sale
+   └─ Page Title: "New Year - New Sale!"
+=========================================================================
+
+VALIDATION PASSED: All 4 carousel slides validated with CTA verification (Mobile)
+✓ TC22-MOBILE completed successfully
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Components Page › TC6 — Validate Ratings &amp; Reviews in the Header" classname="components.spec.ts" time="10.105">
+<testcase name="Home Page Mobile › TCXX-MOBILE — Validate Inline Links in Sections (Mobile)" classname="home.mobile.spec.ts" time="132.419">
 <system-out>
 <![CDATA[
-=== TEST: TC6 — Validate Ratings & Reviews in the Header ===
+=== TEST: TCXX-MOBILE — Validate Inline Links in Sections (Mobile) ===
+=== END: PASS ===
+[ERROR] Page closed - acceptCookies
 
-===== TEST STARTED: TC6 — Validate Ratings & Reviews in the Header =====
+[[ATTACHMENT|test-results\home.mobile-Home-Page-Mobi-b821a-e-Links-in-Sections-Mobile--Mobile-Chrome\test-failed-1.png]]
 
-VALIDATION PASSED: Ratings & Reviews link text validated
-VALIDATION PASSED: Redirected to Reviews page successfully
-VALIDATION PASSED: Reviews page title validated
-✓ TC6 completed successfully - "Ratings & Reviews" → https://www.igluski.com/customer-reviews
+[[ATTACHMENT|test-results\home.mobile-Home-Page-Mobi-b821a-e-Links-in-Sections-Mobile--Mobile-Chrome\error-context.md]]
+
+=== TEST: TCXX-MOBILE — Validate Inline Links in Sections (Mobile) ===
+VALIDATION PASSED: Speak to Experts section inline links validated (Mobile)
+VALIDATION PASSED: Find Your Skiing Holiday section inline links validated (Mobile)
+✓ Inline links validation completed successfully (Mobile)
+=== END: PASS ===
+
+[[ATTACHMENT|test-results\home.mobile-Home-Page-Mobi-b821a-e-Links-in-Sections-Mobile--Mobile-Chrome-retry1\trace.zip]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page Mobile › TC26-MOBILE — Validate Mobile Layout Consistency" classname="home.mobile.spec.ts" time="13.116">
+<system-out>
+<![CDATA[
+=== TEST: TC26-MOBILE — Validate Mobile Layout Consistency ===
+VALIDATION PASSED: Page layout validated at 812px (Mobile Landscape)
+✓ TC26-MOBILE completed successfully - mobile landscape layout validated
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Components Page › TC18 — Validate Contact Section (Phone, Email, Newsletter)" classname="components.spec.ts" time="90.256">
-<failure message="components.spec.ts:285:9 TC18 — Validate Contact Section (Phone, Email, Newsletter)" type="FAILURE">
-<![CDATA[  [chromium] › components.spec.ts:285:9 › Components Page › TC18 — Validate Contact Section (Phone, Email, Newsletter) 
-
-    Test timeout of 90000ms exceeded.
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\error-context.md
-]]>
-</failure>
+</testsuite>
+<testsuite name="home.mobile.spec.ts" timestamp="2026-01-19T11:06:30.790Z" hostname="Mobile Safari" tests="6" failures="0" skipped="0" time="193.304" errors="0">
+<testcase name="Home Page Mobile › TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)" classname="home.mobile.spec.ts" time="26.36">
 <system-out>
 <![CDATA[
-=== TEST: TC18 — Validate Contact Section (Phone, Email, Newsletter) ===
-
-===== TEST STARTED: TC18 — Validate Contact Section (Phone, Email, Newsletter) =====
-
-=== END: PASS ===
-[ERROR] Page closed - contact phone validation
-VALIDATION PASSED: Contact phone block validated
-[ERROR] Page closed - contact email validation
-VALIDATION PASSED: Contact email block validated
-[ERROR] Page closed - contact newsletter validation
-VALIDATION PASSED: Contact newsletter block validated
-✓ TC18 completed successfully
-
-[[ATTACHMENT|test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\test-failed-1.png]]
-
-[[ATTACHMENT|test-results\components-Components-Page-78f87-ion-Phone-Email-Newsletter--chromium\error-context.md]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Components Page › TC20 — Validate Footer Links" classname="components.spec.ts" time="56.353">
-<system-out>
-<![CDATA[
-=== TEST: TC20 — Validate Footer Links ===
-
-===== TEST STARTED: TC20 — Validate Footer Links =====
-
-VALIDATION PASSED: All 41 footer items visibility validated
-VALIDATION PASSED: All 41 footer items text validated
-VALIDATION PASSED: All 41 footer items URL format validated
-VALIDATION PASSED: All 41 footer links navigation validated
-
-==================== FOOTER DATA VALIDATION SUMMARY ====================
-Footer Configuration:
-  • Holiday ID Search Button: "Search"
-  • Input Placeholder: "Enter your holiday ID"
-  • Description: "Holiday ID search form configuration in footer"
-  • Total footer items found: 41
-=================================================================
-
-✓ TC20 completed successfully
+=== TEST: TC15-MOBILE — Validate Main Titles on the Home Page (Mobile) ===
+VALIDATION PASSED: All 3 home page titles validated successfully (Mobile)
+✓ TC15-MOBILE completed successfully - validated 3 titles
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Components Page › TC28 — Validate &quot;Search by Holiday ID&quot; Button in Footer" classname="components.spec.ts" time="6.366">
+<testcase name="Home Page Mobile › TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)" classname="home.mobile.spec.ts" time="45.636">
 <system-out>
 <![CDATA[
-=== TEST: TC28 — Validate "Search by Holiday ID" Button in Footer ===
-
-===== TEST STARTED: TC28 — Validate "Search by Holiday ID" Button in Footer =====
-
-VALIDATION PASSED: Holiday ID Search validated - Button: "Search"
-✓ TC28 completed successfully
+=== TEST: TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile) ===
+VALIDATION PASSED: All 8 country banners validated with correct redirections (Mobile)
+✓ TC16-MOBILE completed successfully - validated 8 banners
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Components Page › TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer" classname="components.spec.ts" time="5.072">
+<testcase name="Home Page Mobile › TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)" classname="home.mobile.spec.ts" time="9.945">
 <system-out>
 <![CDATA[
-=== TEST: TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer ===
-
-===== TEST STARTED: TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer =====
-
-VALIDATION PASSED: Trust seals visibility validated (4 seals)
-VALIDATION PASSED: Trust seals clickable links validated (4 seals)
-VALIDATION PASSED: Trust seals URL format validated (4 seals)
-✓ TC-F21 completed successfully - validated 4 trust seals
+=== TEST: TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile) ===
+VALIDATION PASSED: All 3 CTA boxes titles and redirections validated successfully (Mobile)
+✓ TC17-MOBILE completed successfully - validated 3 CTA boxes
 === END: PASS ===
 ]]>
 </system-out>
 </testcase>
-<testcase name="Components Page › TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer" classname="components.spec.ts" time="4.89">
+<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="47.173">
 <system-out>
 <![CDATA[
-=== TEST: TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer ===
+=== TEST: TC22-MOBILE — Validate Carousel CTA Button (Mobile) ===
+✓ Slide 1: Has CTA button
+✓ Slide 2: Has CTA button
+✓ Slide 3: Has CTA button
+✓ Slide 4: Has CTA button
 
-===== TEST STARTED: TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer =====
 
-VALIDATION PASSED: Social media icons visibility validated (3 icons)
-VALIDATION PASSED: Social media icons links validated (3 icons)
-VALIDATION PASSED: Social media URL format validated (3 icons)
-✓ TC-F22 completed successfully - validated 3 social media icons
+==================== ✓ CAROUSEL VALIDATION SUMMARY (MOBILE) ====================
+Total slides: 4
+Slides with CTA: 4
+Slides without CTA: 0
+---------------------------------------------------------------
+Slide 1: https://www.igluski.com/ski-holidays/new-year-sale
+   └─ Page Title: "New Year - New Sale!"
+Slide 2: https://forms.gle/VbTuCiWDovvUCtSCA
+   └─ Page Title: "Club Med Launch 2026/27"
+Slide 3: https://www.igluski.com/ski-holidays/next-season-ski-holidays
+   └─ Page Title: "2027 Ski Holidays | Secure Your Ski Holiday"
+Slide 4: https://www.igluski.com/ski-holidays
+   └─ Page Title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
+=========================================================================
+
+VALIDATION PASSED: All 4 carousel slides validated with CTA verification (Mobile)
+✓ TC22-MOBILE completed successfully
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page Mobile › TCXX-MOBILE — Validate Inline Links in Sections (Mobile)" classname="home.mobile.spec.ts" time="48.182">
+<system-out>
+<![CDATA[
+=== TEST: TCXX-MOBILE — Validate Inline Links in Sections (Mobile) ===
+VALIDATION PASSED: Speak to Experts section inline links validated (Mobile)
+VALIDATION PASSED: Find Your Skiing Holiday section inline links validated (Mobile)
+✓ Inline links validation completed successfully (Mobile)
+=== END: PASS ===
+]]>
+</system-out>
+</testcase>
+<testcase name="Home Page Mobile › TC26-MOBILE — Validate Mobile Layout Consistency" classname="home.mobile.spec.ts" time="16.008">
+<system-out>
+<![CDATA[
+=== TEST: TC26-MOBILE — Validate Mobile Layout Consistency ===
+VALIDATION PASSED: Page layout validated at 812px (Mobile Landscape)
+✓ TC26-MOBILE completed successfully - mobile landscape layout validated
 === END: PASS ===
 ]]>
 </system-out>

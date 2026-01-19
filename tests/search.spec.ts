@@ -103,24 +103,25 @@ test.describe('Search and Filters — Ski Holidays', () => {
     // Verify results appear (soft check)
     await test.step('Validate results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(1);
-      console.log('VALIDATION PASSED: Results are displayed');
     });
 
     // Validate exact match count from message
+    let exactMatches = 0;
     await test.step('Validate "We have found X properties" message', async () => {
-      const exactMatches = await pm.onSearchPage().validateExactMatchCount();
-      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
-      console.log('VALIDATION PASSED: Results match expected count');
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
     });
 
     // Check result cards display correct nights text
     await test.step(`Validate results contain "${nightsData.min} Nights"`, async () => {
       await pm.onSearchPage().validateResultsContainNights(nightsData.min);
-      console.log(`VALIDATION PASSED: Results contain "${nightsData.min} Nights"`);
     });
 
     // Log test completion
     await test.step('✅ Test completed', async () => {
+      console.log('VALIDATION PASSED: Results are displayed');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
+      console.log('VALIDATION PASSED: Results match expected count');
+      console.log(`VALIDATION PASSED: Results contain "${nightsData.min} Nights"`);
       console.log(`✅ TC-001 PASS — ${nightsData.min} nights filter validated successfully`);
     });
   });
@@ -137,22 +138,22 @@ test.describe('Search and Filters — Ski Holidays', () => {
     // Verify results appear
     await test.step('Validate results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(1);
-      console.log('VALIDATION PASSED: Results are displayed');
     });
 
     // Validate exact match count
     await test.step('Validate exact match count', async () => {
       await pm.onSearchPage().validateExactMatchCount();
-      console.log('VALIDATION PASSED: Results match expected count');
     });
 
     // Validate results contain the expected duration
     await test.step(`Validate results contain "${nightsData.default} Nights"`, async () => {
       await pm.onSearchPage().validateResultsContainNights(nightsData.default);
-      console.log(`VALIDATION PASSED: Results contain "${nightsData.default} Nights"`);
     });
 
     await test.step('✅ Test completed', async () => {
+      console.log('VALIDATION PASSED: Results are displayed');
+      console.log('VALIDATION PASSED: Results match expected count');
+      console.log(`VALIDATION PASSED: Results contain "${nightsData.default} Nights"`);
       console.log(`✅ TC-002 PASS — ${nightsData.default} nights filter validated successfully`);
     });
   });
@@ -169,21 +170,21 @@ test.describe('Search and Filters — Ski Holidays', () => {
     // Verify results appear
     await test.step('Validate results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(1);
-      console.log('VALIDATION PASSED: Results are displayed');
     });
 
     // Validate exact match message and that cards show correct nights
     await test.step('Validate exact match count message (if present)', async () => {
       await pm.onSearchPage().validateExactMatchCount();
-      console.log('VALIDATION PASSED: Results match expected count');
     });
 
     await test.step(`Validate results contain "${nightsData.max} Nights"`, async () => {
       await pm.onSearchPage().validateResultsContainNights(nightsData.max);
-      console.log(`VALIDATION PASSED: Results contain "${nightsData.max} Nights"`);
     });
 
     await test.step('✅ Test completed', async () => {
+      console.log('VALIDATION PASSED: Results are displayed');
+      console.log('VALIDATION PASSED: Results match expected count');
+      console.log(`VALIDATION PASSED: Results contain "${nightsData.max} Nights"`);
       console.log(`✅ TC-003 PASS — ${nightsData.max} nights filter validated successfully`);
     });
   });

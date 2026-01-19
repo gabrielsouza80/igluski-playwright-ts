@@ -25,6 +25,12 @@ export class HomePage extends HelperBase {
   readonly acceptCookiesBtnRecommended = this.page.locator('#accept-recommended-btn-handler');
 
   // ============================
+  // SLEEKNOTE LOCATORS
+  // ============================
+  readonly sleeknotePopup = this.page.locator('sleeknote-top, [class*="sleeknote"]').first();
+  readonly sleeknoteCloseButton = this.page.locator('sleeknote-top button[aria-label*="close" i], sleeknote-top .close, [class*="sleeknote"] button[aria-label*="close" i]').first();
+
+  // ============================
   // SEARCH LOCATORS
   // ============================
   readonly propertiesSearchInput = this.page.locator('input[placeholder*="property" i]');
@@ -96,7 +102,9 @@ export class HomePage extends HelperBase {
   async validateSingleCarouselSlide(index: number, total: number): Promise<void> {
 
 
-    // Click CTA inside the active slide
+    // Scroll to CTA and click
+    await this.carouselCta.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
     await this.carouselCta.click();
     this.logInfo("✓ CTA clicked");
 
@@ -166,12 +174,44 @@ export class HomePage extends HelperBase {
     this.logInfo(`URL: ${url}`);
     this.logDivider();
 
-    // Open URL and validate pattern
-    await this.openAndValidateUrl(url, expectedPattern);
-    this.logInfo("✓ CTA navigation OK");
+    // Scroll to CTA box to ensure visibility
+    const ctaBox = this.ctaBoxes.nth(index);
+    await ctaBox.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
 
-    // Return to homepage
-    await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+    // Prepare listeners for either navigation or popup
+    const popupPromise = this.page.context().waitForEvent("page", { timeout: 8000 }).catch(() => null);
+    const navigationPromise = this.page.waitForNavigation({ timeout: 8000 }).catch(() => null);
+
+    await ctaBox.click();
+
+    const newTab = await popupPromise;
+    const didNavigateSameTab = await navigationPromise;
+
+    if (newTab) {
+      await newTab.waitForLoadState("domcontentloaded");
+      await expect(newTab).toHaveURL(expectedPattern);
+      const titleText = await newTab.title();
+      if (!titleText || !titleText.trim()) {
+        throw new Error("CTA target page title is empty");
+      }
+      this.logInfo(`Page title: "${titleText}"`);
+      this.logInfo("✓ CTA opened and validated in a new tab");
+      await newTab.close();
+    } else if (didNavigateSameTab) {
+      await expect(this.page).toHaveURL(expectedPattern);
+      const titleText = await this.page.title();
+      if (!titleText || !titleText.trim()) {
+        throw new Error("CTA target page title is empty");
+      }
+      this.logInfo(`Page title: "${titleText}"`);
+      this.logInfo("✓ CTA opened in the current tab and validated");
+
+      // Return to homepage for the next CTA validation
+      await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+    } else {
+      throw new Error("CTA did not open a new tab or navigate");
+    }
 
     this.logDivider();
   }
@@ -326,15 +366,23 @@ export class HomePage extends HelperBase {
 
     this.logInfo(`Validating title: "${expected}"`);
 
-    // Locate the title using Playwright's native text selector
-    const titleLocator = this.page.getByText(expected, { exact: false });
+    // Locate the title - must be h1, h2, or h3
+    const titleLocator = this.page.locator('h1, h2, h3').filter({ hasText: expected });
+
+    // Scroll to title to ensure visibility
+    await titleLocator.first().scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
 
     // Get text to confirm it exists
-    const text = await titleLocator.textContent();
+    const text = await titleLocator.first().textContent();
     this.logInfo(`Title text: "${text}"`);
 
-    // VALIDATION — Must be visible
-    await expect(titleLocator).toBeVisible();
+    // Get tag name to confirm it's a heading
+    const tagName = await titleLocator.first().evaluate(el => el.tagName.toLowerCase());
+    this.logInfo(`Title tag: <${tagName}>`);
+
+    // VALIDATION — Must be visible and be a heading
+    await expect(titleLocator.first()).toBeVisible();
     this.logInfo(`✓ Title found and visible: "${expected}"`);
 
     this.logDivider();
@@ -353,6 +401,9 @@ export class HomePage extends HelperBase {
   async validateCarouselCtaVisibility(slideIndex?: number): Promise<void> {
     const slideName = slideIndex !== undefined ? `Slide ${slideIndex + 1}` : "Carousel";
 
+    // Scroll to carousel to ensure visibility
+    await this.carouselCta.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
 
     // Capture CTA href for validation and logging
     const href = await this.carouselCta.getAttribute("href");
@@ -374,7 +425,9 @@ export class HomePage extends HelperBase {
       throw new Error("❌ CTA button has no href attribute");
     }
 
-    // Click CTA
+    // Scroll to CTA and click
+    await this.carouselCta.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
     await this.carouselCta.click();
     this.logInfo("✓ CTA clicked");
 
@@ -399,11 +452,28 @@ export class HomePage extends HelperBase {
 
     // Open link in new page (tab) to avoid leaving the carousel
     const newPage = await this.page.context().newPage();
+    
+    // Block Sleeknote in the new page
+    await this.blockSleeknoteInPage(newPage);
+    
     await newPage.goto(href, { waitUntil: 'domcontentloaded' });
 
-    // Validate navigation
-    await expect(newPage).toHaveURL(new RegExp(href, "i"));
-    this.logInfo(`✓ Navigation OK → ${newPage.url()}`);
+    // Validate navigation (allow short-link redirects, e.g., forms.gle -> docs.google.com)
+    const escapeRegex = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const allowedPatterns = [new RegExp(escapeRegex(href), "i")];
+
+    if (/forms\.gle/i.test(href)) {
+      allowedPatterns.push(/docs\.google\.com\/forms/i);
+    }
+
+    const finalUrl = newPage.url();
+    const matchesAllowed = allowedPatterns.some(rx => rx.test(finalUrl));
+
+    if (!matchesAllowed) {
+      throw new Error(`CTA navigation mismatch. Expected match for ${allowedPatterns.map(r => r.toString()).join(' OR ')} but got ${finalUrl}`);
+    }
+
+    this.logInfo(`✓ Navigation OK → ${finalUrl}`);
 
     // Validate page title
     const pageTitle = await newPage.title();
@@ -428,16 +498,25 @@ export class HomePage extends HelperBase {
     await this.validateCarouselCtaNavigation();
   }
 
-  async clickCarouselNextButton(currentIndex?: number, totalSlides?: number): Promise<void> {
+  async clickCarouselNextButton(currentIndex?: number, totalSlides?: number, forceMobile: boolean = false): Promise<void> {
     const nextIndex = currentIndex !== undefined && totalSlides ? currentIndex + 1 : null;
     const slideName = nextIndex !== null ? `Slide ${nextIndex + 1}/${totalSlides}` : "Carousel";
 
+    // Handle Sleeknote popup for mobile (if forceMobile is true)
+    if (forceMobile) {
+      await this.handleSleeknotePopup();
+    }
 
     // Get current active slide href to detect when slide changes
     const currentHref = await this.carouselCta.getAttribute('href');
     this.logInfo(`Current slide CTA href: ${currentHref}`);
 
-    // Click next button
+    // Scroll to next button to ensure it's visible
+    await this.carouselNextButton.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
+
+    // Click next button (without force to ensure it's actually clickable)
+    // Note: forceMobile handler already cleared any overlays
     await this.carouselNextButton.click();
     this.logInfo("✓ Clicked Next button");
 
@@ -531,6 +610,10 @@ export class HomePage extends HelperBase {
 
     // Get banner link
     const bannerLink = this.countryBannerBoxes.nth(index);
+
+    // Scroll to banner to ensure visibility
+    await bannerLink.scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(300);
 
     // Extract href and country name
     const href = await bannerLink.getAttribute('href');
@@ -859,5 +942,99 @@ export class HomePage extends HelperBase {
 
   async validateResponsiveness(width: number): Promise<void> {
     await this.validateResponsivenessAtWidth(width);
+  }
+
+  // ============================================================
+  // 🔵 SLEEKNOTE POPUP HANDLER
+  // ============================================================
+  async blockSleeknoteInPage(page: Page): Promise<void> {
+    // Block Sleeknote requests
+    await page.route('**/*sleeknote*/**', (route: any) => route.abort());
+    await page.route('**/*.sleeknote.*', (route: any) => route.abort());
+    
+    // Add CSS and MutationObserver after navigation
+    await page.addInitScript(() => {
+      // Block via CSS
+      const style = document.createElement('style');
+      style.textContent = `
+        [class*="sleeknote"],
+        sleeknote-top,
+        sleeknote-bottom,
+        sleeknote-left,
+        sleeknote-right {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
+      `;
+      
+      if (document.head) {
+        document.head.appendChild(style);
+      } else {
+        document.addEventListener('DOMContentLoaded', () => {
+          document.head.appendChild(style);
+        });
+      }
+      
+      // Monitor and remove Sleeknote elements
+      const observer = new MutationObserver(() => {
+        const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
+        sleeknoteElements.forEach((el: Element) => el.remove());
+      });
+      
+      if (document.body) {
+        observer.observe(document.body, { childList: true, subtree: true });
+      } else {
+        document.addEventListener('DOMContentLoaded', () => {
+          observer.observe(document.body, { childList: true, subtree: true });
+        });
+      }
+    });
+  }
+
+  async handleSleeknotePopup(): Promise<void> {
+    try {
+      // Check if Sleeknote popup is visible (with short timeout)
+      const isVisible = await this.sleeknotePopup.isVisible({ timeout: 2000 });
+      
+      if (isVisible) {
+        this.logInfo("Sleeknote popup detected, attempting to dismiss...");
+        
+        // Try multiple strategies to dismiss the popup
+        // Strategy 1: Try Escape key
+        await this.page.keyboard.press('Escape');
+        await this.page.waitForTimeout(300);
+        
+        // Strategy 2: Try to close button
+        try {
+          const closeButtonVisible = await this.sleeknoteCloseButton.isVisible({ timeout: 500 });
+          if (closeButtonVisible) {
+            await this.sleeknoteCloseButton.click({ force: true });
+            await this.page.waitForTimeout(300);
+          }
+        } catch {
+          // Close button not found, continue
+        }
+        
+        // Strategy 3: Remove the element via JavaScript (last resort)
+        await this.page.evaluate(() => {
+          const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
+          sleeknoteElements.forEach(el => el.remove());
+        });
+        
+        this.logInfo("✓ Sleeknote popup handled successfully");
+        await this.page.waitForTimeout(500);
+      }
+    } catch (error) {
+      // Sleeknote not present - try to remove it anyway via JavaScript
+      await this.page.evaluate(() => {
+        const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
+        sleeknoteElements.forEach(el => el.remove());
+      }).catch(() => {
+        // Ignore if no elements found
+      });
+      this.logInfo("No Sleeknote popup detected (or already handled)");
+    }
   }
 }

@@ -15,15 +15,10 @@ test.describe('Home Page', () => {
   });
 
   // ============================================================
-  // 🔵 TC15 — Validate Main Titles on the Home Page
+  // 🔵 TC01 — Validate Main Titles on the Home Page
   // ============================================================
   // This test validates the main titles displayed on the Home Page.
-  test('TC15 — Validate Main Titles on the Home Page', async ({ pm }, testInfo) => {
-
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
+  test('TC01 — Validate Main Titles on the Home Page', async ({ pm }, testInfo) => {
 
     // STEP 1 — Define expected Home Page titles
     const expectedTitles = testData.homePage.titles.data;
@@ -33,27 +28,22 @@ test.describe('Home Page', () => {
       for (const title of expectedTitles) {
         await pm.onHomePage().validateSingleTitle(title);
       }
-      console.log(`VALIDATION PASSED: All ${expectedTitles.length} home page titles validated successfully`);
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
-      console.log(`✓ TC15 completed successfully - validated ${expectedTitles.length} titles`);
+      console.log(`VALIDATION PASSED: All ${expectedTitles.length} home page titles validated successfully`);
+      console.log(`✓ TC01 completed successfully - validated ${expectedTitles.length} titles`);
     });
   });
 
   // ============================================================
-  // 🔵 TC16 — Validate Country Banners (Ski Resorts)
+  // 🔵 TC02 — Validate Country Banners (Ski Resorts)
   // ============================================================
   // This test validates country banner boxes and their redirections.
-  test('TC16 — Validate Country Banners (Ski Resorts)', async ({ pm }, testInfo) => {
+  test('TC02 — Validate Country Banners (Ski Resorts)', async ({ pm }, testInfo) => {
 
     const bannerData = testData.homePage.countryBanners;
-
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
 
     // STEP 1 — Count and validate all country banners
     let bannerCount = 0;
@@ -62,27 +52,22 @@ test.describe('Home Page', () => {
       for (let i = 0; i < bannerCount; i++) {
         await pm.onHomePage().validateSingleCountryBannerRedirection(i);
       }
-      console.log(`VALIDATION PASSED: All ${bannerCount} country banners validated with correct redirections`);
     });
 
     // STEP 2 — Finish test
     await test.step('Finish test', async () => {
-      console.log(`✓ TC16 completed successfully - validated ${bannerCount} banners`);
+      console.log(`VALIDATION PASSED: All ${bannerCount} country banners validated with correct redirections`);
+      console.log(`✓ TC02 completed successfully - validated ${bannerCount} banners`);
     });
   });
 
   // ============================================================
-  // 🔵 TC17 — Validate CTA Boxes (Call To Action)
+  // 🔵 TC03 — Validate CTA Boxes (Call To Action)
   // ============================================================
   // This test validates all CTA boxes, their titles, and their redirections.
-  test('TC17 — Validate CTA Boxes (Call To Action)', async ({ pm }, testInfo) => {
+  test('TC03 — Validate CTA Boxes (Call To Action)', async ({ pm }, testInfo) => {
 
     const ctaBoxesData = testData.homePage.ctaBoxes;
-
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
 
     // STEP 1 — Fetch CTA boxes list (optional, only for logging)
     await pm.onHomePage().getCtaBoxesList();
@@ -90,25 +75,20 @@ test.describe('Home Page', () => {
     // STEP 2 — Validate each CTA box
     await test.step('Validate CTA titles and redirections', async () => {
       await pm.onHomePage().validateCtaBoxesList(ctaBoxesData.data);
-      console.log(`VALIDATION PASSED: All ${ctaBoxesData.data.length} CTA boxes titles and redirections validated successfully`);
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
-      console.log(`✓ TC17 completed successfully - validated ${ctaBoxesData.data.length} CTA boxes`);
+      console.log(`VALIDATION PASSED: All ${ctaBoxesData.data.length} CTA boxes titles and redirections validated successfully`);
+      console.log(`✓ TC03 completed successfully - validated ${ctaBoxesData.data.length} CTA boxes`);
     });
   });
 
   // ============================================================
-  // 🔵 TC22 — Validate Carousel CTA Button
+  // 🔵 TC04 — Validate Carousel CTA Button
   // ============================================================
   // This test validates the CTA button for each carousel slide.
-  test('TC22 — Validate Carousel CTA Button', async ({ pm }, testInfo) => {
-
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
+  test('TC04 — Validate Carousel CTA Button', async ({ pm }, testInfo) => {
 
     // STEP 1 — Count carousel slides
     let totalSlides: number = 0;
@@ -190,45 +170,40 @@ test.describe('Home Page', () => {
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
-      console.log('✓ TC22 completed successfully');
+      console.log('✓ TC04 completed successfully');
     });
   });
 
   // ============================================================
-  // 🔵 TCXX — Validate Inline Links in Sections
+  // 🔵 TC05 — Validate Inline Links in Sections
   // ============================================================
   // This test validates inline links inside two Home Page sections:
   // 1) Speak to the ski experts
   // 2) Find Your Skiing Holiday
-  test('TCXX — Validate Inline Links in Sections', async ({ pm }, testInfo) => {
-
-    // STEP 0 — Start test
-    await test.step('Start test', async () => {
-      pm.onHomePage().logTestStart(testInfo.title);
-    });
+  test('TC05 — Validate Inline Links in Sections', async ({ pm }, testInfo) => {
 
     // STEP 1 — Validate Speak to Experts section
     await test.step('Validate inline links inside the "Speak to Experts" section', async () => {
       await pm.onHomePage().validateSpeakToExpertsLinksList();
-      console.log('VALIDATION PASSED: Speak to Experts section inline links validated');
     });
 
     // STEP 2 — Validate Find Your Skiing Holiday section
     await test.step('Validate inline links inside the "Find Your Skiing Holiday" section', async () => {
       await pm.onHomePage().validateFindYourSkiingHolidayLinksList();
-      console.log('VALIDATION PASSED: Find Your Skiing Holiday section inline links validated');
     });
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
+      console.log('VALIDATION PASSED: Speak to Experts section inline links validated');
+      console.log('VALIDATION PASSED: Find Your Skiing Holiday section inline links validated');
       console.log('✓ Inline links validation completed successfully');
     });
   });
 
   // ============================================================
-  // 🔵 TC26 — Validate Page Responsiveness (Mobile + Tablet)
+  // 🔵 TC06 — Validate Page Responsiveness (Mobile + Tablet)
   // ============================================================
-  test('TC26 — Validate Page Responsiveness (Mobile/Tablet)', async ({ pm }, testInfo) => {
+  test('TC06 — Validate Page Responsiveness (Mobile/Tablet)', async ({ pm }, testInfo) => {
 
     const viewports = testData.responsiveness.viewports;
 
@@ -251,7 +226,7 @@ test.describe('Home Page', () => {
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
-      console.log(`✓ TC26 completed successfully - validated ${viewports.length} viewports`);
+      console.log(`✓ TC06 completed successfully - validated ${viewports.length} viewports`);
     });
   });
 
