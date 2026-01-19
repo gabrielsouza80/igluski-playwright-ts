@@ -1,192 +1,27 @@
-<<<<<<< HEAD
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="22.039723000000002">
-<testsuite name="search.mobile.spec.ts" timestamp="2026-01-16T16:56:47.523Z" hostname="Mobile Chrome" tests="1" failures="0" skipped="0" time="19.866" errors="0">
-<testcase name="Search and Filters — Ski Holidays (Mobile) › TC-019-MOBILE — Validate rating filter (5 snowflakes)" classname="search.mobile.spec.ts" time="19.866">
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="359.193263">
+<testsuite name="search.spec.ts" timestamp="2026-01-19T16:44:04.022Z" hostname="chromium" tests="1" failures="0" skipped="0" time="356.829" errors="0">
+<testcase name="Search and Filters — Ski Holidays › TC-014 — Extremes: 2 minimums and 2 maximums" classname="search.spec.ts" time="356.829">
 <system-out>
 <![CDATA[
-=== TEST: TC-019-MOBILE — Validate rating filter (5 snowflakes) ===
-✓ Filter panel opened
-VALIDATION PASSED: Filtered results are displayed (Mobile)
-✓ Found 284 properties with 5+ rating
-VALIDATION PASSED: All results have 5+ snowflakes rating (Mobile)
-✅ TC-019-MOBILE PASS — 5 snowflakes filter validated successfully
-=======
-<testsuites id="" name="" tests="12" failures="0" skipped="0" errors="0" time="143.10659900000002">
-<testsuite name="home.mobile.spec.ts" timestamp="2026-01-19T11:06:30.790Z" hostname="Mobile Chrome" tests="6" failures="0" skipped="0" time="274.912" errors="0">
-<testcase name="Home Page Mobile › TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)" classname="home.mobile.spec.ts" time="37.873">
-<system-out>
-<![CDATA[
-=== TEST: TC15-MOBILE — Validate Main Titles on the Home Page (Mobile) ===
-VALIDATION PASSED: All 3 home page titles validated successfully (Mobile)
-✓ TC15-MOBILE completed successfully - validated 3 titles
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page Mobile › TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)" classname="home.mobile.spec.ts" time="49.85">
-<system-out>
-<![CDATA[
-=== TEST: TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile) ===
-VALIDATION PASSED: All 8 country banners validated with correct redirections (Mobile)
-✓ TC16-MOBILE completed successfully - validated 8 banners
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page Mobile › TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)" classname="home.mobile.spec.ts" time="12.044">
-<system-out>
-<![CDATA[
-=== TEST: TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile) ===
-VALIDATION PASSED: All 3 CTA boxes titles and redirections validated successfully (Mobile)
-✓ TC17-MOBILE completed successfully - validated 3 CTA boxes
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="29.61">
-<system-out>
-<![CDATA[
-=== TEST: TC22-MOBILE — Validate Carousel CTA Button (Mobile) ===
-✓ Slide 1: Has CTA button
-✓ Slide 2: Has CTA button
-✓ Slide 3: Has CTA button
-✓ Slide 4: Has CTA button
+=== TEST: TC-014 — Extremes: 2 minimums and 2 maximums ===
+✓ EXTREME MIN #1 (1a,0c,2n): All filters validated (1a, 0c, 2n)
+🔎 EXTREME MIN #1 (1a,0c,2n): results present → 4 cards
+✓ EXTREME MIN #2 (2a,0c,2n): All filters validated (2a, 0c, 2n)
+🔎 EXTREME MIN #2 (2a,0c,2n): results present → 4 cards
+❌ EXTREME MAX #1 (30+ a,10c,14+ n): Failed to select travelers - continuing anyway
+[ERROR] [FAIL] Filter validation failed before results check: Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
 
+Received: [31mfalse[39m
+⚠ EXTREME MAX #1 (30+ a,10c,14+ n): Filter validation failed - Error: Filter validation failed - ensure filters are correctly set before validating results: Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
 
-==================== ✓ CAROUSEL VALIDATION SUMMARY (MOBILE) ====================
-Total slides: 4
-Slides with CTA: 4
-Slides without CTA: 0
----------------------------------------------------------------
-Slide 1: https://forms.gle/VbTuCiWDovvUCtSCA
-   └─ Page Title: "Club Med Launch 2026/27"
-Slide 2: https://www.igluski.com/ski-holidays/next-season-ski-holidays
-   └─ Page Title: "2027 Ski Holidays | Secure Your Ski Holiday"
-Slide 3: https://www.igluski.com/ski-holidays
-   └─ Page Title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
-Slide 4: https://www.igluski.com/ski-holidays/new-year-sale
-   └─ Page Title: "New Year - New Sale!"
-=========================================================================
-
-VALIDATION PASSED: All 4 carousel slides validated with CTA verification (Mobile)
-✓ TC22-MOBILE completed successfully
+Received: [31mfalse[39m
+🔎 EXTREME MAX #1 (30+ a,10c,14+ n): results present → 1188 cards
+⚠ TC-014: Test execution exceeded 220s - completing test
+VALIDATION PASSED: Extremes (2 min, 2 max) executed
+✓ TC-014 completed — extremes (2 min, 2 max) executed
 === END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page Mobile › TCXX-MOBILE — Validate Inline Links in Sections (Mobile)" classname="home.mobile.spec.ts" time="132.419">
-<system-out>
-<![CDATA[
-=== TEST: TCXX-MOBILE — Validate Inline Links in Sections (Mobile) ===
-=== END: PASS ===
-[ERROR] Page closed - acceptCookies
-
-[[ATTACHMENT|test-results\home.mobile-Home-Page-Mobi-b821a-e-Links-in-Sections-Mobile--Mobile-Chrome\test-failed-1.png]]
-
-[[ATTACHMENT|test-results\home.mobile-Home-Page-Mobi-b821a-e-Links-in-Sections-Mobile--Mobile-Chrome\error-context.md]]
-
-=== TEST: TCXX-MOBILE — Validate Inline Links in Sections (Mobile) ===
-VALIDATION PASSED: Speak to Experts section inline links validated (Mobile)
-VALIDATION PASSED: Find Your Skiing Holiday section inline links validated (Mobile)
-✓ Inline links validation completed successfully (Mobile)
-=== END: PASS ===
-
-[[ATTACHMENT|test-results\home.mobile-Home-Page-Mobi-b821a-e-Links-in-Sections-Mobile--Mobile-Chrome-retry1\trace.zip]]
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page Mobile › TC26-MOBILE — Validate Mobile Layout Consistency" classname="home.mobile.spec.ts" time="13.116">
-<system-out>
-<![CDATA[
-=== TEST: TC26-MOBILE — Validate Mobile Layout Consistency ===
-VALIDATION PASSED: Page layout validated at 812px (Mobile Landscape)
-✓ TC26-MOBILE completed successfully - mobile landscape layout validated
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-</testsuite>
-<testsuite name="home.mobile.spec.ts" timestamp="2026-01-19T11:06:30.790Z" hostname="Mobile Safari" tests="6" failures="0" skipped="0" time="193.304" errors="0">
-<testcase name="Home Page Mobile › TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)" classname="home.mobile.spec.ts" time="26.36">
-<system-out>
-<![CDATA[
-=== TEST: TC15-MOBILE — Validate Main Titles on the Home Page (Mobile) ===
-VALIDATION PASSED: All 3 home page titles validated successfully (Mobile)
-✓ TC15-MOBILE completed successfully - validated 3 titles
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page Mobile › TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)" classname="home.mobile.spec.ts" time="45.636">
-<system-out>
-<![CDATA[
-=== TEST: TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile) ===
-VALIDATION PASSED: All 8 country banners validated with correct redirections (Mobile)
-✓ TC16-MOBILE completed successfully - validated 8 banners
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page Mobile › TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)" classname="home.mobile.spec.ts" time="9.945">
-<system-out>
-<![CDATA[
-=== TEST: TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile) ===
-VALIDATION PASSED: All 3 CTA boxes titles and redirections validated successfully (Mobile)
-✓ TC17-MOBILE completed successfully - validated 3 CTA boxes
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page Mobile › TC22-MOBILE — Validate Carousel CTA Button (Mobile)" classname="home.mobile.spec.ts" time="47.173">
-<system-out>
-<![CDATA[
-=== TEST: TC22-MOBILE — Validate Carousel CTA Button (Mobile) ===
-✓ Slide 1: Has CTA button
-✓ Slide 2: Has CTA button
-✓ Slide 3: Has CTA button
-✓ Slide 4: Has CTA button
-
-
-==================== ✓ CAROUSEL VALIDATION SUMMARY (MOBILE) ====================
-Total slides: 4
-Slides with CTA: 4
-Slides without CTA: 0
----------------------------------------------------------------
-Slide 1: https://www.igluski.com/ski-holidays/new-year-sale
-   └─ Page Title: "New Year - New Sale!"
-Slide 2: https://forms.gle/VbTuCiWDovvUCtSCA
-   └─ Page Title: "Club Med Launch 2026/27"
-Slide 3: https://www.igluski.com/ski-holidays/next-season-ski-holidays
-   └─ Page Title: "2027 Ski Holidays | Secure Your Ski Holiday"
-Slide 4: https://www.igluski.com/ski-holidays
-   └─ Page Title: "Ski Holidays 2026/2027 | Price Match Guarantee!"
-=========================================================================
-
-VALIDATION PASSED: All 4 carousel slides validated with CTA verification (Mobile)
-✓ TC22-MOBILE completed successfully
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page Mobile › TCXX-MOBILE — Validate Inline Links in Sections (Mobile)" classname="home.mobile.spec.ts" time="48.182">
-<system-out>
-<![CDATA[
-=== TEST: TCXX-MOBILE — Validate Inline Links in Sections (Mobile) ===
-VALIDATION PASSED: Speak to Experts section inline links validated (Mobile)
-VALIDATION PASSED: Find Your Skiing Holiday section inline links validated (Mobile)
-✓ Inline links validation completed successfully (Mobile)
-=== END: PASS ===
-]]>
-</system-out>
-</testcase>
-<testcase name="Home Page Mobile › TC26-MOBILE — Validate Mobile Layout Consistency" classname="home.mobile.spec.ts" time="16.008">
-<system-out>
-<![CDATA[
-=== TEST: TC26-MOBILE — Validate Mobile Layout Consistency ===
-VALIDATION PASSED: Page layout validated at 812px (Mobile Landscape)
-✓ TC26-MOBILE completed successfully - mobile landscape layout validated
->>>>>>> origin/CreateHomeMobile
-=== END: PASS ===
+❌ EXTREME MAX #2 (30+ a,10c,14+ n): Failed to select travelers - continuing anyway
+⚠ EXTREME MAX #2 (30+ a,10c,14+ n): Page closed after travelers - skipping remaining steps
 ]]>
 </system-out>
 </testcase>

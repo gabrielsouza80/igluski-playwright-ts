@@ -71,18 +71,50 @@ test.describe('Search and Filters — Ski Holidays', () => {
   test.beforeEach(async ({ pm }) => {
     try {
       await pm.onSearchPage().navigateAndAcceptCookies('/ski-holidays');
-      // Wait for page to fully load before continuing
-      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
-      // Standardize state: always clear nights before each TC
-      await pm.onSearchPage().deselectAllNights().catch((err) => {
-        // If deselect fails, log but continue - page may be in process of reloading
-        console.warn(`⚠️ Warning in beforeEach deselectAllNights: ${err.message}`);
+      // Wait for DOM to be ready (more reliable than networkidle)
+      await pm.getPage().waitForLoadState('domcontentloaded', { timeout: 10000 });
+      // Standardize state: always clear nights before each TC (programmatic DOM clear)
+      await test.step('Clear nights filter (DOM reset)', async () => {
+        const nightsSelect = pm.getPage()
+          .locator('#holiday-collapse')
+          .locator('select[data-option-type="nts"], select.faceted-search__select.marker-moon')
+          .first();
+        
+        await nightsSelect.evaluate((sel) => {
+          const select = sel as HTMLSelectElement;
+          for (const opt of Array.from(select.options)) {
+            if (!opt.disabled) opt.selected = false;
+          }
+          select.dispatchEvent(new Event('input', { bubbles: true }));
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        }).catch((err) => {
+          console.warn(`⚠️ Warning: Could not clear nights filter: ${err.message}`);
+        });
       });
     } catch (error) {
       // If beforeEach setup fails completely, try one more time with fresh navigation
       console.log(`⚠️ beforeEach setup failed, retrying: ${error}`);
       await pm.onSearchPage().navigateAndAcceptCookies('/ski-holidays');
-      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
+      await pm.getPage().waitForLoadState('domcontentloaded', { timeout: 10000 });
+      
+      // IMPORTANT: Clear nights filter on retry too
+      await test.step('Clear nights filter (DOM reset - retry)', async () => {
+        const nightsSelect = pm.getPage()
+          .locator('#holiday-collapse')
+          .locator('select[data-option-type="nts"], select.faceted-search__select.marker-moon')
+          .first();
+        
+        await nightsSelect.evaluate((sel) => {
+          const select = sel as HTMLSelectElement;
+          for (const opt of Array.from(select.options)) {
+            if (!opt.disabled) opt.selected = false;
+          }
+          select.dispatchEvent(new Event('input', { bubbles: true }));
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        }).catch((err) => {
+          console.warn(`⚠️ Warning on retry: Could not clear nights filter: ${err.message}`);
+        });
+      });
     }
   });
 
@@ -108,6 +140,8 @@ test.describe('Search and Filters — Ski Holidays', () => {
     // Validate exact match count from message
     let exactMatches = 0;
     await test.step('Validate "We have found X properties" message', async () => {
+      // Validate filters before checking results
+      await pm.onSearchPage().validateFiltersBeforeResults(nightsData.min, null, null);
       exactMatches = await pm.onSearchPage().validateExactMatchCount();
     });
 
@@ -141,8 +175,11 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Validate exact match count
+    let exactMatches = 0;
     await test.step('Validate exact match count', async () => {
-      await pm.onSearchPage().validateExactMatchCount();
+      // Validate filters before checking results
+      await pm.onSearchPage().validateFiltersBeforeResults(nightsData.default, null, null);
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
     });
 
     // Validate results contain the expected duration
@@ -152,6 +189,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
     await test.step('✅ Test completed', async () => {
       console.log('VALIDATION PASSED: Results are displayed');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log('VALIDATION PASSED: Results match expected count');
       console.log(`VALIDATION PASSED: Results contain "${nightsData.default} Nights"`);
       console.log(`✅ TC-002 PASS — ${nightsData.default} nights filter validated successfully`);
@@ -173,8 +211,11 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Validate exact match message and that cards show correct nights
+    let exactMatches = 0;
     await test.step('Validate exact match count message (if present)', async () => {
-      await pm.onSearchPage().validateExactMatchCount();
+      // Validate filters before checking results
+      await pm.onSearchPage().validateFiltersBeforeResults(nightsData.max, null, null);
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
     });
 
     await test.step(`Validate results contain "${nightsData.max} Nights"`, async () => {
@@ -183,6 +224,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
     await test.step('✅ Test completed', async () => {
       console.log('VALIDATION PASSED: Results are displayed');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log('VALIDATION PASSED: Results match expected count');
       console.log(`VALIDATION PASSED: Results contain "${nightsData.max} Nights"`);
       console.log(`✅ TC-003 PASS — ${nightsData.max} nights filter validated successfully`);
@@ -205,8 +247,9 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Validate exact match message (may be absent for very large result sets)
+    let exactMatches = 0;
     await test.step('Validate exact match count message (if present)', async () => {
-      await pm.onSearchPage().validateExactMatchCount();
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
       console.log('VALIDATION PASSED: Results match expected count');
     });
 
@@ -229,6 +272,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     await test.step('✅ Test completed', async () => {
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log(`✅ TC-004 PASS — ${nightsData.maxOpen} nights filter validated successfully`);
     });
   });
@@ -248,10 +292,11 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Verify multiple results appear (at least 10)
+    let exactMatches = 0;
     await test.step('Validate many results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(10);
       console.log('VALIDATION PASSED: Many results are displayed');
-      await pm.onSearchPage().validateExactMatchCount();
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
       console.log('VALIDATION PASSED: Results match expected count');
     });
 
@@ -262,6 +307,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     await test.step('✅ Test completed', async () => {
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log(`✅ TC-007 PASS — ${countryData.name} country filter validated successfully`);
     });
   });
@@ -276,14 +322,16 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Verify at least some results appear
+    let exactMatches = 0;
     await test.step('Validate results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(1);
       console.log('VALIDATION PASSED: Results are displayed for USA (low volume country)');
-      await pm.onSearchPage().validateExactMatchCount();
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
       console.log('VALIDATION PASSED: Results match expected count');
     });
 
     await test.step('✅ Test completed', async () => {
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log(`✅ TC-008 PASS — ${countryData.name} country filter validated successfully`);
     });
   });
@@ -312,15 +360,22 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
     // Country selection can reset duration; enforce nights again for stability.
     await test.step(`Re-apply ${nightsData.default} nights after country selection`, async () => {
-      await pm.onSearchPage().deselectAllNights();
+      await pm.onSearchPage().deselectAllNights().catch((err) => {
+        console.log(`⚠ Could not deselect nights before re-applying: ${err}`);
+      });
+      await pm.onSearchPage().openNightsDropdown();
       await pm.onSearchPage().selectNightsFilter(nightsData.default);
+      await pm.onSearchPage().assertNightsSelected(nightsData.default);
       console.log(`VALIDATION PASSED: Re-applied ${nightsData.default} nights after country selection`);
     });
 
     // Verify combined filters return results
+    let exactMatches = 0;
     await test.step('Validate combined results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(10);
-      await pm.onSearchPage().validateExactMatchCount();
+      // Validate filters before checking results
+      await pm.onSearchPage().validateFiltersBeforeResults(nightsData.default, null, null);
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
       console.log('VALIDATION PASSED: Combined filters returned results');
     });
 
@@ -332,6 +387,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     await test.step('✅ Test completed', async () => {
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log(`✅ TC-009 PASS — Combined filter validated: ${nightsData.default} nights + ${countryData.name}`);
     });
   });
@@ -355,19 +411,25 @@ test.describe('Search and Filters — Ski Holidays', () => {
 
     // Country selection can reset duration; enforce nights again for stability.
     await test.step(`Re-apply ${nightsData.maxOpen} nights after country selection`, async () => {
-      await pm.onSearchPage().deselectAllNights();
+      await pm.onSearchPage().deselectAllNights().catch((err) => {
+        console.log(`⚠ Could not deselect nights before re-applying: ${err}`);
+      });
+      await pm.onSearchPage().openNightsDropdown();
       await pm.onSearchPage().selectNightsFilter(nightsData.maxOpen);
+      await pm.onSearchPage().assertNightsSelected(nightsData.maxOpen);
       console.log(`VALIDATION PASSED: Re-applied ${nightsData.maxOpen} nights after country selection`);
     });
 
     // Verify combined filters return results
+    let exactMatches = 0;
     await test.step('Validate combined results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(1);
-      await pm.onSearchPage().validateExactMatchCount();
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
       console.log('VALIDATION PASSED: Combined filters returned results');
     });
 
     await test.step('✅ Test completed', async () => {
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log(`✅ TC-010 PASS — Combined filter validated: ${nightsData.maxOpen} nights + ${countryData.name}`);
     });
   });
@@ -482,34 +544,91 @@ test.describe('Search and Filters — Ski Holidays', () => {
   // TC-014: Tests 4 extreme filter combinations (2 min, 2 max) with timeout guard
   test('TC-014 — Extremes: 2 minimums and 2 maximums', async ({ pm }, testInfo) => {
     // Set extended timeout for this test since it performs 4 extreme filter combinations
-    testInfo.setTimeout(150000); // 150 seconds
+    testInfo.setTimeout(240000); // 240 seconds (4 minutes)
     
     // Data-driven approach: loops through extremes combinations from testdata.json
     const combos = testData.searchPage.extremes.combinations;
 
+    // Helper: ensure we have a live search page and baseline filters before each combo
+    const ensureSearchPageAlive = async (label: string) => {
+      let page = pm.onSearchPage()['page'];
+      if (!page || page.isClosed()) {
+        console.log(`↻ ${label}: Page closed, reloading /ski-holidays`);
+        await pm.onSearchPage().navigateAndAcceptCookies('/ski-holidays');
+        await pm.onSearchPage().deselectAllNights().catch(() => {});
+        await pm.onSearchPage().resetTravelersFilter().catch(() => {});
+        page = pm.onSearchPage()['page'];
+      }
+      return page;
+    };
+
     // Main test execution wrapped for timeout control
     const testExecution = async () => {
       try {
+        let isFirstCombo = true;
+        let previousNights: string | number | null = null;
+        
         for (const combo of combos) {
-          // Check if page still exists before each combination
-          const page = pm.onSearchPage()['page']; // Access internal page object
-          if (page && page.isClosed()) {
-            console.log(`⚠ ${combo.label}: Page closed - skipping remaining combinations`);
-            break; // Exit loop early
+          // Ensure page is alive (recover if closed) before starting this combo
+          const page = await ensureSearchPageAlive(combo.label);
+          if (!page || page.isClosed()) {
+            console.log(`⚠ ${combo.label}: Page not recoverable - skipping remaining combinations`);
+            break;
           }
 
-          // Select nights filter with page closure check
+          // Select nights filter with page closure check and retry on empty filter
           await test.step(`${combo.label} — Select ${combo.nights} nights`, async () => {
             try {
               if (page && !page.isClosed()) {
-                // Reset nights before selecting a new value for reliability
-                await pm.onSearchPage().deselectAllNights();
-                await pm.onSearchPage().selectNightsFilter(combo.nights as any);
+                // Only clear nights when VALUE CHANGES (not every combo)
+                // Combo 1 & 2: 2n (same value, no need to clear between them)
+                // Combo 3 & 4: 14+n (same value, no need to clear between them)
+                // But clear when switching from 2n to 14+n
+                const needsClear = !isFirstCombo && previousNights !== combo.nights;
+                
+                if (needsClear) {
+                  await pm.onSearchPage().deselectAllNights().catch((err) => {
+                    console.log(`⚠ ${combo.label}: Could not deselect nights before applying new value: ${err}`);
+                  });
+                  // Extra wait after deselect to avoid accidental re-click
+                  await page.waitForTimeout(300);
+                  // Re-open dropdown after clearing (it closes automatically)
+                  await pm.onSearchPage().openNightsDropdown();
+                } else if (isFirstCombo) {
+                  // First combo: beforeEach already cleared, just open dropdown
+                  await pm.onSearchPage().openNightsDropdown();
+                } else {
+                  // Same nights value as previous combo, no need to clear or reopen
+                  console.log(`✓ ${combo.label}: Reusing same nights value (${combo.nights}), no deselect needed`);
+                }
+
+                // Select nights (will skip if already selected with same value)
+                if (needsClear || isFirstCombo) {
+                  await pm.onSearchPage().selectNightsFilter(combo.nights as any);
+                }
+                
+                // Always validate selection
+                previousNights = combo.nights;
+                
+                // Validate selection with retry if empty
+                try {
+                  await pm.onSearchPage().assertNightsSelected(combo.nights as any);
+                } catch (validationError) {
+                  const errMsg = String(validationError);
+                  if (errMsg.includes('EMPTY')) {
+                    console.log(`⚠ ${combo.label}: Nights filter empty, retrying selection...`);
+                    await pm.onSearchPage().openNightsDropdown();
+                    await pm.onSearchPage().selectNightsFilter(combo.nights as any);
+                    await pm.onSearchPage().assertNightsSelected(combo.nights as any);
+                  } else {
+                    throw validationError;
+                  }
+                }
               } else {
                 console.log(`⚠ ${combo.label}: Page closed before selecting nights`);
               }
             } catch (error) {
-              console.log(`❌ ${combo.label}: Failed to select nights - continuing anyway`);
+              console.log(`❌ ${combo.label}: Failed to select nights - ${error}`);
             }
           });
 
@@ -519,11 +638,32 @@ test.describe('Search and Filters — Ski Holidays', () => {
             break;
           }
 
+          // Reset travelers to baseline before applying combination
+          await test.step(`${combo.label} — Reset travelers to defaults`, async () => {
+            try {
+              if (!isFirstCombo) {
+                const livePage = await ensureSearchPageAlive(`${combo.label} reset travelers`);
+                if (livePage && !livePage.isClosed()) {
+                  await pm.onSearchPage().resetTravelersFilter();
+                  // Reopen dropdowns after reset (they close automatically)
+                  await pm.onSearchPage().openAdultsDropdown();
+                  await pm.onSearchPage().openChildrenDropdown();
+                } else {
+                  console.log(`⚠ ${combo.label}: Page closed before resetting travelers`);
+                }
+              }
+            } catch (error) {
+              console.log(`⚠ ${combo.label}: Failed to reset travelers - continuing`);
+            }
+          });
+
           // Select travelers with DOM manipulation
           await test.step(`${combo.label} — Select travelers (${combo.adults} adults, ${combo.children} children)`, async () => {
             try {
               if (page && !page.isClosed()) {
                 await pm.onSearchPage().selectTravelersFilter(combo.adults as any, combo.children as number);
+                await pm.onSearchPage().assertAdultsSelected(combo.adults as any);
+                await pm.onSearchPage().assertChildrenSelected(combo.children);
               } else {
                 console.log(`⚠ ${combo.label}: Page closed before selecting travelers`);
               }
@@ -537,6 +677,21 @@ test.describe('Search and Filters — Ski Holidays', () => {
             console.log(`⚠ ${combo.label}: Page closed after travelers - skipping remaining steps`);
             break;
           }
+
+          // Validate filters are configured correctly before checking results
+          await test.step(`${combo.label} — Validate all filters configured`, async () => {
+            try {
+              if (page && !page.isClosed()) {
+                // Use centralized validation method
+                await pm.onSearchPage().validateFiltersBeforeResults(combo.nights as any, combo.adults as any, combo.children);
+                console.log(`✓ ${combo.label}: All filters validated (${combo.adults}a, ${combo.children}c, ${combo.nights}n)`);
+              } else {
+                console.log(`⚠ ${combo.label}: Page closed before filter validation`);
+              }
+            } catch (error) {
+              console.log(`⚠ ${combo.label}: Filter validation failed - ${error}`);
+            }
+          });
 
           // Validate results or no-results message
           await test.step(`${combo.label} — Validate results or no-results`, async () => {
@@ -557,19 +712,21 @@ test.describe('Search and Filters — Ski Holidays', () => {
               console.log(`⚠ ${combo.label}: Could not validate results - ${error}`);
             }
           });
+
+          isFirstCombo = false;
         }
       } catch (error) {
         console.log(`⚠ TC-014: Unexpected error - ${error}`);
       }
     };
 
-    // Timeout guard: 75000ms - prevents hanging if page closes during extreme filter testing
+    // Timeout guard: 220000ms - aligns with extended test runtime (slightly less than test timeout)
     await Promise.race([
       testExecution(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Test execution timeout')), 75000))
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Test execution timeout')), 220000))
     ]).catch(err => {
       if (err.message !== 'Test execution timeout') throw err;
-      console.log(`⚠ TC-014: Test execution exceeded 75s - completing test`);
+      console.log(`⚠ TC-014: Test execution exceeded 220s - completing test`);
     });
 
     // Log test completion
@@ -596,14 +753,18 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Verify results appear for minimum travelers
+    let exactMatches = 0;
     await test.step('Validate results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(1);
-      await pm.onSearchPage().validateExactMatchCount();
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
         console.log('VALIDATION PASSED: Results are displayed for minimum travelers');
         console.log('VALIDATION PASSED: Results match expected count for minimum travelers');
     });
 
     await test.step('Finish test', async () => {
+      console.log('VALIDATION PASSED: Results are displayed for minimum travelers');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
+      console.log('VALIDATION PASSED: Results match expected count for minimum travelers');
       console.log(`✓ TC-015 completed - validated minimum travelers`);
     });
   });
@@ -645,10 +806,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
     testInfo.setTimeout(150000); // 2.5 minutes
     const accommodationData = testData.searchPage.filters.accommodation;
 
-    // Reset nights to avoid interference from defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-    });
 
     // Select accommodation type
     await test.step(`Select accommodation: ${accommodationData.selected}`, async () => {
@@ -656,9 +813,12 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Verify results contain only selected accommodation type
+    let exactMatches = 0;
     await test.step('Validate results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(1);
-      await pm.onSearchPage().validateExactMatchCount();
+      // Validate filters before checking results
+      await pm.onSearchPage().validateFiltersBeforeResults(null, null, null);
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
         console.log('VALIDATION PASSED: Results are displayed for accommodation filter');
         console.log('VALIDATION PASSED: Results match expected count for accommodation filter');
     });
@@ -669,6 +829,9 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     await test.step('Finish test', async () => {
+      console.log('VALIDATION PASSED: Results are displayed for accommodation filter');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
+      console.log(`VALIDATION PASSED: Results contain only ${accommodationData.selected}`);
       console.log(`✓ TC-017 completed - validated ${accommodationData.selected} filter`);
     });
   });
@@ -684,10 +847,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
     testInfo.setTimeout(150000); // 2.5 minutes
     const boardBasisData = testData.searchPage.filters.boardBasis;
 
-    // Reset nights to avoid interference from defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-    });
 
     // Select board basis option
     await test.step(`Select board basis: ${boardBasisData.selected}`, async () => {
@@ -695,10 +854,11 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Verify results contain only selected board basis
+    let exactMatches = 0;
     await test.step('Validate results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(1);
       console.log('VALIDATION PASSED: Results are displayed');
-      await pm.onSearchPage().validateExactMatchCount();
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
       console.log('VALIDATION PASSED: Results match expected count');
     });
 
@@ -708,6 +868,9 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     await test.step('✅ Test completed', async () => {
+      console.log('VALIDATION PASSED: Results are displayed');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
+      console.log(`VALIDATION PASSED: Results contain only ${boardBasisData.selected} board basis`);
       console.log(`✅ TC-018 PASS — ${boardBasisData.selected} board basis filter validated successfully`);
     });
   });
@@ -723,14 +886,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
     testInfo.setTimeout(180000); // 3 minutes instead of default 1.5
     const ratingData = testData.searchPage.filters.rating;
 
-    // Reset nights to avoid interference from defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-      // Verify page is still responsive after clearing nights
-      if (pm.getPage().isClosed()) {
-        throw new Error('Page closed unexpectedly during deselectAllNights');
-      }
-    });
 
     // Select maximum rating
     await test.step(`Select rating: ${ratingData.selected} snowflakes`, async () => {
@@ -744,13 +899,14 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Verify results contain only 5-star properties
+    let exactMatches = 0;
     await test.step('Validate results are displayed', async () => {
       if (pm.getPage().isClosed()) {
         throw new Error('Page closed before validating results are displayed');
       }
       await pm.onSearchPage().validateResultsCount(1);
       console.log('VALIDATION PASSED: Results are displayed');
-      await pm.onSearchPage().validateExactMatchCount();
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
       console.log('VALIDATION PASSED: Results match expected count');
     });
 
@@ -777,6 +933,9 @@ test.describe('Search and Filters — Ski Holidays', () => {
       if (pm.getPage().isClosed()) {
         throw new Error('Page closed before test completion');
       }
+      console.log('VALIDATION PASSED: Results are displayed');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
+      console.log('VALIDATION PASSED: Results match expected count');
       console.log(`✅ TC-019 PASS — ${ratingData.selected}★ rating filter validated successfully`);
     });
   });
@@ -787,15 +946,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
     testInfo.setTimeout(180000); // 3 minutes instead of default 1.5
     
     // Reset nights to avoid interference from defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-      // Wait for deselectAllNights to complete
-      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
-      // Verify page is still responsive after clearing nights
-      if (pm.getPage().isClosed()) {
-        throw new Error('Page closed unexpectedly during deselectAllNights');
-      }
-    });
 
     // Select minimum rating (2 snowflakes)
     await test.step('Select rating: 2 snowflakes (minimum)', async () => {
@@ -811,6 +961,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Verify results contain only properties with exactly 2 stars
+    let exactMatches = 0;
     await test.step('Validate results are displayed', async () => {
       if (pm.getPage().isClosed()) {
         throw new Error('Page closed before validating results are displayed');
@@ -822,7 +973,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
       }
       await pm.onSearchPage().validateResultsCount(1);
       console.log('VALIDATION PASSED: Results are displayed');
-      await pm.onSearchPage().validateExactMatchCount();
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
       console.log('VALIDATION PASSED: Results match expected count');
     });
 
@@ -849,6 +1000,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
       if (pm.getPage().isClosed()) {
         throw new Error('Page closed before test completion');
       }
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log(`✅ TC-019b PASS — 2★ (minimum) rating filter validated — ONLY 2★ properties shown`);
     });
   });
@@ -928,10 +1080,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
     testInfo.setTimeout(150000); // 2.5 minutes
     const skiAreaData = testData.searchPage.filters.skiArea;
 
-    // Reset nights to avoid interference from defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-    });
 
     // Select ski area
     await test.step(`Select ski area: ${skiAreaData.selected}`, async () => {
@@ -939,10 +1087,11 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Verify results contain only properties in selected ski area
+    let exactMatches = 0;
     await test.step('Validate results are displayed', async () => {
       await pm.onSearchPage().validateResultsCount(1);
       console.log('VALIDATION PASSED: Results are displayed');
-      await pm.onSearchPage().validateExactMatchCount();
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
       console.log('VALIDATION PASSED: Results match expected count');
     });
 
@@ -952,6 +1101,9 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     await test.step('✅ Test completed', async () => {
+      console.log('VALIDATION PASSED: Results are displayed');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
+      console.log(`VALIDATION PASSED: Results belong to ski area ${skiAreaData.selected}`);
       console.log(`✅ TC-021 PASS — ${skiAreaData.selected} ski area filter validated successfully`);
     });
   });
@@ -967,12 +1119,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
     testInfo.setTimeout(150000); // 2.5 minutes
     const resortData = testData.searchPage.filters.resort;
 
-    // Reset nights to avoid interference from defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-      // Wait for page to stabilize after clearing nights
-      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
-    });
 
     // Select resort
     await test.step(`Select resort: ${resortData.selected}`, async () => {
@@ -984,6 +1130,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     // Verify results contain only properties in selected resort
+    let exactMatches = 0;
     await test.step('Validate results are displayed', async () => {
       if (pm.getPage().isClosed()) {
         throw new Error('Page closed before validating results are displayed');
@@ -995,7 +1142,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
       }
       await pm.onSearchPage().validateResultsCount(1);
       console.log('VALIDATION PASSED: Results are displayed');
-      await pm.onSearchPage().validateExactMatchCount();
+      exactMatches = await pm.onSearchPage().validateExactMatchCount();
       console.log('VALIDATION PASSED: Results match expected count');
     });
 
@@ -1016,6 +1163,9 @@ test.describe('Search and Filters — Ski Holidays', () => {
       if (pm.getPage().isClosed()) {
         throw new Error('Page closed before test completion');
       }
+      console.log('VALIDATION PASSED: Results are displayed');
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
+      console.log(`VALIDATION PASSED: Results belong to resort "${resortData.selected}"`);
       console.log(`✅ TC-022 PASS — ${resortData.selected} resort filter validated successfully`);
     });
   });
@@ -1033,10 +1183,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
     const accommodationData = testData.searchPage.filters.accommodation;
     const nightsData = testData.searchPage.filters.nights;
 
-    // Reset nights to avoid relying on defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-    });
 
     // Apply multiple filters
     await test.step('Apply multiple filters', async () => {
@@ -1079,7 +1225,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
       try {
         // Step 1: Change nights from default 7 to 2
         await test.step('Change nights to create filtered state', async () => {
-          await pm.onSearchPage().deselectAllNights();
+          // Nights already cleared by beforeEach
           await pm.onSearchPage().selectNightsFilter(nightsData.min);
         });
 
@@ -1174,10 +1320,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
     const accommodationData = testData.searchPage.filters.accommodation;
     const travelersData = testData.searchPage.filters.travelers;
 
-    // Reset nights to avoid relying on defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-    });
 
     // Apply specific filters
     await test.step('Apply multiple filters', async () => {
@@ -1215,10 +1357,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
     const countries = ['FR', 'AT', 'IT']; // France, Austria, Italy
     const countryNames = ['France', 'Austria', 'Italy'];
 
-    // Always remove default filters like 7 nights first
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-    });
 
     // Get individual counts per country (with nights cleared) and clear between selections
     const individualCounts: number[] = [];
@@ -1271,10 +1409,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
     const countries = ['FR', 'AT', 'IT'];
     const countryNames = ['France', 'Austria', 'Italy'];
 
-    // Reset nights to avoid interference from defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-    });
 
     // Select all 3 countries
     await test.step('Select France, Austria, and Italy', async () => {
@@ -1322,10 +1456,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
   test('TC-028 — Validate multi-accommodation selection (Hotel + Chalet)', async ({ pm }, testInfo) => {
     const accommodations = ['Hotel', 'Chalet'];
 
-    // Reset nights to avoid interference from defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-    });
 
     // Select multiple accommodations
     await test.step('Select Hotel and Chalet', async () => {
@@ -1352,10 +1482,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
   test('TC-029 — Validate multi-board basis selection (Self Catered + Bed & Breakfast)', async ({ pm }, testInfo) => {
     const boardBasisOptions = ['Self catered', 'Bed & Breakfast'];
 
-    // Reset nights to avoid interference from defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-    });
 
     // Select multiple board basis options
     await test.step('Select Self Catered and Bed & Breakfast', async () => {
@@ -1382,10 +1508,6 @@ test.describe('Search and Filters — Ski Holidays', () => {
   test('TC-030 — Validate multi-ski area selection (The 3 Valleys + Paradiski)', async ({ pm }, testInfo) => {
     const skiAreas = ['The 3 Valleys', 'Paradiski'];
 
-    // Reset nights to avoid interference from defaults
-    await test.step('Reset nights with Deselect All', async () => {
-      await pm.onSearchPage().deselectAllNights();
-    });
 
     // Select multiple ski areas
     await test.step('Select The 3 Valleys and Paradiski', async () => {

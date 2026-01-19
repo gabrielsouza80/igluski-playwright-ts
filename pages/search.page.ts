@@ -6,7 +6,55 @@ export class SearchPage extends HelperBase {
   constructor(page: Page) { super(page) }
 
   // ============================================================
-  // 📌 VALIDATION CONSTANTS & PATTERNS (from testdata)
+  // � PAGE VARIANT DETECTION
+  // ============================================================
+  private pageVariant: 'A' | 'B' | null = null;
+
+  /**
+   * Reseta a detecção de variante (útil após navegação/reload)
+   */
+  resetVariantDetection(): void {
+    this.pageVariant = null;
+    this.logInfo('🔄 Page variant detection reset');
+  }
+
+  /**
+   * Detecta qual variante da página está carregada (A ou B)
+   * Verifica elementos únicos de cada variante para identificar qual está ativa
+   */
+  private async detectPageVariant(): Promise<'A' | 'B'> {
+    if (this.pageVariant) return this.pageVariant;
+
+    try {
+      // Teste variante A: estrutura clássica com .search-results
+      const variantAIndicator = await this.page.locator('.search-results').count();
+      
+      // Teste variante B: estrutura alternativa com seletores diferentes
+      const variantBIndicator = await this.page.locator('.results-container, .property-list, [data-results-variant="b"]').count();
+      
+      // Determina qual variante baseado nos elementos encontrados
+      if (variantAIndicator > 0 && variantBIndicator === 0) {
+        this.pageVariant = 'A';
+        this.logInfo('🔍 Page variant detected: A (classic layout)');
+      } else if (variantBIndicator > 0) {
+        this.pageVariant = 'B';
+        this.logInfo('🔍 Page variant detected: B (alternative layout)');
+      } else {
+        // Default para A se não conseguir detectar
+        this.pageVariant = 'A';
+        this.logInfo('⚠️ Page variant uncertain, defaulting to A');
+      }
+      
+      return this.pageVariant;
+    } catch (error) {
+      this.logWarn(`❌ Page variant detection failed: ${error}, defaulting to A`);
+      this.pageVariant = 'A';
+      return 'A';
+    }
+  }
+
+  // ============================================================
+  // �📌 VALIDATION CONSTANTS & PATTERNS (from testdata)
   // ============================================================
   private readonly MAX_EXACT_MATCHES = testdata.searchPage.validationConstants.maxExactMatches;
   private readonly MAX_DEBUG_ITEMS = testdata.searchPage.validationConstants.maxDebugItems;
@@ -282,10 +330,20 @@ export class SearchPage extends HelperBase {
   // ============================================================
 
   /**
+   * Ensures page variant is detected before performing critical operations
+   * Call this at the beginning of test-facing methods
+   */
+  private async ensureVariantDetected(): Promise<'A' | 'B'> {
+    return await this.detectPageVariant();
+  }
+
+  /**
    * Checks if search results are present on the page
    * @returns {Promise<boolean>} True if at least one result is found
    */
   async hasSearchResults(): Promise<boolean> {
+    await this.ensureVariantDetected();
+    
     try {
       await this.searchResults.first().waitFor({ state: 'visible' });
     } catch {
@@ -355,6 +413,9 @@ export class SearchPage extends HelperBase {
 
   /** Select nights from the duration dropdown (Bootstrap-Select) */
   async selectNightsFilter(nights: number | string): Promise<void> {
+    // Detect page variant before operating
+    const variant = await this.ensureVariantDetected();
+    
     try {
       // Check if page is closed before attempting any action
       if (await this.isPageClosed()) {
@@ -376,17 +437,8 @@ export class SearchPage extends HelperBase {
       const nightsValue = parsed;
       const isOpenEnded = raw.includes('+');
 
-      // Clear previous selection first to mimic "Deselect All".
-      await nightsSelect.evaluate((sel) => {
-        const select = sel as HTMLSelectElement;
-        for (const opt of Array.from(select.options)) {
-          if (!opt.disabled) opt.selected = false;
-        }
-        select.dispatchEvent(new Event('input', { bubbles: true }));
-        select.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-
       // Select the requested value by matching the option value directly
+      // (beforeEach already cleared nights filter, no need to clear again)
       await nightsSelect.evaluate((sel, val) => {
         const select = sel as HTMLSelectElement;
         const targetValue = String(val).trim();
@@ -1058,14 +1110,20 @@ export class SearchPage extends HelperBase {
 
       this.logInfo('🔄 Clearing nights filter via "Deselect All" button...');
 
-      // Open the nights dropdown
+      // Open the nights dropdown (ensure it's on-screen for a visual click)
+      await this.nightsButton.scrollIntoViewIfNeeded().catch(() => {});
       await this.nightsButton.click().catch(() => {});
+      await this.page.waitForTimeout(150).catch(() => {});
 
       // Click "Deselect All" button
       const btnCount = await this.nightsDeselectAllBtn.count();
       if (btnCount > 0) {
+        await this.nightsDeselectAllBtn.first().scrollIntoViewIfNeeded().catch(() => {});
         await this.nightsDeselectAllBtn.click({ force: true });
         this.logInfo('  ✓ Clicked "Deselect All" button');
+        
+        // IMPORTANT: Wait for dropdown UI to settle after deselect
+        await this.page.waitForTimeout(500);
         
         // Close dropdown
         await this.page.keyboard.press('Escape').catch(() => {});
@@ -1104,6 +1162,187 @@ export class SearchPage extends HelperBase {
       
     } catch (error) {
       this.logInfo(`⚠ Error clearing nights filter: ${error}`);
+    }
+  }
+
+  /** Opens the nights dropdown (Bootstrap select toggle) */
+  async openNightsDropdown(): Promise<void> {
+    try {
+      await this.nightsButton.scrollIntoViewIfNeeded().catch(() => {});
+      await this.nightsButton.click({ timeout: 3000 }).catch(() => {});
+      await this.page.waitForTimeout(150).catch(() => {});
+    } catch (error) {
+      this.logInfo(`⚠ Error opening nights dropdown: ${error}`);
+    }
+  }
+
+  /** Opens the adults dropdown (Bootstrap select toggle) */
+  async openAdultsDropdown(): Promise<void> {
+    try {
+      await this.adultsButton.scrollIntoViewIfNeeded().catch(() => {});
+      await this.adultsButton.click({ timeout: 3000 }).catch(() => {});
+      await this.page.waitForTimeout(150).catch(() => {});
+    } catch (error) {
+      this.logInfo(`⚠ Error opening adults dropdown: ${error}`);
+    }
+  }
+
+  /** Opens the children dropdown (Bootstrap select toggle) */
+  async openChildrenDropdown(): Promise<void> {
+    try {
+      await this.childrenButton.scrollIntoViewIfNeeded().catch(() => {});
+      await this.childrenButton.click({ timeout: 3000 }).catch(() => {});
+      await this.page.waitForTimeout(150).catch(() => {});
+    } catch (error) {
+      this.logInfo(`⚠ Error opening children dropdown: ${error}`);
+    }
+  }
+
+  /** Validates that the requested nights value is selected in the native <select> */
+  async assertNightsSelected(nights: number | string): Promise<void> {
+    const target = String(nights).trim();
+    const select = this.filtersSidebar
+      .locator('select[data-option-type="nts"], select.faceted-search__select.marker-moon')
+      .first();
+
+    await select.waitFor({ state: 'attached', timeout: 5000 });
+
+    const result = await select.evaluate((sel, val) => {
+      const selectEl = sel as HTMLSelectElement;
+      const expected = String(val).trim();
+      const selectedOptions = Array.from(selectEl.selectedOptions);
+      const hasExpected = selectedOptions.some(opt => (opt.value || '').trim() === expected);
+      const isEmpty = selectedOptions.length === 0;
+      const currentValues = selectedOptions.map(opt => opt.value || '').join(', ');
+      return { hasExpected, isEmpty, currentValues };
+    }, target);
+
+    if (result.isEmpty) {
+      throw new Error(`❌ Nights filter is EMPTY - no options selected. Expected: ${target}. Possible cause: 'Deselect All' was clicked accidentally.`);
+    }
+
+    if (!result.hasExpected) {
+      throw new Error(`❌ Nights filter mismatch - Expected: ${target}, Got: ${result.currentValues}`);
+    }
+
+    expect(result.hasExpected).toBeTruthy();
+    this.logInfo(`✓ Nights selection confirmed: ${target}`);
+  }
+
+  /** Validates that the requested adults value is selected in the native <select> */
+  async assertAdultsSelected(adults: number | string): Promise<void> {
+    const target = String(adults).trim();
+    const select = this.page
+      .locator('select[data-option-type="ad"], select.faceted-search__select--adult, select[name="Adults"]')
+      .first();
+
+    await select.waitFor({ state: 'attached', timeout: 5000 });
+
+    const isSelected = await select.evaluate((sel, val) => {
+      const selectEl = sel as HTMLSelectElement;
+      const expected = String(val).trim();
+      return Array.from(selectEl.selectedOptions).some(opt => (opt.value || '').trim() === expected);
+    }, target);
+
+    expect(isSelected).toBeTruthy();
+    this.logInfo(`✓ Adults selection confirmed: ${target}`);
+  }
+
+  /** Validates that the requested children value is selected in the native <select> */
+  async assertChildrenSelected(children: number | string): Promise<void> {
+    const target = String(children).trim();
+    const select = this.page
+      .locator('select[data-option-type="ch"], select.faceted-search__select--children, select[name="Children"]')
+      .first();
+
+    await select.waitFor({ state: 'attached', timeout: 5000 });
+
+    const isSelected = await select.evaluate((sel, val) => {
+      const selectEl = sel as HTMLSelectElement;
+      const expected = String(val).trim();
+      return Array.from(selectEl.selectedOptions).some(opt => (opt.value || '').trim() === expected);
+    }, target);
+
+    expect(isSelected).toBeTruthy();
+    this.logInfo(`✓ Children selection confirmed: ${target}`);
+  }
+
+  /** 
+   * Validates all three filters (nights, adults, children) before checking results
+   * Ensures filters are correctly configured before validating result cards
+   * @param nights Expected nights value (or null to skip validation)
+   * @param adults Expected adults value (or null to skip validation)
+   * @param children Expected children value (or null to skip validation)
+   */
+  async validateFiltersBeforeResults(
+    nights: number | string | null = null,
+    adults: number | string | null = null,
+    children: number | string | null = null
+  ): Promise<void> {
+    this.logInfo('🔍 Validating filters before checking results...');
+    
+    try {
+      if (nights !== null) {
+        await this.assertNightsSelected(nights);
+      }
+      
+      if (adults !== null) {
+        await this.assertAdultsSelected(adults);
+      }
+      
+      if (children !== null) {
+        await this.assertChildrenSelected(children);
+      }
+      
+      this.logInfo(`✓ All filters validated correctly (${nights !== null ? nights + 'n' : ''} ${adults !== null ? adults + 'a' : ''} ${children !== null ? children + 'c' : ''})`);
+    } catch (error) {
+      const errorMsg = String(error);
+      this.logError(`❌ Filter validation failed before results check: ${errorMsg}`);
+      throw new Error(`Filter validation failed - ensure filters are correctly set before validating results: ${errorMsg}`);
+    }
+  }
+
+  /** Resets travelers filters back to baseline (1 adult, 0 children) */
+  async resetTravelersFilter(): Promise<void> {
+    try {
+      const resolveValue = async (select: Locator, preferred: string): Promise<string> => {
+        const preferredOption = select.locator(`option[value="${preferred}"]`).first();
+        if (await preferredOption.count()) return preferred;
+
+        const fallbackOption = select.locator('option:not([disabled])').first();
+        const fallbackValue = await fallbackOption.getAttribute('value');
+        return fallbackValue || preferred;
+      };
+
+      const adultsSelect = this.page
+        .locator('select[data-option-type="ad"], select.faceted-search__select--adult, select[name="Adults"]')
+        .first();
+
+      if (!(await adultsSelect.count())) {
+        this.logInfo('⚠ Adults select not found while resetting travelers');
+        return;
+      }
+
+      const targetAdults = await resolveValue(adultsSelect, '1');
+      await adultsSelect.selectOption(targetAdults);
+
+      const childrenSelect = this.page
+        .locator('select[data-option-type="ch"], select.faceted-search__select--children, select[name="Children"]')
+        .first();
+
+      if (!(await childrenSelect.count())) {
+        this.logInfo('⚠ Children select not found while resetting travelers');
+        return;
+      }
+
+      const targetChildren = await resolveValue(childrenSelect, '0');
+      await childrenSelect.selectOption(targetChildren);
+
+      await this.page.waitForLoadState('domcontentloaded').catch(() => { });
+      await this.page.waitForTimeout(300).catch(() => { });
+      this.logInfo('✓ Travelers reset to defaults (1 adult, 0 children)');
+    } catch (error) {
+      this.logInfo(`⚠ Error resetting travelers filters: ${error}`);
     }
   }
 
@@ -3043,6 +3282,39 @@ export class SearchPage extends HelperBase {
    */
   async selectResultsPerPage(count: string | number): Promise<void> {
     await this.changeResultsPerPage(Number(count));
+  }
+
+  /**
+   * Close the mobile filter panel (Refine) after selecting filters
+   * Tries Apply button first, then falls back to X button if needed
+   */
+  async closeFilterPanel(): Promise<void> {
+    try {
+      // Try Apply button first (mobile viewports hide this with hidden-md hidden-lg)
+      const applyBtn = this.page.locator('.btn.btn-primary.refine-apply:visible').first();
+      const applyVisible = await applyBtn.isVisible({ timeout: 1000 }).catch(() => false);
+      
+      if (applyVisible) {
+        await applyBtn.click({ force: true, timeout: 5000 });
+        await this.page.waitForTimeout(800);
+        this.logInfo('✓ Filter panel closed with Apply button');
+        return;
+      }
+      
+      // Fallback: Use X button
+      const closeBtn = this.page.locator('.refine-cross').first();
+      const closeVisible = await closeBtn.isVisible({ timeout: 1000 }).catch(() => false);
+      
+      if (closeVisible) {
+        // Scroll to X if needed
+        await closeBtn.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
+        await closeBtn.click({ force: true, timeout: 5000 });
+        await this.page.waitForTimeout(800);
+        this.logInfo('✓ Filter panel closed with X button');
+      }
+    } catch (err) {
+      this.logWarn(`⚠️ Could not close filter panel: ${err}`);
+    }
   }
 
   /**

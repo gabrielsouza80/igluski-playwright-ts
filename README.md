@@ -138,6 +138,25 @@ You can also use the included npm scripts:
 - `npm run allure:generate` — generate the report
 - `npm run allure:open` — open the report
 
+---
+
+## 🔄 Page Variants Support
+**Important:** The search page has **two different layout variants** (A and B) that can appear randomly in both desktop and mobile views. This is common in websites using A/B testing or feature flags.
+
+### How the Tests Handle Variants
+- The `SearchPage` class automatically **detects which variant** is loaded on each test run
+- Detection happens before critical operations (filters, results validation)
+- Tests use **adaptive selectors** that work with both variants
+- Variant detection is logged in the console: `🔍 Page variant detected: A (classic layout)` or `🔍 Page variant detected: B (alternative layout)`
+
+### If Tests Fail Intermittently
+If you see intermittent failures where tests pass sometimes and fail others, it may be due to:
+1. **Different variants loading** on different test runs
+2. **Missing selectors** for variant B that only exist in variant A
+
+**Solution:** Check the test logs to see which variant was detected, then update the selectors in `pages/search.page.ts` to support both variants.
+
+---
 
 👤 Author
 Gabriel Souza – QA Automation Engineer

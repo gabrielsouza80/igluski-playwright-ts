@@ -4,64 +4,7 @@ import testData from './fixtures/testdata.json';
 // ================================================================
 // Test Suite: Search Page Mobile
 // ================================================================
-
-// Helper function to block Sleeknote
-async function blockSleeknote(page: any) {
-  await page.evaluate(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      [class*="sleeknote"],
-      sleeknote-top,
-      sleeknote-bottom,
-      sleeknote-left,
-      sleeknote-right {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    const observer = new MutationObserver(() => {
-      const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
-      sleeknoteElements.forEach(el => el.remove());
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-  });
-}
-
-// Helper to close the mobile filter panel (Refine) after selecting filters
-async function closeFilterPanel(page: any) {
-  try {
-    // Try Apply button first (mobile viewports hide this with hidden-md hidden-lg)
-    const applyBtn = page.locator('.btn.btn-primary.refine-apply:visible').first();
-    const applyVisible = await applyBtn.isVisible({ timeout: 1000 }).catch(() => false);
-    
-    if (applyVisible) {
-      await applyBtn.click({ force: true, timeout: 5000 });
-      await page.waitForTimeout(800);
-      return;
-    }
-    
-    // Fallback: Use X button
-    const closeBtn = page.locator('.refine-cross').first();
-    const closeVisible = await closeBtn.isVisible({ timeout: 1000 }).catch(() => false);
-    
-    if (closeVisible) {
-      // Scroll to X if needed
-      await closeBtn.scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
-      await closeBtn.click({ force: true, timeout: 5000 });
-      await page.waitForTimeout(800);
-    }
-  } catch (err) {
-    console.log(`⚠️ Could not close filter panel: ${err}`);
-  }
-}
+// NOTE: blockSleeknote() is now available in HelperBase and inherited by all page objects
 
 test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
@@ -79,7 +22,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
     await test.step('✓ Navigate to search page and handle cookie banner', async () => {
       await pm.onSearchPage().navigateAndAcceptCookies('/ski-holidays');
-      await blockSleeknote(page);
+      await pm.onSearchPage().blockSleeknote();
     });
 
     // Mobile-specific: Click "Refine" button to open filter panel
@@ -350,11 +293,8 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
     // STEP 2 — Close Refine panel (to avoid overlay blocking)
     await test.step('Close Refine panel', async () => {
       console.log('Closing Refine panel to avoid overlay blocking...');
-      const page = pm.getPage();
-      
-      // Ensure filter panel is closed before interacting with results-per-page button
-      await closeFilterPanel(page);
-      await page.waitForTimeout(800);
+      await pm.onSearchPage().closeFilterPanel();
+      await pm.getPage().waitForTimeout(800);
     });
 
     // STEP 3 — Change results per page

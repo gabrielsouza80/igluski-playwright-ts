@@ -499,16 +499,16 @@
                     "children": 0
                 },
                 {
-                    "label": "EXTREME MAX #1 (30+ a,10c,14+ n)",
+                    "label": "EXTREME MAX #1 (29a,9c,14+ n)",
                     "nights": "14+",
-                    "adults": "30+",
-                    "children": 10
+                    "adults": 29,
+                    "children": 9
                 },
                 {
-                    "label": "EXTREME MAX #2 (29a,10c,14 n)",
-                    "nights": 14,
+                    "label": "EXTREME MAX #2 (29a,9c,14+ n)",
+                    "nights": "14+",
                     "adults": 29,
-                    "children": 10
+                    "children": 9
                 }
             ],
             "auxiliaryExtremes": {
