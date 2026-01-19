@@ -29,7 +29,7 @@ test.describe('Enquire Page', () => {
 
   test('Validate enquire intro text', async ({ page, pm }) => {
 
-    await expect(page.locator('body')).toContainText(enquireData.introText, { timeout: 5000 });
+    await expect(page.locator('body')).toContainText(enquireData.introText);
   });
 
   test('Validate invalid email format shows error', async ({ page, pm }) => {

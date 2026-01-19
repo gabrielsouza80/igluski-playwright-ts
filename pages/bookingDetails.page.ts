@@ -38,7 +38,7 @@ export class BookingDetailsPage extends HelperBase {
   }
 
   async waitForPaymentPage(timeout = 10000): Promise<void> {
-    // Esperar pela página de pagamento (URL change ou elemento específico)
+    // Wait for payment page (URL change or specific element)
     await this.page.waitForURL(/payment|checkout|pay/i, { timeout });
   }
 

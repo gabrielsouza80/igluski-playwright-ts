@@ -1,14 +1,14 @@
 /**
- * Gerador de dados aleatórios para testes do Iglu Ski
+ * Random data generator for Iglu Ski tests
  */
 
 /**
- * Títulos disponíveis no formulário
+ * Available titles in the form
  */
 export const AVAILABLE_TITLES = ['Dr', 'Miss', 'Mr', 'Mrs', 'Ms'];
 
 /**
- * Primeiros nomes comuns (aleatórios)
+ * Common first names (random)
  */
 const FIRST_NAMES = [
   'John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'James', 'Lisa', 'Robert', 'Mary',
@@ -17,7 +17,7 @@ const FIRST_NAMES = [
 ];
 
 /**
- * Apelidos comuns (aleatórios)
+ * Common last names (random)
  */
 const LAST_NAMES = [
   'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
@@ -26,7 +26,7 @@ const LAST_NAMES = [
 ];
 
 /**
- * Endereços tipo rua (aleatórios)
+ * Street address names (random)
  */
 const STREET_NAMES = [
   'Oxford Street', 'Baker Street', 'Main Street', 'High Street', 'King Street', 'Queen Street',
@@ -34,7 +34,7 @@ const STREET_NAMES = [
 ];
 
 /**
- * Cidades disponíveis (com POST CODE válidos do Reino Unido)
+ * Available cities (with valid UK postcodes)
  */
 const CITIES = [
   { city: 'London', postcode: 'SW1A 1AA' },
@@ -50,7 +50,7 @@ const CITIES = [
 ];
 
 /**
- * Interface para dados de passageiro
+ * Interface for passenger data
  */
 export interface PassengerData {
   title: string;
@@ -69,49 +69,49 @@ export interface PassengerData {
 }
 
 /**
- * Gera um número aleatório entre min e max (inclusivo)
+ * Generates a random number between min and max (inclusive)
  */
 function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /**
- * Gera um elemento aleatório de um array
+ * Gets a random element from an array
  */
 function getRandomElement<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
 
 /**
- * Gera um primeiro nome aleatório
+ * Generates a random first name
  */
 export function generateFirstName(): string {
   return getRandomElement(FIRST_NAMES);
 }
 
 /**
- * Gera um apelido aleatório
+ * Generates a random last name
  */
 export function generateLastName(): string {
   return getRandomElement(LAST_NAMES);
 }
 
 /**
- * Gera um título aleatório válido
+ * Generates a random valid title
  */
 export function generateTitle(): string {
   return getRandomElement(AVAILABLE_TITLES);
 }
 
 /**
- * Gera uma data de nascimento aleatória (adulto entre 18 e 80 anos)
- * Retorna { day, month, year }
+ * Generates a random date of birth (adult between 18 and 80 years old)
+ * Returns { day, month, year }
  */
 export function generateDateOfBirth(): { day: string; month: string; year: string } {
   const currentYear = new Date().getFullYear();
   const year = getRandomNumber(currentYear - 80, currentYear - 18);
   const month = String(getRandomNumber(1, 12)).padStart(2, '0');
-  const day = String(getRandomNumber(1, 28)).padStart(2, '0'); // Usar até dia 28 para evitar problemas com fevereiro
+  const day = String(getRandomNumber(1, 28)).padStart(2, '0'); // Use up to day 28 to avoid February issues
 
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
   const monthName = monthNames[parseInt(month) - 1];
@@ -124,14 +124,14 @@ export function generateDateOfBirth(): { day: string; month: string; year: strin
 }
 
 /**
- * Gera um POST CODE válido do Reino Unido
+ * Generates a valid UK postcode
  */
 export function generatePostCode(): string {
   return getRandomElement(CITIES).postcode;
 }
 
 /**
- * Gera um endereço válido
+ * Generates a valid address
  */
 export function generateAddress(): { postcode: string; address1: string; town: string; country: string } {
   const city = getRandomElement(CITIES);
@@ -147,28 +147,28 @@ export function generateAddress(): { postcode: string; address1: string; town: s
 }
 
 /**
- * Gera um número de telemóvel válido do Reino Unido
- * Formato: +447911123456 (11 dígitos após +44)
+ * Generates a valid UK mobile phone number
+ * Format: +447911123456 (11 digits after +44)
  */
 export function generateMobilePhone(): string {
-  const prefix = '+447911'; // Número fixo válido do UK
+  const prefix = '+447911'; // Valid UK fixed prefix
   const randomDigits = String(getRandomNumber(100000, 999999));
   return `${prefix}${randomDigits}`;
 }
 
 /**
- * Gera um número de telefone sem código do país (apenas dígitos)
- * Formato: 7911123456
+ * Generates a phone number without country code (digits only)
+ * Format: 7911123456
  */
 export function generatePhoneNumber(): string {
-  const prefix = '7911'; // Prefixo válido do UK sem +44
+  const prefix = '7911'; // Valid UK prefix without +44
   const randomDigits = String(getRandomNumber(100000, 999999));
   return `${prefix}${randomDigits}`;
 }
 
 /**
- * Gera um código de país para telefone aleatório
- * Retorna o nome do país ou código, dependendo do formato esperado
+ * Generates a random phone country code
+ * Returns the country name or code, depending on the expected format
  */
 export function generatePhoneCountryCode(): string {
   const countries = ['+44', '+1', '+33', '+49'];
@@ -176,31 +176,31 @@ export function generatePhoneCountryCode(): string {
 }
 
 /**
- * Gera um número aleatório de adultos (1-4)
+ * Generates a random number of adults (1-4)
  */
 export function generateAdultsCount(): string {
   return String(getRandomNumber(1, 4));
 }
 
 /**
- * Gera um número aleatório de crianças (0-2)
+ * Generates a random number of children (0-2)
  */
 export function generateChildrenCount(): string {
   return String(getRandomNumber(0, 2));
 }
 
 /**
- * Gera um email único e válido
+ * Generates a unique and valid email
  */
 export function generateEmail(): string {
-  const randomId = Math.random().toString(36).substring(2, 8); // Gera string aleatória
+  const randomId = Math.random().toString(36).substring(2, 8); // Generate random string
   const firstName = getRandomElement(FIRST_NAMES).toLowerCase();
   const domain = getRandomElement(['example.com', 'test.com', 'demo.co.uk', 'mail.co.uk']);
   return `${firstName}.${randomId}@${domain}`;
 }
 
 /**
- * Gera dados completos de um passageiro aleatório
+ * Generates complete random passenger data
  */
 export function generatePassengerData(includeOptionalFields = true): PassengerData {
   const dob = generateDateOfBirth();
@@ -225,7 +225,7 @@ export function generatePassengerData(includeOptionalFields = true): PassengerDa
 }
 
 /**
- * Gera múltiplos passageiros
+ * Generates multiple passengers
  */
 export function generateMultiplePassengers(count: number, includeOptionalFields = true): PassengerData[] {
   return Array.from({ length: count }, () => generatePassengerData(includeOptionalFields));

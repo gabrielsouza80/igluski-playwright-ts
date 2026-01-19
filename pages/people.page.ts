@@ -36,7 +36,7 @@ export class PeopleAndContactDetailsPage extends HelperBase {
   }
 
   async fillAllMandatoryFields(passengerData?: PassengerData): Promise<void> {
-    // Se não fornecer dados, gerar aleatórios
+    // If no data provided, generate random ones
     const data = passengerData || generatePassengerData();
 
     console.log('📝 Filling mandatory fields with passenger data:');
@@ -64,7 +64,7 @@ export class PeopleAndContactDetailsPage extends HelperBase {
     await this.postCodeInput.fill(data.postcode);
     await this.address1Input.fill(data.address1);
 
-    // Address 2 é opcional
+    // Address 2 is optional
     if (data.address2) {
       await this.address2Input.fill(data.address2);
     }
@@ -81,14 +81,14 @@ export class PeopleAndContactDetailsPage extends HelperBase {
   }
 
   /**
-   * Preenche múltiplos passageiros (Adult 1 e Adult 2)
+   * Fills multiple passengers (Adult 1 and Adult 2)
    */
   async fillMultiplePassengers(passengersData?: PassengerData[]): Promise<void> {
     const passengers = passengersData || generateMultiplePassengers(2);
     // Adult 1
     await this.fillAllMandatoryFields(passengers[0]);
 
-    // Adult 2 (se disponível)
+    // Adult 2 (if available)
     if (passengers.length > 1) {
       console.log('\n📝 Filling Adult 2 data:');
       const adult2 = passengers[1];

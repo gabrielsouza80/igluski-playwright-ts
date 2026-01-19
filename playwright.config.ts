@@ -17,7 +17,7 @@ export default defineConfig({
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
 
-    // Screenshot e vídeo
+    // Screenshots and videos
     screenshot: 'only-on-failure',
     video: 'off',
 
@@ -32,41 +32,41 @@ export default defineConfig({
     navigationTimeout: 90_000,
   },
 
- // Browsers
-projects: [
-  {
-    name: 'chromium',
-    use: { ...devices['Desktop Chromium'] },
-    testIgnore: /.*\.mobile\.spec\.ts/,
-  },
-  {
-    name: 'firefox',
-    use: { ...devices['Desktop Firefox'] },
-    testIgnore: /.*\.mobile\.spec\.ts/,
-  },
-  {
-    name: 'webkit',
-    use: { ...devices['Desktop Safari'] },
-    testIgnore: /.*\.mobile\.spec\.ts/,
-  },
-  // {
-  //   name: 'Mobile Chrome',
-  //   use: { ...devices['Pixel 5'] },
-  //   testMatch: /.*\.mobile\.spec\.ts/,
-  // },
-  {
-    name: 'Mobile Safari',
-    use: { ...devices['iPhone 12'] },
-    testMatch: /.*\.mobile\.spec\.ts/,
-  },
-],
+  // Browsers
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chromium'] },
+      testIgnore: /.*\.mobile\.spec\.ts/,
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+      testIgnore: /.*\.mobile\.spec\.ts/,
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+      testIgnore: /.*\.mobile\.spec\.ts/,
+    },
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] },
+      testMatch: /.*\.mobile\.spec\.ts/,
+    },
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 12'] },
+      testMatch: /.*\.mobile\.spec\.ts/,
+    },
+  ],
 
   // Reports
   reporter: [
     ['list'],
     ['allure-playwright'],
     ['junit', { outputFile: 'results.xml' }],
-    ['html', { open: 'never' }]
+    ['html', { outputFolder: 'my-report', open: 'never' }]
   ],
 
   outputDir: 'test-results/',

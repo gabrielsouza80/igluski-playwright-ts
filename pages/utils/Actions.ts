@@ -29,10 +29,10 @@ export class Actions {
     }
   }
 
-  // Verifica se um elemento está visível (genérico)
+  // Checks if an element is visible (generic)
   async verifyElementVisible(locator: Locator): Promise<boolean> {
     try {
-      return await locator.isVisible({ timeout: 5000 });
+      return await locator.isVisible();
     } catch {
       return false;
     }
@@ -41,6 +41,7 @@ export class Actions {
   // Wait for the page to load with the expected URL (generic).
   async verifyPageLoaded(expectedUrl: string): Promise<boolean> {
     try {
+      // Use extended timeout (15s) for page navigation to handle slower connections
       await this.page.waitForURL(`**${expectedUrl}*`, { timeout: 15000 });
       return this.page.url().includes(expectedUrl);
     } catch {

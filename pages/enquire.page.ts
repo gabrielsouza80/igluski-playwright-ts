@@ -181,7 +181,7 @@ export class EnquirePage extends HelperBase {
 
   async isSubmissionSuccessful(): Promise<boolean> {
     // Pode ser um redirect ou uma mensagem de sucesso
-    const successMessage = await this.page.locator('text=/Thank you|Success|confirmation/i').isVisible({ timeout: 5000 }).catch(() => false);
+    const successMessage = await this.page.locator('text=/Thank you|Success|confirmation/i').isVisible().catch(() => false);
     const urlChanged = !this.page.url().includes('/enquire');
 
     return successMessage || urlChanged;

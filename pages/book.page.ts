@@ -24,6 +24,6 @@ export class PeopleAndContactDetailsPage extends HelperBase {
   }
 
   async isBookPageLoaded(): Promise<boolean> {
-    return await this.bookingConfirmationSection.isVisible({ timeout: 5000 }).catch(() => false);
+    return await this.bookingConfirmationSection.isVisible().catch(() => false);
   }
 }

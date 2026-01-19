@@ -1,0 +1,540 @@
+{
+    "_metadata": {
+        "description": "Centralized test data for igluski.com E2E automation suite",
+        "purpose": "Single source of truth for all test data across home.spec.ts, components.spec.ts and search.spec.ts",
+        "lastUpdated": "2025-01-07",
+        "maintainer": "QA Automation Team",
+        "coverage": {
+            "homePage": [
+                "TC15",
+                "TC16",
+                "TC17",
+                "TC22",
+                "TC26"
+            ],
+            "componentsPage": [
+                "TC1",
+                "TC2",
+                "TC3",
+                "TC4",
+                "TC5",
+                "TC6",
+                "TC18",
+                "TC20",
+                "TC28",
+                "TC-F21",
+                "TC-F22"
+            ],
+            "searchPage": [
+                "TC-001",
+                "TC-002",
+                "TC-003",
+                "TC-004",
+                "TC-005",
+                "TC-006",
+                "TC-007",
+                "TC-008",
+                "TC-009",
+                "TC-010",
+                "TC-011",
+                "TC-012",
+                "TC-013",
+                "TC-014",
+                "TC-015",
+                "TC-016",
+                "TC-017",
+                "TC-018",
+                "TC-019",
+                "TC-020",
+                "TC-021",
+                "TC-022"
+            ]
+        }
+    },
+    "urls": {
+        "_comment": "External URLs used across test suite",
+        "reviewsPage": "https://www.igluski.com/customer-reviews"
+    },
+    "framework": {
+        "_comment": "Framework-level behavior toggles (logging + strictness)",
+        "logging": {
+            "level": "minimal",
+            "note": "minimal hides most [OK] lines; set LOG_LEVEL=verbose to show everything"
+        },
+        "strictness": {
+            "failOnWarnings": false,
+            "note": "When true, any soft warning fails the test (in addition to soft errors)"
+        }
+    },
+    "homePage": {
+        "_comment": "Home page specific test data",
+        "titles": {
+            "description": "Main headings and section titles displayed on home page",
+            "testCase": "TC15",
+            "data": [
+                "Welcome To The Home Of Ski Holidays",
+                "Speak to the ski experts",
+                "Find Your Skiing Holiday"
+            ]
+        },
+        "countryBanners": {
+            "description": "Country/resort banner boxes with ski destination names",
+            "testCase": "TC16",
+            "expectedCount": 8,
+            "note": "Must validate all 8 country banners and their redirection links",
+            "data": [
+                "FRANCE",
+                "AUSTRIA",
+                "ITALY",
+                "ANDORRA",
+                "BULGARIA",
+                "SWITZERLAND",
+                "CANADA",
+                "JAPAN"
+            ]
+        },
+        "ctaBoxes": {
+            "description": "Call-to-action boxes with titles and URL patterns",
+            "testCase": "TC17",
+            "note": "Each CTA box contains a title and URL pattern for validation",
+            "data": [
+                {
+                    "title": "TALK TO A SKI EXPERT",
+                    "urlPattern": "/enquire",
+                    "description": "Contact specialist button"
+                },
+                {
+                    "title": "ABOUT IGLU SKI",
+                    "urlPattern": "/about",
+                    "description": "Company information button"
+                },
+                {
+                    "title": "SIGN UP TO OUR NEWSLETTER",
+                    "urlPattern": "/signup",
+                    "description": "Newsletter subscription button"
+                }
+            ]
+        }
+    },
+    "responsiveness": {
+        "_comment": "Responsive design breakpoints for testing",
+        "description": "Viewport configurations for mobile and tablet testing",
+        "testCase": "TC26",
+        "viewports": [
+            {
+                "name": "mobile",
+                "width": 375,
+                "height": 900,
+                "description": "Mobile portrait viewport"
+            },
+            {
+                "name": "tablet",
+                "width": 768,
+                "height": 900,
+                "description": "Tablet portrait viewport"
+            }
+        ]
+    },
+    "components": {
+        "_comment": "Components page specific test data",
+        "header": {
+            "_comment": "Header component data",
+            "contactTexts": {
+                "description": "Header contact information labels and URLs",
+                "testCase": "TC3",
+                "phoneTitle": "Phone",
+                "contactUsLink": "Contact Us",
+                "contactUsUrl": "/contact-us"
+            },
+            "recentlyViewed": {
+                "description": "Recently Viewed items panel configuration",
+                "testCase": "TC4",
+                "buttonText": "Recently Viewed",
+                "panelDescription": "Your recently viewed properties"
+            },
+            "customerPortal": {
+                "description": "Customer Portal login button and expected form fields",
+                "testCase": "TC5",
+                "buttonText": "Customer Portal",
+                "requiredFields": [
+                    "Email",
+                    "Password",
+                    "Sign in"
+                ]
+            },
+            "reviewsLink": {
+                "description": "Ratings & Reviews header link configuration",
+                "testCase": "TC6",
+                "text": "Ratings & Reviews",
+                "expectedUrl": "/customer-reviews"
+            }
+        },
+        "footer": {
+            "_comment": "Footer component data",
+            "holidayIdSearch": {
+                "description": "Holiday ID search form configuration in footer",
+                "testCase": [
+                    "TC20",
+                    "TC28"
+                ],
+                "inputPlaceholder": "Enter your holiday ID",
+                "buttonText": "Search"
+            },
+            "trustSeals": {
+                "description": "Trust and certification seals in footer",
+                "testCase": "TC-F21",
+                "seals": [
+                    {
+                        "name": "ATOL",
+                        "altText": "ATOL",
+                        "urlPattern": "atol",
+                        "description": "ATOL protection certification"
+                    },
+                    {
+                        "name": "ABTA",
+                        "altText": "ABTA",
+                        "urlPattern": "abta",
+                        "description": "ABTA membership certification"
+                    },
+                    {
+                        "name": "IATA",
+                        "altText": "IATA",
+                        "urlPattern": "iata",
+                        "description": "IATA accreditation"
+                    },
+                    {
+                        "name": "Feefo",
+                        "altText": "Feefo",
+                        "urlPattern": "feefo",
+                        "description": "Feefo reviews certification"
+                    }
+                ]
+            },
+            "socialMedia": {
+                "description": "Social media icons and links in footer",
+                "testCase": "TC-F22",
+                "platforms": [
+                    {
+                        "name": "Facebook",
+                        "urlPattern": "facebook.com",
+                        "expectedUrl": "https://www.facebook.com/igluskiholidays",
+                        "description": "Facebook social profile"
+                    },
+                    {
+                        "name": "Instagram",
+                        "urlPattern": "instagram.com",
+                        "expectedUrl": "https://www.instagram.com/igluski",
+                        "description": "Instagram social profile"
+                    },
+                    {
+                        "name": "X",
+                        "urlPattern": "twitter.com",
+                        "expectedUrl": "https://twitter.com/igluski",
+                        "description": "X (Twitter) social profile"
+                    }
+                ]
+            }
+        },
+        "contact": {
+            "_comment": "Contact section data",
+            "description": "Contact blocks for phone, email, and newsletter",
+            "testCase": "TC18",
+            "blocks": [
+                {
+                    "type": "phone",
+                    "title": "Phone",
+                    "hasPhoneNumber": true,
+                    "description": "Phone contact block"
+                },
+                {
+                    "type": "email",
+                    "title": "Email",
+                    "hasButton": true,
+                    "description": "Email contact block with CTA button"
+                },
+                {
+                    "type": "newsletter",
+                    "title": "Newsletter",
+                    "hasButton": true,
+                    "description": "Newsletter signup block with CTA button"
+                }
+            ]
+        }
+    },
+    "searchPage": {
+        "_comment": "Search and filter page test data for ski holidays",
+        "locators": {
+            "_comment": "CSS selectors and accessor patterns for SearchPage - organized by section",
+            "pageStructure": {
+                "_comment": "Main page container and layout elements",
+                "main": "main.main",
+                "description": "Main content container"
+            },
+            "filterSidebar": {
+                "_comment": "Filter panel locators",
+                "sidebar": "#holiday-collapse",
+                "checkboxes": "input[type='checkbox']",
+                "dropdownButton": "button.dropdown-toggle",
+                "nights": {
+                    "pattern": "/nights|Any/",
+                    "description": "Duration filter button pattern"
+                },
+                "adults": {
+                    "pattern": "/Adult/",
+                    "description": "Adults dropdown button pattern within sidebar"
+                },
+                "children": {
+                    "pattern": "/Children/",
+                    "description": "Children dropdown button pattern within sidebar"
+                },
+                "labelAncestor": "xpath=ancestor::label[1]",
+                "description": "Fallback label selector for checkbox interaction"
+            },
+            "resultsDisplay": {
+                "_comment": "Results grid and pagination locators",
+                "cards": ".search-results",
+                "statsText": ".faceted-search__details__stats",
+                "paginationRole": {
+                    "name": "/Displaying 1 -/",
+                    "description": "Navigation element for pagination"
+                },
+                "sortButton": "button#results-sort",
+                "resultsPerPageButton": "button#results-per-page",
+                "bookOnlineButton": {
+                    "role": "button",
+                    "name": "Book Online",
+                    "description": "First Book Online CTA button"
+                },
+                "noResultsMessage": "text=/no results|no properties/i"
+            },
+            "detailPage": {
+                "_comment": "Detail page locators within opened tabs/pages",
+                "specSelectors": ".package__include-text, .package__include-title, .package__include",
+                "dataLayer": "#DataLayer",
+                "ratingLocators": "[class*='rating'], .star-rating, [data-rating]",
+                "linkPatterns": {
+                    "skiResorts": "a[href*='/ski-resorts']",
+                    "title": "a.search-result__title, a:has(.search-result__title)",
+                    "cta": "a:has-text('View'), a:has-text('Details'), a:has-text('Book Online')",
+                    "ski": "a[href*='ski' i]",
+                    "fallback": "a[href]"
+                }
+            },
+            "regexPatterns": {
+                "_comment": "Regex patterns used across page interactions",
+                "resultsMessage": "/We\\s+have\\s+found\\s+\\d+\\s+properties?/",
+                "displayingStats": "/of\\s+\\d+\\s+results?/i",
+                "ariaRating": "/(\\d+(?:\\.\\d+)?)\\s*(?:out\\s+of\\s+)?5/i",
+                "propertyType": "Hotel|Chalet|Apartment|Resort|Cottage",
+                "boardBasis": "Self catered|Half board|Full board|All inclusive"
+            }
+        },
+        "timeouts": {
+            "_comment": "Wait times for various page elements",
+            "sidebarVisible": 10000,
+            "resultsVisible": 5000,
+            "detailPageLoad": 30000,
+            "pageSettlement": 500,
+            "networkIdle": "domcontentloaded"
+        },
+        "filters": {
+            "nights": {
+                "description": "Duration filter options in nights",
+                "testCases": [
+                    "TC-001",
+                    "TC-002",
+                    "TC-003",
+                    "TC-004"
+                ],
+                "min": 2,
+                "default": 7,
+                "max": 13,
+                "maxOpen": "14+"
+            },
+            "travelers": {
+                "description": "Adults and children filter limits",
+                "testCases": [
+                    "TC-005",
+                    "TC-006",
+                    "TC-015",
+                    "TC-016"
+                ],
+                "adults": {
+                    "min": 1,
+                    "default": 2,
+                    "max": "30+"
+                },
+                "children": {
+                    "min": 0,
+                    "max": 10
+                }
+            },
+            "accommodation": {
+                "description": "Property type filter options",
+                "testCase": "TC-017",
+                "types": [
+                    "Hotel",
+                    "Chalet",
+                    "Apartment"
+                ],
+                "selected": "Hotel"
+            },
+            "boardBasis": {
+                "description": "Board basis (meal plan) filter options",
+                "testCase": "TC-018",
+                "options": [
+                    "Self catered",
+                    "Half board",
+                    "Full board",
+                    "All inclusive"
+                ],
+                "selected": "Self catered"
+            },
+            "rating": {
+                "description": "Iglu Ski Snowflake rating filter",
+                "testCase": "TC-019",
+                "min": 1,
+                "max": 5,
+                "selected": 5
+            },
+            "propertyFeatures": {
+                "description": "Property amenities and facilities",
+                "testCase": "TC-020",
+                "features": [
+                    "WiFi",
+                    "Pool",
+                    "Sauna",
+                    "Hot tub"
+                ],
+                "selected": "WiFi"
+            },
+            "skiArea": {
+                "description": "Ski area filter selection",
+                "testCase": "TC-021",
+                "areas": [
+                    "The 3 Valleys",
+                    "Portes du Soleil",
+                    "Paradiski"
+                ],
+                "selected": "The 3 Valleys"
+            },
+            "resort": {
+                "description": "Specific resort filter selection",
+                "testCase": "TC-022",
+                "resorts": [
+                    "Val d'Isère",
+                    "St Anton",
+                    "Chamonix"
+                ],
+                "selected": "Val d'Isère"
+            },
+            "countries": {
+                "description": "Country selection with expected property behavior",
+                "testCases": [
+                    "TC-007",
+                    "TC-008",
+                    "TC-009",
+                    "TC-010"
+                ],
+                "highVolume": {
+                    "code": "FR",
+                    "name": "France",
+                    "description": "Country with many properties (1000+)"
+                },
+                "lowVolume": {
+                    "code": "US",
+                    "name": "USA",
+                    "description": "Country with few properties (10-100)",
+                    "alternativeCode": "NO",
+                    "alternativeName": "Norway"
+                }
+            }
+        },
+        "resultsDisplay": {
+            "description": "Results pagination and sorting options",
+            "testCases": [
+                "TC-011",
+                "TC-012",
+                "TC-013"
+            ],
+            "defaultPerPage": 10,
+            "perPageOptions": [
+                10,
+                20,
+                30
+            ],
+            "sortOptions": [
+                "Iglu recommends",
+                "Discount",
+                "Price (Low - High)",
+                "Price (High - Low)",
+                "Rating"
+            ]
+        },
+        "negativeScenario": {
+            "description": "Testing extreme filter combination (30+ adults + 10 children) - Tests cascading filter availability and business logic",
+            "testCase": "TC-014",
+            "filters": {
+                "nights": 2,
+                "adults": 30,
+                "children": 10,
+                "country": "NO"
+            },
+            "expectedMessage": "Testing extreme combination availability"
+        },
+        "extremes": {
+            "description": "Extreme min/max combinations across filters for TC-014 and related analyses",
+            "testCase": "TC-014",
+            "combinations": [
+                {
+                    "label": "EXTREME MIN #1 (1a,0c,2n)",
+                    "nights": 2,
+                    "adults": 1,
+                    "children": 0
+                },
+                {
+                    "label": "EXTREME MIN #2 (2a,0c,2n)",
+                    "nights": 2,
+                    "adults": 2,
+                    "children": 0
+                },
+                {
+                    "label": "EXTREME MAX #1 (30+ a,10c,14+ n)",
+                    "nights": "14+",
+                    "adults": "30+",
+                    "children": 10
+                },
+                {
+                    "label": "EXTREME MAX #2 (29a,10c,14 n)",
+                    "nights": 14,
+                    "adults": 29,
+                    "children": 10
+                }
+            ],
+            "auxiliaryExtremes": {
+                "rating": {
+                    "min": 1,
+                    "max": 5
+                },
+                "resultsPerPage": {
+                    "min": 10,
+                    "max": 30
+                },
+                "countries": {
+                    "min": "US",
+                    "max": "FR"
+                }
+            }
+        },
+        "validationConstants": {
+            "maxExactMatches": 4,
+            "maxDebugItems": 5
+        },
+        "countryMappings": {
+            "finland": "Finland",
+            "france": "France",
+            "usa": "USA",
+            "norway": "Norway"
+        }
+    }
+}

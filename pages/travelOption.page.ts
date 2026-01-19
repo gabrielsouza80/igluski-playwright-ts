@@ -12,7 +12,7 @@ export class TravelOptionsPage   extends HelperBase {
   readonly continueToExtrasBtn: Locator = this.page.locator('.chalet-details .sob-step-navigation.hidden-sm button[data-button-type="goToExtrasBtn"]');
 
   async selectDefaultFlight(): Promise<void> {
-    // Flight Option (Default) já vem selecionada
+    // Flight Option (Default) is already selected
     const selectBtn = this.defaultFlightOption.locator('..').locator('button:has-text("Select")').first();
     await selectBtn.click({ force: true });
   }
