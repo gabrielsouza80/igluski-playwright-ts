@@ -4,36 +4,7 @@ import testData from './fixtures/testdata.json';
 // ================================================================
 // Test Suite: Home Page Mobile
 // ================================================================
-
-// Helper function to block Sleeknote
-async function blockSleeknote(page: any) {
-  await page.evaluate(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      [class*="sleeknote"],
-      sleeknote-top,
-      sleeknote-bottom,
-      sleeknote-left,
-      sleeknote-right {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    const observer = new MutationObserver(() => {
-      const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
-      sleeknoteElements.forEach(el => el.remove());
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-  });
-}
+// NOTE: blockSleeknote() is now available in HelperBase and inherited by all page objects
 
 test.describe('Home Page Mobile', () => {
 
@@ -51,7 +22,7 @@ test.describe('Home Page Mobile', () => {
 
     await test.step('✓ Navigate to the homepage and handle cookie banner', async () => {
       await pm.onHomePage().navigateAndAcceptCookies();
-      await blockSleeknote(page);
+      await pm.onHomePage().blockSleeknote();
     });
 
     await test.step('✓ Handle Sleeknote popup if present', async () => {
@@ -60,10 +31,10 @@ test.describe('Home Page Mobile', () => {
   });
 
   // ============================================================
-  // 🔵 TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)
+  // 🔵 TC01-MOBILE — Validate Main Titles on the Home Page (Mobile)
   // ============================================================
   // This test validates the main titles displayed on the Home Page in mobile view.
-  test('TC15-MOBILE — Validate Main Titles on the Home Page (Mobile)', async ({ pm }, testInfo) => {
+  test('TC01-MOBILE — Validate Main Titles on the Home Page (Mobile)', async ({ pm }, testInfo) => {
 
     // STEP 1 — Define expected Home Page titles
     const expectedTitles = testData.homePage.titles.data;
@@ -78,15 +49,15 @@ test.describe('Home Page Mobile', () => {
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
       console.log(`VALIDATION PASSED: All ${expectedTitles.length} home page titles validated successfully (Mobile)`);
-      console.log(`✓ TC15-MOBILE completed successfully - validated ${expectedTitles.length} titles`);
+      console.log(`✓ TC01-MOBILE completed successfully - validated ${expectedTitles.length} titles`);
     });
   });
 
   // ============================================================
-  // 🔵 TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)
+  // 🔵 TC02-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)
   // ============================================================
   // This test validates country banner boxes and their redirections in mobile view.
-  test('TC16-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)', async ({ pm }, testInfo) => {
+  test('TC02-MOBILE — Validate Country Banners (Ski Resorts) (Mobile)', async ({ pm }, testInfo) => {
 
     const bannerData = testData.homePage.countryBanners;
 
@@ -102,15 +73,15 @@ test.describe('Home Page Mobile', () => {
     // STEP 2 — Finish test
     await test.step('Finish test', async () => {
       console.log(`VALIDATION PASSED: All ${bannerCount} country banners validated with correct redirections (Mobile)`);
-      console.log(`✓ TC16-MOBILE completed successfully - validated ${bannerCount} banners`);
+      console.log(`✓ TC02-MOBILE completed successfully - validated ${bannerCount} banners`);
     });
   });
 
   // ============================================================
-  // 🔵 TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)
+  // 🔵 TC03-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)
   // ============================================================
   // This test validates all CTA boxes, their titles, and their redirections in mobile view.
-  test('TC17-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)', async ({ pm }, testInfo) => {
+  test('TC03-MOBILE — Validate CTA Boxes (Call To Action) (Mobile)', async ({ pm }, testInfo) => {
 
     const ctaBoxesData = testData.homePage.ctaBoxes;
 
@@ -125,15 +96,15 @@ test.describe('Home Page Mobile', () => {
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
       console.log(`VALIDATION PASSED: All ${ctaBoxesData.data.length} CTA boxes titles and redirections validated successfully (Mobile)`);
-      console.log(`✓ TC17-MOBILE completed successfully - validated ${ctaBoxesData.data.length} CTA boxes`);
+      console.log(`✓ TC03-MOBILE completed successfully - validated ${ctaBoxesData.data.length} CTA boxes`);
     });
   });
 
   // ============================================================
-  // 🔵 TC22-MOBILE — Validate Carousel CTA Button (Mobile)
+  // 🔵 TC04-MOBILE — Validate Carousel CTA Button (Mobile)
   // ============================================================
   // This test validates the CTA button for each carousel slide in mobile view.
-  test('TC22-MOBILE — Validate Carousel CTA Button (Mobile)', async ({ pm }, testInfo) => {
+  test('TC04-MOBILE — Validate Carousel CTA Button (Mobile)', async ({ pm }, testInfo) => {
 
     // STEP 1 — Count carousel slides
     let totalSlides: number = 0;
@@ -215,17 +186,17 @@ test.describe('Home Page Mobile', () => {
 
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
-      console.log('✓ TC22-MOBILE completed successfully');
+      console.log('✓ TC04-MOBILE completed successfully');
     });
   });
 
   // ============================================================
-  // 🔵 TCXX-MOBILE — Validate Inline Links in Sections (Mobile)
+  // 🔵 TC05-MOBILE — Validate Inline Links in Sections (Mobile)
   // ============================================================
   // This test validates inline links inside two Home Page sections in mobile view:
   // 1) Speak to the ski experts
   // 2) Find Your Skiing Holiday
-  test('TCXX-MOBILE — Validate Inline Links in Sections (Mobile)', async ({ pm }, testInfo) => {
+  test('TC05-MOBILE — Validate Inline Links in Sections (Mobile)', async ({ pm }, testInfo) => {
 
     // STEP 1 — Validate Speak to Experts section
     await test.step('Validate inline links inside the "Speak to Experts" section', async () => {
@@ -246,10 +217,10 @@ test.describe('Home Page Mobile', () => {
   });
 
   // ============================================================
-  // 🔵 TC26-MOBILE — Validate Mobile Layout Consistency
+  // 🔵 TC06-MOBILE — Validate Mobile Layout Consistency
   // ============================================================
   // This test validates that the page renders correctly in mobile landscape mode (812x375)
-  test('TC26-MOBILE — Validate Mobile Layout Consistency', async ({ pm }, testInfo) => {
+  test('TC06-MOBILE — Validate Mobile Layout Consistency', async ({ pm }, testInfo) => {
 
     // STEP 1 — Set mobile landscape viewport (deitado)
     await test.step('Set mobile landscape viewport (812x375)', async () => {
@@ -264,7 +235,7 @@ test.describe('Home Page Mobile', () => {
     // STEP 3 — Finish test
     await test.step('Finish test', async () => {
       console.log('VALIDATION PASSED: Page layout validated at 812px (Mobile Landscape)');
-      console.log('✓ TC26-MOBILE completed successfully - mobile landscape layout validated');
+      console.log('✓ TC06-MOBILE completed successfully - mobile landscape layout validated');
     });
   });
 

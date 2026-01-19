@@ -179,12 +179,39 @@ export class HomePage extends HelperBase {
     await ctaBox.scrollIntoViewIfNeeded();
     await this.page.waitForTimeout(300);
 
-    // Open URL and validate pattern
-    await this.openAndValidateUrl(url, expectedPattern);
-    this.logInfo("✓ CTA navigation OK");
+    // Prepare listeners for either navigation or popup
+    const popupPromise = this.page.context().waitForEvent("page", { timeout: 8000 }).catch(() => null);
+    const navigationPromise = this.page.waitForNavigation({ timeout: 8000 }).catch(() => null);
 
-    // Return to homepage
-    await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+    await ctaBox.click();
+
+    const newTab = await popupPromise;
+    const didNavigateSameTab = await navigationPromise;
+
+    if (newTab) {
+      await newTab.waitForLoadState("domcontentloaded");
+      await expect(newTab).toHaveURL(expectedPattern);
+      const titleText = await newTab.title();
+      if (!titleText || !titleText.trim()) {
+        throw new Error("CTA target page title is empty");
+      }
+      this.logInfo(`Page title: "${titleText}"`);
+      this.logInfo("✓ CTA opened and validated in a new tab");
+      await newTab.close();
+    } else if (didNavigateSameTab) {
+      await expect(this.page).toHaveURL(expectedPattern);
+      const titleText = await this.page.title();
+      if (!titleText || !titleText.trim()) {
+        throw new Error("CTA target page title is empty");
+      }
+      this.logInfo(`Page title: "${titleText}"`);
+      this.logInfo("✓ CTA opened in the current tab and validated");
+
+      // Return to homepage for the next CTA validation
+      await this.page.goto("https://www.igluski.com/", { waitUntil: "domcontentloaded" });
+    } else {
+      throw new Error("CTA did not open a new tab or navigate");
+    }
 
     this.logDivider();
   }
@@ -431,9 +458,22 @@ export class HomePage extends HelperBase {
     
     await newPage.goto(href, { waitUntil: 'domcontentloaded' });
 
-    // Validate navigation
-    await expect(newPage).toHaveURL(new RegExp(href, "i"));
-    this.logInfo(`✓ Navigation OK → ${newPage.url()}`);
+    // Validate navigation (allow short-link redirects, e.g., forms.gle -> docs.google.com)
+    const escapeRegex = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const allowedPatterns = [new RegExp(escapeRegex(href), "i")];
+
+    if (/forms\.gle/i.test(href)) {
+      allowedPatterns.push(/docs\.google\.com\/forms/i);
+    }
+
+    const finalUrl = newPage.url();
+    const matchesAllowed = allowedPatterns.some(rx => rx.test(finalUrl));
+
+    if (!matchesAllowed) {
+      throw new Error(`CTA navigation mismatch. Expected match for ${allowedPatterns.map(r => r.toString()).join(' OR ')} but got ${finalUrl}`);
+    }
+
+    this.logInfo(`✓ Navigation OK → ${finalUrl}`);
 
     // Validate page title
     const pageTitle = await newPage.title();
