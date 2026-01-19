@@ -4,36 +4,7 @@ import testData from './fixtures/testdata.json';
 // ================================================================
 // Test Suite: Home Page Mobile
 // ================================================================
-
-// Helper function to block Sleeknote
-async function blockSleeknote(page: any) {
-  await page.evaluate(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      [class*="sleeknote"],
-      sleeknote-top,
-      sleeknote-bottom,
-      sleeknote-left,
-      sleeknote-right {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    const observer = new MutationObserver(() => {
-      const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
-      sleeknoteElements.forEach(el => el.remove());
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-  });
-}
+// NOTE: blockSleeknote() is now available in HelperBase and inherited by all page objects
 
 test.describe('Home Page Mobile', () => {
 
@@ -51,7 +22,7 @@ test.describe('Home Page Mobile', () => {
 
     await test.step('✓ Navigate to the homepage and handle cookie banner', async () => {
       await pm.onHomePage().navigateAndAcceptCookies();
-      await blockSleeknote(page);
+      await pm.onHomePage().blockSleeknote();
     });
 
     await test.step('✓ Handle Sleeknote popup if present', async () => {

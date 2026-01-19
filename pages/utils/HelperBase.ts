@@ -566,4 +566,39 @@ export class HelperBase {
       return false;
     }
   }
+
+  // ============================================================
+  // 🔵 BLOCK SLEEKNOTE (Popup Blocking)
+  // ============================================================
+  /**
+   * Block Sleeknote popups by injecting CSS and MutationObserver
+   */
+  async blockSleeknote(): Promise<void> {
+    await this.page.evaluate(() => {
+      const style = document.createElement('style');
+      style.textContent = `
+        [class*="sleeknote"],
+        sleeknote-top,
+        sleeknote-bottom,
+        sleeknote-left,
+        sleeknote-right {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+
+      const observer = new MutationObserver(() => {
+        const sleeknoteElements = document.querySelectorAll('[class*="sleeknote"], sleeknote-top, sleeknote-bottom, sleeknote-left, sleeknote-right');
+        sleeknoteElements.forEach(el => el.remove());
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    });
+  }
 }
