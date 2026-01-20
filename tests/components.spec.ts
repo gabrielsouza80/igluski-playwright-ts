@@ -31,10 +31,10 @@ test.describe('Components Page', () => {
     });
 
     // ============================================================
-    // 🔵 TC1 — Validate Header Logo Navigation
+    // 🔵 TC-001 — Validate Header Logo Navigation
     // ============================================================
     // This test validates the header logo navigation flow.
-    test('TC1 — Validate Logo Navigation', async ({ pm }, testInfo) => {
+    test('TC-001 — Validate Logo Navigation', async ({ pm }, testInfo) => {
 
         // STEP 1 — Click the header logo
         await test.step('Click the header logo', async () => {
@@ -49,15 +49,15 @@ test.describe('Components Page', () => {
         // STEP 3 — Finish test
         await test.step('Finish test', async () => {
             console.log('VALIDATION PASSED: Header logo clicked and redirected to Home Page');
-            console.log('✓ TC1 completed successfully');
+            console.log('✓ TC-001 completed successfully');
         });
     });
 
     // ============================================================
-    // 🔵 TC2 — Validate Header Navigation + Submenu Navigation
+    // 🔵 TC-002 — Validate Header Navigation + Submenu Navigation
     // ============================================================
     // This test validates all main menu items and all submenu items.
-    test('TC2 — Header Navigation + Submenu Validation', async ({ pm }, testInfo) => {
+    test('TC-002 — Header Navigation + Submenu Validation', async ({ pm }, testInfo) => {
 
         test.setTimeout(300_000); // Extended timeout due to heavy navigation
 
@@ -95,7 +95,7 @@ test.describe('Components Page', () => {
             await pm.onComponentsPage().closeNavigationPage();
 
             if (pm.onComponentsPage().testCaseErrors.length > 0) {
-                console.log("\n==================== TC2 — SUMMARY OF ERRORS ====================");
+                console.log("\n==================== TC-002 — SUMMARY OF ERRORS ====================");
 
                 const summary = pm.onComponentsPage().testCaseErrors.join("\n");
 
@@ -103,22 +103,22 @@ test.describe('Components Page', () => {
                 console.log("=================================================================\n");
 
                 // Attach full summary to the Playwright report
-                await testInfo.attach("TC2 — Errors Summary", {
+                await testInfo.attach("TC-002 — Errors Summary", {
                     body: summary,
                     contentType: "text/plain"
                 });
 
             } else {
-                console.log("✓ TC2 completed successfully — no errors found");
+                console.log("✓ TC-002 completed successfully — no errors found");
             }
         });
     });
 
     // ============================================================
-    // 🔵 TC3 — Validate Contact Information in the Header
+    // 🔵 TC-003 — Validate Contact Information in the Header
     // ============================================================
     // This test validates the phone number, Contact Us text, and Contact Us redirection.
-    test('TC3 — Validate Contact Information in the Header', async ({ pm }, testInfo) => {
+    test('TC-003 — Validate Contact Information in the Header', async ({ pm }, testInfo) => {
 
         const contactTexts = testData.components.header.contactTexts;
 
@@ -147,15 +147,15 @@ test.describe('Components Page', () => {
             console.log('VALIDATION PASSED: Header phone number validated');
             console.log('VALIDATION PASSED: Contact Us link validated');
             console.log('VALIDATION PASSED: Contact Us redirection validated');
-            console.log(`✓ TC3 completed successfully - validated contact: "${contactTexts.phoneTitle}"`);
+            console.log(`✓ TC-003 completed successfully - validated contact: "${contactTexts.phoneTitle}"`);
         });
     });
 
     // ============================================================
-    // 🔵 TC4 — Validate "Recently Viewed" Button
+    // 🔵 TC-004 — Validate "Recently Viewed" Button
     // ============================================================
     // This test validates the Recently Viewed button and its panel visibility.
-    test('TC4 — Validate "Recently Viewed" Button', async ({ pm }, testInfo) => {
+    test('TC-004 — Validate "Recently Viewed" Button', async ({ pm }, testInfo) => {
 
         const recentlyViewedData = testData.components.header.recentlyViewed;
 
@@ -173,16 +173,16 @@ test.describe('Components Page', () => {
         await test.step('Finish test', async () => {
             console.log('VALIDATION PASSED: Recently Viewed button text validated');
             console.log('VALIDATION PASSED: Recently Viewed panel validated');
-            console.log(`✓ TC4 completed successfully - "${recentlyViewedData.buttonText}"`);
+            console.log(`✓ TC-004 completed successfully - "${recentlyViewedData.buttonText}"`);
         });
     });
 
     // ============================================================
-    // 🔵 TC5 — Validate Access to the Customer Portal
+    // 🔵 TC-005 — Validate Access to the Customer Portal
     // ============================================================
     // This test validates the Customer Portal button, AJAX-loaded content,
     // and the presence of required fields on the Customer Portal page.
-    test('TC5 — Validate Access to the Customer Portal', async ({ pm }, testInfo) => {
+    test('TC-005 — Validate Access to the Customer Portal', async ({ pm }, testInfo) => {
 
         const customerPortalData = testData.components.header.customerPortal;
 
@@ -212,15 +212,15 @@ test.describe('Components Page', () => {
             console.log('VALIDATION PASSED: Customer Portal button text validated');
             console.log('VALIDATION PASSED: AJAX content loaded successfully');
             console.log(`VALIDATION PASSED: Customer Portal required fields validated (${customerPortalData.requiredFields.length} fields)`);
-            console.log(`✓ TC5 completed successfully - expected fields: ${customerPortalData.requiredFields.join(', ')}`);
+            console.log(`✓ TC-005 completed successfully - expected fields: ${customerPortalData.requiredFields.join(', ')}`);
         });
     });
 
     // ============================================================
-    // 🔵 TC6 — Validate Ratings & Reviews in the Header
+    // 🔵 TC-006 — Validate Ratings & Reviews in the Header
     // ============================================================
     // This test validates the Ratings & Reviews link, its text, and the redirection.
-    test('TC6 — Validate Ratings & Reviews in the Header', async ({ pm }, testInfo) => {
+    test('TC-006 — Validate Ratings & Reviews in the Header', async ({ pm }, testInfo) => {
 
         const reviewsLinkData = testData.components.header.reviewsLink;
         const reviewsPageUrl = testData.urls.reviewsPage;
@@ -250,15 +250,15 @@ test.describe('Components Page', () => {
             console.log('VALIDATION PASSED: Ratings & Reviews link text validated');
             console.log('VALIDATION PASSED: Redirected to Reviews page successfully');
             console.log('VALIDATION PASSED: Reviews page title validated');
-            console.log(`✓ TC6 completed successfully - "${reviewsLinkData.text}" → ${reviewsPageUrl}`);
+            console.log(`✓ TC-006 completed successfully - "${reviewsLinkData.text}" → ${reviewsPageUrl}`);
         });
     });
 
     // ============================================================
-    // 🔵 TC18 — Validate Contact Section (Phone, Email, Newsletter)
+    // 🔵 TC-007 — Validate Contact Section (Phone, Email, Newsletter)
     // ============================================================
     // This test validates the three contact blocks displayed on the Home Page.
-    test('TC18 — Validate Contact Section (Phone, Email, Newsletter)', async ({ pm }, testInfo) => {
+    test('TC-007 — Validate Contact Section (Phone, Email, Newsletter)', async ({ pm }, testInfo) => {
 
         const contactBlocks = testData.components.contact.blocks;
 
@@ -282,14 +282,14 @@ test.describe('Components Page', () => {
             console.log('VALIDATION PASSED: Contact phone block validated');
             console.log('VALIDATION PASSED: Contact email block validated');
             console.log('VALIDATION PASSED: Contact newsletter block validated');
-            console.log('✓ TC18 completed successfully');
+            console.log('✓ TC-007 completed successfully');
         });
     });
 
     // ============================================================
-    // 🔵 TC20 — Validate Footer Links
+    // 🔵 TC-008 — Validate Footer Links
     // ============================================================
-    test('TC20 — Validate Footer Links', async ({ pm }, testInfo) => {
+    test('TC-008 — Validate Footer Links', async ({ pm }, testInfo) => {
         test.setTimeout(300_000); // Extended timeout due to heavy navigation
 
         const footerData = testData.components.footer.holidayIdSearch;
@@ -347,14 +347,14 @@ test.describe('Components Page', () => {
             console.log(`  • Total footer items found: ${footerItems.length}`);
             console.log(`=================================================================\n`);
             await pm.onComponentsPage().closeFooterNavigationPage();
-            console.log("✓ TC20 completed successfully");
+            console.log("✓ TC-008 completed successfully");
         });
     });
 
     // ============================================================
-    // 🔵 TC28 — Validate "Search by Holiday ID" Button in Footer
+    // 🔵 TC-009 — Validate "Search by Holiday ID" Button in Footer
     // ============================================================
-    test('TC28 — Validate "Search by Holiday ID" Button in Footer', async ({ pm }, testInfo) => {
+    test('TC-009 — Validate "Search by Holiday ID" Button in Footer', async ({ pm }, testInfo) => {
 
         const holidayIdData = testData.components.footer.holidayIdSearch;
 
@@ -371,14 +371,14 @@ test.describe('Components Page', () => {
 
         // STEP 2 — Finish test
         await test.step('Finish test', async () => {
-            console.log("✓ TC28 completed successfully");
+            console.log("✓ TC-009 completed successfully");
         });
     });
 
     // ============================================================
-    // 🔵 TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer
+    // 🔵 TC-010 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer
     // ============================================================
-    test('TC-F21 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer', async ({ pm }, testInfo) => {
+    test('TC-010 — Validate Trust Seals (ATOL, ABTA, IATA, Feefo) in Footer', async ({ pm }, testInfo) => {
 
         const trustSealsData = testData.components.footer.trustSeals;
 
@@ -407,14 +407,14 @@ test.describe('Components Page', () => {
             console.log(`VALIDATION PASSED: Trust seals visibility validated (${trustSealsData.seals.length} seals)`);
             console.log(`VALIDATION PASSED: Trust seals clickable links validated (${trustSealsData.seals.length} seals)`);
             console.log(`VALIDATION PASSED: Trust seals URL format validated (${trustSealsData.seals.length} seals)`);
-            console.log(`✓ TC-F21 completed successfully - validated ${trustSealsData.seals.length} trust seals`);
+            console.log(`✓ TC-010 completed successfully - validated ${trustSealsData.seals.length} trust seals`);
         });
     });
 
     // ============================================================
-    // 🔵 TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer
+    // 🔵 TC-011 — Validate Social Media Icons (Facebook, Instagram, X) in Footer
     // ============================================================
-    test('TC-F22 — Validate Social Media Icons (Facebook, Instagram, X) in Footer', async ({ pm }, testInfo) => {
+    test('TC-011 — Validate Social Media Icons (Facebook, Instagram, X) in Footer', async ({ pm }, testInfo) => {
 
         const socialMediaData = testData.components.footer.socialMedia;
 
@@ -443,7 +443,7 @@ test.describe('Components Page', () => {
             console.log(`VALIDATION PASSED: Social media icons visibility validated (${socialMediaData.platforms.length} icons)`);
             console.log(`VALIDATION PASSED: Social media icons links validated (${socialMediaData.platforms.length} icons)`);
             console.log(`VALIDATION PASSED: Social media URL format validated (${socialMediaData.platforms.length} icons)`);
-            console.log(`✓ TC-F22 completed successfully - validated ${socialMediaData.platforms.length} social media icons`);
+            console.log(`✓ TC-011 completed successfully - validated ${socialMediaData.platforms.length} social media icons`);
         });
     });
 });
