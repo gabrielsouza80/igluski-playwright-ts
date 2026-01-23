@@ -1,18 +1,15 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="17.48272899999842">
-<testsuite name="search.spec.ts" timestamp="2026-01-20T14:33:53.736Z" hostname="chromium" tests="1" failures="0" skipped="0" time="13.064" errors="0">
-<testcase name="Search and Filters — Ski Holidays › TC-022 — Validate section &quot;clear&quot; button (Country)" classname="search.spec.ts" time="13.064">
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="22.36851400000043">
+<testsuite name="search.spec.ts" timestamp="2026-01-23T14:43:35.930Z" hostname="chromium" tests="1" failures="0" skipped="0" time="18.316" errors="0">
+<testcase name="Search and Filters — Ski Holidays › TC-025 — Validate multi-accommodation selection (Hotel + Chalet)" classname="search.spec.ts" time="18.316">
 <system-out>
 <![CDATA[
-=== TEST: TC-022 — Validate section "clear" button (Country) ===
-[WARN] Checkbox for accommodation type: undefined not found (3 checkboxes in container)
-⚠️ Country section clear button not visible - filter may not have been applied correctly
-⚠️ TC-022: Unexpected error - Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
-
-Received: [31mfalse[39m
-✅ TC-022 PASS — Section "clear" button functionality validated successfully
-=== END: PASS (warnings: 1) ===
-Warnings summary:
-- Checkbox for accommodation type: undefined not found (3 checkboxes in container)
+=== TEST: TC-025 — Validate multi-accommodation selection (Hotel + Chalet) ===
+✓ Selected accommodations: Hotel + Chalet
+✓ Multi-accommodation selection (Hotel + Chalet) - Results: 4503
+⚠️  WARNING: Results count 4503 outside expected range [1736-2122]
+⚠️  Expected ~1929 properties (Hotel + Chalet), but got 4503
+✅ TC-025 PASS — Multi-accommodation selection validated: Hotel + Chalet
+=== END: PASS ===
 ]]>
 </system-out>
 </testcase>

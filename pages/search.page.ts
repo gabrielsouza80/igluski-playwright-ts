@@ -430,6 +430,38 @@ export class SearchPage extends HelperBase {
   }
 
   /**
+   * Gets the full results message text
+   * Returns message like "We have found 1 property that match your search criteria."
+   * @returns {Promise<string>} Full results message text
+   */
+  async getResultsMessage(): Promise<string> {
+    try {
+      // Try primary results message: "We have found X properties that match your search criteria"
+      const resultSummaryEN = this.page.locator(`text=${this.PATTERN_RESULTS_MESSAGE}`).first();
+      if (await resultSummaryEN.count() > 0) {
+        const text = await resultSummaryEN.textContent();
+        if (text) {
+          return text.trim();
+        }
+      }
+
+      // Fallback: pagination stats "Displaying 1 - 10 of 30 results"
+      const stats = this.resultsCountText.first();
+      if (await stats.count() > 0) {
+        const statsText = await stats.textContent();
+        if (statsText) {
+          return statsText.trim();
+        }
+      }
+
+      // No message found
+      return 'No results message found';
+    } catch (error) {
+      return `Error getting results message: ${error}`;
+    }
+  }
+
+  /**
    * Clicks the "Book Online" button on the first search result
    */
   async clickFirstBookOnline(): Promise<void> {
@@ -598,7 +630,7 @@ export class SearchPage extends HelperBase {
       // Wait for network with timeout - don't hang
       try {
         await Promise.race([
-          this.page.waitForLoadState('networkidle'),
+          this.page.waitForLoadState('load'),
           new Promise(resolve => setTimeout(resolve, 2500))
         ]);
       } catch {}
@@ -649,7 +681,7 @@ export class SearchPage extends HelperBase {
             // Short settle window and bounded network wait
             await this.page.waitForTimeout(400);
             await Promise.race([
-              this.page.waitForLoadState('networkidle'),
+              this.page.waitForLoadState('load'),
               new Promise(resolve => setTimeout(resolve, 2500))
             ]).catch(() => {});
 
@@ -1675,6 +1707,8 @@ export class SearchPage extends HelperBase {
   }
 
   async selectCountryFilter(countryCode: string): Promise<void> {
+    this.logInfo(`🔵 [START] Selecting country: ${countryCode}`);
+    
     if (!this.checkPageAlive(`selecting country ${countryCode}`)) {
       this.logInfo(`[ERROR] Page closed - selecting country ${countryCode}`);
       return;
@@ -1692,7 +1726,10 @@ export class SearchPage extends HelperBase {
 
     try {
       if (!(await countryCheckbox.count())) {
+        this.logInfo(`⚠ Checkbox input#${countryCode} not found, trying fallback locator`);
         countryCheckbox = this.filtersSidebar.locator(`input[value="${countryCode}" i], input[id*="${countryCode}" i]`).first();
+      } else {
+        this.logInfo(`✓ Found checkbox input#${countryCode}`);
       }
     } catch {
       this.logInfo(`Country ${countryCode} lookup failed - page may be closed`);
@@ -1701,7 +1738,7 @@ export class SearchPage extends HelperBase {
 
     try {
       if (!(await countryCheckbox.count())) {
-        this.logInfo(`Country ${countryCode} not found`);
+        this.logInfo(`❌ Country ${countryCode} not found in page`);
         return;
       }
     } catch {
@@ -1729,10 +1766,14 @@ export class SearchPage extends HelperBase {
 
     try {
       const isChecked = await countryCheckbox.isChecked();
+      this.logInfo(`🔍 Checkbox ${countryCode} isChecked: ${isChecked}`);
       if (isChecked) {
+        this.logInfo(`⏭️ ${countryCode} already selected, skipping`);
         return;
       }
-    } catch { }
+    } catch (error) {
+      this.logInfo(`⚠ Error checking ${countryCode} state: ${error}`);
+    }
 
     // Click the checkbox with retry mechanism
     let attempts = 0;
@@ -1761,8 +1802,23 @@ export class SearchPage extends HelperBase {
           throw new Error(`Country ${countryCode} checkbox did not become checked`);
         }
         
-        // Wait for page to respond (avoid `networkidle` which can hang on this site)
+        // Wait for page to respond and URL to update
         await this.page.waitForLoadState('domcontentloaded').catch(() => { });
+        await this.page.waitForTimeout(500); // Small wait for URL to update
+        
+        // Verify URL contains the country parameter (critical for multi-select)
+        const currentUrl = await this.page.url();
+        if (!currentUrl.toUpperCase().includes(countryCode.toUpperCase())) {
+          console.log(`⚠ URL doesn't contain ${countryCode}, waiting longer...`);
+          await this.page.waitForTimeout(1500);
+          const updatedUrl = await this.page.url();
+          if (!updatedUrl.toUpperCase().includes(countryCode.toUpperCase())) {
+            this.logInfo(`⚠ WARNING: ${countryCode} checkbox checked but URL not updated`);
+          } else {
+            this.logInfo(`✓ ${countryCode} verified in URL after extra wait`);
+          }
+        }
+        
         await this.searchResults.first().waitFor({ state: 'visible' }).catch(() => { });
         
         const count = await this.getResultsCount();
@@ -1965,8 +2021,8 @@ export class SearchPage extends HelperBase {
    */
   async validateExactMatchCount(expectedCount?: number): Promise<number> {
     try {
-      // Wait for page to finish loading (network idle)
-      await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+      // Wait for page to finish loading
+      await this.page.waitForLoadState('load', { timeout: 5000 }).catch(() => {});
       
       // Scroll top of results into view first
       const resultsDiv = this.page.locator('#results').first();
@@ -2322,37 +2378,6 @@ export class SearchPage extends HelperBase {
     return '';
   }
 
-  /** Checks if a section clear button (e.g., country) is visible (not hidden) */
-  async isSectionClearVisible(optionType: string): Promise<boolean> {
-    try {
-      // Wait for filters sidebar to be stable
-      await this.filtersSidebar.waitFor({ state: 'visible' }).catch(() => {});
-      
-      const section = this.filtersSidebar.locator(`[data-option-type="${optionType}"]`).first();
-      if (!(await section.count())) {
-        this.logInfo(`⚠️ Section with data-option-type="${optionType}" not found`);
-        return false;
-      }
-      
-      const clearBtn = section.locator('.faceted-search__section-clear').first();
-      if (!(await clearBtn.count())) {
-        this.logInfo(`⚠️ Clear button not found in ${optionType} section`);
-        return false;
-      }
-      
-      // Wait a bit for DOM to update after filter selection
-      await this.page.waitForTimeout(500).catch(() => {});
-      
-      const classAttr = (await clearBtn.getAttribute('class')) || '';
-      const isVisible = !classAttr.includes('hidden');
-      this.logInfo(`Clear button for ${optionType}: ${isVisible ? 'visible' : 'hidden'} (classes: ${classAttr})`);
-      return isVisible;
-    } catch (error) {
-      this.logInfo(`⚠️ Error checking clear button visibility for ${optionType}: ${error}`);
-      return false;
-    }
-  }
-
   /** Opens the first result's detail page and validates a feature exists in FEATURES block */
   async validateFeatureInFirstResultDetail(feature: string): Promise<void> {
     let detailPage: Page | null = null;
@@ -2549,15 +2574,16 @@ export class SearchPage extends HelperBase {
     // Wait after unchecking
     await this.page.waitForTimeout(300);
 
-    // Find the LABEL that contains the input with data-rating
-    const labelSelector = `label.faceted-search__label--check-box:has(input[data-rating="${rating}"])`;
-    this.logInfo(`Locating: ${labelSelector}`);
+    // Find the checkbox with data-rating and its parent label
+    // Strategy: Find checkbox first, then use parent label if needed
+    const checkboxSelector = `input.faceted-search__input--check-box[data-rating="${rating}"]`;
+    this.logInfo(`Locating checkbox: ${checkboxSelector}`);
     
-    const label = this.page.locator(labelSelector).first();
-    const labelCount = await label.count();
-    this.logInfo(`Found ${labelCount} matching label(s)`);
+    const checkbox = this.page.locator(checkboxSelector).first();
+    const checkboxCount = await checkbox.count();
+    this.logInfo(`Found ${checkboxCount} matching checkbox(es)`);
     
-    if (labelCount === 0) {
+    if (checkboxCount === 0) {
       const allLabels = await this.page.locator('label.faceted-search__label--check-box:has(input[data-rating])').count();
       this.logWarn(`Total rating labels available: ${allLabels}`);
       
@@ -2575,44 +2601,50 @@ export class SearchPage extends HelperBase {
       await this.page.waitForTimeout(300);
     } catch {}
     
-    // Scroll label into view
+    // Scroll checkbox into view
     try {
-      await label.scrollIntoViewIfNeeded();
+      await checkbox.scrollIntoViewIfNeeded();
     } catch {}
     
     // Check checkbox state before clicking
-    const checkbox = this.page.locator(`input[data-rating="${rating}"]`).first();
     const isCheckedBefore = await checkbox.isChecked();
     this.logInfo(`Checkbox BEFORE: ${isCheckedBefore ? 'checked' : 'unchecked'}`);
     
     // Try multiple click strategies
     let clickSuccess = false;
     
-    // Strategy 1: Click label with force
+    // Strategy 1: Direct checkbox click with force
     try {
-      await label.click({ timeout: 5000, force: true });
+      this.logInfo(`Trying checkbox direct click (force)...`);
+      await checkbox.click({ force: true, timeout: 5000 });
       await this.page.waitForTimeout(300);
-      this.logInfo(`Label clicked (force)`);
-      clickSuccess = true;
+      let isCheckedAfter = await checkbox.isChecked();
+      this.logInfo(`Checkbox after direct click: ${isCheckedAfter ? 'checked' : 'unchecked'}`);
+      if (isCheckedAfter) {
+        clickSuccess = true;
+      }
     } catch (e) {
-      this.logWarn(`Label click failed: ${e}`);
+      this.logWarn(`Direct checkbox click failed: ${e}`);
     }
     
-    // Verify checkbox state after clicking
+    // If not checked yet, try parent label click
     let isCheckedAfter = await checkbox.isChecked();
-    this.logInfo(`Checkbox AFTER label click: ${isCheckedAfter ? 'checked' : 'unchecked'}`);
-    
-    // Fallback strategies if not checked
     if (!isCheckedAfter) {
-      // Strategy 2: Direct checkbox click with force
       try {
-        this.logInfo(`Trying checkbox direct click...`);
-        await checkbox.click({ force: true, timeout: 5000 });
+        // Find parent label using XPath
+        const labelXPath = `//input[@class="faceted-search__input--check-box" and @data-rating="${rating}"]/ancestor::label[@class="faceted-search__label--check-box"]`;
+        const label = this.page.locator(`xpath=${labelXPath}`).first();
+        
+        this.logInfo(`Trying parent label click...`);
+        await label.click({ timeout: 5000, force: true });
         await this.page.waitForTimeout(300);
         isCheckedAfter = await checkbox.isChecked();
-        this.logInfo(`Checkbox after direct click: ${isCheckedAfter ? 'checked' : 'unchecked'}`);
+        this.logInfo(`Checkbox after label click: ${isCheckedAfter ? 'checked' : 'unchecked'}`);
+        if (isCheckedAfter) {
+          clickSuccess = true;
+        }
       } catch (e) {
-        this.logWarn(`Direct click failed: ${e}`);
+        this.logWarn(`Label click failed: ${e}`);
       }
     }
     
@@ -2687,7 +2719,10 @@ export class SearchPage extends HelperBase {
         return false;
       });
       if (parentLabel) {
-        await label.click({ force: true, timeout: 1000 }).catch(() => {});
+        const labelLocator = checkbox.locator('xpath=ancestor::label[1]');
+        if (await labelLocator.count() > 0) {
+          await labelLocator.click({ force: true, timeout: 1000 }).catch(() => {});
+        }
       }
     } catch {}
     
@@ -2701,7 +2736,7 @@ export class SearchPage extends HelperBase {
     
     // Wait for network to be idle (honors global timeout)
     try {
-      await this.page.waitForLoadState('networkidle');
+      await this.page.waitForLoadState('load');
     } catch {}
     
     // Prefer direct presence of rating wrappers on result cards
@@ -3480,6 +3515,196 @@ export class SearchPage extends HelperBase {
   }
 
   /**
+   * Clear only Nights filter section
+   * Finds and clicks the "clear" button within the Nights section
+   */
+  async clearNightsFilters(): Promise<void> {
+    try {
+      // Strategy 1: Find "clear" button in data-option-type="nights" section
+      let clearButton = this.filtersSidebar
+        .locator('[data-option-type="nights"]')
+        .locator('a:has-text("clear"), button:has-text("clear")')
+        .first();
+
+      if (!(await clearButton.count())) {
+        // Strategy 2: Find by class name pattern
+        clearButton = this.filtersSidebar
+          .locator('[data-option-type="nights"]')
+          .locator('.faceted-search__section-clear')
+          .first();
+      }
+
+      if (await clearButton.count() > 0) {
+        await clearButton.scrollIntoViewIfNeeded().catch(() => {});
+        await clearButton.click({ force: true }).catch(() => {});
+        await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+        await this.page.waitForTimeout(300).catch(() => {});
+        this.logInfo('✓ Cleared nights filters');
+      } else {
+        // Fallback: programmatically uncheck all nights checkboxes in the section
+        const nightsSection = this.filtersSidebar.locator('[data-option-type="nights"]').first();
+        if (await nightsSection.count()) {
+          await nightsSection.evaluate((section) => {
+            const inputs = Array.from(section.querySelectorAll('input[type="checkbox"]')) as HTMLInputElement[];
+            for (const input of inputs) {
+              if (input.checked) {
+                input.checked = false;
+              }
+            }
+            section.dispatchEvent(new Event('input', { bubbles: true }));
+            section.dispatchEvent(new Event('change', { bubbles: true }));
+          }).catch(() => {});
+          await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+          await this.page.waitForTimeout(300).catch(() => {});
+          this.logInfo('✓ Cleared nights filters via fallback');
+        } else {
+          this.logInfo('⚠ Nights section not found - filters may not have been cleared');
+        }
+      }
+    } catch (error) {
+      this.logInfo(`⚠ Error clearing nights filters: ${error}`);
+    }
+  }
+
+  /**
+   * Clear only Resort filter section
+   * Finds and clicks the "clear" button within the Resort section
+   */
+  async clearResortFilters(): Promise<void> {
+    try {
+      // Strategy 1: Find "clear" button in data-option-type="resort" section
+      let clearButton = this.filtersSidebar
+        .locator('[data-option-type="resort"]')
+        .locator('a:has-text("clear"), button:has-text("clear")')
+        .first();
+
+      if (!(await clearButton.count())) {
+        // Strategy 2: Find by class name pattern
+        clearButton = this.filtersSidebar
+          .locator('[data-option-type="resort"]')
+          .locator('.faceted-search__section-clear')
+          .first();
+      }
+
+      if (await clearButton.count() > 0) {
+        await clearButton.scrollIntoViewIfNeeded().catch(() => {});
+        await clearButton.click({ force: true }).catch(() => {});
+        await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+        await this.page.waitForTimeout(300).catch(() => {});
+        this.logInfo('✓ Cleared resort filters');
+      } else {
+        // Fallback: programmatically uncheck all resort checkboxes in the section
+        const resortSection = this.filtersSidebar.locator('[data-option-type="resort"]').first();
+        if (await resortSection.count()) {
+          await resortSection.evaluate((section) => {
+            const inputs = Array.from(section.querySelectorAll('input[type="checkbox"]')) as HTMLInputElement[];
+            for (const input of inputs) {
+              if (input.checked) {
+                input.checked = false;
+              }
+            }
+            section.dispatchEvent(new Event('input', { bubbles: true }));
+            section.dispatchEvent(new Event('change', { bubbles: true }));
+          }).catch(() => {});
+          await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+          await this.page.waitForTimeout(300).catch(() => {});
+          this.logInfo('✓ Cleared resort filters via fallback');
+        } else {
+          this.logInfo('⚠ Resort section not found - filters may not have been cleared');
+        }
+      }
+    } catch (error) {
+      this.logInfo(`⚠ Error clearing resort filters: ${error}`);
+    }
+  }
+
+  /**
+   * Clear only Recommendations filter section (Resort For)
+   * Finds and clicks the "clear" button within the Recommendations section
+   */
+  async clearResortForFilters(): Promise<void> {
+    try {
+      let clearButton = this.filtersSidebar
+        .locator('[data-option-type="resortfor"]')
+        .locator('a:has-text("clear"), button:has-text("clear")')
+        .first();
+
+      if (!(await clearButton.count())) {
+        clearButton = this.filtersSidebar
+          .locator('[data-option-type="resortfor"]')
+          .locator('.faceted-search__section-clear')
+          .first();
+      }
+
+      if (await clearButton.count() > 0) {
+        await clearButton.scrollIntoViewIfNeeded().catch(() => {});
+        await clearButton.click({ force: true }).catch(() => {});
+        await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+        await this.page.waitForTimeout(300).catch(() => {});
+        this.logInfo('✓ Cleared recommendations filters');
+      } else {
+        const resortForSection = this.filtersSidebar.locator('[data-option-type="resortfor"]').first();
+        if (await resortForSection.count()) {
+          await resortForSection.evaluate((section) => {
+            const inputs = Array.from(section.querySelectorAll('input[type="checkbox"]')) as HTMLInputElement[];
+            for (const input of inputs) {
+              if (input.checked) input.checked = false;
+            }
+            section.dispatchEvent(new Event('change', { bubbles: true }));
+          }).catch(() => {});
+          await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+          this.logInfo('✓ Cleared recommendations filters via fallback');
+        }
+      }
+    } catch (error) {
+      this.logInfo(`⚠ Error clearing recommendations filters: ${error}`);
+    }
+  }
+
+  /**
+   * Clear only Board Basis filter section
+   * Finds and clicks the "clear" button within the Board section
+   */
+  async clearBoardFilters(): Promise<void> {
+    try {
+      let clearButton = this.filtersSidebar
+        .locator('[data-option-type="board"]')
+        .locator('a:has-text("clear"), button:has-text("clear")')
+        .first();
+
+      if (!(await clearButton.count())) {
+        clearButton = this.filtersSidebar
+          .locator('[data-option-type="board"]')
+          .locator('.faceted-search__section-clear')
+          .first();
+      }
+
+      if (await clearButton.count() > 0) {
+        await clearButton.scrollIntoViewIfNeeded().catch(() => {});
+        await clearButton.click({ force: true }).catch(() => {});
+        await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+        await this.page.waitForTimeout(300).catch(() => {});
+        this.logInfo('✓ Cleared board basis filters');
+      } else {
+        const boardSection = this.filtersSidebar.locator('[data-option-type="board"]').first();
+        if (await boardSection.count()) {
+          await boardSection.evaluate((section) => {
+            const inputs = Array.from(section.querySelectorAll('input[type="checkbox"]')) as HTMLInputElement[];
+            for (const input of inputs) {
+              if (input.checked) input.checked = false;
+            }
+            section.dispatchEvent(new Event('change', { bubbles: true }));
+          }).catch(() => {});
+          await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+          this.logInfo('✓ Cleared board basis filters via fallback');
+        }
+      }
+    } catch (error) {
+      this.logInfo(`⚠ Error clearing board basis filters: ${error}`);
+    }
+  }
+
+  /**
    * Get current page URL
    * @returns {Promise<string>} Current URL
    */
@@ -3497,141 +3722,62 @@ export class SearchPage extends HelperBase {
    * @returns {Promise<number>} Final results count
    */
   async selectMultipleCountries(countryCodes: string[]): Promise<number> {
-    for (const code of countryCodes) {
+    this.logInfo(`🔵 [MULTI-SELECT] Starting selection of ${countryCodes.length} countries: ${countryCodes.join(', ')}`);
+    
+    for (let i = 0; i < countryCodes.length; i++) {
+      const code = countryCodes[i];
+      this.logInfo(`🔵 [${i + 1}/${countryCodes.length}] Selecting country: ${code}`);
+      
       if (!this.checkPageAlive('selectMultipleCountries')) {
-        this.logInfo(`⚠ Page closed - cannot select more countries`);
+        this.logInfo(`⚠ Page closed - cannot select more countries (stopped at ${i + 1}/${countryCodes.length})`);
         break;
       }
 
       try {
         // Reuse the robust single-country selection logic (uses id + fallbacks)
         await this.selectCountryFilter(code);
-      } catch (error) {
-        this.logInfo(`⚠ ${code} error: ${error}`);
-      }
-    }
-
-    const resultsCount = await this.getResultsCount();
-    return resultsCount;
-  }
-
-  /**
-   * Select multiple accommodation types simultaneously
-   * @param {string[]} accommodationTypes - Array of accommodation types to select
-   * @returns {Promise<number>} Final results count
-   */
-  async selectMultipleAccommodations(accommodationTypes: string[]): Promise<number> {
-    for (const type of accommodationTypes) {
-      const strategies = [
-        this.page.locator(`label:has-text("${type}") input[type="checkbox"]`).first(),
-        this.page.locator(`input[type="checkbox"][value="${type}"]`).first(),
-        this.page.locator(`input[type="checkbox"]#${type.replace(/\s+/g, '')}`).first()
-      ];
-
-      await this.selectCheckboxByStrategies('accommodation type', type, strategies, this.filtersSidebar);
-      const count = await this.getResultsCount();
-      this.logInfo(`✓ ${type} → ${count} results`);
-    }
-
-    const resultsCount = await this.getResultsCount();
-    return resultsCount;
-  }
-
-  /**
-   * Select multiple board basis options simultaneously
-   * @param {string[]} boardBasisOptions - Array of board basis options to select
-   * @returns {Promise<number>} Final results count
-   */
-  async selectMultipleBoardBasis(boardBasisOptions: string[]): Promise<number> {
-    for (const option of boardBasisOptions) {
-      const strategies = [
-        this.page.locator(`label:has-text("${option}") input[type="checkbox"]`).first(),
-        this.page.locator(`input[type="checkbox"][value="${option}"]`).first(),
-        this.page.locator(`input[type="checkbox"]#${option.replace(/\s+/g, '')}`).first()
-      ];
-
-      await this.selectCheckboxByStrategies('board basis', option, strategies, this.filtersSidebar);
-      const count = await this.getResultsCount();
-      this.logInfo(`✓ ${option} → ${count} results`);
-    }
-
-    const resultsCount = await this.getResultsCount();
-    return resultsCount;
-  }
-
-  /**
-   * Select multiple ski areas simultaneously
-   * @param {string[]} skiAreas - Array of ski area names to select
-   * @returns {Promise<number>} Final results count
-   */
-  async selectMultipleSkiAreas(skiAreas: string[]): Promise<number> {
-    for (const area of skiAreas) {
-      // Use more comprehensive locator strategies for ski areas
-      const safeId = area.replace(/[^A-Za-z0-9_-]/g, '').substring(0, 50);
-      const strategies = [
-        // Direct label with text match
-        this.filtersSidebar.locator(`label.faceted-search__label--check-box:has-text("${area}")`).first(),
-        // Label with nested input
-        this.filtersSidebar.locator(`label:has(input[type="checkbox"]):has-text("${area}")`).first(),
-        // Input with value attribute
-        this.page.locator(`input[type="checkbox"][value="${area}"]`).first(),
-        // Input with ID match
-        this.page.locator(`input[type="checkbox"]#${safeId}`).first(),
-        // Any label with text
-        this.page.locator(`label:has-text("${area}") input[type="checkbox"]`).first()
-      ];
-
-      let success = await this.selectCheckboxByStrategies('ski area', area, strategies, this.filtersSidebar);
-      
-      // If first attempt failed, try aggressive fallback
-      if (!success) {
-        try {
-          this.logInfo(`  🔄 Attempting aggressive fallback for ${area}...`);
-          
-          // Find the label and click it multiple times if needed
-          const labels = await this.page.locator(`label:has-text("${area}")`).all();
-          for (const label of labels) {
-            try {
-              const isVisible = await label.isVisible().catch(() => false);
-              if (isVisible) {
-                // Try aggressive click
-                await label.click({ force: true, timeout: 2000 }).catch(() => {});
-                await this.page.waitForTimeout(200);
-                
-                // Verify checkbox got checked
-                const checkbox = await label.locator('input[type="checkbox"]').first();
-                const isChecked = await checkbox.isChecked().catch(() => false);
-                if (isChecked) {
-                  success = true;
-                  this.logInfo(`  ✅ Aggressive fallback succeeded for ${area}`);
-                  break;
-                }
-              }
-            } catch (e) {
-              // Continue to next label
-            }
-          }
-        } catch (e) {
-          this.logInfo(`  ⚠️  Aggressive fallback also failed: ${e}`);
-        }
-      }
-      
-      if (success) {
-        // Wait for results to update after selection
-        try {
+        this.logInfo(`✅ [${i + 1}/${countryCodes.length}] Completed selection of ${code}`);
+        
+        // Verify the selection took effect by checking URL or results change
+        const currentCount = await this.getResultsCount();
+        this.logInfo(`📊 Results after ${code}: ${currentCount}`);
+        
+        // CRITICAL: Wait for page to fully stabilize after each country selection
+        // The page triggers AJAX updates that make it temporarily unresponsive
+        if (i < countryCodes.length - 1) { // Don't wait after the last one
+          this.logInfo(`⏳ Waiting for page to stabilize before next selection...`);
           await this.page.waitForLoadState('domcontentloaded').catch(() => {});
-          await this.page.waitForTimeout(400);
-          const count = await this.getResultsCount();
-          this.logInfo(`✓ ${area} → ${count} results`);
-        } catch (e) {
-          this.logInfo(`⚠️  ${area} selected but results count unavailable`);
+          
+          // Wait longer for network to settle (more countries = more data)
+          const waitTime = 3000 + (i * 1000); // Increases with each country
+          this.logInfo(`⏳ Waiting ${waitTime}ms for network to settle...`);
+          await this.page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+          await this.page.waitForTimeout(waitTime);
+          
+          // Verify page is still responsive
+          if (!this.checkPageAlive('between country selections')) {
+            this.logInfo(`⚠ Page became unresponsive after ${code}`);
+            break;
+          }
+          
+          // Ensure filters sidebar is still accessible
+          try {
+            await this.filtersSidebar.waitFor({ state: 'visible', timeout: 5000 });
+            this.logInfo(`✓ Page stabilized, filters sidebar visible, ready for next selection`);
+          } catch (error) {
+            this.logInfo(`⚠ Filters sidebar not visible after ${code}: ${error}`);
+            break;
+          }
         }
-      } else {
-        this.logInfo(`⚠️  Failed to select ${area}, but continuing with remaining areas`);
+      } catch (error) {
+        this.logInfo(`❌ [${i + 1}/${countryCodes.length}] ${code} error: ${error}`);
+        // Don't break - try next country anyway
       }
     }
 
+    this.logInfo(`🔵 [MULTI-SELECT] Completed all country selections`);
     const resultsCount = await this.getResultsCount();
+    this.logInfo(`🔵 [MULTI-SELECT] Final results count: ${resultsCount}`);
     return resultsCount;
   }
 
@@ -3784,8 +3930,8 @@ export class SearchPage extends HelperBase {
   // ================================================================
   async countFilteredResultCards(): Promise<number> {
     try {
-      // Wait for page to finish loading (network idle)
-      await this.page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+      // Wait for page to finish loading
+      await this.page.waitForLoadState('load', { timeout: 5000 }).catch(() => {});
       
       // Scroll results into view first to ensure all elements are loaded
       const firstCard = this.page.locator('.search-results').first();

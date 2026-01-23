@@ -256,7 +256,16 @@ export class HelperBase {
   // ============================================================
   // 🔵 NAVIGATION
   // ============================================================
-  async navigateAndAcceptCookies(path: string = '/'): Promise<void> {
+  /**
+   * Navigate to a URL and accept cookies with configurable wait strategy
+   * @param path URL path to navigate to (default: '/')
+   * @param waitStrategy Loading state to wait for ('networkidle' | 'load' | 'domcontentloaded' | 'none')
+   *                     - 'networkidle': Wait until network is idle (slowest, most reliable)
+   *                     - 'load': Wait for window.onload event (balanced)
+   *                     - 'domcontentloaded': Wait for DOMContentLoaded event (fastest)
+   *                     - 'none': Skip additional waits after goto
+   */
+  async navigateAndAcceptCookies(path: string = '/', waitStrategy: 'networkidle' | 'load' | 'domcontentloaded' | 'none' = 'load'): Promise<void> {
     try {
       await this.page.goto(path, { waitUntil: 'load' });
     } catch (error) {
@@ -267,10 +276,13 @@ export class HelperBase {
       throw error;
     }
 
-    try {
-      await this.page.waitForLoadState('networkidle');
-    } catch {
-      // networkidle may never occur; continue.
+    // Apply additional wait strategy if specified
+    if (waitStrategy !== 'none') {
+      try {
+        await this.page.waitForLoadState(waitStrategy);
+      } catch {
+        this.logInfo(`⚠ Wait strategy '${waitStrategy}' did not complete; continuing.`);
+      }
     }
 
     await this.acceptCookies();

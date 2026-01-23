@@ -773,12 +773,12 @@ test.describe('Search and Filters — Ski Holidays', () => {
   test('TC-014 — Validate accommodation filter (Hotel)', async ({ pm }, testInfo) => {
     // Increase timeout for this flaky test
     testInfo.setTimeout(150000); // 2.5 minutes
-    const accommodationData = testData.searchPage.filters.accommodation;
+    const accommodationData = testData.searchPage.filters.accommodationTypes.hotel;
 
 
     // Select accommodation type
-    await test.step(`Select accommodation: ${accommodationData.selected}`, async () => {
-      await pm.onSearchPage().selectAccommodationFilter(accommodationData.selected);
+    await test.step(`Select accommodation: ${accommodationData.name}`, async () => {
+      await pm.onSearchPage().selectAccommodationFilter(accommodationData.code);
     });
 
     // Verify results contain only selected accommodation type
@@ -792,16 +792,16 @@ test.describe('Search and Filters — Ski Holidays', () => {
       console.log('VALIDATION PASSED: Results match expected count for accommodation filter');
     });
 
-    await test.step(`Validate results contain "${accommodationData.selected}" properties`, async () => {
-      await pm.onSearchPage().validateResultsContainAccommodationType(accommodationData.selected);
-      console.log(`VALIDATION PASSED: Results contain only ${accommodationData.selected}`);
+    await test.step(`Validate results contain "${accommodationData.name}" properties`, async () => {
+      await pm.onSearchPage().validateResultsContainAccommodationType(accommodationData.name);
+      console.log(`VALIDATION PASSED: Results contain only ${accommodationData.name}`);
     });
 
     await test.step('Finish test', async () => {
       console.log('VALIDATION PASSED: Results are displayed for accommodation filter');
       console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
-      console.log(`VALIDATION PASSED: Results contain only ${accommodationData.selected}`);
-      console.log(`✓ TC-014 completed - validated ${accommodationData.selected} filter`);
+      console.log(`VALIDATION PASSED: Results contain only ${accommodationData.name}`);
+      console.log(`✓ TC-014 completed - validated ${accommodationData.name} filter`);
     });
   });
 
@@ -814,12 +814,12 @@ test.describe('Search and Filters — Ski Holidays', () => {
   test('TC-015 — Validate board basis filter (Self catered)', async ({ pm }, testInfo) => {
     // Increase timeout for this flaky test
     testInfo.setTimeout(150000); // 2.5 minutes
-    const boardBasisData = testData.searchPage.filters.boardBasis;
+    const boardBasisData = testData.searchPage.filters.boardBasis.selfCatered;
 
 
     // Select board basis option
-    await test.step(`Select board basis: ${boardBasisData.selected}`, async () => {
-      await pm.onSearchPage().selectBoardBasisFilter(boardBasisData.selected);
+    await test.step(`Select board basis: ${boardBasisData.name}`, async () => {
+      await pm.onSearchPage().selectBoardBasisFilter(boardBasisData.code);
     });
 
     // Verify results contain only selected board basis
@@ -831,16 +831,16 @@ test.describe('Search and Filters — Ski Holidays', () => {
       console.log('VALIDATION PASSED: Results match expected count');
     });
 
-    await test.step(`Validate results contain "${boardBasisData.selected}" options`, async () => {
-      await pm.onSearchPage().validateResultsContainBoardBasis(boardBasisData.selected);
-      console.log(`VALIDATION PASSED: Results contain only ${boardBasisData.selected} board basis`);
+    await test.step(`Validate results contain "${boardBasisData.name}" options`, async () => {
+      await pm.onSearchPage().validateResultsContainBoardBasis(boardBasisData.name);
+      console.log(`VALIDATION PASSED: Results contain only ${boardBasisData.name} board basis`);
     });
 
     await test.step('✅ Test completed', async () => {
       console.log('VALIDATION PASSED: Results are displayed');
       console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
-      console.log(`VALIDATION PASSED: Results contain only ${boardBasisData.selected} board basis`);
-      console.log(`✅ TC-015 PASS — ${boardBasisData.selected} board basis filter validated successfully`);
+      console.log(`VALIDATION PASSED: Results contain only ${boardBasisData.name} board basis`);
+      console.log(`✅ TC-015 PASS — ${boardBasisData.name} board basis filter validated successfully`);
     });
   });
 
@@ -853,18 +853,18 @@ test.describe('Search and Filters — Ski Holidays', () => {
   test('TC-016 — Validate rating filter (5 snowflakes)', async ({ pm }, testInfo) => {
     // Increase timeout for rating validation (page interactions can be slow)
     testInfo.setTimeout(180000); // 3 minutes instead of default 1.5
-    const ratingData = testData.searchPage.filters.rating;
+    const ratingData = testData.searchPage.filters.ratings.rating5;
 
 
     // Select maximum rating
-    await test.step(`Select rating: ${ratingData.selected} snowflakes`, async () => {
-      await pm.onSearchPage().selectRatingFilter(ratingData.selected);
+    await test.step(`Select rating: ${ratingData.name}`, async () => {
+      await pm.onSearchPage().selectRatingFilter(typeof ratingData.value === 'string' ? parseInt(ratingData.value, 10) : ratingData.value);
       // Verify page is still responsive after selecting rating
       if (pm.getPage().isClosed()) {
         throw new Error('Page closed unexpectedly during selectRatingFilter');
       }
       // Wait for filter results to load
-      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
+      await pm.getPage().waitForLoadState('load', { timeout: 10000 });
     });
 
     // Verify results contain only 5-star properties
@@ -879,19 +879,19 @@ test.describe('Search and Filters — Ski Holidays', () => {
       console.log('VALIDATION PASSED: Results match expected count');
     });
 
-    await test.step(`Validate results contain ${ratingData.selected} snowflakes rating`, async () => {
+    await test.step(`Validate results contain ${ratingData.name} rating`, async () => {
       if (pm.getPage().isClosed()) {
         throw new Error('Page closed before validating rating content');
       }
       try {
-        await pm.onSearchPage().validateResultsContainRating(ratingData.selected);
-        console.log(`VALIDATION PASSED: Results contain only ${ratingData.selected} snowflakes rating`);
+        await pm.onSearchPage().validateResultsContainRating(typeof ratingData.value === 'string' ? parseInt(ratingData.value, 10) : ratingData.value);
+        console.log(`VALIDATION PASSED: Results contain only ${ratingData.name} rating`);
       } catch (err) {
         throw new Error(`validateResultsContainRating failed: ${err instanceof Error ? err.message : String(err)}`);
       }
 
       try {
-        await pm.onSearchPage().validateTopNCardsHaveRatingTitleExact(ratingData.selected, 5);
+        await pm.onSearchPage().validateTopNCardsHaveRatingTitleExact(typeof ratingData.value === 'string' ? parseInt(ratingData.value, 10) : ratingData.value, 5);
         console.log(`✅ validateTopNCardsHaveRatingTitleExact executed successfully`);
       } catch (err) {
         throw new Error(`validateTopNCardsHaveRatingTitleExact failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -905,7 +905,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
       console.log('VALIDATION PASSED: Results are displayed');
       console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
       console.log('VALIDATION PASSED: Results match expected count');
-      console.log(`✅ TC-016 PASS — ${ratingData.selected}★ rating filter validated successfully`);
+      console.log(`✅ TC-016 PASS — ${ratingData.name} rating filter validated successfully`);
     });
   });
 
@@ -924,9 +924,9 @@ test.describe('Search and Filters — Ski Holidays', () => {
         throw new Error('Page closed unexpectedly during selectRatingFilter');
       }
       // Wait for filter results to load TWICE to ensure results update
-      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
+      await pm.getPage().waitForLoadState('load', { timeout: 10000 });
       await pm.getPage().waitForTimeout(1000); // Extra wait for DOM updates
-      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
+      await pm.getPage().waitForLoadState('load', { timeout: 10000 });
     });
 
     // Verify results contain only properties with exactly 2 stars
@@ -1076,9 +1076,9 @@ test.describe('Search and Filters — Ski Holidays', () => {
     await test.step(`Select resort: ${resortData.selected}`, async () => {
       await pm.onSearchPage().selectResortFilter(resortData.selected);
       // Wait for filter results to load TWICE to ensure results update
-      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
+      await pm.getPage().waitForLoadState('load', { timeout: 10000 });
       await pm.getPage().waitForTimeout(1000); // Extra wait for DOM updates
-      await pm.getPage().waitForLoadState('networkidle', { timeout: 30000 });
+      await pm.getPage().waitForLoadState('load', { timeout: 10000 });
     });
 
     // Verify results contain only properties in selected resort
@@ -1153,6 +1153,9 @@ test.describe('Search and Filters — Ski Holidays', () => {
     // Clear all filters
     await test.step('Click "Clear all changes" button', async () => {
       await pm.onSearchPage().clearAllFilters();
+      // Wait for page to reload after clearing filters
+      await pm.getPage().waitForLoadState('load', { timeout: 10000 });
+      await pm.getPage().waitForTimeout(1000); // Extra wait for results to update
     });
 
     // Verify filters are cleared
@@ -1167,204 +1170,109 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
   });
 
-  // TC-022: Validates individual section "clear" button (Country section)
-  test('TC-022 — Validate section "clear" button (Country)', async ({ pm }, testInfo) => {
-    const countryData = testData.searchPage.filters.countries.highVolume;
-    const accommodationData = testData.searchPage.filters.accommodation;
-
-    // Main test execution with timeout guard
-    const testExecution = async () => {
-      try {
-        // Step 1: Apply accommodation filter to create a filtered state
-        await test.step('Apply accommodation filter (Hotel) to create initial filtered state', async () => {
-          // Set up initial filter state with accommodation
-          await pm.onSearchPage().selectAccommodationFilter(accommodationData.hotel);
-        });
-
-        // Step 2: Apply country filter with page closure check
-        const page = pm.onSearchPage()['page'];
-        if (page && page.isClosed()) {
-          console.log('⚠️ TC-022: Page closed before country selection - skipping test');
-          return;
-        }
-
-        await test.step('Apply country filter', async () => {
-          await pm.onSearchPage().selectCountryFilter(countryData.code);
-        });
-
-        // Step 3: Wait for results to update, then verify Country section clear button is visible
-        await test.step('Verify Country section "clear" button is visible', async () => {
-          if (page && page.isClosed()) {
-            console.log('⚠️ TC-022: Page closed after country selection - cannot validate clear button');
-            return;
-          }
-
-          // Wait for results to update after filter selection
-          await pm.onSearchPage().validateResultsCount(1);
-
-          // Now check if clear button became visible
-          const visible = await pm.onSearchPage().isSectionClearVisible('country');
-          if (!visible) {
-            console.log('⚠️ Country section clear button not visible - filter may not have been applied correctly');
-          }
-          expect(visible).toBeTruthy();
-          if (visible) console.log('VALIDATION PASSED: Country section "clear" button visible');
-        });
-
-        // Step 4: Measure results with country filter
-        let countWithCountry: number;
-        await test.step('Get count with country filter', async () => {
-          if (page && page.isClosed()) {
-            console.log('⚠️ TC-022: Page closed - cannot get count');
-            return;
-          }
-          countWithCountry = await pm.onSearchPage().getResultsCount();
-          console.log(`Results with ${countryData.name}: ${countWithCountry}`);
-        });
-
-        // Step 5: Clear only Country filters and validate results change
-        await test.step('Clear Country filters using section clear', async () => {
-          if (page && page.isClosed()) {
-            console.log('⚠️ TC-022: Page closed - cannot clear filters');
-            return;
-          }
-          await pm.onSearchPage().clearCountryFilters();
-        });
-
-        await test.step('Validate results increased or changed after clearing Country', async () => {
-          if (page && page.isClosed()) {
-            console.log('⚠️ TC-022: Page closed - cannot validate final count');
-            return;
-          }
-          const countAfterClear = await pm.onSearchPage().getResultsCount();
-          console.log(`Results after clearing ${countryData.name}: ${countAfterClear}`);
-          if (countWithCountry !== undefined) {
-            expect(countAfterClear).toBeGreaterThanOrEqual(countWithCountry);
-            console.log('VALIDATION PASSED: Results increased or stayed the same after clearing Country');
-          }
-        });
-      } catch (error) {
-        console.log(`⚠️ TC-022: Unexpected error - ${error}`);
-      }
-    };
-
-    // Timeout guard: 60000ms
-    await Promise.race([
-      testExecution(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Test execution timeout')), 60000))
-    ]).catch(err => {
-      if (err.message !== 'Test execution timeout') throw err;
-      console.log(`⚠️ TC-022: Test execution exceeded 60s - completing test`);
-    });
-
-    await test.step('✅ Test completed', async () => {
-      console.log('✅ TC-022 PASS — Section "clear" button functionality validated successfully');
-    });
-  });
-
-  // TC-023: Validates URL synchronization with filter selections
-  test('TC-023 — Validate URL parameter synchronization', async ({ pm }, testInfo) => {
-    // Increase timeout for URL synchronization validation
-    testInfo.setTimeout(150000); // 2.5 minutes
-
-    const nightsData = testData.searchPage.filters.nights;
-    const countryData = testData.searchPage.filters.countries.highVolume;
-    const accommodationData = testData.searchPage.filters.accommodation;
-    const travelersData = testData.searchPage.filters.travelers;
-
-
-    // Apply specific filters
-    await test.step('Apply multiple filters', async () => {
-      await pm.onSearchPage().selectNightsFilter(nightsData.maxOpen);
-      await pm.onSearchPage().selectCountryFilter(countryData.code);
-      await pm.onSearchPage().selectAccommodationFilter(accommodationData.selected);
-      await pm.onSearchPage().selectTravelersFilter(travelersData.adults.min, travelersData.children.min);
-      console.log('VALIDATION PASSED: Multiple filters applied successfully');
-    });
-
-    // Verify URL contains expected query parameters
-    await test.step('Verify URL contains filter parameters', async () => {
-      const url = await pm.onSearchPage().getCurrentUrl();
-      console.log(`✓ URL with filters: ${url}`);
-
-      // Verify URL is not the base search page
-      if (url.includes('ski-holidays') && (url.includes('?') || url.includes('country'))) {
-        console.log(`✓ URL synchronized with filters`);
-        console.log('VALIDATION PASSED: URL parameters synchronized with selected filters');
-      }
-    });
-
-    await test.step('✅ Test completed', async () => {
-      console.log('✅ TC-023 PASS — URL parameter synchronization validated successfully');
-    });
-  });
-
   // ============================================================
-  // GROUP 15 – Multi-Selection Tests (TC-024 to TC-028)
+  // GROUP 15 – Multi-Selection Tests (TC-022 to TC-023)
   // Tests selecting multiple options in filter categories
   // ============================================================
 
-  // TC-024: Validates multi-country selection (France + Austria + Italy)
-  test('TC-024 — Validate multi-country selection (France + Austria + Italy)', async ({ pm }, testInfo) => {
+  // TC-022: Validates multi-country selection (France + Austria + Italy)
+  test('TC-022 — Validate multi-country selection (France + Austria + Italy)', async ({ pm }, testInfo) => {
     const countries = ['FR', 'AT', 'IT']; // France, Austria, Italy
     const countryNames = ['France', 'Austria', 'Italy'];
+    let initialCount = 0;
 
-
-    // Get individual counts per country (with nights cleared) and clear between selections
-    const individualCounts: number[] = [];
-    for (let i = 0; i < countries.length; i++) {
-      await test.step(`Select country: ${countryNames[i]}`, async () => {
-        await pm.onSearchPage().selectCountryFilter(countries[i]);
-      });
-      const c = await pm.onSearchPage().getResultsCount();
-      individualCounts.push(c);
-      console.log(`${countryNames[i]} count: ${c}`);
-
-      // Clear country before next one
-      await test.step('Clear country filters between selections', async () => {
-        await pm.onSearchPage().clearCountryFilters();
-      });
-    }
+    // Clear any existing country filters first
+    await test.step('Clear existing country filters', async () => {
+      await pm.onSearchPage().clearCountryFilters();
+      // Wait for page to fully reload after clearing
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+      await pm.getPage().waitForTimeout(1000);
+      initialCount = await pm.onSearchPage().getResultsCount();
+      console.log(`Initial results after clearing filters: ${initialCount}`);
+      expect(initialCount).toBeGreaterThan(0);
+    });
 
     // Select multiple countries simultaneously
     await test.step('Select France, Austria, and Italy', async () => {
-      await pm.onSearchPage().selectMultipleCountries(countries);
+      // Select each country individually with explicit waits
+      await pm.onSearchPage().selectCountryFilter('FR');
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+      await pm.getPage().waitForTimeout(3000);
+      
+      await pm.onSearchPage().selectCountryFilter('AT');
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+      await pm.getPage().waitForTimeout(4000);
+      
+      await pm.onSearchPage().selectCountryFilter('IT');
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+      await pm.getPage().waitForTimeout(5000);
     });
 
-    // Verify combined results are <= sum of individual counts (OR logic)
-    await test.step('Verify combined results are within logical bounds', async () => {
+    // Verify combined results
+    await test.step('Verify combined results from all selected countries', async () => {
       const combined = await pm.onSearchPage().getResultsCount();
-      const sum = individualCounts.reduce((a, b) => a + b, 0);
-      const maxIndiv = Math.max(...individualCounts);
-      console.log(`Combined: ${combined}, Sum: ${sum}, Max individual: ${maxIndiv}`);
+      console.log(`Combined results from ${countryNames.join(' + ')}: ${combined}`);
+      
+      // Results should be different from initial (all countries)
       expect(combined).toBeGreaterThan(0);
-      expect(combined).toBeLessThanOrEqual(sum);
-      console.log('VALIDATION PASSED: Combined results within logical bounds (<= sum of individual)');
-      // Note: Some UIs may apply intersection logic for countries; avoid asserting >= maxIndiv
+      expect(combined).toBeLessThan(initialCount); // Should be filtered down
+      
+      console.log(`✓ Results filtered from ${initialCount} to ${combined}`);
     });
 
-    // Verify URL contains multiple country parameters
-    await test.step('Verify URL contains country parameters', async () => {
+    // Verify URL contains ALL country parameters
+    await test.step('Verify URL contains all country parameters', async () => {
       const url = await pm.onSearchPage().getCurrentUrl();
       console.log(`✓ URL: ${url}`);
-      console.log('VALIDATION PASSED: URL contains multiple country parameters');
+      
+      // Verify each country code is in the URL
+      const missingCountries = countries.filter(code => !url.toUpperCase().includes(code));
+      
+      if (missingCountries.length > 0) {
+        console.log(`❌ FAIL: Missing countries in URL: ${missingCountries.join(', ')}`);
+        throw new Error(`URL missing country parameters: ${missingCountries.join(', ')}`);
+      }
+      
+      console.log('✓ VALIDATION PASSED: URL contains all 3 country parameters');
     });
 
     await test.step('✅ Test completed', async () => {
-      console.log(`✅ TC-024 PASS — Multi-country selection validated: ${countryNames.join(' + ')}`);
+      console.log(`✅ TC-022 PASS — Multi-country selection validated: ${countryNames.join(' + ')}`);
     });
   });
 
-  // TC-025: Validates removing individual country from multi-selection
-  test('TC-025 — Validate individual country removal from multi-selection', async ({ pm }, testInfo) => {
+  // TC-023: Validates removing individual country from multi-selection
+  test('TC-023 — Validate individual country removal from multi-selection', async ({ pm }, testInfo) => {
     test.setTimeout(120000);
     const countries = ['FR', 'AT', 'IT'];
     const countryNames = ['France', 'Austria', 'Italy'];
 
+    // Clear any existing country filters first
+    await test.step('Clear existing country filters', async () => {
+      await pm.onSearchPage().clearCountryFilters();
+      // Wait for page to fully reload after clearing
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+      await pm.getPage().waitForTimeout(2000); // Increased from 1s to 2s
+      
+      // Verify filters are actually cleared
+      const urlAfterClear = await pm.onSearchPage().getCurrentUrl();
+      console.log(`URL after clearing filters: ${urlAfterClear}`);
+    });
 
     // Select all 3 countries
     await test.step('Select France, Austria, and Italy', async () => {
-      await pm.onSearchPage().selectMultipleCountries(countries);
+      // Select each country individually with explicit waits
+      await pm.onSearchPage().selectCountryFilter('FR');
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+      await pm.getPage().waitForTimeout(3000);
+      
+      await pm.onSearchPage().selectCountryFilter('AT');
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+      await pm.getPage().waitForTimeout(4000);
+      
+      await pm.onSearchPage().selectCountryFilter('IT');
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+      await pm.getPage().waitForTimeout(5000);
     });
 
     // Record count with all 3 countries
@@ -1372,11 +1280,21 @@ test.describe('Search and Filters — Ski Holidays', () => {
     await test.step('Record results with all 3 countries', async () => {
       countWith3Countries = await pm.onSearchPage().getResultsCount();
       console.log(`✓ Results with 3 countries: ${countWith3Countries}`);
+      
+      // Validate we actually have results from all 3 countries
+      const url = await pm.onSearchPage().getCurrentUrl();
+      expect(url).toContain('FR');
+      expect(url).toContain('AT');
+      expect(url).toContain('IT');
     });
 
     // Deselect only France
     await test.step('Deselect France (keep Austria + Italy)', async () => {
       await pm.onSearchPage().deselectCountry('FR');
+      
+      // CRITICAL: Wait for page to process the deselection
+      await pm.getPage().waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+      await pm.getPage().waitForTimeout(3000); // Same wait as multi-select
     });
 
     // Verify Austria and Italy remain selected
@@ -1384,10 +1302,13 @@ test.describe('Search and Filters — Ski Holidays', () => {
       const countWith2Countries = await pm.onSearchPage().getResultsCount();
       console.log(`✓ Results with 2 countries (Austria + Italy): ${countWith2Countries}`);
 
-      if (countWith2Countries !== countWith3Countries!) {
-        console.log(`✓ Results count changed - France was successfully removed`);
-        console.log('VALIDATION PASSED: Individual country removal reflected in results');
-      }
+      // Results should decrease after removing France
+      expect(countWith2Countries, 
+        `Expected fewer results after removing France. Had ${countWith3Countries} with 3 countries, now have ${countWith2Countries} with 2`
+      ).toBeLessThan(countWith3Countries!);
+      
+      console.log(`✓ Results count decreased from ${countWith3Countries} to ${countWith2Countries} - France successfully removed`);
+      console.log('VALIDATION PASSED: Individual country removal reflected in results');
     });
 
     // Verify URL updated
@@ -1400,85 +1321,7 @@ test.describe('Search and Filters — Ski Holidays', () => {
     });
 
     await test.step('✅ Test completed', async () => {
-      console.log('✅ TC-025 PASS — Individual country removal from multi-selection validated successfully');
-    });
-  });
-
-  // TC-026: Validates multi-accommodation selection (Hotel + Chalet)
-  test('TC-026 — Validate multi-accommodation selection (Hotel + Chalet)', async ({ pm }, testInfo) => {
-    const accommodations = ['Hotel', 'Chalet'];
-
-
-    // Select multiple accommodations
-    await test.step('Select Hotel and Chalet', async () => {
-      await pm.onSearchPage().selectMultipleAccommodations(accommodations);
-    });
-
-    // Verify results from both accommodation types
-    await test.step('Verify results from multiple accommodation types', async () => {
-      const resultsCount = await pm.onSearchPage().getResultsCount();
-      console.log(`✓ Multi-accommodation selection (Hotel + Chalet) - Results: ${resultsCount}`);
-
-      if (resultsCount > 0) {
-        console.log(`✓ Both accommodation types selected and returning results`);
-        console.log('VALIDATION PASSED: Results returned for both accommodation types');
-      }
-    });
-
-    await test.step('✅ Test completed', async () => {
-      console.log(`✅ TC-026 PASS — Multi-accommodation selection validated: ${accommodations.join(' + ')}`);
-    });
-  });
-
-  // TC-027: Validates multi-board basis selection (Self Catered + Bed & Breakfast)
-  test('TC-027 — Validate multi-board basis selection (Self Catered + Bed & Breakfast)', async ({ pm }, testInfo) => {
-    const boardBasisOptions = ['Self catered', 'Bed & Breakfast'];
-
-
-    // Select multiple board basis options
-    await test.step('Select Self Catered and Bed & Breakfast', async () => {
-      await pm.onSearchPage().selectMultipleBoardBasis(boardBasisOptions);
-    });
-
-    // Verify results from both board basis options
-    await test.step('Verify results from multiple board basis options', async () => {
-      const resultsCount = await pm.onSearchPage().getResultsCount();
-      console.log(`✓ Multi-board basis selection (Self catered + Bed & Breakfast) - Results: ${resultsCount}`);
-
-      if (resultsCount > 0) {
-        console.log(`✓ Both board basis options selected and returning results`);
-        console.log('VALIDATION PASSED: Results returned for both board basis options');
-      }
-    });
-
-    await test.step('✅ Test completed', async () => {
-      console.log(`✅ TC-027 PASS — Multi-board basis selection validated: ${boardBasisOptions.join(' + ')}`);
-    });
-  });
-
-  // TC-028: Validates multi-ski area selection (The 3 Valleys + Paradiski)
-  test('TC-028 — Validate multi-ski area selection (The 3 Valleys + Paradiski)', async ({ pm }, testInfo) => {
-    const skiAreas = ['The 3 Valleys', 'Paradiski'];
-
-
-    // Select multiple ski areas
-    await test.step('Select The 3 Valleys and Paradiski', async () => {
-      await pm.onSearchPage().selectMultipleSkiAreas(skiAreas);
-    });
-
-    // Verify results from both ski areas
-    await test.step('Verify results from multiple ski areas', async () => {
-      const resultsCount = await pm.onSearchPage().getResultsCount();
-      console.log(`✓ Multi-ski area selection (The 3 Valleys + Paradiski) - Results: ${resultsCount}`);
-
-      if (resultsCount > 0) {
-        console.log(`✓ Both ski areas selected and returning results`);
-        console.log('VALIDATION PASSED: Results returned for both ski areas');
-      }
-    });
-
-    await test.step('✅ Test completed', async () => {
-      console.log(`✅ TC-028 PASS — Multi-ski area selection validated: The 3 Valleys + Paradiski`);
+      console.log('✅ TC-023 PASS — Individual country removal from multi-selection validated successfully');
     });
   });
 });

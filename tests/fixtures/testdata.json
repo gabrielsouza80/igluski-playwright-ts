@@ -379,20 +379,73 @@
                 ],
                 "selected": "Hotel"
             },
+            "accommodationTypes": {
+                "description": "Property type filter options with codes",
+                "testCase": "TC-017, TC-022",
+                "hotel": {
+                    "code": "hot",
+                    "name": "Hotel"
+                },
+                "chalet": {
+                    "code": "cha",
+                    "name": "Chalet"
+                },
+                "apartment": {
+                    "code": "apa",
+                    "name": "Apartment"
+                },
+                "chaletHotel": {
+                    "code": "chh",
+                    "name": "Chalet Hotel"
+                }
+            },
             "boardBasis": {
-                "description": "Board basis (meal plan) filter options",
-                "testCase": "TC-018",
-                "options": [
-                    "Self catered",
-                    "Half board",
-                    "Full board",
-                    "All inclusive"
-                ],
-                "selected": "Self catered"
+                "description": "Board basis (meal plan) filter options with codes",
+                "testCase": "TC-018, TC-022",
+                "catered": {
+                    "code": "ca",
+                    "name": "Catered"
+                },
+                "selfCatered": {
+                    "code": "sc",
+                    "name": "Self Catered"
+                },
+                "halfBoard": {
+                    "code": "hb",
+                    "name": "Half Board"
+                },
+                "allInclusive": {
+                    "code": "al",
+                    "name": "All Inclusive"
+                },
+                "bedBreakfast": {
+                    "code": "bb",
+                    "name": "Bed & Breakfast"
+                }
+            },
+            "ratings": {
+                "description": "Iglu Ski Snowflake rating filter options",
+                "testCase": "TC-016, TC-022",
+                "rating2": {
+                    "value": "2",
+                    "name": "2 stars"
+                },
+                "rating3": {
+                    "value": "3",
+                    "name": "3 stars"
+                },
+                "rating4": {
+                    "value": "4",
+                    "name": "4 stars"
+                },
+                "rating5": {
+                    "value": "5",
+                    "name": "5 stars"
+                }
             },
             "rating": {
-                "description": "Iglu Ski Snowflake rating filter",
-                "testCase": "TC-019",
+                "description": "Iglu Ski Snowflake rating filter (legacy)",
+                "testCase": "TC-016",
                 "min": 1,
                 "max": 5,
                 "selected": 5
@@ -419,7 +472,7 @@
                 "selected": "The 3 Valleys"
             },
             "resort": {
-                "description": "Specific resort filter selection",
+                "description": "Specific resort filter selection with codes",
                 "testCase": "TC-022",
                 "resorts": [
                     "Val d'Isère",
@@ -428,13 +481,30 @@
                 ],
                 "selected": "Val d'Isère"
             },
+            "resorts": {
+                "description": "Specific resort filter options with names",
+                "testCase": "TC-022",
+                "highVolume": {
+                    "name": "Tignes",
+                    "description": "Popular resort with many properties"
+                },
+                "midVolume": {
+                    "name": "Val d'Isère",
+                    "description": "Medium-sized resort"
+                },
+                "lowVolume": {
+                    "name": "Chamonix",
+                    "description": "Boutique resort with fewer properties"
+                }
+            },
             "countries": {
                 "description": "Country selection with expected property behavior",
                 "testCases": [
                     "TC-007",
                     "TC-008",
                     "TC-009",
-                    "TC-010"
+                    "TC-010",
+                    "TC-022"
                 ],
                 "highVolume": {
                     "code": "FR",
@@ -448,6 +518,47 @@
                     "alternativeCode": "NO",
                     "alternativeName": "Norway"
                 }
+            },
+            "sectionClearButtons": {
+                "description": "Section-level clear button test configuration",
+                "testCase": "TC-022",
+                "sections": [
+                    {
+                        "name": "Country",
+                        "optionType": "country",
+                        "clearMethod": "clearCountryFilters",
+                        "filterMethod": "selectCountryFilter",
+                        "filterValue": "France"
+                    },
+                    {
+                        "name": "Resort",
+                        "optionType": "resort",
+                        "clearMethod": "clearResortFilters",
+                        "filterMethod": "selectResortFilter",
+                        "filterValue": "Tignes"
+                    },
+                    {
+                        "name": "Accommodation",
+                        "optionType": "propertytype",
+                        "clearMethod": "clearAccommodationFilters",
+                        "filterMethod": "selectAccommodationFilter",
+                        "filterValue": "hot"
+                    },
+                    {
+                        "name": "Board Basis",
+                        "optionType": "board",
+                        "clearMethod": "clearBoardFilters",
+                        "filterMethod": "selectBoardBasisFilter",
+                        "filterValue": "ca"
+                    },
+                    {
+                        "name": "Rating",
+                        "optionType": "rating",
+                        "clearMethod": "clearRatingFilters",
+                        "filterMethod": "selectRatingFilter",
+                        "filterValue": "4"
+                    }
+                ]
             }
         },
         "resultsDisplay": {
