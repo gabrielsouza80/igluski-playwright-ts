@@ -1,3 +1,4 @@
+import { Locator } from 'playwright-core';
 import { test } from '../support/baseTest';
 import testData from './fixtures/testdata.json';
 
@@ -167,48 +168,39 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
   // ============================================================
   test('TC-007-MOBILE — Validate country with many properties (France)', async ({ pm }, testInfo) => {
     test.setTimeout(120000); // 2 minutes for mobile tests
-    const countryCode = 'FR';
-    const country = 'France';
+    const countryData = testData.searchPage.filters.countries.highVolume;
 
     // STEP 1 — Select country filter using mobile-specific method
-    await test.step(`Select country: ${country}`, async () => {
+    await test.step(`Select country: ${countryData.name} (${countryData.code})`, async () => {
       // Scroll to filters sidebar for mobile visibility
       const filtersSidebar = pm.getPage().locator('#holiday-collapse');
       await filtersSidebar.scrollIntoViewIfNeeded();
       await pm.getPage().waitForTimeout(300);
       
       // Use mobile-specific country filter that expands accordion and closes panel
-      await pm.onSearchPage().selectCountryFilterMobile(countryCode);
+      await pm.onSearchPage().selectCountryFilterMobile(countryData.code);
+      console.log(`VALIDATION PASSED: Selected country ${countryData.name} (${countryData.code})`);
     });
 
-    // STEP 2 — Validate results
+    // STEP 2 — Validate results are displayed
     let exactMatches = 0;
-    await test.step('Validate results are displayed', async () => {
-      // Mobile-specific: Validate search results loaded
-      console.log('🔍 Validating search results on mobile...');
-      const searchResultsLocator = pm.getPage().locator('.search-results');
-      
-      // Wait for results to load
-      await searchResultsLocator.first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {
-        throw new Error('❌ VALIDATION FAILED: No .search-results elements visible on mobile page');
-      });
-      
-      const resultsCount = await searchResultsLocator.count();
-      console.log(`✅ Found ${resultsCount} search result cards on page`);
-      
-      if (resultsCount === 0) {
-        throw new Error('❌ VALIDATION FAILED: 0 .search-results elements found - page may not have loaded correctly');
-      }
-      
-      await pm.onSearchPage().validateResultsCount(1);
+    await test.step('Validate many results are displayed', async () => {
+      await pm.onSearchPage().validateResultsCount(10);
+      console.log('VALIDATION PASSED: Many results are displayed');
       exactMatches = await pm.onSearchPage().validateExactMatchCount();
+      console.log('VALIDATION PASSED: Results match expected count');
     });
 
-    // STEP 3 — Finish test
-    await test.step('Finish test', async () => {
-      console.log('VALIDATION PASSED: Results are displayed (Mobile)');
-      console.log(`✓ Found ${exactMatches} properties in ${country}`);
-      console.log(`✅ TC-007-MOBILE PASS — ${country} filter validated successfully`);
+    // STEP 3 — Validate results contain the expected country
+    await test.step(`Validate results contain "${countryData.name}"`, async () => {
+      await pm.onSearchPage().validateResultsContainCountry(countryData.name);
+      console.log(`VALIDATION PASSED: Results contain "${countryData.name}"`);
+    });
+
+    // STEP 4 — Finish test
+    await test.step('✅ Test completed', async () => {
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
+      console.log(`✅ TC-007-MOBILE PASS — ${countryData.name} country filter validated successfully`);
     });
   });
 
@@ -217,48 +209,55 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
   // ============================================================
   test('TC-009-MOBILE — Validate 7 nights + France combination', async ({ pm }, testInfo) => {
     test.setTimeout(120000); // 2 minutes for mobile tests
-    const nights = 7;
-    const countryCode = 'FR';
-    const country = 'France';
+    const nightsData = testData.searchPage.filters.nights;
+    const countryData = testData.searchPage.filters.countries.highVolume;
 
-    // STEP 1 — Apply filters
-    await test.step(`Apply filters: ${nights} nights + ${country}`, async () => {
-      // Scroll to filters for mobile visibility
-      const nightsSelect = pm.getPage().locator('select[data-option-type="nts"]').first();
-      await nightsSelect.scrollIntoViewIfNeeded();
+    // STEP 1 — Apply duration filter
+    await test.step(`Select ${nightsData.default} nights filter`, async () => {
+      await pm.onSearchPage().selectNightsFilterMobile(nightsData.default);
+      console.log(`VALIDATION PASSED: Selected ${nightsData.default} nights filter`);
+    });
+
+    // STEP 2 — Apply country filter
+    await test.step(`Select country: ${countryData.name} (${countryData.code})`, async () => {
+      // Scroll to filters sidebar for mobile visibility
+      const filtersSidebar = pm.getPage().locator('#holiday-collapse');
+      await filtersSidebar.scrollIntoViewIfNeeded();
       await pm.getPage().waitForTimeout(300);
       
-      // Select nights using mobile method
-      await pm.onSearchPage().selectNightsFilterMobile(nights);
-      
-      // Then select country using mobile method (which expands accordion and closes panel)
-      await pm.onSearchPage().selectCountryFilterMobile(countryCode);
+      await pm.onSearchPage().selectCountryFilterMobile(countryData.code);
+      console.log(`VALIDATION PASSED: Selected country ${countryData.name} (${countryData.code})`);
     });
 
-    // STEP 2 — Validate results
+    // STEP 3 — Re-apply nights after country selection (stability)
+    await test.step(`Re-apply ${nightsData.default} nights after country selection`, async () => {
+      await pm.onSearchPage().deselectAllNights().catch((err) => {
+        console.log(`⚠ Could not deselect nights before re-applying: ${err}`);
+      });
+      await pm.onSearchPage().selectNightsFilterMobile(nightsData.default);
+      console.log(`VALIDATION PASSED: Re-applied ${nightsData.default} nights after country selection`);
+    });
+
+    // STEP 4 — Validate combined results
     let exactMatches = 0;
-    await test.step('Validate filtered results', async () => {
-      // Mobile-specific: Validate search results using correct selectors from HTML
-      console.log('🔍 Validating search results matching the filter criteria...');
-      
-      // Count filtered results (before "More results..." section)
-      const filteredCount = await pm.onSearchPage().countFilteredResultCards();
-      
-      if (filteredCount === 0) {
-        throw new Error('❌ VALIDATION FAILED: No filtered results found on page');
-      }
-      
-      await pm.onSearchPage().validateResultsCount(1);
+    await test.step('Validate combined results are displayed', async () => {
+      await pm.onSearchPage().validateResultsCount(10);
+      console.log('VALIDATION PASSED: Combined filters returned results');
       exactMatches = await pm.onSearchPage().validateExactMatchCount();
-      await pm.onSearchPage().validateResultsContainNights(nights);
+      console.log('VALIDATION PASSED: Results match expected count');
     });
 
-    // STEP 3 — Finish test
-    await test.step('Finish test', async () => {
-      console.log('VALIDATION PASSED: Filtered results are displayed (Mobile)');
-      console.log(`✓ Found ${exactMatches} properties matching criteria`);
-      console.log(`VALIDATION PASSED: Results contain "${nights} Nights" + ${country} (Mobile)`);
-      console.log(`✅ TC-009-MOBILE PASS — Combination filter validated successfully`);
+    // STEP 5 — Validate results contain both filters
+    await test.step(`Validate results contain "${nightsData.default} Nights" and "${countryData.name}"`, async () => {
+      await pm.onSearchPage().validateResultsContainNights(nightsData.default);
+      await pm.onSearchPage().validateResultsContainCountry(countryData.name);
+      console.log(`VALIDATION PASSED: Results contain "${nightsData.default} Nights" and "${countryData.name}"`);
+    });
+
+    // STEP 6 — Finish test
+    await test.step('✅ Test completed', async () => {
+      console.log(`✓ Found ${exactMatches} properties matching filter criteria`);
+      console.log(`✅ TC-009-MOBILE PASS — Combined filter validated: ${nightsData.default} nights + ${countryData.name}`);
     });
   });
 
@@ -597,7 +596,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
     // STEP 1 — Select minimum travelers
     await test.step(`Select ${adults} adult and ${children} children`, async () => {
-      await pm.onSearchPage().selectTravelersMobile(adults, children);
+      await pm.onSearchPage().selectTravelersFilter(adults, children);
     });
 
     // STEP 2 — Validate results
@@ -624,7 +623,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
     // STEP 1 — Select maximum travelers
     await test.step(`Select ${adults} adults and ${children} children`, async () => {
-      await pm.onSearchPage().selectTravelersMobile(adults, children);
+      await pm.onSearchPage().selectTravelersFilter(adults, children);
     });
 
     // STEP 2 — Validate travelers selected
@@ -648,7 +647,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
     // STEP 4 — Finish test
     await test.step('Finish test', async () => {
-      console.log(`TC-013-MOBILE PASS — max travelers (${travelersData.adults.max} adults, ${travelersData.children.max} children)`);
+      console.log(`TC-013-MOBILE PASS — max travelers (${adults} adults, ${children} children)`);
     });
   });
 
@@ -688,7 +687,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
     // STEP 1 — Select board basis filter
     await test.step(`Select board basis: ${boardBasis}`, async () => {
-      await pm.onSearchPage().selectBoardBasisMobile(boardBasis);
+      await pm.onSearchPage().selectBoardBasisFilter(boardBasis);
     });
 
     // STEP 2 — Validate results
@@ -751,7 +750,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
     // STEP 2 — Select WiFi feature
     await test.step(`Select feature: ${feature}`, async () => {
-      await pm.onSearchPage().selectPropertyFeatureMobile(feature);
+      await pm.onSearchPage().selectPropertyFeatureFilter(feature);
     });
 
     // STEP 3 — Validate results
@@ -780,7 +779,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
     // STEP 1 — Select resort
     await test.step(`Select resort: ${resort}`, async () => {
-      await pm.onSearchPage().selectResortMobile(resort);
+      await pm.onSearchPage().selectResortFilter(resort);
     });
 
     // STEP 2 — Validate results
@@ -821,7 +820,7 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
 
     // STEP 3 — Clear all filters
     await test.step('Click "Clear all changes" button', async () => {
-      await pm.onSearchPage().clearAllFiltersMobile();
+      await pm.onSearchPage().clearAllFilters();
       await pm.getPage().waitForLoadState('load', { timeout: 10000 });
       await pm.getPage().waitForTimeout(1000);
     });
@@ -961,9 +960,9 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
     await test.step('Verify Austria and Italy still selected', async () => {
       const countWith2Countries = await pm.onSearchPage().getResultsCount();
       console.log(`✓ Results with 2 countries (Austria + Italy): ${countWith2Countries}`);
-      expect(countWith2Countries, 
+      expect(countWith2Countries).toBeLessThan(countWith3Countries, 
         `Expected fewer results after removing France. Had ${countWith3Countries} with 3 countries, now have ${countWith2Countries} with 2`
-      ).toBeLessThan(countWith3Countries!);
+      );
       console.log(`✓ Results count decreased from ${countWith3Countries} to ${countWith2Countries} - France successfully removed`);
     });
 
@@ -982,3 +981,43 @@ test.describe('Search and Filters — Ski Holidays (Mobile)', () => {
   });
 
 });
+function expect(value: Locator | number | string | boolean) {
+  return {
+    toBeVisible: async () => {
+      if (value instanceof Object && 'isVisible' in value) {
+        const isVisible = await (value as Locator).isVisible();
+        if (!isVisible) {
+          throw new Error('Expected element to be visible');
+        }
+      }
+    },
+    toBeGreaterThan: (expected: number) => {
+      if (typeof value !== 'number') {
+        throw new Error('Expected value to be a number');
+      }
+      if (value <= expected) {
+        throw new Error(`Expected ${value} to be greater than ${expected}`);
+      }
+    },
+    toBeLessThan: (expected: number | undefined, message?: string) => {
+      if (typeof value !== 'number') {
+        throw new Error('Expected value to be a number');
+      }
+      if (expected === undefined) {
+        throw new Error('Expected value is undefined');
+      }
+      if (value >= expected) {
+        throw new Error(message || `Expected ${value} to be less than ${expected}`);
+      }
+    },
+    toContain: (substring: string) => {
+      if (typeof value !== 'string') {
+        throw new Error('Expected value to be a string');
+      }
+      if (!value.includes(substring)) {
+        throw new Error(`Expected "${value}" to contain "${substring}"`);
+      }
+    },
+  };
+}
+
