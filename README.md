@@ -1,4 +1,4 @@
-# Igluski-Playwright-ts
+# Travel-platform-playwright-ts
 End-to-end QA project including automated tests for search and booking flows on IgluSki's demo holiday website using Playwright + TypeScript.
 
 🏔️ **Automated QA Project – IgluSki Holiday**
